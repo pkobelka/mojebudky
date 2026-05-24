@@ -40,7 +40,6 @@ async function nactiStatistiky() {
 
     document.getElementById('stat-osidlenych').textContent = data.osidlenych;
     document.getElementById('stat-spravcu').textContent = data.spravcuRegistrovano;
-    document.getElementById('stat-vycisteno').textContent = data.vycisteno + '%';
 
     const ted = new Date();
     const cas = `${ted.getDate()}.${ted.getMonth()+1}. ${String(ted.getHours()).padStart(2,'0')}:${String(ted.getMinutes()).padStart(2,'0')}`;
