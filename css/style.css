@@ -1,0 +1,423 @@
+:root {
+  --nav-bg: #1a3a0a;
+  --nav-hover: #2d5516;
+  --panel-bg: rgba(40, 18, 4, 0.93);
+  --panel-border: #5c2e0a;
+  --panel-header: #3a1a06;
+  --orange: #c96420;
+  --orange-dark: #a0501a;
+  --orange-light: #e88040;
+  --sky-top: #5a9fd4;
+  --sky-bottom: #aad4f0;
+  --tree-dark: #1a4008;
+  --tree-mid: #2d6010;
+  --text-light: #f5ead0;
+  --text-muted: #c8a878;
+  --bar-bg: #f0ead8;
+  --bar-text: #3a2008;
+  --footer-bg: #1a3a0a;
+  --accent-gold: #d4a040;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  height: 100%;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  background: var(--sky-bottom);
+  overflow-x: hidden;
+}
+
+/* ── POZADÍ ── */
+.bg-scene {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background: linear-gradient(180deg, var(--sky-top) 0%, var(--sky-bottom) 65%, #8ec870 65%, #5a9a2a 100%);
+  pointer-events: none;
+}
+
+.bg-clouds {
+  position: absolute;
+  width: 100%; height: 60%;
+  overflow: hidden;
+}
+
+.cloud {
+  position: absolute;
+  background: rgba(255,255,255,0.75);
+  border-radius: 50px;
+  filter: blur(2px);
+  animation: cloudMove linear infinite;
+}
+.cloud::before, .cloud::after {
+  content: '';
+  position: absolute;
+  background: rgba(255,255,255,0.75);
+  border-radius: 50%;
+}
+.cloud-1 { width:160px; height:50px; top:12%; animation-duration:60s; animation-delay:-20s; }
+.cloud-1::before { width:70px; height:70px; top:-30px; left:20px; }
+.cloud-1::after  { width:50px; height:50px; top:-20px; left:80px; }
+.cloud-2 { width:220px; height:60px; top:22%; animation-duration:80s; animation-delay:-50s; }
+.cloud-2::before { width:80px; height:80px; top:-35px; left:30px; }
+.cloud-2::after  { width:60px; height:60px; top:-25px; left:110px; }
+.cloud-3 { width:130px; height:40px; top:8%; animation-duration:50s; animation-delay:-35s; }
+.cloud-3::before { width:55px; height:55px; top:-25px; left:15px; }
+.cloud-3::after  { width:45px; height:45px; top:-18px; left:65px; }
+
+@keyframes cloudMove {
+  from { transform: translateX(-300px); }
+  to   { transform: translateX(calc(100vw + 300px)); }
+}
+
+.bg-trees {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  width: 100%; height: 120px;
+}
+
+/* ── WRAPPER ── */
+#app {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* ── NAVIGACE ── */
+.navbar {
+  background: var(--nav-bg);
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  height: 58px;
+  gap: 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+}
+
+.nav-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+
+.nav-logo svg {
+  width: 36px;
+  height: 48px;
+}
+
+.logo-text {
+  color: var(--text-light);
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.nav-links {
+  display: flex;
+  list-style: none;
+  gap: 4px;
+  flex: 1;
+}
+
+.nav-links a {
+  color: var(--text-muted);
+  text-decoration: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+.nav-links a:hover, .nav-links a.active {
+  background: var(--nav-hover);
+  color: var(--text-light);
+}
+
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.search-box {
+  display: flex;
+  background: rgba(255,255,255,0.12);
+  border-radius: 20px;
+  overflow: hidden;
+}
+.search-box input {
+  background: none;
+  border: none;
+  color: var(--text-light);
+  padding: 6px 12px;
+  font-size: 0.85rem;
+  outline: none;
+  width: 180px;
+}
+.search-box input::placeholder { color: var(--text-muted); }
+.search-box button {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  padding: 6px 10px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+.search-box button:hover { color: var(--text-light); }
+
+.btn-login {
+  background: var(--orange);
+  color: white;
+  text-decoration: none;
+  padding: 7px 16px;
+  border-radius: 5px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  white-space: nowrap;
+  transition: background 0.2s;
+}
+.btn-login:hover { background: var(--orange-dark); }
+
+/* ── INFO LIŠTA ── */
+.info-bar {
+  background: var(--bar-bg);
+  color: var(--bar-text);
+  font-size: 0.83rem;
+  padding: 5px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #d0c0a0;
+  min-height: 30px;
+}
+.info-bar .bar-right {
+  color: var(--tree-mid);
+  font-style: italic;
+  font-size: 0.8rem;
+}
+
+/* ── HLAVNÍ OBSAH ── */
+.main-content {
+  display: flex;
+  flex: 1;
+  height: calc(100vh - 88px);
+  min-height: 500px;
+}
+
+/* ── PANELY ── */
+.panel {
+  background: var(--panel-bg);
+  border: 1px solid var(--panel-border);
+  width: 250px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.panel-title {
+  background: var(--panel-header);
+  color: var(--text-light);
+  font-size: 0.95rem;
+  font-weight: 700;
+  padding: 10px 14px;
+  letter-spacing: 0.3px;
+  border-bottom: 2px solid var(--orange);
+  flex-shrink: 0;
+}
+
+/* ── LEVÝ PANEL: Příběhy ── */
+.panel-left .panel-title::before { content: '🌿 '; }
+
+.pribehy-list {
+  overflow-y: auto;
+  flex: 1;
+  padding: 8px 0;
+}
+.pribehy-list::-webkit-scrollbar { width: 4px; }
+.pribehy-list::-webkit-scrollbar-track { background: transparent; }
+.pribehy-list::-webkit-scrollbar-thumb { background: var(--panel-border); border-radius: 2px; }
+
+.pribeh-item {
+  display: flex;
+  gap: 10px;
+  padding: 10px 12px;
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+  cursor: default;
+  transition: background 0.15s;
+}
+.pribeh-item:hover { background: rgba(255,255,255,0.05); }
+
+.pribeh-ikona {
+  flex-shrink: 0;
+  width: 38px;
+  height: 38px;
+}
+.pribeh-ikona svg { width: 38px; height: 38px; }
+
+.pribeh-text { flex: 1; min-width: 0; }
+.pribeh-druh {
+  color: var(--accent-gold);
+  font-size: 0.82rem;
+  font-weight: 700;
+  margin-bottom: 3px;
+}
+.pribeh-popis {
+  color: var(--text-light);
+  font-size: 0.78rem;
+  line-height: 1.4;
+  margin-bottom: 4px;
+  opacity: 0.9;
+}
+.pribeh-datum {
+  color: var(--text-muted);
+  font-size: 0.72rem;
+}
+
+/* ── MAPA ── */
+.map-wrapper {
+  flex: 1;
+  position: relative;
+  min-width: 0;
+}
+#map {
+  width: 100%;
+  height: 100%;
+}
+
+/* ── PRAVÝ PANEL: Statistiky ── */
+.panel-right .panel-title::before { content: '📊 '; }
+
+.stats-grid {
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex: 1;
+}
+
+.stat-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 6px;
+  border-left: 3px solid var(--orange);
+}
+
+.stat-icon {
+  font-size: 1.6rem;
+  flex-shrink: 0;
+  width: 36px;
+  text-align: center;
+}
+
+.stat-value {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--text-light);
+  line-height: 1;
+}
+.stat-label {
+  font-size: 0.73rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.stat-item:nth-child(2) { border-left-color: #5aaa2a; }
+.stat-item:nth-child(3) { border-left-color: #4488cc; }
+.stat-item:nth-child(4) { border-left-color: #cc8822; }
+
+.stat-aktualizace {
+  padding: 10px 14px;
+  border-top: 1px solid var(--panel-border);
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  flex-shrink: 0;
+}
+.stat-aktualizace span { color: var(--text-light); font-weight: 600; }
+
+/* ── PARTNEŘI ── */
+.partners-section {
+  background: rgba(26, 58, 10, 0.92);
+  border-top: 2px solid var(--orange);
+  padding: 14px 24px;
+}
+.partners-section h3 {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+#partneriList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.partner-item {
+  background: rgba(255,255,255,0.1);
+  color: var(--text-light);
+  padding: 5px 14px;
+  border-radius: 20px;
+  font-size: 0.83rem;
+  text-decoration: none;
+  border: 1px solid rgba(255,255,255,0.15);
+  transition: background 0.2s;
+}
+.partner-item:hover { background: rgba(255,255,255,0.18); }
+
+/* ── FOOTER: Návštěvnost ── */
+.footer-bar {
+  background: var(--footer-bg);
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  padding: 6px 24px;
+  text-align: center;
+}
+.footer-bar strong { color: var(--text-light); }
+
+/* ── LEAFLET POPUPY ── */
+.leaflet-popup-content-wrapper {
+  border-radius: 6px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+}
+.budka-popup { font-size: 0.88rem; }
+.popup-title { font-weight: 700; color: #3a1a06; margin-bottom: 4px; }
+.popup-stav { font-size: 0.8rem; margin-bottom: 4px; }
+.popup-ptak { color: #2d5516; font-weight: 600; margin-bottom: 3px; }
+.popup-info { color: #666; font-size: 0.78rem; }
+
+/* ── MARKER ── */
+.budka-marker {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  filter: drop-shadow(1px 2px 3px rgba(0,0,0,0.5));
+  transition: transform 0.15s;
+}
+.budka-marker:hover { transform: scale(1.2); }
+.budka-marker svg { width: 28px; height: 38px; }
+
+/* ── RESPONSIVITA ── */
+@media (max-width: 900px) {
+  .main-content { flex-direction: column; height: auto; }
+  .panel { width: 100%; max-height: 220px; }
+  .map-wrapper { height: 60vw; min-height: 320px; }
+  .search-box { display: none; }
+  .nav-links { gap: 0; }
+  .nav-links a { padding: 6px 8px; font-size: 0.8rem; }
+}
+
+@media (max-width: 600px) {
+  .nav-links { display: none; }
+  .navbar { padding: 0 12px; }
+}

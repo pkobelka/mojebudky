@@ -1,0 +1,1820 @@
+[
+  {
+    "cislo": 0,
+    "nazev": "Petr",
+    "typ": "32mm",
+    "lat": 49.6297,
+    "lng": 16.70569,
+    "ptak": "Sýkora modřinka",
+    "stav": "osidlena"
+  },
+  {
+    "cislo": 1,
+    "nazev": "Ája",
+    "typ": "32mm",
+    "lat": 49.62969,
+    "lng": 16.70547,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 2,
+    "nazev": "Holda",
+    "typ": "32mm",
+    "lat": 49.7523,
+    "lng": 16.65639,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 3,
+    "nazev": "Pavel",
+    "typ": "32mm",
+    "lat": 49.81811,
+    "lng": 16.5809,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 4,
+    "nazev": null,
+    "typ": "32mm",
+    "lat": 49.67998,
+    "lng": 16.626,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 5,
+    "nazev": "Vali + Viki",
+    "typ": "32mm",
+    "lat": 49.63006,
+    "lng": 16.70573,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 6,
+    "nazev": "U Badyna",
+    "typ": "28mm",
+    "lat": 49.62969,
+    "lng": 16.70622,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 7,
+    "nazev": "Jirka",
+    "typ": "28mm",
+    "lat": 49.63007,
+    "lng": 16.70633,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 8,
+    "nazev": "Karel",
+    "typ": "28mm",
+    "lat": 49.76633,
+    "lng": 16.66217,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 9,
+    "nazev": "Plíšek 2",
+    "typ": "32mm",
+    "lat": 49.62918,
+    "lng": 16.7045,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 10,
+    "nazev": null,
+    "typ": null,
+    "lat": 49.63681,
+    "lng": 16.67823,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 11,
+    "nazev": "Štěpánek",
+    "typ": "32mm",
+    "lat": 49.62993,
+    "lng": 16.70605,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 12,
+    "nazev": "Plíšek 1",
+    "typ": null,
+    "lat": 49.62909,
+    "lng": 16.70442,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 13,
+    "nazev": "Lampoš",
+    "typ": "32mm",
+    "lat": 50.14669,
+    "lng": 14.10151,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 14,
+    "nazev": "Dia",
+    "typ": null,
+    "lat": 50.10115,
+    "lng": 14.40187,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 15,
+    "nazev": "Theodorka",
+    "typ": "32mm",
+    "lat": 49.76596,
+    "lng": 16.47282,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 16,
+    "nazev": "Janek",
+    "typ": "32mm",
+    "lat": 49.70764,
+    "lng": 16.72844,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 17,
+    "nazev": "Niki",
+    "typ": "32mm",
+    "lat": 49.77518,
+    "lng": 16.43609,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 18,
+    "nazev": "Tomášek",
+    "typ": "32mm",
+    "lat": 50.07631,
+    "lng": 14.87817,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 19,
+    "nazev": "Pavel",
+    "typ": "32mm",
+    "lat": 49.74813,
+    "lng": 16.64664,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 20,
+    "nazev": "Kristýnka + Marie",
+    "typ": "32mm",
+    "lat": 49.72581,
+    "lng": 16.64512,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 21,
+    "nazev": "ZŠ",
+    "typ": "32mm",
+    "lat": 49.63144,
+    "lng": 16.70649,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 22,
+    "nazev": "Sláveček+Anežka",
+    "typ": "32mm",
+    "lat": 49.6291,
+    "lng": 16.70536,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 23,
+    "nazev": "Ivetka",
+    "typ": "32mm",
+    "lat": 49.6472,
+    "lng": 16.75924,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 24,
+    "nazev": "Emily",
+    "typ": "32mm",
+    "lat": 49.83213,
+    "lng": 16.63975,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 25,
+    "nazev": null,
+    "typ": "32mm",
+    "lat": 49.71371,
+    "lng": 16.75398,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 26,
+    "nazev": "Adam",
+    "typ": "32mm",
+    "lat": 49.63674,
+    "lng": 16.67829,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 27,
+    "nazev": "Péťa",
+    "typ": "32mm",
+    "lat": 49.62381,
+    "lng": 17.22838,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 28,
+    "nazev": "Kristýnka",
+    "typ": "32mm",
+    "lat": 49.62426,
+    "lng": 17.22817,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 29,
+    "nazev": "Laura",
+    "typ": "28mm",
+    "lat": 49.81895,
+    "lng": 16.1143,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 30,
+    "nazev": "Péťa",
+    "typ": "32mm",
+    "lat": 50.32039,
+    "lng": 15.94812,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 31,
+    "nazev": "Lubor",
+    "typ": "32mm",
+    "lat": 50.08655,
+    "lng": 15.77455,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 32,
+    "nazev": "Karel",
+    "typ": "32mm",
+    "lat": 49.6594,
+    "lng": 14.42367,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 33,
+    "nazev": "Crhuš",
+    "typ": "32mm",
+    "lat": 49.63031,
+    "lng": 16.70318,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 34,
+    "nazev": "Adík",
+    "typ": "32mm",
+    "lat": 49.72611,
+    "lng": 14.35728,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 35,
+    "nazev": "Miro",
+    "typ": "32mm",
+    "lat": 48.64769,
+    "lng": 21.05647,
+    "ptak": "Sýkora koňadra",
+    "stav": "osidlena"
+  },
+  {
+    "cislo": 36,
+    "nazev": "Hauptík",
+    "typ": "32mm",
+    "lat": 49.70886,
+    "lng": 16.72226,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 37,
+    "nazev": null,
+    "typ": "32mm",
+    "lat": 49.74217,
+    "lng": 16.4777,
+    "ptak": "Sýkora modřinka",
+    "stav": "osidlena"
+  },
+  {
+    "cislo": 38,
+    "nazev": "Vojtík",
+    "typ": "32mm",
+    "lat": 49.62944,
+    "lng": 16.70739,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 39,
+    "nazev": "Mateřská škola",
+    "typ": "32mm",
+    "lat": 49.78704,
+    "lng": 16.71068,
+    "ptak": "Sýkora modřinka",
+    "stav": "osidlena"
+  },
+  {
+    "cislo": 40,
+    "nazev": "Lucka",
+    "typ": "32mm",
+    "lat": 49.57713,
+    "lng": 17.24552,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 41,
+    "nazev": "Laďa",
+    "typ": "32mm",
+    "lat": 49.57713,
+    "lng": 17.24552,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 42,
+    "nazev": null,
+    "typ": "32mm",
+    "lat": 49.82041,
+    "lng": 17.90812,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 43,
+    "nazev": "Anežka",
+    "typ": "28mm",
+    "lat": 49.85613,
+    "lng": 16.32652,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 44,
+    "nazev": null,
+    "typ": "32mm",
+    "lat": 49.75643,
+    "lng": 16.65982,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 45,
+    "nazev": null,
+    "typ": "32mm",
+    "lat": 49.63287,
+    "lng": 16.68029,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 46,
+    "nazev": "Hela",
+    "typ": "32mm",
+    "lat": 49.71873,
+    "lng": 16.78951,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 47,
+    "nazev": null,
+    "typ": "32mm",
+    "lat": 49.63042,
+    "lng": 16.70519,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 48,
+    "nazev": "U Kapličky",
+    "typ": "32mm",
+    "lat": 50.07565,
+    "lng": 14.8813,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 49,
+    "nazev": "Jonášek",
+    "typ": "32mm",
+    "lat": 49.619,
+    "lng": 16.58335,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 50,
+    "nazev": "Janek",
+    "typ": "32mm",
+    "lat": 49.20364,
+    "lng": 16.48306,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 51,
+    "nazev": "Ester",
+    "typ": "32mm",
+    "lat": 49.81931,
+    "lng": 16.11525,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 52,
+    "nazev": "U Sojky",
+    "typ": "32mm",
+    "lat": 50.11252,
+    "lng": 13.30312,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 53,
+    "nazev": null,
+    "typ": "32mm",
+    "lat": 49.748,
+    "lng": 16.64676,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 54,
+    "nazev": "Šidlenka",
+    "typ": "32mm",
+    "lat": 48.94731,
+    "lng": 17.11913,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 55,
+    "nazev": null,
+    "typ": "32mm",
+    "lat": 49.63001,
+    "lng": 16.70317,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 56,
+    "nazev": null,
+    "typ": "32mm",
+    "lat": 50.11236,
+    "lng": 13.30465,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 57,
+    "nazev": null,
+    "typ": "32mm",
+    "lat": 49.63026,
+    "lng": 16.70445,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 58,
+    "nazev": null,
+    "typ": "32mm",
+    "lat": 49.76759,
+    "lng": 16.6702,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 59,
+    "nazev": null,
+    "typ": "32mm",
+    "lat": 49.70139,
+    "lng": 16.64108,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 60,
+    "nazev": "Natálka",
+    "typ": "32mm",
+    "lat": 49.57679,
+    "lng": 17.25106,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 61,
+    "nazev": "Erwin Thuis",
+    "typ": "32mm",
+    "lat": 52.17079,
+    "lng": 5.46953,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 62,
+    "nazev": "Erwin Werkplaats",
+    "typ": "32mm",
+    "lat": 51.7854,
+    "lng": 4.74479,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 63,
+    "nazev": "Adla",
+    "typ": "32mm",
+    "lat": 49.63241,
+    "lng": 16.71791,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 64,
+    "nazev": "Žabka",
+    "typ": "32mm",
+    "lat": 49.67892,
+    "lng": 16.625,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 65,
+    "nazev": "Ërwin 3",
+    "typ": "32mm",
+    "lat": 52.09014,
+    "lng": 5.22816,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 66,
+    "nazev": null,
+    "typ": "32mm",
+    "lat": 49.83332,
+    "lng": 16.63945,
+    "ptak": "Sýkora modřinka",
+    "stav": "osidlena"
+  },
+  {
+    "cislo": 67,
+    "nazev": "Plastika",
+    "typ": "32mm",
+    "lat": 48.26549,
+    "lng": 18.10192,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 68,
+    "nazev": "Hanička",
+    "typ": "32mm",
+    "lat": 49.76911,
+    "lng": 16.6637,
+    "ptak": "Sýkora koňadra",
+    "stav": "osidlena"
+  },
+  {
+    "cislo": 69,
+    "nazev": "Srubec",
+    "typ": "32mm",
+    "lat": 48.9539,
+    "lng": 14.53429,
+    "ptak": "Sýkora koňadra",
+    "stav": "osidlena"
+  },
+  {
+    "cislo": 70,
+    "nazev": null,
+    "typ": "28mm",
+    "lat": 49.76231,
+    "lng": 16.45782,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 71,
+    "nazev": "Martin",
+    "typ": "32mm",
+    "lat": 49.47,
+    "lng": 17.0728,
+    "ptak": "Vrabec domácí",
+    "stav": "osidlena"
+  },
+  {
+    "cislo": 72,
+    "nazev": "Michal",
+    "typ": "32mm",
+    "lat": 49.85185,
+    "lng": 16.6928,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 73,
+    "nazev": null,
+    "typ": "32mm",
+    "lat": 49.73805,
+    "lng": 16.71311,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 74,
+    "nazev": null,
+    "typ": "32mm",
+    "lat": 49.63676,
+    "lng": 16.67862,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 75,
+    "nazev": null,
+    "typ": "32mm",
+    "lat": 49.82954,
+    "lng": 16.64012,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 76,
+    "nazev": "Zdena",
+    "typ": "32mm",
+    "lat": 49.84461,
+    "lng": 16.13636,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 77,
+    "nazev": "Žofka",
+    "typ": "32mm",
+    "lat": 49.63652,
+    "lng": 16.67715,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 78,
+    "nazev": "Thea - Přemky",
+    "typ": "32mm",
+    "lat": 49.55285,
+    "lng": 16.9592,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 79,
+    "nazev": null,
+    "typ": "32mm",
+    "lat": 49.82935,
+    "lng": 16.63983,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 80,
+    "nazev": "Thea - Rozstání",
+    "typ": "28mm",
+    "lat": 49.73661,
+    "lng": 16.7165,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 81,
+    "nazev": null,
+    "typ": "32mm",
+    "lat": 49.75822,
+    "lng": 16.67861,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 82,
+    "nazev": "Chille",
+    "typ": "32mm",
+    "lat": 49.11077,
+    "lng": 17.34846,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 83,
+    "nazev": "Jasmínka",
+    "typ": "32mm",
+    "lat": 49.62609,
+    "lng": 16.74438,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 84,
+    "nazev": null,
+    "typ": "32mm",
+    "lat": 49.76237,
+    "lng": 16.74425,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 85,
+    "nazev": null,
+    "typ": "32mm",
+    "lat": 49.63036,
+    "lng": 16.67301,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 86,
+    "nazev": "Mirka",
+    "typ": "28mm",
+    "lat": 49.63651,
+    "lng": 16.67702,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 87,
+    "nazev": null,
+    "typ": "32mm",
+    "lat": 49.69566,
+    "lng": 16.72789,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 88,
+    "nazev": "Bálkovi",
+    "typ": "28mm",
+    "lat": 49.64461,
+    "lng": 16.76075,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 89,
+    "nazev": null,
+    "typ": "32mm",
+    "lat": 49.75233,
+    "lng": 16.65604,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 90,
+    "nazev": null,
+    "typ": "32mm",
+    "lat": 49.64588,
+    "lng": 16.75957,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 91,
+    "nazev": null,
+    "typ": "32mm",
+    "lat": 49.62647,
+    "lng": 16.7636,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 92,
+    "nazev": null,
+    "typ": "32mm",
+    "lat": 49.84787,
+    "lng": 17.2488,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 93,
+    "nazev": null,
+    "typ": "32mm",
+    "lat": 49.81,
+    "lng": 13.96874,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 94,
+    "nazev": null,
+    "typ": "28mm",
+    "lat": 49.85791,
+    "lng": 17.26756,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 95,
+    "nazev": null,
+    "typ": "28mm",
+    "lat": 49.81039,
+    "lng": 13.96917,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 96,
+    "nazev": null,
+    "typ": "32mm",
+    "lat": 49.87174,
+    "lng": 16.59429,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 97,
+    "nazev": null,
+    "typ": "32mm",
+    "lat": 49.87165,
+    "lng": 16.59405,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 98,
+    "nazev": null,
+    "typ": "32mm",
+    "lat": 49.75744,
+    "lng": 16.68179,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 99,
+    "nazev": null,
+    "typ": "28mm",
+    "lat": 49.87166,
+    "lng": 16.59416,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 100,
+    "nazev": "Ema-Emuška",
+    "typ": "32mm",
+    "lat": 49.60694,
+    "lng": 16.64992,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 101,
+    "nazev": null,
+    "typ": "32mm",
+    "lat": 48.84968,
+    "lng": 16.9777,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 102,
+    "nazev": null,
+    "typ": "32mm",
+    "lat": 49.64728,
+    "lng": 16.75426,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 103,
+    "nazev": null,
+    "typ": "32mm",
+    "lat": 49.64772,
+    "lng": 16.75499,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 104,
+    "nazev": null,
+    "typ": "32mm",
+    "lat": 49.63163,
+    "lng": 16.71427,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 105,
+    "nazev": null,
+    "typ": "28mm",
+    "lat": 49.64785,
+    "lng": 16.75424,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 106,
+    "nazev": null,
+    "typ": "28mm",
+    "lat": 49.64768,
+    "lng": 16.75618,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 107,
+    "nazev": null,
+    "typ": "32mm",
+    "lat": 49.62696,
+    "lng": 16.67523,
+    "ptak": "Sýkora koňadra",
+    "stav": "osidlena"
+  },
+  {
+    "cislo": 108,
+    "nazev": "Marek",
+    "typ": "32mm",
+    "lat": 49.68291,
+    "lng": 17.27041,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 109,
+    "nazev": "PODLAS",
+    "typ": "32mm",
+    "lat": 49.58788,
+    "lng": 17.24971,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 110,
+    "nazev": "Maty",
+    "typ": "28mm",
+    "lat": 49.54606,
+    "lng": 17.34037,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 111,
+    "nazev": "Vojta",
+    "typ": "28mm",
+    "lat": 50.33005,
+    "lng": 16.19986,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 112,
+    "nazev": null,
+    "typ": "32mm",
+    "lat": 50.25932,
+    "lng": 17.39522,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 113,
+    "nazev": null,
+    "typ": "32mm",
+    "lat": 50.09669,
+    "lng": 17.33493,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 114,
+    "nazev": "Tomík",
+    "typ": "32mm",
+    "lat": 50.07641,
+    "lng": 14.87808,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 115,
+    "nazev": "Kiki",
+    "typ": "28mm",
+    "lat": 49.57677,
+    "lng": 16.55987,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 116,
+    "nazev": "Karolína",
+    "typ": "32mm",
+    "lat": 49.81932,
+    "lng": 16.11584,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 117,
+    "nazev": "Julie",
+    "typ": "32mm",
+    "lat": 49.81925,
+    "lng": 16.11624,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 118,
+    "nazev": "Tadeáš",
+    "typ": "32mm",
+    "lat": 49.76908,
+    "lng": 16.66371,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 119,
+    "nazev": null,
+    "typ": "32mm",
+    "lat": 49.64694,
+    "lng": 16.75818,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 120,
+    "nazev": null,
+    "typ": "32mm",
+    "lat": 49.64699,
+    "lng": 16.75893,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 121,
+    "nazev": null,
+    "typ": "32mm",
+    "lat": 49.6479,
+    "lng": 16.75572,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 122,
+    "nazev": null,
+    "typ": "28mm",
+    "lat": 49.64792,
+    "lng": 16.75355,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 123,
+    "nazev": null,
+    "typ": "32mm",
+    "lat": 49.64724,
+    "lng": 16.75727,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 124,
+    "nazev": null,
+    "typ": "32mm",
+    "lat": 49.64607,
+    "lng": 16.75995,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 125,
+    "nazev": "Daminán",
+    "typ": "32mm",
+    "lat": 49.13289,
+    "lng": 17.43931,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 126,
+    "nazev": null,
+    "typ": "32mm",
+    "lat": 49.72513,
+    "lng": 16.6453,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 127,
+    "nazev": "Olda+Martin",
+    "typ": "32mm",
+    "lat": 50.31228,
+    "lng": 16.08162,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 128,
+    "nazev": null,
+    "typ": "28mm",
+    "lat": 48.86539,
+    "lng": 16.81824,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 129,
+    "nazev": null,
+    "typ": "32mm",
+    "lat": 49.65171,
+    "lng": 16.61232,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 130,
+    "nazev": null,
+    "typ": "32mm",
+    "lat": 49.3378,
+    "lng": 16.43454,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 131,
+    "nazev": "babi Draha",
+    "typ": "32mm",
+    "lat": 49.60101,
+    "lng": 16.64418,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 132,
+    "nazev": null,
+    "typ": "32mm",
+    "lat": 50.75052,
+    "lng": 15.02148,
+    "ptak": "Sýkora koňadra",
+    "stav": "osidlena"
+  },
+  {
+    "cislo": 133,
+    "nazev": "Oskar",
+    "typ": "32mm",
+    "lat": 50.72526,
+    "lng": 15.46618,
+    "ptak": "Sýkora modřinka",
+    "stav": "osidlena"
+  },
+  {
+    "cislo": 134,
+    "nazev": "Hvězdička",
+    "typ": "32mm",
+    "lat": 49.72181,
+    "lng": 16.64327,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 135,
+    "nazev": null,
+    "typ": "32mm",
+    "lat": 50.44011,
+    "lng": 14.33193,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 136,
+    "nazev": "Chateau Lačnov",
+    "typ": "32mm",
+    "lat": 49.76586,
+    "lng": 16.47246,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 137,
+    "nazev": null,
+    "typ": "32mm",
+    "lat": 49.61137,
+    "lng": 16.66712,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 138,
+    "nazev": "U starosty",
+    "typ": "32mm",
+    "lat": 49.67878,
+    "lng": 16.62767,
+    "ptak": "Sýkora parukářka",
+    "stav": "osidlena"
+  },
+  {
+    "cislo": 139,
+    "nazev": "Honzík",
+    "typ": "32mm",
+    "lat": 49.19144,
+    "lng": 16.7775,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 140,
+    "nazev": "Adélka+Petr",
+    "typ": "32mm",
+    "lat": 49.5948,
+    "lng": 17.1218,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 141,
+    "nazev": "STAVOKA",
+    "typ": "28mm",
+    "lat": 50.18673,
+    "lng": 15.53535,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 142,
+    "nazev": "Péťa",
+    "typ": "32mm",
+    "lat": 49.57682,
+    "lng": 16.55999,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 143,
+    "nazev": "Adélka",
+    "typ": "32mm",
+    "lat": 49.69948,
+    "lng": 16.64035,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 144,
+    "nazev": "Markéta",
+    "typ": "28mm",
+    "lat": 49.95826,
+    "lng": 12.60938,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 145,
+    "nazev": "Na vrších",
+    "typ": "32mm",
+    "lat": 50.23515,
+    "lng": 15.97415,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 146,
+    "nazev": "Drahuška",
+    "typ": "32mm",
+    "lat": 49.76422,
+    "lng": 16.65688,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 147,
+    "nazev": null,
+    "typ": "32mm",
+    "lat": 49.1739,
+    "lng": 20.21984,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 148,
+    "nazev": null,
+    "typ": "32mm",
+    "lat": 49.758,
+    "lng": 15.90083,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 149,
+    "nazev": "Markéta",
+    "typ": "32mm",
+    "lat": 49.69189,
+    "lng": 14.03173,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 150,
+    "nazev": "Jindřichovka",
+    "typ": "32mm",
+    "lat": 49.42279,
+    "lng": 12.75017,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 151,
+    "nazev": "Ivan",
+    "typ": "32mm",
+    "lat": 49.0018,
+    "lng": 14.53287,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 152,
+    "nazev": null,
+    "typ": "32mm",
+    "lat": 49.89826,
+    "lng": 15.94305,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 153,
+    "nazev": null,
+    "typ": "32mm",
+    "lat": 49.7644,
+    "lng": 16.47058,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 154,
+    "nazev": "Všetulka",
+    "typ": "32mm",
+    "lat": 49.32844,
+    "lng": 17.55438,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 155,
+    "nazev": null,
+    "typ": "32mm",
+    "lat": 50.05771,
+    "lng": 16.30598,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 156,
+    "nazev": "U Rebeky a Oskara",
+    "typ": "32mm",
+    "lat": 49.34876,
+    "lng": 14.70084,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 157,
+    "nazev": "HUTIRA",
+    "typ": "32mm",
+    "lat": 49.21392,
+    "lng": 16.40744,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 158,
+    "nazev": "Jíťa",
+    "typ": "32mm",
+    "lat": 49.74493,
+    "lng": 15.92507,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 159,
+    "nazev": "Kubovka 63",
+    "typ": "32mm",
+    "lat": 48.98261,
+    "lng": 13.77355,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 160,
+    "nazev": null,
+    "typ": "32mm",
+    "lat": 50.14212,
+    "lng": 14.0246,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 161,
+    "nazev": null,
+    "typ": "28mm",
+    "lat": 50.06246,
+    "lng": 12.37743,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 162,
+    "nazev": null,
+    "typ": "32mm",
+    "lat": 49.39493,
+    "lng": 16.70918,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 163,
+    "nazev": null,
+    "typ": "28mm",
+    "lat": 50.01453,
+    "lng": 16.68292,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 164,
+    "nazev": null,
+    "typ": "28mm",
+    "lat": 49.5535,
+    "lng": 16.79174,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 165,
+    "nazev": "Kapka",
+    "typ": "32mm",
+    "lat": 49.93527,
+    "lng": 15.25305,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 166,
+    "nazev": null,
+    "typ": "28mm",
+    "lat": 48.96462,
+    "lng": 14.51441,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 167,
+    "nazev": null,
+    "typ": "32mm",
+    "lat": 48.66774,
+    "lng": 14.13553,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 168,
+    "nazev": "Tondova budka",
+    "typ": "32mm",
+    "lat": 49.01043,
+    "lng": 14.50653,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 169,
+    "nazev": null,
+    "typ": "32mm",
+    "lat": 48.33789,
+    "lng": 19.65855,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 170,
+    "nazev": null,
+    "typ": "32mm",
+    "lat": 49.96916,
+    "lng": 14.07579,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 171,
+    "nazev": null,
+    "typ": "32mm",
+    "lat": 49.393,
+    "lng": 13.30481,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 172,
+    "nazev": null,
+    "typ": "28mm",
+    "lat": 49.01587,
+    "lng": 17.19311,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 173,
+    "nazev": "Kolombo šel na sever",
+    "typ": "32mm",
+    "lat": 49.43698,
+    "lng": 15.46611,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 174,
+    "nazev": null,
+    "typ": "32mm",
+    "lat": 49.0971,
+    "lng": 18.02157,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 175,
+    "nazev": "Víťa",
+    "typ": "32mm",
+    "lat": 49.81886,
+    "lng": 16.11452,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 176,
+    "nazev": null,
+    "typ": "28mm",
+    "lat": 50.51795,
+    "lng": 16.3452,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 177,
+    "nazev": "Gábi",
+    "typ": "32mm",
+    "lat": 49.23288,
+    "lng": 19.06449,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 178,
+    "nazev": "Marie",
+    "typ": "32mm",
+    "lat": 49.72762,
+    "lng": 16.64474,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 179,
+    "nazev": null,
+    "typ": "32mm",
+    "lat": 49.76355,
+    "lng": 16.65569,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 180,
+    "nazev": "Ptáčenka",
+    "typ": "32mm",
+    "lat": 49.81511,
+    "lng": 15.65461,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 181,
+    "nazev": "Na Smuteční vrbě",
+    "typ": "32mm",
+    "lat": 49.83837,
+    "lng": 16.64604,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 182,
+    "nazev": "Libuška",
+    "typ": "28mm",
+    "lat": 50.01142,
+    "lng": 14.44528,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 183,
+    "nazev": null,
+    "typ": "32mm",
+    "lat": 49.29636,
+    "lng": 13.04612,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 184,
+    "nazev": "Maruška",
+    "typ": "32mm",
+    "lat": 49.57494,
+    "lng": 18.78618,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 185,
+    "nazev": "Kostelec",
+    "typ": "32mm",
+    "lat": 13.51046,
+    "lng": 13.51046,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 186,
+    "nazev": "Na Lípě",
+    "typ": "32mm",
+    "lat": 49.8272,
+    "lng": 16.63766,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 189,
+    "nazev": "Dvořibudka",
+    "typ": "32mm",
+    "lat": 49.95502,
+    "lng": 14.68344,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 190,
+    "nazev": "Birdie",
+    "typ": "32mm",
+    "lat": 50.58163,
+    "lng": 16.35269,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 191,
+    "nazev": "Ptačí domeček na Salisově",
+    "typ": "32mm",
+    "lat": 50.27665,
+    "lng": 17.33612,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 192,
+    "nazev": "DOMITA",
+    "typ": "32mm",
+    "lat": 50.3971,
+    "lng": 16.17056,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 193,
+    "nazev": "Lucie",
+    "typ": "32mm",
+    "lat": 49.85611,
+    "lng": 16.32691,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 194,
+    "nazev": null,
+    "typ": "32mm",
+    "lat": 50.31826,
+    "lng": 15.71731,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 195,
+    "nazev": "Kryštůfek",
+    "typ": "32mm",
+    "lat": 49.66273,
+    "lng": 16.78802,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 196,
+    "nazev": "U Simony",
+    "typ": "32mm",
+    "lat": 48.59872,
+    "lng": 17.84636,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 197,
+    "nazev": null,
+    "typ": "32mm",
+    "lat": 49.75189,
+    "lng": 14.63183,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 198,
+    "nazev": null,
+    "typ": "32mm",
+    "lat": 49.92143,
+    "lng": 15.95582,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 199,
+    "nazev": "Zábělá 358",
+    "typ": "32mm",
+    "lat": 49.77005,
+    "lng": 13.45207,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 204,
+    "nazev": "Děda",
+    "typ": "32mm",
+    "lat": 49.48529,
+    "lng": 13.48875,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 205,
+    "nazev": "Budka pro Pavla",
+    "typ": "32mm",
+    "lat": 48.8943,
+    "lng": 14.64386,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 207,
+    "nazev": "Tonča",
+    "typ": "28mm",
+    "lat": 49.33202,
+    "lng": 15.91827,
+    "ptak": null,
+    "stav": "aktivni"
+  },
+  {
+    "cislo": 208,
+    "nazev": "Manča",
+    "typ": "32mm",
+    "lat": 49.76167,
+    "lng": 16.66062,
+    "ptak": null,
+    "stav": "aktivni"
+  }
+]

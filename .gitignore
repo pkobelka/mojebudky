@@ -1,0 +1,15 @@
+# Citlivá data – NIKDY nekomitnout
+*.csv
+*.xlsm
+*.xlsx
+*hesly*
+*hesla*
+*passwords*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
