@@ -393,25 +393,94 @@ html, body {
 
 /* ── LEAFLET POPUPY ── */
 .leaflet-popup-content-wrapper {
-  border-radius: 6px;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.35);
+  padding: 0;
+  overflow: hidden;
 }
-.budka-popup { font-size: 0.88rem; }
-.popup-title { font-weight: 700; color: #3a1a06; margin-bottom: 4px; }
-.popup-stav { font-size: 0.8rem; margin-bottom: 4px; }
-.popup-ptak { color: #2d5516; font-weight: 600; margin-bottom: 3px; }
-.popup-info { color: #666; font-size: 0.78rem; }
+.leaflet-popup-content {
+  margin: 0;
+}
+.budka-popup-wrap .leaflet-popup-content-wrapper {
+  background: #fffef8;
+}
+
+.budka-popup { font-size: 0.88rem; font-family: 'Segoe UI', system-ui, sans-serif; }
+
+.popup-header {
+  padding: 10px 14px 8px;
+  background: #faf6ee;
+  border-bottom: 1px solid #e8dcc8;
+}
+.popup-cislo {
+  font-weight: 800;
+  font-size: 1rem;
+  color: #3a1a06;
+  margin-bottom: 2px;
+}
+.popup-badge {
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+.popup-ptak {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px 4px;
+  color: #2d5516;
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+.popup-bird-icon {
+  flex-shrink: 0;
+  line-height: 0;
+}
+.popup-info {
+  padding: 4px 14px 10px;
+  color: #888;
+  font-size: 0.78rem;
+}
+.popup-info strong { color: #555; }
+
+/* ── MAPA LEGENDA ── */
+.mapa-legenda {
+  background: rgba(255,255,255,0.95);
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.25);
+  padding: 10px 14px;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  font-size: 0.8rem;
+  color: #3a2008;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  min-width: 140px;
+}
+.legenda-polozka {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+.legenda-polozka img {
+  flex-shrink: 0;
+}
 
 /* ── MARKER ── */
 .budka-marker {
   display: flex;
   align-items: flex-end;
   justify-content: center;
-  filter: drop-shadow(1px 2px 3px rgba(0,0,0,0.5));
   transition: transform 0.15s;
+  cursor: pointer;
 }
-.budka-marker:hover { transform: scale(1.2); }
-.budka-marker svg { width: 28px; height: 38px; }
+.budka-marker:hover { transform: scale(1.25); }
+.budka-aktivni {
+  filter: drop-shadow(1px 3px 4px rgba(0,0,0,0.5));
+}
+.budka-osidlena {
+  filter: drop-shadow(0 2px 6px rgba(58,154,58,0.6));
+}
+.budka-marker img { display: block; }
 
 /* ── RESPONSIVITA ── */
 @media (max-width: 900px) {
