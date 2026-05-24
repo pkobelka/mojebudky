@@ -60,37 +60,60 @@ async function nactiStatistiky() {
 }
 
 const BIRD_ICONS = {
-  konadra: `<svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
-    <circle cx="16" cy="16" r="14" fill="#4a7c1a"/>
-    <ellipse cx="16" cy="18" rx="7" ry="8" fill="#ffd700"/>
-    <ellipse cx="16" cy="12" rx="5" ry="6" fill="#1a1a1a"/>
-    <circle cx="14" cy="11" r="1.5" fill="white"/>
-    <path d="M11,20 Q16,25 21,20" fill="#ff9900" stroke="none"/>
+  konadra: `<svg viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg" width="38" height="38">
+    <ellipse cx="18" cy="30" rx="11" ry="15" fill="#f5c800" transform="rotate(-8,18,30)"/>
+    <ellipse cx="32" cy="30" rx="11" ry="15" fill="#f5c800" transform="rotate(8,32,30)"/>
+    <rect x="20" y="18" width="10" height="22" rx="5" fill="#1a1f2e"/>
+    <ellipse cx="25" cy="17" rx="13" ry="12" fill="#1a1f2e"/>
+    <ellipse cx="13" cy="21" rx="6" ry="5" fill="#fff" opacity="0.9"/>
+    <ellipse cx="37" cy="21" rx="6" ry="5" fill="#fff" opacity="0.9"/>
+    <circle cx="19" cy="14" r="1.2" fill="#fff"/>
+    <circle cx="33" cy="14" r="1.2" fill="#fff"/>
+    <path d="M21,27 L29,27 L25,33 Z" fill="#ff9999"/>
   </svg>`,
-  modrinka: `<svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
-    <circle cx="16" cy="16" r="14" fill="#2255aa"/>
-    <ellipse cx="16" cy="18" rx="7" ry="8" fill="#ffd700"/>
-    <ellipse cx="16" cy="12" rx="5" ry="6" fill="#1155dd"/>
-    <circle cx="14" cy="11" r="1.5" fill="white"/>
+  modrinka: `<svg viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg" width="38" height="38">
+    <ellipse cx="25" cy="34" rx="13" ry="11" fill="#ffd700"/>
+    <rect x="19" y="20" width="12" height="18" rx="6" fill="#1a5a9a"/>
+    <ellipse cx="25" cy="18" rx="13" ry="11" fill="#1a5a9a"/>
+    <rect x="13" y="12" width="24" height="6" rx="3" fill="#4ab0e8"/>
+    <ellipse cx="15" cy="23" rx="5" ry="4" fill="#fff" opacity="0.9"/>
+    <ellipse cx="35" cy="23" rx="5" ry="4" fill="#fff" opacity="0.9"/>
+    <circle cx="21" cy="15" r="1.2" fill="#fff"/>
+    <circle cx="31" cy="15" r="1.2" fill="#fff"/>
+    <path d="M22,28 L28,28 L25,34 Z" fill="#ff9999"/>
   </svg>`,
-  parukarka: `<svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
-    <circle cx="16" cy="16" r="14" fill="#556622"/>
-    <ellipse cx="16" cy="18" rx="7" ry="8" fill="#eeeeaa"/>
-    <ellipse cx="16" cy="12" rx="5" ry="6" fill="#222200"/>
-    <path d="M16,6 Q13,2 15,0 Q17,2 19,4 Q17,5 16,6" fill="#333300"/>
-    <circle cx="14" cy="11" r="1.5" fill="white"/>
+  parukarka: `<svg viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg" width="38" height="38">
+    <ellipse cx="25" cy="32" rx="12" ry="10" fill="#e8e0d0"/>
+    <rect x="19" y="20" width="12" height="16" rx="6" fill="#5a5a5a"/>
+    <ellipse cx="25" cy="18" rx="13" ry="11" fill="#2a2a2a"/>
+    <path d="M22,8 L25,18 L28,8 C27,4 23,4 22,8Z" fill="#2a2a2a"/>
+    <ellipse cx="14" cy="22" rx="5" ry="4" fill="#fff" opacity="0.8"/>
+    <ellipse cx="36" cy="22" rx="5" ry="4" fill="#fff" opacity="0.8"/>
+    <circle cx="21" cy="14" r="1.2" fill="#fff"/>
+    <circle cx="31" cy="14" r="1.2" fill="#fff"/>
+    <path d="M22,27 L28,27 L25,32 Z" fill="#ffcc88"/>
   </svg>`,
-  vrabec: `<svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
-    <circle cx="16" cy="16" r="14" fill="#8B6914"/>
-    <ellipse cx="16" cy="18" rx="7" ry="8" fill="#c8a050"/>
-    <ellipse cx="16" cy="12" rx="5" ry="6" fill="#5a3a10"/>
-    <circle cx="14" cy="11" r="1.5" fill="white"/>
+  vrabec: `<svg viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg" width="38" height="38">
+    <ellipse cx="25" cy="32" rx="13" ry="11" fill="#c8a060"/>
+    <rect x="19" y="20" width="12" height="16" rx="6" fill="#8B6040"/>
+    <ellipse cx="25" cy="18" rx="13" ry="11" fill="#6B4020"/>
+    <rect x="13" y="13" width="24" height="5" rx="2.5" fill="#c8a060"/>
+    <ellipse cx="14" cy="22" rx="5" ry="4" fill="#e8c890" opacity="0.8"/>
+    <ellipse cx="36" cy="22" rx="5" ry="4" fill="#e8c890" opacity="0.8"/>
+    <circle cx="21" cy="14" r="1.2" fill="#fff"/>
+    <circle cx="31" cy="14" r="1.2" fill="#fff"/>
+    <path d="M22,27 L28,27 L25,32 Z" fill="#dda060"/>
   </svg>`,
-  sojka: `<svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
-    <circle cx="16" cy="16" r="14" fill="#7755aa"/>
-    <ellipse cx="16" cy="18" rx="7" ry="8" fill="#ddbbff"/>
-    <ellipse cx="16" cy="12" rx="5" ry="6" fill="#334488"/>
-    <circle cx="14" cy="11" r="1.5" fill="white"/>
+  sojka: `<svg viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg" width="38" height="38">
+    <ellipse cx="25" cy="32" rx="13" ry="11" fill="#d4b8f0"/>
+    <rect x="19" y="20" width="12" height="16" rx="6" fill="#6644aa"/>
+    <ellipse cx="25" cy="18" rx="13" ry="11" fill="#334488"/>
+    <rect x="10" y="12" width="30" height="5" rx="2.5" fill="#88aadd"/>
+    <ellipse cx="14" cy="22" rx="5" ry="4" fill="#eeddff" opacity="0.9"/>
+    <ellipse cx="36" cy="22" rx="5" ry="4" fill="#eeddff" opacity="0.9"/>
+    <circle cx="21" cy="14" r="1.2" fill="#fff"/>
+    <circle cx="31" cy="14" r="1.2" fill="#fff"/>
+    <path d="M22,27 L28,27 L25,32 Z" fill="#ffcc88"/>
   </svg>`
 };
 
