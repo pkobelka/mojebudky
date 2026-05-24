@@ -78,11 +78,17 @@ function formatTooltip(b) {
   const isOsidlena = b.stav === 'osidlena';
   const stavColor = isOsidlena ? '#3a9a3a' : '#7B3810';
   const stavLabel = isOsidlena ? '🟢 Osídlená' : '🟤 Aktivní';
-  const nazevRadek = b.nazev ? `<div class="tt-nazev">${b.nazev}</div>` : '';
   const ptakRadek = b.ptak ? `<div class="tt-ptak">🐦 ${b.ptak}</div>` : '';
+  if (b.nazev) {
+    return `<div class="budka-tooltip">
+      <div class="tt-nazev-hlavni" style="border-left:3px solid ${stavColor}">${b.nazev}</div>
+      <div class="tt-cislo-sub">Budka č. ${b.cislo}</div>
+      <div class="tt-stav" style="color:${stavColor}">${stavLabel}</div>
+      ${ptakRadek}
+    </div>`;
+  }
   return `<div class="budka-tooltip">
     <div class="tt-cislo" style="border-left:3px solid ${stavColor}">Budka č. ${b.cislo}</div>
-    ${nazevRadek}
     <div class="tt-stav" style="color:${stavColor}">${stavLabel}</div>
     ${ptakRadek}
   </div>`;
@@ -120,7 +126,7 @@ function formatPopup(b) {
   const stavLabel = isOsidlena ? '🟢 Osídlená' : '🟤 Aktivní';
 
   const nadpis = b.nazev
-    ? `Budka č. ${b.cislo} <span class="popup-nazev">– ${b.nazev}</span>`
+    ? `<span class="popup-nazev-hlavni">${b.nazev}</span><span class="popup-cislo-sub"> · č. ${b.cislo}</span>`
     : `Budka č. ${b.cislo}`;
 
   const birdSvg = b.ptak && BIRD_SVG[b.ptak] ? BIRD_SVG[b.ptak] : null;

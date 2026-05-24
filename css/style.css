@@ -416,11 +416,17 @@ html, body {
   color: #3a1a06;
   padding: 7px 12px 5px;
 }
-.tt-nazev {
+.tt-nazev-hlavni {
+  background: #faf6ee;
+  font-weight: 800;
+  font-size: 1rem;
+  color: #3a1a06;
+  padding: 7px 12px 2px;
+}
+.tt-cislo-sub {
   padding: 0 12px 4px;
-  color: #7B3810;
-  font-weight: 600;
-  font-size: 0.8rem;
+  color: #a07050;
+  font-size: 0.75rem;
 }
 .tt-stav {
   padding: 2px 12px;
@@ -461,7 +467,8 @@ html, body {
   color: #3a1a06;
   margin-bottom: 2px;
 }
-.popup-nazev { font-weight: 500; color: #7B3810; }
+.popup-nazev-hlavni { font-weight: 800; font-size: 1.05rem; color: #3a1a06; }
+.popup-cislo-sub { font-weight: 400; font-size: 0.8rem; color: #a07050; }
 .popup-badge {
   font-size: 0.78rem;
   font-weight: 600;
