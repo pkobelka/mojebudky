@@ -105,9 +105,15 @@ html, body {
   flex-shrink: 0;
 }
 
-.nav-logo svg {
+.nav-logo-img {
   width: 36px;
   height: 48px;
+}
+
+.stat-svg-icon {
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
 }
 
 .logo-text {

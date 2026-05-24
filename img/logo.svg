@@ -1,0 +1,22 @@
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Post -->
+  <rect x="94" y="148" width="12" height="38" rx="2" fill="#b5651d"/>
+  <rect x="97" y="148" width="3" height="38" rx="1" fill="#d4843a" opacity="0.5"/>
+  <!-- Bottom ledge -->
+  <rect x="62" y="140" width="76" height="10" rx="1" fill="#c96420"/>
+  <rect x="62" y="140" width="76" height="3" rx="1" fill="#1a1a1a" opacity="0.15"/>
+  <!-- Body trapezoid -->
+  <path d="M52,52 L148,52 L136,140 L64,140 Z" fill="#7B3810"/>
+  <path d="M52,52 L148,52 L145,65 L55,65 Z" fill="#5a2608" opacity="0.3"/>
+  <!-- Top plate/roof -->
+  <rect x="42" y="38" width="116" height="16" rx="2" fill="#c96420"/>
+  <rect x="42" y="38" width="116" height="6" rx="2" fill="#e07830" opacity="0.5"/>
+  <!-- Separator line -->
+  <rect x="52" y="52" width="96" height="3" fill="#1a1a1a" opacity="0.25"/>
+  <!-- Entrance hole - shadow ring -->
+  <circle cx="100" cy="96" r="24" fill="#1a0a02"/>
+  <!-- Entrance hole - inner -->
+  <circle cx="100" cy="96" r="21" fill="#f5f0e8"/>
+  <!-- Sensor dot -->
+  <circle cx="100" cy="128" r="5" fill="#1a0a02"/>
+</svg>
