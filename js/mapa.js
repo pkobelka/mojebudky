@@ -1,4 +1,6 @@
 let mapInstance = null;
+const markersByCislo = {};
+let budkyData = [];
 
 const BIRD_SVG = {
   'Sýkora koňadra': `<svg viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg" width="32" height="32">
@@ -138,6 +140,10 @@ function formatPopup(b) {
     ? `<div class="popup-foto"><img src="${b.foto}" alt="Foto budky č. ${b.cislo}"></div>`
     : '';
 
+  const spravceBlock = b.spravce
+    ? `<div class="popup-radek">👤 Správce: <strong>${b.spravce}</strong></div>`
+    : '';
+
   const instBlock = b.instalace
     ? `<div class="popup-radek">📅 Instalace: <strong>${b.instalace}</strong></div>`
     : '';
@@ -157,6 +163,7 @@ function formatPopup(b) {
     ${fotoBlock}
     ${ptakBlock}
     <div class="popup-detail">
+      ${spravceBlock}
       ${instBlock}
       ${gpsBlock}
       ${otvorBlock}
@@ -183,6 +190,27 @@ function pridejLegend(map) {
   legend.addTo(map);
 }
 
+function focusBudka(cislo) {
+  const marker = markersByCislo[cislo];
+  if (!marker || !mapInstance) return;
+  mapInstance.setView(marker.getLatLng(), 16);
+  marker.openPopup();
+}
+
+function hledejBudku(dotaz) {
+  const q = dotaz.trim().toLowerCase();
+  if (!q) return;
+  const cislo = parseInt(q, 10);
+  if (!isNaN(cislo) && markersByCislo[cislo]) {
+    focusBudka(cislo);
+    return;
+  }
+  const nalezena = budkyData.find(b => b.nazev && b.nazev.toLowerCase().includes(q));
+  if (nalezena) {
+    focusBudka(nalezena.cislo);
+  }
+}
+
 async function inicializujMapu() {
   mapInstance = L.map('map', {
     center: [49.75, 15.7],
@@ -192,36 +220,55 @@ async function inicializujMapu() {
 
   L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
     attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> © <a href="https://carto.com/">CARTO</a>',
-    maxZoom: 18
+    maxZoom: 20
   }).addTo(mapInstance);
+
 
   pridejLegend(mapInstance);
 
   try {
-    const res = await fetch('data/budky.json');
-    const budky = await res.json();
+    const [resBudky, resSpravci] = await Promise.all([
+      fetch('data/budky.json'),
+      fetch('data/spravci_jmena.json')
+    ]);
+    const budky = await resBudky.json();
+    budkyData = budky;
+    const spravciList = await resSpravci.json();
+    const spravci = Object.fromEntries(spravciList.map(s => [s.cislo, s.jmeno]));
 
     budky.forEach(b => {
       if (!b.lat || !b.lng) return;
+      const bData = { ...b, spravce: spravci[b.cislo] || null };
       const marker = L.marker([b.lat, b.lng], { icon: vytvorIkonu(b.stav) });
 
-      marker.bindTooltip(formatTooltip(b), {
+      marker.bindTooltip(formatTooltip(bData), {
         direction: 'top',
         offset: [0, -46],
         className: 'budka-tooltip-wrap',
         sticky: false
       });
 
-      marker.bindPopup(formatPopup(b), {
-        maxWidth: 300,
+      marker.bindPopup(formatPopup(bData), {
+        minWidth: 260,
+        maxWidth: 320,
         className: 'budka-popup-wrap'
       });
 
+      markersByCislo[b.cislo] = marker;
       marker.addTo(mapInstance);
     });
 
     document.getElementById('stat-celkem').textContent = budky.length;
   } catch(e) {
     console.error('Chyba načítání dat budek:', e);
+  }
+
+  setTimeout(() => mapInstance.invalidateSize(), 200);
+
+  const searchInput = document.querySelector('.search-box input');
+  const searchBtn = document.querySelector('.search-box button');
+  if (searchInput && searchBtn) {
+    searchBtn.addEventListener('click', () => hledejBudku(searchInput.value));
+    searchInput.addEventListener('keydown', e => { if (e.key === 'Enter') hledejBudku(searchInput.value); });
   }
 }

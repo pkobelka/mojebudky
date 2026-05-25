@@ -6,7 +6,7 @@
   <meta name="description" content="MojeBudky.cz – sledujeme ptačí budky po celé ČR. Živá mapa, statistiky a příběhy z přírody.">
   <title>MojeBudky.cz – Pomáháme ptactvu</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
-  <link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
@@ -36,9 +36,10 @@
         </span>
       </a>
 
-      <ul class="nav-links" role="navigation" aria-label="Hlavní navigace">
-        <li><a href="#mapa" class="active">Mapa Budek</a></li>
-        <li><a href="#pribehy">Příběhy z přírody</a></li>
+      <ul class="nav-links" id="navLinks" role="navigation" aria-label="Hlavní navigace">
+        <li><a href="#mapa" id="nav-mapa">Mapa Budek</a></li>
+        <li><a href="#aktuality">Zprávy z terénu</a></li>
+        <li><a href="#clanky">Zajímavé články</a></li>
         <li><a href="#partneri">Partneři</a></li>
         <li><a href="#kontakt">Kontakt</a></li>
       </ul>
@@ -48,7 +49,12 @@
           <input type="text" placeholder="Hledej budku nebo město" aria-label="Hledat">
           <button aria-label="Hledat">🔍</button>
         </div>
-        <a href="#prihlaseni" class="btn-login">Vstup pro správce</a>
+        <div id="authNavArea">
+          <a href="#" class="btn-login" id="btnOtevritModal">Vstup pro správce</a>
+        </div>
+        <button class="nav-hamburger" id="navHamburger" aria-label="Otevřít menu" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
       </div>
     </nav>
 
@@ -61,17 +67,18 @@
   <!-- Hlavní obsah: 3 sloupce -->
   <main class="main-content" id="mapa">
 
-    <!-- Levý panel: Příběhy z přírody -->
-    <aside class="panel panel-left" id="pribehy" aria-label="Příběhy z přírody">
-      <h2 class="panel-title">Příběhy z přírody</h2>
-      <div class="pribehy-list" id="pribehyList">
-        <div style="padding:20px; color:#c8a878; font-size:0.83rem;">Načítám příběhy…</div>
+    <!-- Levý panel: Aktuality z komunity -->
+    <aside class="panel panel-left" id="aktuality" aria-label="Zprávy z terénu">
+      <h2 class="panel-title">Zprávy z terénu</h2>
+      <div class="pribehy-list" id="aktualityList">
+        <div style="padding:20px; color:#c8a878; font-size:0.83rem;">Načítám aktuality…</div>
       </div>
     </aside>
 
     <!-- Mapa -->
     <div class="map-wrapper" role="application" aria-label="Interaktivní mapa budek">
       <div id="map"></div>
+      <button id="btn-zpet-mapa" class="btn-zpet-mapa" style="display:none;" aria-label="Zpět na přehled">← Zpět</button>
     </div>
 
     <!-- Pravý panel: Statistiky -->
@@ -118,6 +125,10 @@
   <section class="partners-section" id="partneri" aria-label="Partneři projektu">
     <h3>Partneři projektu MojeBudky.cz</h3>
     <div id="partneriList" role="list">Načítám…</div>
+    <div class="podekovani-wrap" id="podekovaniWrap" style="display:none">
+      <span class="podekovani-label">Poděkování:</span>
+      <span id="podekovaniList"></span>
+    </div>
   </section>
 
   <!-- Kontakt -->
@@ -125,9 +136,9 @@
     <div class="kontakt-inner">
       <div class="kontakt-text">
         <div class="kontakt-title">Napište nám</div>
-        <div class="kontakt-popis">Máte zájem přidat svou budku? Chcete se stát správcem? Nebo máte jen dotaz?</div>
+        <div class="kontakt-popis">Máte dotaz, nápad nebo připomínku? Napište nám!</div>
       </div>
-      <a href="mailto:info@petrkobelka.cz" class="btn-kontakt">✉ info@petrkobelka.cz</a>
+      <a href="mailto:info@mojebudky.cz" class="btn-kontakt">✉ info@mojebudky.cz</a>
     </div>
   </section>
 
@@ -136,11 +147,38 @@
     <div id="footer-stats">Načítám statistiky návštěvnosti…</div>
   </footer>
 
+<!-- Auth Modal -->
+<div id="authModal" class="auth-modal-overlay" role="dialog" aria-modal="true" aria-label="Přihlášení správce" hidden>
+  <div class="auth-modal-card">
+    <button class="auth-modal-close" id="btnZavritModal" aria-label="Zavřít">&times;</button>
+    <div class="auth-modal-title">Přihlášení správce</div>
+    <form id="authForm" novalidate>
+      <div class="auth-field">
+        <label for="authEmail">ID správce</label>
+        <div class="auth-input-suffix">
+          <input type="text" id="authEmail" autocomplete="username" required placeholder="001400">
+          <span>@mojebudky.cz</span>
+        </div>
+      </div>
+      <div class="auth-field">
+        <label for="authPassword">Heslo</label>
+        <div class="auth-input-suffix">
+          <input type="password" id="authPassword" autocomplete="current-password" required placeholder="••••••••">
+          <button type="button" id="btnUkazHeslo" style="background:none;border:none;cursor:pointer;color:var(--text-muted);padding:0 10px;font-size:1rem;" title="Zobrazit heslo">👁</button>
+        </div>
+      </div>
+      <div class="auth-error" id="authError" hidden></div>
+      <button type="submit" class="auth-submit" id="authSubmitBtn">Přihlásit se</button>
+    </form>
+  </div>
+</div>
+
 </div><!-- #app -->
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
 <script src="js/svatky.js"></script>
 <script src="js/mapa.js"></script>
 <script src="js/main.js"></script>
+<script type="module" src="js/auth.js"></script>
 </body>
 </html>
