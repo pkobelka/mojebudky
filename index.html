@@ -48,7 +48,9 @@
           <input type="text" placeholder="Hledej budku nebo město" aria-label="Hledat">
           <button aria-label="Hledat">🔍</button>
         </div>
-        <a href="#prihlaseni" class="btn-login">Vstup pro správce</a>
+        <div id="authNavArea">
+          <a href="#" class="btn-login" id="btnOtevritModal">Vstup pro správce</a>
+        </div>
       </div>
     </nav>
 
@@ -136,11 +138,35 @@
     <div id="footer-stats">Načítám statistiky návštěvnosti…</div>
   </footer>
 
+<!-- Auth Modal -->
+<div id="authModal" class="auth-modal-overlay" role="dialog" aria-modal="true" aria-label="Přihlášení správce" hidden>
+  <div class="auth-modal-card">
+    <button class="auth-modal-close" id="btnZavritModal" aria-label="Zavřít">&times;</button>
+    <div class="auth-modal-tabs">
+      <button class="auth-tab active" data-tab="login">Přihlásit se</button>
+      <button class="auth-tab" data-tab="register">Registrovat se</button>
+    </div>
+    <form id="authForm" novalidate>
+      <div class="auth-field">
+        <label for="authEmail">E-mail</label>
+        <input type="email" id="authEmail" autocomplete="email" required placeholder="vas@email.cz">
+      </div>
+      <div class="auth-field">
+        <label for="authPassword">Heslo</label>
+        <input type="password" id="authPassword" autocomplete="current-password" required placeholder="••••••••">
+      </div>
+      <div class="auth-error" id="authError" hidden></div>
+      <button type="submit" class="auth-submit" id="authSubmitBtn">Přihlásit se</button>
+    </form>
+  </div>
+</div>
+
 </div><!-- #app -->
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
 <script src="js/svatky.js"></script>
 <script src="js/mapa.js"></script>
 <script src="js/main.js"></script>
+<script type="module" src="js/auth.js"></script>
 </body>
 </html>
