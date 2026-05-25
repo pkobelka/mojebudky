@@ -851,30 +851,13 @@ html, body {
 }
 .auth-modal-close:hover { color: var(--text-light); }
 
-.auth-modal-tabs {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 24px;
+.auth-modal-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--accent-gold);
+  margin-bottom: 20px;
+  text-align: center;
 }
-
-.auth-tab {
-  flex: 1;
-  background: transparent;
-  border: 1px solid var(--panel-border);
-  color: var(--text-muted);
-  padding: 8px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 0.88rem;
-  transition: all .2s;
-}
-.auth-tab.active {
-  background: var(--orange);
-  border-color: var(--orange);
-  color: white;
-  font-weight: 600;
-}
-.auth-tab:not(.active):hover { border-color: var(--orange-light); color: var(--text-light); }
 
 .auth-field {
   margin-bottom: 16px;

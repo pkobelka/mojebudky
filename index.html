@@ -151,13 +151,10 @@
 <div id="authModal" class="auth-modal-overlay" role="dialog" aria-modal="true" aria-label="Přihlášení správce" hidden>
   <div class="auth-modal-card">
     <button class="auth-modal-close" id="btnZavritModal" aria-label="Zavřít">&times;</button>
-    <div class="auth-modal-tabs">
-      <button class="auth-tab active" data-tab="login">Přihlásit se</button>
-      <button class="auth-tab" data-tab="register">Registrovat se</button>
-    </div>
+    <div class="auth-modal-title">Přihlášení správce</div>
     <form id="authForm" novalidate>
       <div class="auth-field">
-        <label for="authEmail">E-mail</label>
+        <label for="authEmail">ID správce</label>
         <input type="email" id="authEmail" autocomplete="email" required placeholder="vas@email.cz">
       </div>
       <div class="auth-field">
