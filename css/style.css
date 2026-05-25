@@ -392,6 +392,22 @@ html, body {
   transition: background 0.2s;
 }
 .partner-item:hover { background: rgba(255,255,255,0.18); }
+.partner-item--logo {
+  background: #fff;
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.3);
+  display: inline-flex;
+  align-items: center;
+}
+.partner-item--logo:hover { background: #f0f0f0; }
+.partner-logo {
+  height: 36px;
+  width: auto;
+  max-width: 120px;
+  display: block;
+  object-fit: contain;
+}
 
 /* ── KONTAKT ── */
 .kontakt-section {
