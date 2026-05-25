@@ -655,6 +655,7 @@ html, body {
   .main-content { flex-direction: column; height: auto; }
   .panel { width: 100%; max-height: 220px; }
   .map-wrapper { height: 60vw; min-height: 320px; }
+  #map { height: 60vw; min-height: 320px; }
   .search-box { display: none; }
   .nav-links { gap: 0; }
   .nav-links a { padding: 6px 8px; font-size: 0.8rem; }
