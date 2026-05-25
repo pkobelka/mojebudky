@@ -223,7 +223,6 @@ async function inicializujMapu() {
     maxZoom: 20
   }).addTo(mapInstance);
 
-
   pridejLegend(mapInstance);
 
   try {
@@ -249,8 +248,8 @@ async function inicializujMapu() {
       });
 
       marker.bindPopup(formatPopup(bData), {
-        minWidth: 260,
-        maxWidth: 320,
+        minWidth: 280,
+        maxWidth: 280,
         className: 'budka-popup-wrap'
       });
 
