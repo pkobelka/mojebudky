@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8">
+  <title>Import správců – MojeBudky</title>
+  <style>
+    body { font-family: sans-serif; max-width: 600px; margin: 40px auto; padding: 0 20px; background: #f5f5f5; }
+    h1 { color: #1a3a0a; }
+    button { background: #c96420; color: white; border: none; padding: 12px 28px; font-size: 1rem; border-radius: 8px; cursor: pointer; margin-top: 16px; }
+    button:disabled { opacity: .5; cursor: not-allowed; }
+    #log { margin-top: 24px; background: #1e1e1e; color: #ccc; padding: 16px; border-radius: 8px; font-family: monospace; font-size: 0.88rem; white-space: pre-line; min-height: 100px; }
+    .ok { color: #6fcf6f; }
+    .err { color: #f28b82; }
+    .skip { color: #aaa; }
+  </style>
+</head>
+<body>
+  <h1>Import správců budek</h1>
+  <p>Kliknutím na tlačítko se vytvoří Firebase účty pro všechny správce.<br>
+  Tuto stránku použij jen jednou.</p>
+  <button id="btn" onclick="spustit()">Vytvořit účty</button>
+  <div id="log">Čeká na spuštění…</div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword, updateProfile } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBEAhZNxq3REoy1vExIrnNEXlyFXHzP4uI",
+      authDomain: "moje-budky.firebaseapp.com",
+      projectId: "moje-budky",
+      storageBucket: "moje-budky.firebasestorage.app",
+      messagingSenderId: "325649258561",
+      appId: "1:325649258561:web:b5571c3278d98405320ec0"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    const spravci = [
+      { id: "001400", heslo: "INYOW7", jmeno: "Aja" },
+      { id: "002852", heslo: "lHZ4e7", jmeno: "Květa" },
+      { id: "003",    heslo: "dtLj7E", jmeno: "Pavel" },
+      { id: "004112", heslo: "Hq8Koa", jmeno: "" },
+      { id: "005484", heslo: "pWftq3", jmeno: "Vali + Viki" },
+      { id: "006187", heslo: "8WEP6j", jmeno: "Honza" },
+      { id: "007109", heslo: "KFYtjX", jmeno: "Jirka" },
+      { id: "008666", heslo: "2th0zq", jmeno: "Karel" },
+      { id: "009112", heslo: "sfnPAz", jmeno: "Plíšek" },
+      { id: "010488", heslo: "FMjR0c", jmeno: "Jirka" },
+      { id: "011506", heslo: "kBall7", jmeno: "Štěpánek" },
+    ];
+
+    function log(text, typ) {
+      const el = document.getElementById("log");
+      const span = document.createElement("span");
+      span.className = typ || "";
+      span.textContent = text + "\n";
+      if (el.textContent === "Čeká na spuštění…") el.textContent = "";
+      el.appendChild(span);
+    }
+
+    window.spustit = async function() {
+      const btn = document.getElementById("btn");
+      btn.disabled = true;
+      document.getElementById("log").textContent = "";
+
+      for (const s of spravci) {
+        const email = `${s.id}@mojebudky.cz`;
+        try {
+          const result = await createUserWithEmailAndPassword(auth, email, s.heslo);
+          if (s.jmeno) await updateProfile(result.user, { displayName: s.jmeno });
+          log(`✓ ${s.id} – ${s.jmeno}`, "ok");
+        } catch (err) {
+          if (err.code === "auth/email-already-in-use") {
+            log(`– ${s.id} již existuje`, "skip");
+          } else {
+            log(`✗ ${s.id}: ${err.message}`, "err");
+          }
+        }
+      }
+      log("\nHotovo!", "ok");
+    };
+  </script>
+</body>
+</html>
