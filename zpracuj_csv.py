@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 """
-Zpracování dat budek z CSV → budky.json
+Zpracování dat budek z CSV → budky.json + spravci.json
 POZOR: CSV obsahuje osobní data (hesla, telefony, emaily) – NIKDY nekomitovat!
 Exportuje POUZE veřejná data bez osobních údajů.
+Do spravci.json jdou pouze SHA-256 hashe hesel (bez plaintext hesel).
 """
 import csv
+import hashlib
 import json
 import re
 import sys
@@ -154,7 +156,33 @@ def zpracuj(csv_path, json_path):
     print(f"S datem instalace:   {s_ins}")
     print(f"S historií hnízdění: {s_hist}")
 
+def generate_spravci(csv_path, out_path='data/spravci.json'):
+    """
+    Generuje spravci.json se SHA-256 hashi hesel.
+    Čte sloupec 0 (ID) a sloupec 1 (HESLO) z CSV.
+    Do repozitáře jdou jen hashe, nikdy plaintext hesla.
+    """
+    spravci = {}
+    with open(csv_path, newline='', encoding='utf-8-sig') as f:
+        reader = csv.reader(f, delimiter=';')
+        for row in reader:
+            if len(row) < 2:
+                continue
+            login_id = row[0].strip()
+            heslo    = row[1].strip()
+            if not login_id or not re.match(r'^\d+$', login_id):
+                continue  # přeskočit hlavičku nebo prázdné řádky
+            if not heslo:
+                continue
+            spravci[login_id] = hashlib.sha256(heslo.encode('utf-8')).hexdigest()
+
+    with open(out_path, 'w', encoding='utf-8') as f:
+        json.dump(spravci, f, ensure_ascii=False, indent=2)
+    print(f"Správci vygenerováni: {len(spravci)} záznamů → {out_path}")
+
+
 if __name__ == '__main__':
     csv_path  = sys.argv[1] if len(sys.argv) > 1 else 'Seznam_s_hesly.csv'
     json_path = sys.argv[2] if len(sys.argv) > 2 else 'data/budky.json'
     zpracuj(csv_path, json_path)
+    generate_spravci(csv_path)
