@@ -89,6 +89,7 @@ form.addEventListener("submit", async e => {
   } catch (err) {
     console.error("Auth chyba:", err.code, err.message);
     zobrazitChybu(`${prekladChyby(err.code)} [${err.code}]`);
+  } finally {
     submitBtn.disabled = false;
     submitBtn.textContent = "Přihlásit se";
   }
