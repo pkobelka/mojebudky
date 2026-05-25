@@ -41,12 +41,14 @@
     }
   ],
   "partneri": [
-    { "nazev": "Město Rychnov na Moravě", "url": null, "logo": "img/partner-rychnov.png" },
-    { "nazev": "Obec Biskupice", "url": null, "logo": "img/partner-biskupice.png" },
+    { "nazev": "Město Rychnov na Moravě", "url": null, "logo": "img/Rychnov.png" },
+    { "nazev": "Obec Biskupice", "url": null, "logo": "img/Biskupice.png" },
     { "nazev": "VHOS a.s.", "url": null, "logo": "img/partner-vhos.png" },
-    { "nazev": "Hutira", "url": null, "logo": "img/partner-hutira.png" },
-    { "nazev": "Building Expert s.r.o.", "url": null, "logo": "img/partner-building-expert.png" },
-    { "nazev": "AVK Litoměřice", "url": null, "logo": "img/partner-avk.png" }
+    { "nazev": "Hutira", "url": null, "logo": "img/Hutira.png" },
+    { "nazev": "Building Expert s.r.o.", "url": null, "logo": "img/BEX.png" },
+    { "nazev": "AVK Litoměřice", "url": null, "logo": "img/AVK.png" },
+    { "nazev": "Zemský", "url": null, "logo": "img/Zemský.png" },
+    { "nazev": "PP", "url": null, "logo": "img/PP.png" }
   ],
   "navstevnost": {
     "celkem": 14520,
