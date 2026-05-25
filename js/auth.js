@@ -34,9 +34,12 @@ function _zobrazAdminPanel(loginId) {
   `;
   document.body.appendChild(banner);
 
+  if (typeof window._presenceSetAdmin === 'function') window._presenceSetAdmin(true);
+
   document.getElementById('btnOdhlasit').addEventListener('click', () => {
     banner.remove();
     _authSpravciCache = null;
+    if (typeof window._presenceSetAdmin === 'function') window._presenceSetAdmin(false);
     const btn = document.getElementById('btnPrihlasit');
     if (btn) btn.textContent = 'Vstup pro správce';
   });
