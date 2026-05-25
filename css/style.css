@@ -679,16 +679,100 @@ html, body {
 .btn-zpet-mapa:hover { background: var(--nav-hover); }
 
 /* ── RESPONSIVITA ── */
+/* ── HAMBURGER ── */
+.nav-hamburger {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px;
+  margin-left: 6px;
+}
+.nav-hamburger span {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background: var(--text-light);
+  border-radius: 2px;
+  transition: all 0.25s;
+}
+.nav-hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.nav-hamburger.open span:nth-child(2) { opacity: 0; }
+.nav-hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+/* ── TABLET (900px) ── */
 @media (max-width: 900px) {
   .main-content { flex-direction: column; height: auto; }
-  .panel { width: 100%; max-height: 220px; }
-  .map-wrapper { height: 60vw; min-height: 320px; }
+  .panel { width: 100%; max-height: 200px; }
+  .map-wrapper { height: 55vw; min-height: 340px; }
   .search-box { display: none; }
   .nav-links { gap: 0; }
-  .nav-links a { padding: 6px 8px; font-size: 0.8rem; }
+  .nav-links a { padding: 6px 8px; font-size: 0.82rem; }
+  .info-bar { flex-wrap: wrap; gap: 2px; font-size: 0.78rem; }
+  .info-bar .bar-right { width: 100%; padding-top: 2px; }
 }
 
+/* ── MOBIL (600px) ── */
 @media (max-width: 600px) {
-  .nav-links { display: none; }
-  .navbar { padding: 0 12px; }
+  .navbar { padding: 0 12px; height: 52px; }
+  .nav-logo-img { width: 28px; height: 38px; }
+  .logo-text { font-size: 1.05rem; }
+  .logo-autor { font-size: 0.55rem; }
+  .btn-login { font-size: 0.78rem; padding: 6px 10px; }
+  .nav-hamburger { display: flex; }
+
+  /* Nav links jako dropdown */
+  .nav-links {
+    display: none;
+    position: fixed;
+    top: 52px;
+    left: 0; right: 0;
+    background: var(--nav-bg);
+    flex-direction: column;
+    padding: 8px 0 12px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.5);
+    z-index: 999;
+    gap: 0;
+  }
+  .nav-links.open { display: flex; }
+  .nav-links li { width: 100%; }
+  .nav-links a {
+    display: block;
+    padding: 12px 20px;
+    font-size: 0.95rem;
+    border-bottom: 1px solid rgba(255,255,255,0.07);
+  }
+
+  /* Info lišta – jen datum a čas, zabalená */
+  .info-bar { padding: 4px 12px; font-size: 0.75rem; flex-wrap: wrap; }
+  .info-bar .bar-right { display: none; }
+
+  /* Mapa */
+  .map-wrapper { height: 60vh; min-height: 300px; }
+
+  /* Panely */
+  .panel { max-height: 180px; }
+  .panel-title { font-size: 0.88rem; padding: 8px 12px; }
+
+  /* Statistiky – 2 sloupce */
+  .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 10px; }
+  .stat-item { padding: 8px 10px; }
+  .stat-value { font-size: 1.4rem; }
+  .stat-label { font-size: 0.67rem; }
+
+  /* Partneři */
+  .partners-section { padding: 12px 14px; }
+  .partner-item { font-size: 0.78rem; padding: 4px 10px; }
+
+  /* Kontakt */
+  .kontakt-inner { flex-direction: column; text-align: center; gap: 12px; }
+  .kontakt-title { font-size: 0.95rem; }
+  .kontakt-popis { font-size: 0.78rem; }
+  .btn-kontakt { font-size: 0.85rem; padding: 9px 18px; }
+
+  /* Footer */
+  .footer-bar { font-size: 0.7rem; padding: 6px 12px; }
 }

@@ -191,6 +191,27 @@ function nactiPartnery(partneri) {
   ).join('');
 }
 
+function inicializujHamburger() {
+  const btn = document.getElementById('navHamburger');
+  const links = document.getElementById('navLinks');
+  if (!btn || !links) return;
+
+  btn.addEventListener('click', () => {
+    const open = links.classList.toggle('open');
+    btn.classList.toggle('open', open);
+    btn.setAttribute('aria-expanded', open);
+  });
+
+  // Zavři menu po kliknutí na odkaz
+  links.addEventListener('click', e => {
+    if (e.target.tagName === 'A') {
+      links.classList.remove('open');
+      btn.classList.remove('open');
+      btn.setAttribute('aria-expanded', false);
+    }
+  });
+}
+
 function inicializujFullscreenMapu() {
   const navMapa = document.getElementById('nav-mapa');
   const mainContent = document.querySelector('.main-content');
@@ -223,4 +244,5 @@ document.addEventListener('DOMContentLoaded', () => {
   nactiSpravce();
   inicializujMapu();
   inicializujFullscreenMapu();
+  inicializujHamburger();
 });
