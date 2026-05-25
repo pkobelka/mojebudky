@@ -1,6 +1,41 @@
 const DNY = ['neděle','pondělí','úterý','středa','čtvrtek','pátek','sobota'];
 const MESICE = ['ledna','února','března','dubna','května','června','července','srpna','září','října','listopadu','prosince'];
 
+// Mapování kanonických jmen na přezdívky (a zpět)
+const PREZDIVKY = {
+  'Jiří': ['Jirka'], 'Josef': ['Pepa'], 'Jan': ['Honza'],
+  'Tomáš': ['Tomášek'], 'Václav': ['Vašek'], 'Miroslav': ['Miro'],
+  'Petra': ['Peťa'], 'Kateřina': ['Katka'], 'Anna': ['Anička'],
+  'Vladimíra': ['Vlaďka'], 'Gabriela': ['Gábi'],
+};
+const KANONICKY = {};
+for (const [k, arr] of Object.entries(PREZDIVKY)) arr.forEach(p => KANONICKY[p] = k);
+
+let spravciJmena = [];
+
+function pluralSpravcu(n) {
+  if (n === 1) return '1 správce';
+  if (n >= 2 && n <= 4) return `${n} správci`;
+  return `${n} správců`;
+}
+
+function najdiSvatekSpravce(svarekJmeno) {
+  if (!svarekJmeno || !spravciJmena.length) return [];
+  const kanon = KANONICKY[svarekJmeno] || svarekJmeno;
+  const hledej = new Set([kanon, svarekJmeno, ...(PREZDIVKY[kanon] || [])]);
+  return spravciJmena.filter(s => hledej.has(s.jmeno));
+}
+
+async function nactiSpravce() {
+  try {
+    const res = await fetch('data/spravci_jmena.json');
+    spravciJmena = await res.json();
+    aktualizujListu();
+  } catch(e) {
+    console.error('Chyba načítání správců:', e);
+  }
+}
+
 function formatDatum(d) {
   return `${d.getDate()}. ${MESICE[d.getMonth()]} ${d.getFullYear()}`;
 }
@@ -21,8 +56,13 @@ function aktualizujListu() {
   const sva = svarek ? `&nbsp;| Svátek má: <strong>${svarek}</strong>` : '';
   const cas = `&nbsp;| ⏰ <span id="liveCas">${formatCas(d)}</span>`;
 
+  const oslavenci = svarek ? najdiSvatekSpravce(svarek) : [];
+  const pravaSrana = oslavenci.length > 0
+    ? `🎉 Svátek slaví ${pluralSpravcu(oslavenci.length)} – přejeme vše nejlepší!`
+    : '🌿 Pomáháme ptactvu po celé ČR';
+
   bar.innerHTML = `<span class="bar-left">${cal}${sva}${cas}</span>
-    <span class="bar-right">🌿 Pomáháme ptactvu po celé ČR</span>`;
+    <span class="bar-right ${oslavenci.length > 0 ? 'bar-svatek' : ''}">${pravaSrana}</span>`;
 }
 
 function tickCas() {
@@ -45,8 +85,9 @@ async function nactiStatistiky() {
     const cas = `${ted.getDate()}.${ted.getMonth()+1}. ${String(ted.getHours()).padStart(2,'0')}:${String(ted.getMinutes()).padStart(2,'0')}`;
     document.getElementById('stat-aktualizace').textContent = cas;
 
-    nactiPribehy(data.pribehy);
+    nactiAktuality(data.aktuality);
     nactiPartnery(data.partneri);
+    nactiPodekovani(data.podekovani);
 
     const nav = data.navstevnost;
     document.getElementById('footer-stats').innerHTML =
@@ -117,33 +158,105 @@ const BIRD_ICONS = {
   </svg>`
 };
 
-function nactiPribehy(pribehy) {
-  const el = document.getElementById('pribehyList');
-  if (!el || !pribehy) return;
-  el.innerHTML = pribehy.map(p => `
+function nactiAktuality(aktuality) {
+  const el = document.getElementById('aktualityList');
+  if (!el || !aktuality) return;
+  el.innerHTML = aktuality.map(p => `
     <div class="pribeh-item">
       <div class="pribeh-ikona">${BIRD_ICONS[p.ikona] || BIRD_ICONS.konadra}</div>
       <div class="pribeh-text">
         <div class="pribeh-druh">${p.ptak}</div>
         <div class="pribeh-popis">${p.text}</div>
         <div class="pribeh-datum">${p.datum}</div>
+        ${p.budka_id ? `<a class="aktualita-link" data-budka="${p.budka_id}" href="#">→ Budka č. ${p.budka_id}</a>` : ''}
       </div>
     </div>`).join('');
+
+  el.addEventListener('click', e => {
+    const link = e.target.closest('.aktualita-link');
+    if (!link) return;
+    e.preventDefault();
+    const cislo = parseInt(link.dataset.budka, 10);
+    focusBudka(cislo);
+    document.querySelector('.map-wrapper').scrollIntoView({ behavior: 'smooth' });
+  });
 }
 
 function nactiPartnery(partneri) {
   const el = document.getElementById('partneriList');
   if (!el || !partneri) return;
-  el.innerHTML = partneri.map(p =>
-    p.url
-      ? `<a href="${p.url}" class="partner-item" target="_blank" rel="noopener">${p.nazev}</a>`
-      : `<span class="partner-item">${p.nazev}</span>`
+  el.innerHTML = partneri.map(p => {
+    const obsah = p.logo
+      ? `<img src="${p.logo}" alt="${p.nazev}" class="partner-logo">`
+      : p.nazev;
+    return p.url
+      ? `<a href="${p.url}" class="partner-item${p.logo ? ' partner-item--logo' : ''}" target="_blank" rel="noopener" title="${p.nazev}">${obsah}</a>`
+      : `<span class="partner-item${p.logo ? ' partner-item--logo' : ''}" title="${p.nazev}">${obsah}</span>`;
+  }).join('');
+}
+
+function nactiPodekovani(podekovani) {
+  const wrap = document.getElementById('podekovaniWrap');
+  const el = document.getElementById('podekovaniList');
+  if (!wrap || !el || !podekovani || !podekovani.length) return;
+  el.innerHTML = podekovani.map(p =>
+    `<span class="podekovani-osoba" title="${p.popis}">🙏 ${p.jmeno}<em>${p.popis}</em></span>`
   ).join('');
+  wrap.style.display = 'block';
+}
+
+function inicializujHamburger() {
+  const btn = document.getElementById('navHamburger');
+  const links = document.getElementById('navLinks');
+  if (!btn || !links) return;
+
+  btn.addEventListener('click', () => {
+    const open = links.classList.toggle('open');
+    btn.classList.toggle('open', open);
+    btn.setAttribute('aria-expanded', open);
+  });
+
+  // Zavři menu po kliknutí na odkaz
+  links.addEventListener('click', e => {
+    if (e.target.tagName === 'A') {
+      links.classList.remove('open');
+      btn.classList.remove('open');
+      btn.setAttribute('aria-expanded', false);
+    }
+  });
+}
+
+function inicializujFullscreenMapu() {
+  const navMapa = document.getElementById('nav-mapa');
+  const mainContent = document.querySelector('.main-content');
+  const btnZpet = document.getElementById('btn-zpet-mapa');
+  if (!navMapa || !mainContent || !btnZpet) return;
+
+  navMapa.addEventListener('click', e => {
+    e.preventDefault();
+    mainContent.classList.add('mapa-fullscreen');
+    btnZpet.style.display = 'block';
+    if (typeof mapInstance !== 'undefined' && mapInstance) {
+      setTimeout(() => mapInstance.invalidateSize(), 50);
+    }
+    mainContent.scrollIntoView({ behavior: 'smooth' });
+  });
+
+  btnZpet.addEventListener('click', () => {
+    mainContent.classList.remove('mapa-fullscreen');
+    btnZpet.style.display = 'none';
+    if (typeof mapInstance !== 'undefined' && mapInstance) {
+      setTimeout(() => mapInstance.invalidateSize(), 50);
+    }
+  });
 }
 
 document.addEventListener('DOMContentLoaded', () => {
   aktualizujListu();
   setInterval(tickCas, 30000);
   nactiStatistiky();
+  nactiSpravce();
   inicializujMapu();
+  inicializujFullscreenMapu();
+  inicializujHamburger();
 });

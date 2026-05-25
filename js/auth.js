@@ -1,4 +1,4 @@
-import { auth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "./firebase.js";
+import { auth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "./firebase.js";
 
 const modal = document.getElementById("authModal");
 const btnOtevrit = document.getElementById("btnOtevritModal");
@@ -9,9 +9,6 @@ const passwordInput = document.getElementById("authPassword");
 const errorEl = document.getElementById("authError");
 const submitBtn = document.getElementById("authSubmitBtn");
 const authNavArea = document.getElementById("authNavArea");
-const tabs = document.querySelectorAll(".auth-tab");
-
-let activeTab = "login";
 
 function otevritModal() {
   modal.hidden = false;
@@ -38,27 +35,15 @@ function skrytChybu() {
 
 function prekladChyby(code) {
   const map = {
-    "auth/invalid-email": "Neplatný formát e-mailu.",
-    "auth/user-not-found": "Uživatel nenalezen.",
+    "auth/invalid-email": "Neplatné ID správce.",
+    "auth/user-not-found": "Správce nenalezen.",
     "auth/wrong-password": "Špatné heslo.",
-    "auth/email-already-in-use": "Tento e-mail je již zaregistrován.",
-    "auth/weak-password": "Heslo musí mít alespoň 6 znaků.",
-    "auth/invalid-credential": "Nesprávný e-mail nebo heslo.",
+    "auth/invalid-credential": "Nesprávné ID nebo heslo.",
     "auth/too-many-requests": "Příliš mnoho pokusů. Zkuste to za chvíli.",
+    "auth/user-disabled": "Tento účet byl deaktivován.",
   };
   return map[code] || "Nastala chyba. Zkuste to znovu.";
 }
-
-tabs.forEach(tab => {
-  tab.addEventListener("click", () => {
-    activeTab = tab.dataset.tab;
-    tabs.forEach(t => t.classList.remove("active"));
-    tab.classList.add("active");
-    submitBtn.textContent = activeTab === "login" ? "Přihlásit se" : "Registrovat se";
-    skrytChybu();
-    form.reset();
-  });
-});
 
 btnOtevrit.addEventListener("click", e => {
   e.preventDefault();
@@ -66,6 +51,12 @@ btnOtevrit.addEventListener("click", e => {
 });
 
 btnZavrit.addEventListener("click", zavritModal);
+
+document.getElementById("btnUkazHeslo").addEventListener("click", () => {
+  const t = passwordInput.type === "password" ? "text" : "password";
+  passwordInput.type = t;
+});
+
 
 modal.addEventListener("click", e => {
   if (e.target === modal) zavritModal();
@@ -83,24 +74,24 @@ form.addEventListener("submit", async e => {
   const password = passwordInput.value;
 
   if (!email || !password) {
-    zobrazitChybu("Vyplňte e-mail i heslo.");
+    zobrazitChybu("Vyplňte ID správce i heslo.");
     return;
   }
 
   submitBtn.disabled = true;
-  submitBtn.textContent = "Načítám…";
+  submitBtn.textContent = "Přihlašuji…";
+
+  const emailFirebase = email.includes("@") ? email : `${email}@mojebudky.cz`;
 
   try {
-    if (activeTab === "login") {
-      await signInWithEmailAndPassword(auth, email, password);
-    } else {
-      await createUserWithEmailAndPassword(auth, email, password);
-    }
+    await signInWithEmailAndPassword(auth, emailFirebase, password);
     zavritModal();
   } catch (err) {
-    zobrazitChybu(prekladChyby(err.code));
+    console.error("Auth chyba:", err.code, err.message);
+    zobrazitChybu(`${prekladChyby(err.code)} [${err.code}]`);
+  } finally {
     submitBtn.disabled = false;
-    submitBtn.textContent = activeTab === "login" ? "Přihlásit se" : "Registrovat se";
+    submitBtn.textContent = "Přihlásit se";
   }
 });
 

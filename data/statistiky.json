@@ -3,52 +3,62 @@
   "osidlenych": 38,
   "spravcuRegistrovano": 154,
   "vycisteno": 100,
-  "pribehy": [
+  "aktuality": [
     {
       "id": 1,
+      "budka_id": 69,
       "ptak": "Sýkora koňadra",
       "ikona": "konadra",
-      "text": "Budka č. 69 u Srubce je obsazena koňadrou třetí rok v řadě! Mláďata se úspěšně vylíhla.",
+      "text": "Budka u Srubce je obsazena koňadrou třetí rok v řadě! Mláďata se úspěšně vylíhla.",
       "datum": "14. 10. 2024"
     },
     {
       "id": 2,
+      "budka_id": 37,
       "ptak": "Sýkora modřinka",
       "ikona": "modrinka",
-      "text": "První modřinka v nové sezóně si vybrala budku č. 37 nedaleko Boskovice.",
+      "text": "První modřinka v nové sezóně si vybrala budku nedaleko Boskovice.",
       "datum": "28. 3. 2024"
     },
     {
       "id": 3,
+      "budka_id": 138,
       "ptak": "Sýkora parukářka",
       "ikona": "parukarka",
-      "text": "Vzácná sýkora parukářka obsadila budku č. 138 u starosty – letos poprvé v projektu!",
+      "text": "Vzácná sýkora parukářka obsadila budku u starosty – letos poprvé v projektu!",
       "datum": "12. 5. 2024"
     },
     {
       "id": 4,
+      "budka_id": 71,
       "ptak": "Vrabec domácí",
       "ikona": "vrabec",
-      "text": "Po dvou prázdných sezónách se do budky č. 71 nastěhoval vrabec domácí s partnerkou.",
+      "text": "Po dvou prázdných sezónách se nastěhoval vrabec domácí s partnerkou.",
       "datum": "5. 4. 2025"
     },
     {
       "id": 5,
+      "budka_id": 52,
       "ptak": "Sojka obecná",
       "ikona": "sojka",
-      "text": "Budka u Sojky (č. 52) žije svému jménu – sojka obecná si ji vybrala za letní domov.",
+      "text": "Budka žije svému jménu – sojka obecná si ji vybrala za letní domov.",
       "datum": "19. 6. 2024"
     }
   ],
   "partneri": [
-    { "nazev": "Město Jevičko", "url": null },
-    { "nazev": "Lesy ČR", "url": null },
-    { "nazev": "Ornitologický svaz", "url": null },
-    { "nazev": "Přátelé přírody", "url": null },
-    { "nazev": "VHOS a.s.", "url": null },
-    { "nazev": "Hutira", "url": null },
-    { "nazev": "Building Expert", "url": null },
-    { "nazev": "AVK Litoměřice", "url": null }
+    { "nazev": "Město Rychnov na Moravě", "url": "https://rychnovnm.cz/", "logo": "img/Rychnov.png" },
+    { "nazev": "Obec Biskupice", "url": "https://biskupice.eu/", "logo": "img/Biskupice.png" },
+    { "nazev": "VHOS", "url": "https://www.vhos.cz/", "logo": "img/EAG_vhos_logo_CMYK_color.jpg" },
+    { "nazev": "Hutira", "url": "https://www.hutira.cz/cs/", "logo": "img/Hutira.png" },
+    { "nazev": "Building Expert s.r.o.", "url": "https://www.buildingexpert.cz/", "logo": "img/BEX.png" },
+    { "nazev": "AVK Litoměřice", "url": "https://www.avkvodka.cz/cs-cz", "logo": "img/AVK.png" },
+    { "nazev": "ZEMSKÝ Rohatec, s.r.o.", "url": "https://www.zemsky.cz/", "logo": "img/Zemský.png" },
+    { "nazev": "PLASTIKA PIPES s.r.o.", "url": "https://plastikapipes.cz/", "logo": "img/PP.png" }
+  ],
+  "podekovani": [
+    { "jmeno": "Martin Novotný", "popis": "vrchní ptákolog" },
+    { "jmeno": "Milan Hána", "popis": "druhá polovina projektu" },
+    { "jmeno": "Alka", "popis": "za podporu" }
   ],
   "navstevnost": {
     "celkem": 14520,
