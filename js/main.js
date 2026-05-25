@@ -1,6 +1,41 @@
 const DNY = ['neděle','pondělí','úterý','středa','čtvrtek','pátek','sobota'];
 const MESICE = ['ledna','února','března','dubna','května','června','července','srpna','září','října','listopadu','prosince'];
 
+// Mapování kanonických jmen na přezdívky (a zpět)
+const PREZDIVKY = {
+  'Jiří': ['Jirka'], 'Josef': ['Pepa'], 'Jan': ['Honza'],
+  'Tomáš': ['Tomášek'], 'Václav': ['Vašek'], 'Miroslav': ['Miro'],
+  'Petra': ['Peťa'], 'Kateřina': ['Katka'], 'Anna': ['Anička'],
+  'Vladimíra': ['Vlaďka'], 'Gabriela': ['Gábi'],
+};
+const KANONICKY = {};
+for (const [k, arr] of Object.entries(PREZDIVKY)) arr.forEach(p => KANONICKY[p] = k);
+
+let spravciJmena = [];
+
+function pluralSpravcu(n) {
+  if (n === 1) return '1 správce';
+  if (n >= 2 && n <= 4) return `${n} správci`;
+  return `${n} správců`;
+}
+
+function najdiSvatekSpravce(svarekJmeno) {
+  if (!svarekJmeno || !spravciJmena.length) return [];
+  const kanon = KANONICKY[svarekJmeno] || svarekJmeno;
+  const hledej = new Set([kanon, svarekJmeno, ...(PREZDIVKY[kanon] || [])]);
+  return spravciJmena.filter(s => hledej.has(s.jmeno));
+}
+
+async function nactiSpravce() {
+  try {
+    const res = await fetch('data/spravci_jmena.json');
+    spravciJmena = await res.json();
+    aktualizujListu();
+  } catch(e) {
+    console.error('Chyba načítání správců:', e);
+  }
+}
+
 function formatDatum(d) {
   return `${d.getDate()}. ${MESICE[d.getMonth()]} ${d.getFullYear()}`;
 }
@@ -21,8 +56,13 @@ function aktualizujListu() {
   const sva = svarek ? `&nbsp;| Svátek má: <strong>${svarek}</strong>` : '';
   const cas = `&nbsp;| ⏰ <span id="liveCas">${formatCas(d)}</span>`;
 
+  const oslavenci = svarek ? najdiSvatekSpravce(svarek) : [];
+  const pravaSrana = oslavenci.length > 0
+    ? `🎉 Svátek slaví ${pluralSpravcu(oslavenci.length)} – přejeme vše nejlepší!`
+    : '🌿 Pomáháme ptactvu po celé ČR';
+
   bar.innerHTML = `<span class="bar-left">${cal}${sva}${cas}</span>
-    <span class="bar-right">🌿 Pomáháme ptactvu po celé ČR</span>`;
+    <span class="bar-right ${oslavenci.length > 0 ? 'bar-svatek' : ''}">${pravaSrana}</span>`;
 }
 
 function tickCas() {
@@ -180,6 +220,7 @@ document.addEventListener('DOMContentLoaded', () => {
   aktualizujListu();
   setInterval(tickCas, 30000);
   nactiStatistiky();
+  nactiSpravce();
   inicializujMapu();
   inicializujFullscreenMapu();
 });

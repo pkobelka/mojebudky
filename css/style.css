@@ -219,6 +219,11 @@ html, body {
   font-style: italic;
   font-size: 0.8rem;
 }
+.info-bar .bar-right.bar-svatek {
+  color: var(--orange);
+  font-style: normal;
+  font-weight: 600;
+}
 
 /* ── HLAVNÍ OBSAH ── */
 .main-content {
