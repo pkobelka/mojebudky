@@ -3,40 +3,45 @@
   "osidlenych": 38,
   "spravcuRegistrovano": 154,
   "vycisteno": 100,
-  "pribehy": [
+  "aktuality": [
     {
       "id": 1,
+      "budka_id": 69,
       "ptak": "Sýkora koňadra",
       "ikona": "konadra",
-      "text": "Budka č. 69 u Srubce je obsazena koňadrou třetí rok v řadě! Mláďata se úspěšně vylíhla.",
+      "text": "Budka u Srubce je obsazena koňadrou třetí rok v řadě! Mláďata se úspěšně vylíhla.",
       "datum": "14. 10. 2024"
     },
     {
       "id": 2,
+      "budka_id": 37,
       "ptak": "Sýkora modřinka",
       "ikona": "modrinka",
-      "text": "První modřinka v nové sezóně si vybrala budku č. 37 nedaleko Boskovice.",
+      "text": "První modřinka v nové sezóně si vybrala budku nedaleko Boskovice.",
       "datum": "28. 3. 2024"
     },
     {
       "id": 3,
+      "budka_id": 138,
       "ptak": "Sýkora parukářka",
       "ikona": "parukarka",
-      "text": "Vzácná sýkora parukářka obsadila budku č. 138 u starosty – letos poprvé v projektu!",
+      "text": "Vzácná sýkora parukářka obsadila budku u starosty – letos poprvé v projektu!",
       "datum": "12. 5. 2024"
     },
     {
       "id": 4,
+      "budka_id": 71,
       "ptak": "Vrabec domácí",
       "ikona": "vrabec",
-      "text": "Po dvou prázdných sezónách se do budky č. 71 nastěhoval vrabec domácí s partnerkou.",
+      "text": "Po dvou prázdných sezónách se nastěhoval vrabec domácí s partnerkou.",
       "datum": "5. 4. 2025"
     },
     {
       "id": 5,
+      "budka_id": 52,
       "ptak": "Sojka obecná",
       "ikona": "sojka",
-      "text": "Budka u Sojky (č. 52) žije svému jménu – sojka obecná si ji vybrala za letní domov.",
+      "text": "Budka žije svému jménu – sojka obecná si ji vybrala za letní domov.",
       "datum": "19. 6. 2024"
     }
   ],

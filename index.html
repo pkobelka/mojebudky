@@ -37,8 +37,9 @@
       </a>
 
       <ul class="nav-links" role="navigation" aria-label="Hlavní navigace">
-        <li><a href="#mapa" class="active">Mapa Budek</a></li>
-        <li><a href="#pribehy">Příběhy z přírody</a></li>
+        <li><a href="#mapa" id="nav-mapa">Mapa Budek</a></li>
+        <li><a href="#aktuality">Aktuality</a></li>
+        <li><a href="#clanky">Zajímavé články</a></li>
         <li><a href="#partneri">Partneři</a></li>
         <li><a href="#kontakt">Kontakt</a></li>
       </ul>
@@ -61,17 +62,18 @@
   <!-- Hlavní obsah: 3 sloupce -->
   <main class="main-content" id="mapa">
 
-    <!-- Levý panel: Příběhy z přírody -->
-    <aside class="panel panel-left" id="pribehy" aria-label="Příběhy z přírody">
-      <h2 class="panel-title">Příběhy z přírody</h2>
-      <div class="pribehy-list" id="pribehyList">
-        <div style="padding:20px; color:#c8a878; font-size:0.83rem;">Načítám příběhy…</div>
+    <!-- Levý panel: Aktuality z komunity -->
+    <aside class="panel panel-left" id="aktuality" aria-label="Aktuality z komunity">
+      <h2 class="panel-title">Aktuality z komunity</h2>
+      <div class="pribehy-list" id="aktualityList">
+        <div style="padding:20px; color:#c8a878; font-size:0.83rem;">Načítám aktuality…</div>
       </div>
     </aside>
 
     <!-- Mapa -->
     <div class="map-wrapper" role="application" aria-label="Interaktivní mapa budek">
       <div id="map"></div>
+      <button id="btn-zpet-mapa" class="btn-zpet-mapa" style="display:none;" aria-label="Zpět na přehled">← Zpět</button>
     </div>
 
     <!-- Pravý panel: Statistiky -->
@@ -125,7 +127,7 @@
     <div class="kontakt-inner">
       <div class="kontakt-text">
         <div class="kontakt-title">Napište nám</div>
-        <div class="kontakt-popis">Máte zájem přidat svou budku? Chcete se stát správcem? Nebo máte jen dotaz?</div>
+        <div class="kontakt-popis">Máte dotaz, nápad nebo připomínku? Napište nám!</div>
       </div>
       <a href="mailto:info@petrkobelka.cz" class="btn-kontakt">✉ info@petrkobelka.cz</a>
     </div>

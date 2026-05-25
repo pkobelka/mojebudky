@@ -45,7 +45,7 @@ async function nactiStatistiky() {
     const cas = `${ted.getDate()}.${ted.getMonth()+1}. ${String(ted.getHours()).padStart(2,'0')}:${String(ted.getMinutes()).padStart(2,'0')}`;
     document.getElementById('stat-aktualizace').textContent = cas;
 
-    nactiPribehy(data.pribehy);
+    nactiAktuality(data.aktuality);
     nactiPartnery(data.partneri);
 
     const nav = data.navstevnost;
@@ -117,18 +117,28 @@ const BIRD_ICONS = {
   </svg>`
 };
 
-function nactiPribehy(pribehy) {
-  const el = document.getElementById('pribehyList');
-  if (!el || !pribehy) return;
-  el.innerHTML = pribehy.map(p => `
+function nactiAktuality(aktuality) {
+  const el = document.getElementById('aktualityList');
+  if (!el || !aktuality) return;
+  el.innerHTML = aktuality.map(p => `
     <div class="pribeh-item">
       <div class="pribeh-ikona">${BIRD_ICONS[p.ikona] || BIRD_ICONS.konadra}</div>
       <div class="pribeh-text">
         <div class="pribeh-druh">${p.ptak}</div>
         <div class="pribeh-popis">${p.text}</div>
         <div class="pribeh-datum">${p.datum}</div>
+        ${p.budka_id ? `<a class="aktualita-link" data-budka="${p.budka_id}" href="#">→ Budka č. ${p.budka_id}</a>` : ''}
       </div>
     </div>`).join('');
+
+  el.addEventListener('click', e => {
+    const link = e.target.closest('.aktualita-link');
+    if (!link) return;
+    e.preventDefault();
+    const cislo = parseInt(link.dataset.budka, 10);
+    focusBudka(cislo);
+    document.querySelector('.map-wrapper').scrollIntoView({ behavior: 'smooth' });
+  });
 }
 
 function nactiPartnery(partneri) {
@@ -141,9 +151,35 @@ function nactiPartnery(partneri) {
   ).join('');
 }
 
+function inicializujFullscreenMapu() {
+  const navMapa = document.getElementById('nav-mapa');
+  const mainContent = document.querySelector('.main-content');
+  const btnZpet = document.getElementById('btn-zpet-mapa');
+  if (!navMapa || !mainContent || !btnZpet) return;
+
+  navMapa.addEventListener('click', e => {
+    e.preventDefault();
+    mainContent.classList.add('mapa-fullscreen');
+    btnZpet.style.display = 'block';
+    if (typeof mapInstance !== 'undefined' && mapInstance) {
+      setTimeout(() => mapInstance.invalidateSize(), 50);
+    }
+    mainContent.scrollIntoView({ behavior: 'smooth' });
+  });
+
+  btnZpet.addEventListener('click', () => {
+    mainContent.classList.remove('mapa-fullscreen');
+    btnZpet.style.display = 'none';
+    if (typeof mapInstance !== 'undefined' && mapInstance) {
+      setTimeout(() => mapInstance.invalidateSize(), 50);
+    }
+  });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   aktualizujListu();
   setInterval(tickCas, 30000);
   nactiStatistiky();
   inicializujMapu();
+  inicializujFullscreenMapu();
 });

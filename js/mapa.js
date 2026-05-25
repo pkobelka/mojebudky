@@ -1,4 +1,5 @@
 let mapInstance = null;
+const markersByCislo = {};
 
 const BIRD_SVG = {
   'Sýkora koňadra': `<svg viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg" width="32" height="32">
@@ -183,6 +184,13 @@ function pridejLegend(map) {
   legend.addTo(map);
 }
 
+function focusBudka(cislo) {
+  const marker = markersByCislo[cislo];
+  if (!marker || !mapInstance) return;
+  mapInstance.setView(marker.getLatLng(), 14);
+  marker.openPopup();
+}
+
 async function inicializujMapu() {
   mapInstance = L.map('map', {
     center: [49.75, 15.7],
@@ -217,6 +225,7 @@ async function inicializujMapu() {
         className: 'budka-popup-wrap'
       });
 
+      markersByCislo[b.cislo] = marker;
       marker.addTo(mapInstance);
     });
 
