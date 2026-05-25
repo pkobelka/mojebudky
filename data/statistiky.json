@@ -53,7 +53,7 @@
     { "nazev": "Building Expert s.r.o.", "url": null, "logo": "img/BEX.png" },
     { "nazev": "AVK Litoměřice", "url": null, "logo": "img/AVK.png" },
     { "nazev": "ZEMSKÝ Rohatec, s.r.o.", "url": null, "logo": "img/Zemský.png" },
-    { "nazev": "PLASTIKA PIPES s.r.o.", "url": null, "logo": "img/PP.png" }
+    { "nazev": "PLASTIKA PIPES s.r.o.", "url": "https://plastikapipes.cz/", "logo": "img/PP.png" }
   ],
   "navstevnost": {
     "celkem": 14520,
