@@ -155,6 +155,8 @@
 
       let ok = 0, preskoceno = 0, chyby = 0;
 
+      const cekej = ms => new Promise(r => setTimeout(r, ms));
+
       for (const s of spravci) {
         const email = `${s.id}@mojebudky.cz`;
         try {
@@ -162,6 +164,7 @@
           if (s.jmeno || s.email) await updateProfile(result.user, { displayName: s.jmeno || "" });
           log(`✓ ${s.id} – ${s.jmeno}`, "ok");
           ok++;
+          await cekej(400);
         } catch (err) {
           if (err.code === "auth/email-already-in-use") {
             log(`– ${s.id} již existuje`, "skip");
