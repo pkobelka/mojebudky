@@ -125,8 +125,10 @@ html, body {
 .btn-kontakt:hover { background: var(--orange-dark); }
 @media (max-width: 600px) { .kontakt-inner { flex-direction: column; text-align: center; } }
 
-.footer-bar { background: var(--footer-bg); color: var(--text-muted); font-size: 0.78rem; padding: 6px 24px; text-align: center; }
+.footer-bar { background: var(--footer-bg); color: var(--text-muted); font-size: 0.78rem; padding: 6px 24px; display: flex; justify-content: center; align-items: center; gap: 14px; flex-wrap: wrap; }
 .footer-bar strong { color: var(--text-light); }
+.footer-sep { opacity: 0.35; }
+.online-admins { color: var(--accent-gold); }
 
 /* ── POPUP ── */
 .leaflet-popup-content-wrapper { border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.35); padding: 0; overflow: hidden; }
@@ -214,11 +216,12 @@ html, body {
   #partneriList { flex-wrap: wrap; justify-content: center; overflow-x: visible; }
   .partner-item { font-size: 0.78rem; padding: 4px 10px; }
   .partner-logo { height: 28px; max-width: 70px; }
+  .footer-bar { gap: 8px; padding: 6px 12px; font-size: 0.72rem; }
+  .footer-sep { display: none; }
   .kontakt-inner { flex-direction: column; text-align: center; gap: 12px; }
   .kontakt-title { font-size: 0.95rem; }
   .kontakt-popis { font-size: 0.78rem; }
   .btn-kontakt { font-size: 0.85rem; padding: 9px 18px; }
-  .footer-bar { font-size: 0.7rem; padding: 6px 12px; }
 }
 
 /* ── PŘIHLAŠOVACÍ MODAL ── */
