@@ -104,16 +104,18 @@ html, body {
 .stat-aktualizace { padding: 10px 14px; border-top: 1px solid var(--panel-border); color: var(--text-muted); font-size: 0.75rem; flex-shrink: 0; }
 .stat-aktualizace span { color: var(--text-light); font-weight: 600; }
 
-/* ── PARTNEŘI – vycentrováni ── */
+/* ── PARTNEŘI ── */
 .partners-section { background: rgba(26, 58, 10, 0.92); border-top: 2px solid var(--orange); padding: 14px 24px; text-align: center; }
 .partners-section h3 { color: var(--text-muted); font-size: 0.8rem; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 10px; }
 .podekovani-wrap { margin-top: 10px; font-size: 0.8rem; color: var(--text-muted); }
 .podekovani-label { font-weight: 600; margin-right: 6px; }
 .podekovani-osoba { color: var(--text-light); margin-right: 12px; }
 .podekovani-osoba em { color: var(--text-muted); font-style: italic; font-size: 0.75rem; margin-left: 4px; }
-#partneriList { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
-.partner-item { background: rgba(255,255,255,0.1); color: var(--text-light); padding: 5px 14px; border-radius: 20px; font-size: 0.83rem; text-decoration: none; border: 1px solid rgba(255,255,255,0.15); transition: background 0.2s; }
+#partneriList { display: flex; flex-wrap: nowrap; gap: 10px; justify-content: center; align-items: center; overflow-x: auto; padding-bottom: 2px; }
+.partner-item { background: rgba(255,255,255,0.1); color: var(--text-light); padding: 5px 14px; border-radius: 20px; font-size: 0.83rem; text-decoration: none; border: 1px solid rgba(255,255,255,0.15); transition: background 0.2s; white-space: nowrap; flex-shrink: 0; }
 .partner-item:hover { background: rgba(255,255,255,0.18); }
+.partner-item--logo { padding: 5px 10px; }
+.partner-logo { height: 34px; max-width: 90px; width: auto; object-fit: contain; display: block; }
 
 .kontakt-section { background: linear-gradient(135deg, #1a3a0a 0%, #2d5516 100%); border-top: 2px solid var(--orange); padding: 20px 24px; }
 .kontakt-inner { display: flex; align-items: center; justify-content: space-between; gap: 20px; max-width: 900px; margin: 0 auto; }
@@ -209,7 +211,9 @@ html, body {
   .stat-value { font-size: 1.4rem; }
   .stat-label { font-size: 0.67rem; }
   .partners-section { padding: 12px 14px; }
+  #partneriList { flex-wrap: wrap; justify-content: center; overflow-x: visible; }
   .partner-item { font-size: 0.78rem; padding: 4px 10px; }
+  .partner-logo { height: 28px; max-width: 70px; }
   .kontakt-inner { flex-direction: column; text-align: center; gap: 12px; }
   .kontakt-title { font-size: 0.95rem; }
   .kontakt-popis { font-size: 0.78rem; }
