@@ -170,8 +170,8 @@ def generate_spravci(csv_path, out_path='data/spravci.json'):
                 continue
             login_id = row[0].strip()
             heslo    = row[1].strip()
-            if not login_id or not re.match(r'^\d+$', login_id):
-                continue  # přeskočit hlavičku nebo prázdné řádky
+            if not re.match(r'^\d{6}$', login_id):
+                continue  # přeskočit hlavičku nebo záznamy bez 6místného ID
             if not heslo:
                 continue
             spravci[login_id] = hashlib.sha256(heslo.encode('utf-8')).hexdigest()
