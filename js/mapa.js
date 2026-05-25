@@ -205,8 +205,13 @@ async function inicializujMapu() {
 
   L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
     attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> © <a href="https://carto.com/">CARTO</a>',
-    maxZoom: 18
+    maxZoom: 20
   }).addTo(mapInstance);
+
+  const cluster = L.markerClusterGroup({
+    maxClusterRadius: 40,
+    disableClusteringAtZoom: 17
+  });
 
   pridejLegend(mapInstance);
 
@@ -237,9 +242,10 @@ async function inicializujMapu() {
       });
 
       markersByCislo[b.cislo] = marker;
-      marker.addTo(mapInstance);
+      cluster.addLayer(marker);
     });
 
+    mapInstance.addLayer(cluster);
     document.getElementById('stat-celkem').textContent = budky.length;
   } catch(e) {
     console.error('Chyba načítání dat budek:', e);
