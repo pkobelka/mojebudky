@@ -155,7 +155,10 @@
     <form id="authForm" novalidate>
       <div class="auth-field">
         <label for="authEmail">ID správce</label>
-        <input type="text" id="authEmail" autocomplete="username" required placeholder="např. 001400">
+        <div class="auth-input-suffix">
+          <input type="text" id="authEmail" autocomplete="username" required placeholder="001400">
+          <span>@mojebudky.cz</span>
+        </div>
       </div>
       <div class="auth-field">
         <label for="authPassword">Heslo</label>

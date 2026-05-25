@@ -868,6 +868,32 @@ html, body {
   color: var(--text-muted);
   margin-bottom: 5px;
 }
+.auth-input-suffix {
+  display: flex;
+  align-items: center;
+  background: rgba(255,255,255,0.07);
+  border: 1px solid var(--panel-border);
+  border-radius: 7px;
+  overflow: hidden;
+  transition: border-color .2s;
+}
+.auth-input-suffix:focus-within { border-color: var(--orange-light); }
+.auth-input-suffix span {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  padding: 0 10px 0 4px;
+  white-space: nowrap;
+  user-select: none;
+}
+.auth-input-suffix input {
+  border: none !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  flex: 1;
+  min-width: 0;
+}
+.auth-input-suffix input:focus { outline: none; }
+
 .auth-field input {
   width: 100%;
   padding: 9px 12px;
