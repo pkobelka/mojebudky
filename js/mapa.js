@@ -233,4 +233,6 @@ async function inicializujMapu() {
   } catch(e) {
     console.error('Chyba načítání dat budek:', e);
   }
+
+  setTimeout(() => mapInstance.invalidateSize(), 200);
 }
