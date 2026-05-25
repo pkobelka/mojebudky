@@ -72,6 +72,7 @@ html, body {
 .info-bar { background: var(--bar-bg); color: var(--bar-text); font-size: 0.83rem; padding: 5px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #d0c0a0; min-height: 30px; }
 .info-bar .bar-right { color: var(--tree-mid); font-style: italic; font-size: 0.8rem; }
 .info-bar .bar-right.bar-svatek { color: var(--orange); font-style: normal; font-weight: 600; }
+.bar-gratulace { color: var(--orange); font-weight: 700; }
 
 .main-content { display: flex; flex: 1; height: calc(100vh - 88px); min-height: 500px; }
 .panel { background: var(--panel-bg); border: 1px solid var(--panel-border); width: 250px; flex-shrink: 0; display: flex; flex-direction: column; overflow: hidden; }
@@ -125,8 +126,9 @@ html, body {
 .btn-kontakt:hover { background: var(--orange-dark); }
 @media (max-width: 600px) { .kontakt-inner { flex-direction: column; text-align: center; } }
 
-.footer-bar { background: var(--footer-bg); color: var(--text-muted); font-size: 0.78rem; padding: 6px 24px; display: flex; justify-content: center; align-items: center; gap: 14px; flex-wrap: wrap; }
-.footer-bar strong { color: var(--text-light); }
+/* ── FOOTER s návštěvností a online ── */
+.footer-bar { background: var(--footer-bg); color: var(--text-muted); font-size: 0.88rem; padding: 10px 24px; display: flex; justify-content: center; align-items: center; gap: 14px; flex-wrap: wrap; }
+.footer-bar strong { color: #7dd444; font-size: 1.08rem; font-weight: 800; }
 .footer-sep { opacity: 0.35; }
 .online-admins { color: var(--accent-gold); }
 
@@ -143,7 +145,7 @@ html, body {
 .popup-bird-icon { flex-shrink: 0; line-height: 0; }
 .popup-detail { padding: 4px 14px 8px; display: flex; flex-direction: column; gap: 3px; }
 .popup-radek { color: #666; font-size: 0.78rem; }
-.popup-radek strong { color: #444; }
+.popup-radek strong { color: #444; font-size: inherit; font-weight: 600; }
 .popup-sekce { border-top: 1px solid #e8dcc8; padding: 8px 14px 10px; }
 .popup-sekce-title { font-weight: 700; font-size: 0.8rem; color: #3a1a06; margin-bottom: 6px; }
 .popup-historie { width: 100%; border-collapse: collapse; font-size: 0.75rem; }
@@ -216,7 +218,8 @@ html, body {
   #partneriList { flex-wrap: wrap; justify-content: center; overflow-x: visible; }
   .partner-item { font-size: 0.78rem; padding: 4px 10px; }
   .partner-logo { height: 28px; max-width: 70px; }
-  .footer-bar { gap: 8px; padding: 6px 12px; font-size: 0.72rem; }
+  .footer-bar { gap: 8px; padding: 8px 12px; font-size: 0.8rem; }
+  .footer-bar strong { font-size: 0.95rem; }
   .footer-sep { display: none; }
   .kontakt-inner { flex-direction: column; text-align: center; gap: 12px; }
   .kontakt-title { font-size: 0.95rem; }
@@ -246,6 +249,6 @@ html, body {
 
 /* ── ADMIN BANNER ── */
 .admin-banner { position: fixed; bottom: 0; left: 0; right: 0; z-index: 900; background: var(--nav-bg); border-top: 2px solid var(--accent-gold); color: var(--text-light); display: flex; align-items: center; justify-content: space-between; padding: 0.6rem 1.5rem; font-size: 0.9rem; }
-.admin-banner strong { color: var(--accent-gold); }
+.admin-banner strong { color: var(--accent-gold); font-size: inherit; }
 .admin-banner button { background: none; border: 1px solid var(--panel-border); color: var(--text-muted); border-radius: 4px; padding: 0.3rem 0.8rem; cursor: pointer; font-size: 0.82rem; }
 .admin-banner button:hover { color: var(--text-light); border-color: var(--text-muted); }
