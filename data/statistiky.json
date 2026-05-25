@@ -46,14 +46,14 @@
     }
   ],
   "partneri": [
-    { "nazev": "Město Jevičko", "url": null },
-    { "nazev": "Lesy ČR", "url": null },
-    { "nazev": "Ornitologický svaz", "url": null },
-    { "nazev": "Přátelé přírody", "url": null },
-    { "nazev": "VHOS a.s.", "url": null },
-    { "nazev": "Hutira", "url": null },
-    { "nazev": "Building Expert", "url": null },
-    { "nazev": "AVK Litoměřice", "url": null }
+    { "nazev": "Město Rychnov na Moravě", "url": null, "logo": "img/Rychnov.png" },
+    { "nazev": "Obec Biskupice", "url": null, "logo": "img/Biskupice.png" },
+    { "nazev": "VHOS a.s.", "url": null, "logo": "img/EAG.png" },
+    { "nazev": "Hutira", "url": null, "logo": "img/Hutira.png" },
+    { "nazev": "Building Expert s.r.o.", "url": null, "logo": "img/BEX.png" },
+    { "nazev": "AVK Litoměřice", "url": null, "logo": "img/AVK.png" },
+    { "nazev": "ZEMSKÝ Rohatec, s.r.o.", "url": null, "logo": "img/Zemský.png" },
+    { "nazev": "PLASTIKA PIPES s.r.o.", "url": null, "logo": "img/PP.png" }
   ],
   "navstevnost": {
     "celkem": 14520,
