@@ -1,5 +1,6 @@
 let mapInstance = null;
 const markersByCislo = {};
+let budkyData = [];
 
 const BIRD_SVG = {
   'Sýkora koňadra': `<svg viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg" width="32" height="32">
@@ -192,8 +193,22 @@ function pridejLegend(map) {
 function focusBudka(cislo) {
   const marker = markersByCislo[cislo];
   if (!marker || !mapInstance) return;
-  mapInstance.setView(marker.getLatLng(), 14);
+  mapInstance.setView(marker.getLatLng(), 16);
   marker.openPopup();
+}
+
+function hledejBudku(dotaz) {
+  const q = dotaz.trim().toLowerCase();
+  if (!q) return;
+  const cislo = parseInt(q, 10);
+  if (!isNaN(cislo) && markersByCislo[cislo]) {
+    focusBudka(cislo);
+    return;
+  }
+  const nalezena = budkyData.find(b => b.nazev && b.nazev.toLowerCase().includes(q));
+  if (nalezena) {
+    focusBudka(nalezena.cislo);
+  }
 }
 
 async function inicializujMapu() {
@@ -217,6 +232,7 @@ async function inicializujMapu() {
       fetch('data/spravci_jmena.json')
     ]);
     const budky = await resBudky.json();
+    budkyData = budky;
     const spravciList = await resSpravci.json();
     const spravci = Object.fromEntries(spravciList.map(s => [s.cislo, s.jmeno]));
 
@@ -247,4 +263,11 @@ async function inicializujMapu() {
   }
 
   setTimeout(() => mapInstance.invalidateSize(), 200);
+
+  const searchInput = document.querySelector('.search-box input');
+  const searchBtn = document.querySelector('.search-box button');
+  if (searchInput && searchBtn) {
+    searchBtn.addEventListener('click', () => hledejBudku(searchInput.value));
+    searchInput.addEventListener('keydown', e => { if (e.key === 'Enter') hledejBudku(searchInput.value); });
+  }
 }
