@@ -87,7 +87,8 @@ form.addEventListener("submit", async e => {
     await signInWithEmailAndPassword(auth, emailFirebase, password);
     zavritModal();
   } catch (err) {
-    zobrazitChybu(prekladChyby(err.code));
+    console.error("Auth chyba:", err.code, err.message);
+    zobrazitChybu(`${prekladChyby(err.code)} [${err.code}]`);
     submitBtn.disabled = false;
     submitBtn.textContent = "Přihlásit se";
   }
