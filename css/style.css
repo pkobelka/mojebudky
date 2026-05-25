@@ -381,6 +381,25 @@ html, body {
   text-transform: uppercase;
   margin-bottom: 10px;
 }
+.podekovani-wrap {
+  margin-top: 10px;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+.podekovani-label {
+  font-weight: 600;
+  margin-right: 6px;
+}
+.podekovani-osoba {
+  color: var(--text-light);
+  margin-right: 12px;
+}
+.podekovani-osoba em {
+  color: var(--text-muted);
+  font-style: italic;
+  font-size: 0.75rem;
+  margin-left: 4px;
+}
 #partneriList {
   display: flex;
   flex-wrap: wrap;

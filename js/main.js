@@ -87,6 +87,7 @@ async function nactiStatistiky() {
 
     nactiAktuality(data.aktuality);
     nactiPartnery(data.partneri);
+    nactiPodekovani(data.podekovani);
 
     const nav = data.navstevnost;
     document.getElementById('footer-stats').innerHTML =
@@ -192,6 +193,16 @@ function nactiPartnery(partneri) {
       ? `<a href="${p.url}" class="partner-item${p.logo ? ' partner-item--logo' : ''}" target="_blank" rel="noopener" title="${p.nazev}">${obsah}</a>`
       : `<span class="partner-item${p.logo ? ' partner-item--logo' : ''}" title="${p.nazev}">${obsah}</span>`;
   }).join('');
+}
+
+function nactiPodekovani(podekovani) {
+  const wrap = document.getElementById('podekovaniWrap');
+  const el = document.getElementById('podekovaniList');
+  if (!wrap || !el || !podekovani || !podekovani.length) return;
+  el.innerHTML = podekovani.map(p =>
+    `<span class="podekovani-osoba" title="${p.popis}">🙏 ${p.jmeno}<em>${p.popis}</em></span>`
+  ).join('');
+  wrap.style.display = 'block';
 }
 
 function inicializujHamburger() {
