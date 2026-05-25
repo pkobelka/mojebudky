@@ -1,7 +1,6 @@
 const DNY = ['neděle','pondělí','úterý','středa','čtvrtek','pátek','sobota'];
 const MESICE = ['ledna','února','března','dubna','května','června','července','srpna','září','října','listopadu','prosince'];
 
-// Mapování kanonických jmen na přezdívky (a zpět)
 const PREZDIVKY = {
   'Jiří': ['Jirka'], 'Josef': ['Pepa'], 'Jan': ['Honza'],
   'Tomáš': ['Tomášek'], 'Václav': ['Vašek'], 'Miroslav': ['Miro'],
@@ -57,12 +56,12 @@ function aktualizujListu() {
   const cas = `&nbsp;| ⏰ <span id="liveCas">${formatCas(d)}</span>`;
 
   const oslavenci = svarek ? najdiSvatekSpravce(svarek) : [];
-  const pravaSrana = oslavenci.length > 0
-    ? `🎉 Svátek slaví ${pluralSpravcu(oslavenci.length)} – přejeme vše nejlepší!`
-    : '🌿 Pomáháme ptactvu po celé ČR';
+  const gratulace = oslavenci.length > 0
+    ? `&nbsp;| 🎂 <span class="bar-gratulace">${pluralSpravcu(oslavenci.length)} slaví svátek – gratulujeme!</span>`
+    : '';
 
-  bar.innerHTML = `<span class="bar-left">${cal}${sva}${cas}</span>
-    <span class="bar-right ${oslavenci.length > 0 ? 'bar-svatek' : ''}">${pravaSrana}</span>`;
+  bar.innerHTML = `<span class="bar-left">${cal}${sva}${gratulace}${cas}</span>
+    <span class="bar-right">🌿 Pomáháme ptactvu po celé ČR</span>`;
 }
 
 function tickCas() {
@@ -91,10 +90,10 @@ async function nactiStatistiky() {
 
     const nav = data.navstevnost;
     document.getElementById('footer-stats').innerHTML =
-      `Počet návštěv: Celkem: <strong>${nav.celkem.toLocaleString('cs-CZ')}</strong>
-       | Dnes: <strong>${nav.dnes}</strong>
-       | Včera: <strong>${nav.vcera}</strong>
-       | Předevčírem: <strong>${nav.predvcírem}</strong>`;
+      `Návštěvy: Celkem: <strong>${nav.celkem.toLocaleString('cs-CZ')}</strong>`+
+      ` &nbsp;|&nbsp; Dnes: <strong>${nav.dnes}</strong>`+
+      ` &nbsp;|&nbsp; Včera: <strong>${nav.vcera}</strong>`+
+      ` &nbsp;|&nbsp; Předevčírem: <strong>${nav.predvcírem}</strong>`;
   } catch(e) {
     console.error('Chyba načítání statistik:', e);
   }
@@ -216,7 +215,6 @@ function inicializujHamburger() {
     btn.setAttribute('aria-expanded', open);
   });
 
-  // Zavři menu po kliknutí na odkaz
   links.addEventListener('click', e => {
     if (e.target.tagName === 'A') {
       links.classList.remove('open');
