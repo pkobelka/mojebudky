@@ -208,10 +208,6 @@ async function inicializujMapu() {
     maxZoom: 20
   }).addTo(mapInstance);
 
-  const cluster = L.markerClusterGroup({
-    maxClusterRadius: 40,
-    disableClusteringAtZoom: 17
-  });
 
   pridejLegend(mapInstance);
 
@@ -242,10 +238,9 @@ async function inicializujMapu() {
       });
 
       markersByCislo[b.cislo] = marker;
-      cluster.addLayer(marker);
+      marker.addTo(mapInstance);
     });
 
-    mapInstance.addLayer(cluster);
     document.getElementById('stat-celkem').textContent = budky.length;
   } catch(e) {
     console.error('Chyba načítání dat budek:', e);
