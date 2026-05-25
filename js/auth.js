@@ -1,112 +1,128 @@
-import { auth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "./firebase.js";
-
-const modal = document.getElementById("authModal");
-const btnOtevrit = document.getElementById("btnOtevritModal");
-const btnZavrit = document.getElementById("btnZavritModal");
-const form = document.getElementById("authForm");
-const emailInput = document.getElementById("authEmail");
-const passwordInput = document.getElementById("authPassword");
-const errorEl = document.getElementById("authError");
-const submitBtn = document.getElementById("authSubmitBtn");
-const authNavArea = document.getElementById("authNavArea");
-
-function otevritModal() {
-  modal.hidden = false;
-  document.body.style.overflow = "hidden";
-  emailInput.focus();
+async function sha256hex(text) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
 }
 
-function zavritModal() {
-  modal.hidden = true;
-  document.body.style.overflow = "";
-  form.reset();
-  skrytChybu();
+let spravciData = null;
+
+async function nactiSpravce() {
+  if (spravciData) return spravciData;
+  const res = await fetch('data/spravci.json');
+  if (!res.ok) throw new Error('Nelze načíst data správců');
+  spravciData = await res.json();
+  return spravciData;
 }
 
-function zobrazitChybu(text) {
-  errorEl.textContent = text;
-  errorEl.hidden = false;
+async function overitPrihlaseni(id, heslo) {
+  const spravci = await nactiSpravce();
+  const hash = await sha256hex(heslo);
+  return spravci[id] && spravci[id] === hash;
 }
 
-function skrytChybu() {
-  errorEl.hidden = true;
-  errorEl.textContent = "";
+function zobrazAdminPanel(loginId) {
+  const cislo = parseInt(loginId.slice(0, 3), 10);
+
+  const existujici = document.getElementById('adminBanner');
+  if (existujici) existujici.remove();
+
+  const banner = document.createElement('div');
+  banner.id = 'adminBanner';
+  banner.className = 'admin-banner';
+  banner.innerHTML = `
+    <span>Přihlášen jako správce &nbsp;<strong>Budka č. ${cislo}</strong></span>
+    <button id="btnOdhlasit">Odhlásit se</button>
+  `;
+  document.body.appendChild(banner);
+
+  document.getElementById('btnOdhlasit').addEventListener('click', () => {
+    banner.remove();
+    spravciData = null;
+    const btn = document.getElementById('btnPrihlasit');
+    if (btn) btn.textContent = 'Vstup pro správce';
+  });
+
+  const btn = document.getElementById('btnPrihlasit');
+  if (btn) btn.textContent = `Budka ${cislo} ✓`;
 }
 
-function prekladChyby(code) {
-  const map = {
-    "auth/invalid-email": "Neplatné ID správce.",
-    "auth/user-not-found": "Správce nenalezen.",
-    "auth/wrong-password": "Špatné heslo.",
-    "auth/invalid-credential": "Nesprávné ID nebo heslo.",
-    "auth/too-many-requests": "Příliš mnoho pokusů. Zkuste to za chvíli.",
-    "auth/user-disabled": "Tento účet byl deaktivován.",
-  };
-  return map[code] || "Nastala chyba. Zkuste to znovu.";
-}
+document.addEventListener('DOMContentLoaded', () => {
+  const btnPrihlasit = document.getElementById('btnPrihlasit');
+  const modal        = document.getElementById('modalPrihlaseni');
+  const modalZavrit  = document.getElementById('modalZavrit');
+  const loginBtn     = document.getElementById('loginBtn');
+  const inputId      = document.getElementById('loginId');
+  const inputHeslo   = document.getElementById('loginHeslo');
+  const loginError   = document.getElementById('loginError');
+  const loginLoading = document.getElementById('loginLoading');
 
-btnOtevrit.addEventListener("click", e => {
-  e.preventDefault();
-  otevritModal();
-});
+  if (!btnPrihlasit || !modal) return;
 
-btnZavrit.addEventListener("click", zavritModal);
-
-document.getElementById("btnUkazHeslo").addEventListener("click", () => {
-  const t = passwordInput.type === "password" ? "text" : "password";
-  passwordInput.type = t;
-});
-
-
-modal.addEventListener("click", e => {
-  if (e.target === modal) zavritModal();
-});
-
-document.addEventListener("keydown", e => {
-  if (e.key === "Escape" && !modal.hidden) zavritModal();
-});
-
-form.addEventListener("submit", async e => {
-  e.preventDefault();
-  skrytChybu();
-
-  const email = emailInput.value.trim();
-  const password = passwordInput.value;
-
-  if (!email || !password) {
-    zobrazitChybu("Vyplňte ID správce i heslo.");
-    return;
+  function otevritModal() {
+    modal.hidden = false;
+    inputId.value = '';
+    inputHeslo.value = '';
+    loginError.hidden = true;
+    loginLoading.hidden = true;
+    loginBtn.disabled = false;
+    setTimeout(() => inputId.focus(), 50);
   }
 
-  submitBtn.disabled = true;
-  submitBtn.textContent = "Přihlašuji…";
-
-  const emailFirebase = email.includes("@") ? email : `${email}@mojebudky.cz`;
-
-  try {
-    await signInWithEmailAndPassword(auth, emailFirebase, password);
-    zavritModal();
-  } catch (err) {
-    console.error("Auth chyba:", err.code, err.message);
-    zobrazitChybu(`${prekladChyby(err.code)} [${err.code}]`);
-  } finally {
-    submitBtn.disabled = false;
-    submitBtn.textContent = "Přihlásit se";
+  function zavritModal() {
+    modal.hidden = true;
   }
-});
 
-onAuthStateChanged(auth, user => {
-  if (user) {
-    authNavArea.innerHTML = `
-      <span class="nav-user-email">${user.email}</span>
-      <button class="btn-logout" id="btnOdhlasit">Odhlásit</button>
-    `;
-    document.getElementById("btnOdhlasit").addEventListener("click", () => signOut(auth));
-  } else {
-    authNavArea.innerHTML = `<a href="#" class="btn-login" id="btnOtevritModal">Vstup pro správce</a>`;
-    document.getElementById("btnOtevritModal").addEventListener("click", e => {
-      e.preventDefault();
-      otevritModal();
-    });
+  btnPrihlasit.addEventListener('click', otevritModal);
+  modalZavrit.addEventListener('click', zavritModal);
+
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) zavritModal();
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && !modal.hidden) zavritModal();
+  });
+
+  async function pokusOPrihlaseni() {
+    const id    = inputId.value.trim();
+    const heslo = inputHeslo.value;
+
+    if (!/^\d{6}$/.test(id)) {
+      loginError.textContent = 'ID musí mít přesně 6 číslic.';
+      loginError.hidden = false;
+      return;
+    }
+    if (!heslo) {
+      loginError.textContent = 'Zadejte heslo.';
+      loginError.hidden = false;
+      return;
+    }
+
+    loginError.hidden = true;
+    loginLoading.hidden = false;
+    loginBtn.disabled = true;
+
+    try {
+      const ok = await overitPrihlaseni(id, heslo);
+      if (ok) {
+        zavritModal();
+        zobrazAdminPanel(id);
+      } else {
+        loginError.textContent = 'Neplatné ID nebo heslo.';
+        loginError.hidden = false;
+        inputHeslo.value = '';
+        inputHeslo.focus();
+      }
+    } catch {
+      loginError.textContent = 'Chyba při ověřování. Zkuste to znovu.';
+      loginError.hidden = false;
+    } finally {
+      loginLoading.hidden = true;
+      loginBtn.disabled = false;
+    }
   }
+
+  loginBtn.addEventListener('click', pokusOPrihlaseni);
+  [inputId, inputHeslo].forEach(el => {
+    el.addEventListener('keydown', (e) => { if (e.key === 'Enter') pokusOPrihlaseni(); });
+  });
 });
