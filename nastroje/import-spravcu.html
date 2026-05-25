@@ -65,16 +65,45 @@
 
     let spravci = [];
 
+    function cistaBunka(s) {
+      return (s || "").trim().replace(/^"(.*)"$/, '$1').trim();
+    }
+
     function parsujCSV(text) {
       const radky = text.trim().split(/\r?\n/);
       const vysledek = [];
-      // přeskoč hlavičku
-      for (let i = 1; i < radky.length; i++) {
-        const sloupce = radky[i].split(/[;,\t]/);
-        const id = (sloupce[0] || "").trim().replace(/^"(.*)"$/, '$1');
-        const heslo = (sloupce[2] || sloupce[1] || "").trim().replace(/^"(.*)"$/, '$1');
-        const jmeno = (sloupce[3] || "").trim().replace(/^"(.*)"$/, '$1');
-        if (id && heslo) vysledek.push({ id, heslo, jmeno });
+
+      // najdi hlavičku – první řádek s "ID" nebo "Heslo"
+      let hlavickaIndex = 0;
+      let hlavicka = [];
+      for (let i = 0; i < Math.min(5, radky.length); i++) {
+        const sl = radky[i].split(/[;,\t]/);
+        if (sl.some(s => cistaBunka(s).toUpperCase() === "ID") ||
+            sl.some(s => cistaBunka(s).toLowerCase() === "heslo")) {
+          hlavickaIndex = i;
+          hlavicka = sl.map(s => cistaBunka(s).toLowerCase());
+          break;
+        }
+      }
+
+      // indexy sloupců podle názvů
+      const colId     = hlavicka.indexOf("id");
+      const colHeslo  = hlavicka.findIndex(h => h === "heslo");
+      const colJmeno  = hlavicka.findIndex(h => h === "jméno" || h === "jmeno");
+      const colPrijmeni = hlavicka.findIndex(h => h === "příjmení" || h === "prijmeni");
+      const colEmail  = hlavicka.indexOf("email");
+
+      for (let i = hlavickaIndex + 1; i < radky.length; i++) {
+        const sl = radky[i].split(/[;,\t]/);
+        const id    = colId >= 0    ? cistaBunka(sl[colId])    : "";
+        const heslo = colHeslo >= 0 ? cistaBunka(sl[colHeslo]) : "";
+        const jmeno = [
+          colJmeno >= 0    ? cistaBunka(sl[colJmeno])    : "",
+          colPrijmeni >= 0 ? cistaBunka(sl[colPrijmeni]) : ""
+        ].filter(Boolean).join(" ");
+        const email = colEmail >= 0 ? cistaBunka(sl[colEmail]) : "";
+
+        if (id && heslo) vysledek.push({ id, heslo, jmeno, email });
       }
       return vysledek;
     }
@@ -130,7 +159,7 @@
         const email = `${s.id}@mojebudky.cz`;
         try {
           const result = await createUserWithEmailAndPassword(auth, email, s.heslo);
-          if (s.jmeno) await updateProfile(result.user, { displayName: s.jmeno });
+          if (s.jmeno || s.email) await updateProfile(result.user, { displayName: s.jmeno || "" });
           log(`✓ ${s.id} – ${s.jmeno}`, "ok");
           ok++;
         } catch (err) {
