@@ -51,7 +51,7 @@
     { "nazev": "VHOS a.s.", "url": "https://www.vhos.cz/", "logo": "img/EAG.png" },
     { "nazev": "Hutira", "url": "https://www.hutira.cz/cs/", "logo": "img/Hutira.png" },
     { "nazev": "Building Expert s.r.o.", "url": "https://www.buildingexpert.cz/", "logo": "img/BEX.png" },
-    { "nazev": "AVK Litoměřice", "url": null, "logo": "img/AVK.png" },
+    { "nazev": "AVK Litoměřice", "url": "https://www.avkvodka.cz/cs-cz", "logo": "img/AVK.png" },
     { "nazev": "ZEMSKÝ Rohatec, s.r.o.", "url": null, "logo": "img/Zemský.png" },
     { "nazev": "PLASTIKA PIPES s.r.o.", "url": "https://plastikapipes.cz/", "logo": "img/PP.png" }
   ],
