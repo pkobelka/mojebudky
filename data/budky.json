@@ -1749,9 +1749,9 @@
     "instalace": "10.5.2025",
     "lat": 49.42279,
     "lng": 12.75017,
-    "ptak": null,
-    "stav": "aktivni",
-    "historie": null
+    "ptak": "Sýkora koňadra",
+    "stav": "osidlena",
+    "historie": [{"rok": 2025, "obsazeno": "Sýkora koňadra"}]
   },
   {
     "cislo": 151,
