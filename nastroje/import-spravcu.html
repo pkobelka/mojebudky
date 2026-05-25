@@ -164,7 +164,7 @@
           if (s.jmeno || s.email) await updateProfile(result.user, { displayName: s.jmeno || "" });
           log(`✓ ${s.id} – ${s.jmeno}`, "ok");
           ok++;
-          await cekej(400);
+          await cekej(3000);
         } catch (err) {
           if (err.code === "auth/email-already-in-use") {
             log(`– ${s.id} již existuje`, "skip");
