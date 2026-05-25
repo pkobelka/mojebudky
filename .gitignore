@@ -5,6 +5,8 @@
 *hesly*
 *hesla*
 *passwords*
+# Výjimka: utility skripty jsou v pořádku
+!*.py
 
 # OS
 .DS_Store
