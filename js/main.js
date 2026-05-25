@@ -134,11 +134,14 @@ function nactiPribehy(pribehy) {
 function nactiPartnery(partneri) {
   const el = document.getElementById('partneriList');
   if (!el || !partneri) return;
-  el.innerHTML = partneri.map(p =>
-    p.url
-      ? `<a href="${p.url}" class="partner-item" target="_blank" rel="noopener">${p.nazev}</a>`
-      : `<span class="partner-item">${p.nazev}</span>`
-  ).join('');
+  el.innerHTML = partneri.map(p => {
+    const obsah = p.logo
+      ? `<img src="${p.logo}" alt="${p.nazev}" class="partner-logo">`
+      : p.nazev;
+    return p.url
+      ? `<a href="${p.url}" class="partner-item${p.logo ? ' partner-item--logo' : ''}" target="_blank" rel="noopener" title="${p.nazev}">${obsah}</a>`
+      : `<span class="partner-item${p.logo ? ' partner-item--logo' : ''}" title="${p.nazev}">${obsah}</span>`;
+  }).join('');
 }
 
 document.addEventListener('DOMContentLoaded', () => {
