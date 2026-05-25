@@ -75,8 +75,10 @@ form.addEventListener("submit", async e => {
   submitBtn.disabled = true;
   submitBtn.textContent = "Přihlašuji…";
 
+  const emailFirebase = email.includes("@") ? email : `${email}@mojebudky.cz`;
+
   try {
-    await signInWithEmailAndPassword(auth, email, password);
+    await signInWithEmailAndPassword(auth, emailFirebase, password);
     zavritModal();
   } catch (err) {
     zobrazitChybu(prekladChyby(err.code));
