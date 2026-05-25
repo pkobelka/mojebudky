@@ -162,7 +162,10 @@
       </div>
       <div class="auth-field">
         <label for="authPassword">Heslo</label>
-        <input type="password" id="authPassword" autocomplete="current-password" required placeholder="••••••••">
+        <div class="auth-input-suffix">
+          <input type="password" id="authPassword" autocomplete="current-password" required placeholder="••••••••">
+          <button type="button" id="btnUkazHeslo" style="background:none;border:none;cursor:pointer;color:var(--text-muted);padding:0 10px;font-size:1rem;" title="Zobrazit heslo">👁</button>
+        </div>
       </div>
       <div class="auth-error" id="authError" hidden></div>
       <button type="submit" class="auth-submit" id="authSubmitBtn">Přihlásit se</button>

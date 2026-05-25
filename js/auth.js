@@ -52,6 +52,12 @@ btnOtevrit.addEventListener("click", e => {
 
 btnZavrit.addEventListener("click", zavritModal);
 
+document.getElementById("btnUkazHeslo").addEventListener("click", () => {
+  const t = passwordInput.type === "password" ? "text" : "password";
+  passwordInput.type = t;
+});
+
+
 modal.addEventListener("click", e => {
   if (e.target === modal) zavritModal();
 });
