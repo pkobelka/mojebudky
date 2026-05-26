@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="MojeBudky.cz – sledujeme ptačí budky po celé ČR. Živá mapa, statistiky a příběhy z přírody.">
+  <meta name="description" content="MojeBudky.cz – sledujeme ptáčí budky po celé ČR. Živá mapa, statistiky a příběhy z přírody.">
   <title>MojeBudky.cz – Pomáháme ptactvu</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
   <link rel="stylesheet" href="css/style.css">
@@ -40,7 +40,7 @@
       <ul class="nav-links" id="navLinks" role="navigation" aria-label="Hlavní navigace">
         <li><a href="#mapa" id="nav-mapa">Mapa Budek</a></li>
         <li><a href="#aktuality">Zprávy z terénu</a></li>
-        <li><a href="#clanky">Zajímavé články</a></li>
+        <li><a href="#clanky">Zajínavé články</a></li>
         <li><a href="#partneri">Partneré</a></li>
       </ul>
 
@@ -52,7 +52,7 @@
         <div id="authNavArea">
           <a href="mailto:info@mojebudky.cz" class="btn-napsat" aria-label="Napište nám">
             ✉ Napište nám
-            <span class="napsat-tip">Dotaz, nápad nebo zájem o partnerství?<br><strong>info@mojebudky.cz</strong></span>
+            <span class="napsat-tip">Dotaz, nápad nebo zájem o partnerrství?<br><strong>info@mojebudky.cz</strong></span>
           </a>
           <button type="button" class="btn-login" id="btnPrihlasit">Vstup pro správce</button>
         </div>
@@ -88,66 +88,69 @@
     <!-- Pravý panel: Statistiky -->
     <aside class="panel panel-right" aria-label="Statistiky projektu">
       <h2 class="panel-title">Statistiky</h2>
-      <div class="stats-grid" id="statsGrid">
-        <div class="stat-item">
-          <div class="stat-icon"><img src="img/logo.svg" alt="Budka" class="stat-svg-icon"></div>
-          <div>
-            <div class="stat-value" id="stat-celkem">…</div>
-            <div class="stat-label">Celkem budek</div>
+      <div class="panel-scroll">
+        <div class="stats-grid" id="statsGrid">
+          <div class="stat-item">
+            <div class="stat-icon"><img src="img/logo.svg" alt="Budka" class="stat-svg-icon"></div>
+            <div>
+              <div class="stat-value" id="stat-celkem">…</div>
+              <div class="stat-label">Celkem budek</div>
+            </div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-icon"><img src="img/obydleno.svg" alt="Osídlená budka" class="stat-svg-icon"></div>
+            <div>
+              <div class="stat-value" id="stat-osidlenych">…</div>
+              <div class="stat-label">Osídlených budek</div>
+            </div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-icon">👤</div>
+            <div>
+              <div class="stat-value" id="stat-spravcu">…</div>
+              <div class="stat-label">Registrovaných správců</div>
+            </div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-icon">🐦</div>
+            <div>
+              <div class="stat-value" id="stat-druhu">…</div>
+              <div class="stat-label">Druhů ptáků</div>
+            </div>
           </div>
         </div>
-        <div class="stat-item">
-          <div class="stat-icon"><img src="img/obydleno.svg" alt="Osídlená budka" class="stat-svg-icon"></div>
-          <div>
-            <div class="stat-value" id="stat-osidlenych">…</div>
-            <div class="stat-label">Osídlených budek</div>
-          </div>
+        <div class="stat-aktualizace">
+          Poslední aktualizace: <span id="stat-aktualizace">…</span>
         </div>
-        <div class="stat-item">
-          <div class="stat-icon">👤</div>
-          <div>
-            <div class="stat-value" id="stat-spravcu">…</div>
-            <div class="stat-label">Registrovaných správce</div>
+        <div class="druhy-panel" id="druhyPanel"></div>
+        <div class="navstevnost-panel">
+          <div class="navstevnost-title">📈 Návštěvnost</div>
+          <div class="navstevnost-grid">
+            <div class="navst-item">
+              <span class="navst-cislo" id="navst-celkem">…</span>
+              <span class="navst-label">Celkem</span>
+            </div>
+            <div class="navst-item">
+              <span class="navst-cislo" id="navst-dnes">…</span>
+              <span class="navst-label">Dnes</span>
+            </div>
+            <div class="navst-item">
+              <span class="navst-cislo" id="navst-vcera">…</span>
+              <span class="navst-label">Včera</span>
+            </div>
           </div>
+          <div id="onlinePocet" class="online-pocet-panel">🟢 Online: <strong>…</strong></div>
         </div>
-        <div class="stat-item">
-          <div class="stat-icon">🐦</div>
-          <div>
-            <div class="stat-value" id="stat-druhu">4</div>
-            <div class="stat-label">Druhů ptáků</div>
-          </div>
-        </div>
-      </div>
-      <div class="stat-aktualizace">
-        Poslední aktualizace: <span id="stat-aktualizace">…</span>
-      </div>
-      <div class="navstevnost-panel">
-        <div class="navstevnost-title">📈 Návštěvnost</div>
-        <div class="navstevnost-grid">
-          <div class="navst-item">
-            <span class="navst-cislo" id="navst-celkem">…</span>
-            <span class="navst-label">Celkem</span>
-          </div>
-          <div class="navst-item">
-            <span class="navst-cislo" id="navst-dnes">…</span>
-            <span class="navst-label">Dnes</span>
-          </div>
-          <div class="navst-item">
-            <span class="navst-cislo" id="navst-vcera">…</span>
-            <span class="navst-label">Včera</span>
-          </div>
-        </div>
-        <div id="onlinePocet" class="online-pocet-panel">🟢 Online: <strong>…</strong></div>
-      </div>
-      <div class="pridat-na-plochu">
-        <div class="pridat-title">📲 Přidej na plochu mobilu</div>
-        <div class="pridat-body">
-          <img src="img/Favikon.png" alt="MojeBudky ikona" class="pridat-ikona">
-          <div class="pridat-text">
-            <p>Mějte MojeBudky vždy po ruce jako aplikaci.</p>
-            <div class="pridat-navod"><span class="pridat-os">🍎 iOS:</span> Sdílet → <em>Přidat na plochu</em></div>
-            <div class="pridat-navod"><span class="pridat-os">🤖 Android:</span> Menu → <em>Přidat na plochu</em></div>
-            <div id="pushNotifArea"></div>
+        <div class="pridat-na-plochu">
+          <div class="pridat-title">📲 Přidej na plochu mobilu</div>
+          <div class="pridat-body">
+            <img src="img/Favikon.png" alt="MojeBudky ikona" class="pridat-ikona">
+            <div class="pridat-text">
+              <p>Mějte MojeBudky vždy po ruce jako aplikaci.</p>
+              <div class="pridat-navod"><span class="pridat-os">🍎 iOS:</span> Sdílet → <em>Přidat na plochu</em></div>
+              <div class="pridat-navod"><span class="pridat-os">🤖 Android:</span> Menu → <em>Přidat na plochu</em></div>
+              <div id="pushNotifArea"></div>
+            </div>
           </div>
         </div>
       </div>
@@ -175,7 +178,7 @@
 </div><!-- #app -->
 
 <!-- Přihlašovací modal -->
-<div id="modalPrihlaseni" class="modal-overlay" role="dialog" aria-modal="true" aria-label="Přihlášení správce" hidden>
+<div id="modalPrihlaseni" class="modal-overlay" role="dialog" aria-modal="true" aria-label="Přihlašení správce" hidden>
   <div class="modal-box">
     <button class="modal-zavrit" id="modalZavrit" aria-label="Zavřít">×</button>
     <div class="modal-logo-wrap">
@@ -184,7 +187,7 @@
     <h2 class="modal-nadpis">Vstup pro správce</h2>
     <p class="modal-hint">Zadejte své 6místné ID a heslo</p>
     <div class="modal-form">
-      <input type="text" id="loginId" maxlength="6" inputmode="numeric" placeholder="ID (6 čslic)" autocomplete="off" aria-label="ID správce">
+      <input type="text" id="loginId" maxlength="6" inputmode="numeric" placeholder="ID (6 číslic)" autocomplete="off" aria-label="ID správce">
       <div class="heslo-wrap">
         <input type="password" id="loginHeslo" maxlength="8" placeholder="Heslo (8 znaků)" autocomplete="off" aria-label="Heslo">
         <button type="button" class="btn-oko" id="btnOko" aria-label="Zobrazit/skrýt heslo" title="Zobrazit heslo">👁</button>
