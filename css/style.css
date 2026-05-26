@@ -94,6 +94,8 @@ html, body {
 .admin-banner strong { color: var(--accent-gold); font-size: inherit; }
 .admin-banner button { background: none; border: 1px solid var(--panel-border); color: var(--text-muted); border-radius: 4px; padding: 0.3rem 0.8rem; cursor: pointer; font-size: 0.82rem; }
 .admin-banner button:hover { color: var(--text-light); border-color: var(--text-muted); }
+.admin-budka-link { color: var(--accent-gold); font-size: 0.85rem; font-style: italic; }
+.btn-login.prihlaseny { background: transparent !important; color: var(--accent-gold) !important; text-decoration: underline; border-color: transparent !important; }
 
 .info-bar { background: var(--bar-bg); color: var(--bar-text); font-size: 0.83rem; padding: 5px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #d0c0a0; min-height: 30px; }
 .info-bar .bar-right { color: var(--tree-mid); font-style: italic; font-size: 0.8rem; }

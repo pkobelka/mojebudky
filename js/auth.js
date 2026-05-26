@@ -4,6 +4,7 @@ async function sha256hex(text) {
 }
 
 let _authSpravciCache = null;
+let _spravciInfoCache = null;
 
 async function _nactiAuthSpravce() {
   if (_authSpravciCache) return _authSpravciCache;
@@ -13,14 +14,31 @@ async function _nactiAuthSpravce() {
   return _authSpravciCache;
 }
 
+async function _nactiSpravciInfo() {
+  if (_spravciInfoCache) return _spravciInfoCache;
+  try {
+    const res = await fetch('data/spravci_info.json');
+    if (res.ok) _spravciInfoCache = await res.json();
+  } catch {}
+  return _spravciInfoCache;
+}
+
 async function _overitPrihlaseni(id, heslo) {
   const spravci = await _nactiAuthSpravce();
   const hash = await sha256hex(heslo);
   return spravci[id] && spravci[id] === hash;
 }
 
-function _zobrazAdminPanel(loginId) {
-  const cislo = parseInt(loginId.slice(0, 3), 10);
+async function _zobrazAdminPanel(loginId) {
+  const info = await _nactiSpravciInfo();
+  const spravceInfo = info && info[loginId];
+
+  const jmeno = spravceInfo ? spravceInfo.jmeno : loginId;
+  const budkaCislo = spravceInfo ? spravceInfo.budka_cislo : parseInt(loginId, 10);
+  const budkaNazev = spravceInfo ? spravceInfo.budka_nazev : '';
+  const budkaText = budkaNazev && budkaNazev !== String(budkaCislo)
+    ? `Budka č. ${budkaCislo} – ${budkaNazev}`
+    : `Budka č. ${budkaCislo}`;
 
   const existujici = document.getElementById('adminBanner');
   if (existujici) existujici.remove();
@@ -29,7 +47,7 @@ function _zobrazAdminPanel(loginId) {
   banner.id = 'adminBanner';
   banner.className = 'admin-banner';
   banner.innerHTML = `
-    <span>Přihlášen jako správce &nbsp;<strong>Budka č. ${cislo}</strong></span>
+    <span class="admin-budka-link">Administrace: ${budkaText}</span>
     <button id="btnOdhlasit">Odhlásit se</button>
   `;
   document.body.appendChild(banner);
@@ -39,13 +57,14 @@ function _zobrazAdminPanel(loginId) {
   document.getElementById('btnOdhlasit').addEventListener('click', () => {
     banner.remove();
     _authSpravciCache = null;
+    _spravciInfoCache = null;
     if (typeof window._presenceSetAdmin === 'function') window._presenceSetAdmin(false);
     const btn = document.getElementById('btnPrihlasit');
-    if (btn) btn.textContent = 'Vstup pro správce';
+    if (btn) { btn.textContent = 'Vstup pro správce'; btn.classList.remove('prihlaseny'); }
   });
 
   const btn = document.getElementById('btnPrihlasit');
-  if (btn) btn.textContent = `Budka ${cislo} ✓`;
+  if (btn) { btn.textContent = `Přihlášen ${jmeno}`; btn.classList.add('prihlaseny'); }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -89,8 +108,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const id    = inputId.value.trim();
     const heslo = inputHeslo.value;
 
-    if (!/^\d{6}$/.test(id)) {
-      loginError.textContent = 'ID musí mít přesně 6 číslic.';
+    if (!/^\d{1,6}$/.test(id)) {
+      loginError.textContent = 'ID musí být 1–6 číslic.';
       loginError.hidden = false;
       return;
     }
