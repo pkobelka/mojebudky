@@ -306,28 +306,19 @@ html, body {
 /* ── ADMIN PANEL (po přihlášení) ── */
 .admin-banner {
   position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
+  bottom: 1.2rem;
+  right: 1.2rem;
   z-index: 900;
-  background: var(--nav-bg);
-  border-top: 2px solid var(--accent-gold);
-  color: var(--text-light);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0.6rem 1.5rem;
-  font-size: 0.9rem;
 }
-.admin-banner strong { color: var(--accent-gold); }
 .admin-banner button {
-  background: none;
-  border: 1px solid var(--panel-border);
+  background: var(--nav-bg);
+  border: 1px solid var(--accent-gold);
   color: var(--text-muted);
   border-radius: 4px;
-  padding: 0.3rem 0.8rem;
+  padding: 0.4rem 1rem;
   cursor: pointer;
   font-size: 0.82rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.4);
 }
 .admin-banner button:hover { color: var(--text-light); border-color: var(--text-muted); }
 

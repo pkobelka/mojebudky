@@ -22,28 +22,29 @@ async function overitPrihlaseni(id, heslo) {
 function zobrazAdminPanel(loginId) {
   const cislo = parseInt(loginId.slice(0, 3), 10);
 
+  prihlaseneId = loginId;
+
   const existujici = document.getElementById('adminBanner');
   if (existujici) existujici.remove();
 
   const banner = document.createElement('div');
   banner.id = 'adminBanner';
   banner.className = 'admin-banner';
-  banner.innerHTML = `
-    <span>Přihlášen jako správce &nbsp;<strong>Budka č. ${cislo}</strong></span>
-    <button id="btnOdhlasit">Odhlásit se</button>
-  `;
+  banner.innerHTML = `<button id="btnOdhlasit">Odhlásit se</button>`;
   document.body.appendChild(banner);
 
   document.getElementById('btnOdhlasit').addEventListener('click', () => {
     banner.remove();
     spravciData = null;
-    document.getElementById('btnPrihlasit').textContent = 'Vstup pro správce';
+    prihlaseneId = null;
+    btnPrihlasit.textContent = 'Vstup pro správce';
   });
 
-  document.getElementById('btnPrihlasit').textContent = `Budka ${cislo} ✓`;
+  btnPrihlasit.textContent = `Budka č. ${cislo}`;
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+  let prihlaseneId = null;
   const btnPrihlasit = document.getElementById('btnPrihlasit');
   const modal        = document.getElementById('modalPrihlaseni');
   const modalZavrit  = document.getElementById('modalZavrit');
@@ -54,6 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const loginLoading = document.getElementById('loginLoading');
 
   function otevritModal() {
+    if (prihlaseneId !== null) return;
     modal.hidden = false;
     inputId.value = '';
     inputHeslo.value = '';
