@@ -132,7 +132,7 @@
     { "nazev": "AVK Litoměřice", "url": "https://www.avkvodka.cz/cs-cz", "logo": "img/AVK.png" },
     { "nazev": "ZEMSKÝ Rohatec, s.r.o.", "url": "https://www.zemsky.cz/", "logo": "img/Zemský.png" },
     { "nazev": "PLASTIKA PIPES s.r.o.", "url": "https://plastikapipes.cz/", "logo": "img/PP.png" },
-    { "nazev": "METALI", "url": null }
+    { "nazev": "METALI", "url": "http://www.metali.cz/?page=sluzby" }
   ],
   "podekovani": [
     { "jmeno": "Martin N.", "popis": "vrchní ptákolog" },
