@@ -313,19 +313,33 @@ html, body {
 /* ── ADMIN PANEL (po přihlášení) ── */
 .admin-banner {
   position: fixed;
-  bottom: 1.2rem;
-  right: 1.2rem;
+  bottom: 0;
+  left: 0;
+  right: 0;
   z-index: 900;
+  background: rgba(20, 45, 8, 0.97);
+  border-top: 1px solid var(--accent-gold);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 1.5rem;
+  gap: 1rem;
+}
+.admin-budka-link {
+  color: var(--accent-gold);
+  font-size: 0.85rem;
+  font-style: italic;
+  opacity: 0.85;
 }
 .admin-banner button {
-  background: var(--nav-bg);
-  border: 1px solid var(--accent-gold);
+  background: none;
+  border: 1px solid var(--panel-border);
   color: var(--text-muted);
   border-radius: 4px;
-  padding: 0.4rem 1rem;
+  padding: 0.3rem 0.9rem;
   cursor: pointer;
   font-size: 0.82rem;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+  white-space: nowrap;
 }
 .admin-banner button:hover { color: var(--text-light); border-color: var(--text-muted); }
 

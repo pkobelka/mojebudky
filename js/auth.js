@@ -4,6 +4,7 @@ async function sha256hex(text) {
 }
 
 let spravciData = null;
+let spravciInfo = null;
 
 async function nactiSpravce() {
   if (spravciData) return spravciData;
@@ -13,36 +14,19 @@ async function nactiSpravce() {
   return spravciData;
 }
 
+async function nactiSpravciInfo() {
+  if (spravciInfo) return spravciInfo;
+  try {
+    const res = await fetch('data/spravci_info.json');
+    if (res.ok) spravciInfo = await res.json();
+  } catch {}
+  return spravciInfo || {};
+}
+
 async function overitPrihlaseni(id, heslo) {
   const spravci = await nactiSpravce();
   const hash = await sha256hex(heslo);
   return spravci[id] && spravci[id] === hash;
-}
-
-function zobrazAdminPanel(loginId) {
-  const cislo = parseInt(loginId.slice(0, 3), 10);
-
-  prihlaseneId = loginId;
-
-  const existujici = document.getElementById('adminBanner');
-  if (existujici) existujici.remove();
-
-  const banner = document.createElement('div');
-  banner.id = 'adminBanner';
-  banner.className = 'admin-banner';
-  banner.innerHTML = `<button id="btnOdhlasit">Odhlásit se</button>`;
-  document.body.appendChild(banner);
-
-  document.getElementById('btnOdhlasit').addEventListener('click', () => {
-    banner.remove();
-    spravciData = null;
-    prihlaseneId = null;
-    btnPrihlasit.textContent = 'Vstup pro správce';
-    btnPrihlasit.classList.remove('prihlaseny');
-  });
-
-  btnPrihlasit.textContent = `Budka č. ${cislo}`;
-  btnPrihlasit.classList.add('prihlaseny');
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -69,6 +53,50 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function zavritModal() {
     modal.hidden = true;
+  }
+
+  function odhlasit() {
+    const banner = document.getElementById('adminBanner');
+    if (banner) banner.remove();
+    spravciData = null;
+    spravciInfo = null;
+    prihlaseneId = null;
+    btnPrihlasit.textContent = 'Vstup pro správce';
+    btnPrihlasit.classList.remove('prihlaseny');
+    btnPrihlasit.onclick = null;
+    btnPrihlasit.addEventListener('click', otevritModal);
+  }
+
+  async function zobrazAdminPanel(loginId) {
+    prihlaseneId = loginId;
+
+    const info = await nactiSpravciInfo();
+    const zaznam = info[loginId] || {};
+    const jmeno      = zaznam.jmeno || zaznam.spravce || loginId;
+    const bCislo     = zaznam.budka_cislo ?? parseInt(loginId.slice(0, 3), 10);
+    const bNazev     = zaznam.budka_nazev || '';
+    const bLabel     = bNazev ? `č. ${bCislo} – ${bNazev}` : `č. ${bCislo}`;
+
+    // Navbar tlačítko
+    btnPrihlasit.textContent = `Přihlášen ${jmeno}`;
+    btnPrihlasit.classList.add('prihlaseny');
+    btnPrihlasit.removeEventListener('click', otevritModal);
+    btnPrihlasit.onclick = null;
+
+    // Admin banner
+    const existujici = document.getElementById('adminBanner');
+    if (existujici) existujici.remove();
+
+    const banner = document.createElement('div');
+    banner.id = 'adminBanner';
+    banner.className = 'admin-banner';
+    banner.innerHTML = `
+      <span class="admin-budka-link">Administrace budky ${bLabel}</span>
+      <button id="btnOdhlasit">Odhlásit se</button>
+    `;
+    document.body.appendChild(banner);
+
+    document.getElementById('btnOdhlasit').addEventListener('click', odhlasit);
   }
 
   btnPrihlasit.addEventListener('click', otevritModal);
@@ -105,7 +133,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const ok = await overitPrihlaseni(id, heslo);
       if (ok) {
         zavritModal();
-        zobrazAdminPanel(id);
+        await zobrazAdminPanel(id);
       } else {
         loginError.textContent = 'Neplatné ID nebo heslo.';
         loginError.hidden = false;
