@@ -89,11 +89,12 @@ async function nactiStatistiky() {
     nactiPodekovani(data.podekovani);
 
     const nav = data.navstevnost;
-    document.getElementById('footer-stats').innerHTML =
-      `Návštěvy: Celkem: <strong>${nav.celkem.toLocaleString('cs-CZ')}</strong>`+
-      ` &nbsp;|&nbsp; Dnes: <strong>${nav.dnes}</strong>`+
-      ` &nbsp;|&nbsp; Včera: <strong>${nav.vcera}</strong>`+
-      ` &nbsp;|&nbsp; Předevčírem: <strong>${nav.predvcírem}</strong>`;
+    const elCelkem = document.getElementById('navst-celkem');
+    const elDnes   = document.getElementById('navst-dnes');
+    const elVcera  = document.getElementById('navst-vcera');
+    if (elCelkem) elCelkem.textContent = nav.celkem.toLocaleString('cs-CZ');
+    if (elDnes)   elDnes.textContent   = nav.dnes;
+    if (elVcera)  elVcera.textContent  = nav.vcera;
   } catch(e) {
     console.error('Chyba načítání statistik:', e);
   }
@@ -166,7 +167,7 @@ function nactiAktuality(aktuality) {
       <div class="pribeh-text">
         <div class="pribeh-druh">${p.ptak}</div>
         <div class="pribeh-popis">${p.text}</div>
-        <div class="pribeh-datum">${p.datum}</div>
+        <div class="pribeh-datum">${p.datum}${p.cas ? ` · ${p.cas}` : ''}</div>
         ${p.budka_id ? `<a class="aktualita-link" data-budka="${p.budka_id}" href="#">→ Budka č. ${p.budka_id}</a>` : ''}
       </div>
     </div>`).join('');
@@ -199,7 +200,7 @@ function nactiPodekovani(podekovani) {
   const el = document.getElementById('podekovaniList');
   if (!wrap || !el || !podekovani || !podekovani.length) return;
   el.innerHTML = podekovani.map(p =>
-    `<span class="podekovani-osoba" title="${p.popis}">🙏 ${p.jmeno}<em>${p.popis}</em></span>`
+    `<span class="podekovani-osoba" title="${p.popis}">🙏 ${p.jmeno}</span>`
   ).join('');
   wrap.style.display = 'block';
 }

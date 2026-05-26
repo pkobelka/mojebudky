@@ -6,7 +6,8 @@
   <meta name="description" content="MojeBudky.cz – sledujeme ptačí budky po celé ČR. Živá mapa, statistiky a příběhy z přírody.">
   <title>MojeBudky.cz – Pomáháme ptactvu</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
-<link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" type="image/svg+xml" href="img/favicon.svg">
 </head>
 <body>
 
@@ -41,7 +42,6 @@
         <li><a href="#aktuality">Zprávy z terénu</a></li>
         <li><a href="#clanky">Zajímavé články</a></li>
         <li><a href="#partneri">Partneři</a></li>
-        <li><a href="#kontakt">Kontakt</a></li>
       </ul>
 
       <div class="nav-actions">
@@ -50,6 +50,10 @@
           <button aria-label="Hledat">🔍</button>
         </div>
         <div id="authNavArea">
+          <a href="mailto:info@mojebudky.cz" class="btn-napsat" aria-label="Napište nám">
+            ✉ Napište nám
+            <span class="napsat-tip">Dotaz, nápad nebo zájem o partnerství?<br><strong>info@mojebudky.cz</strong></span>
+          </a>
           <button type="button" class="btn-login" id="btnPrihlasit">Vstup pro správce</button>
         </div>
         <button class="nav-hamburger" id="navHamburger" aria-label="Otevřít menu" aria-expanded="false">
@@ -117,6 +121,24 @@
       <div class="stat-aktualizace">
         Poslední aktualizace: <span id="stat-aktualizace">…</span>
       </div>
+      <div class="navstevnost-panel">
+        <div class="navstevnost-title">📈 Návštěvnost</div>
+        <div class="navstevnost-grid">
+          <div class="navst-item">
+            <span class="navst-cislo" id="navst-celkem">…</span>
+            <span class="navst-label">Celkem</span>
+          </div>
+          <div class="navst-item">
+            <span class="navst-cislo" id="navst-dnes">…</span>
+            <span class="navst-label">Dnes</span>
+          </div>
+          <div class="navst-item">
+            <span class="navst-cislo" id="navst-vcera">…</span>
+            <span class="navst-label">Včera</span>
+          </div>
+        </div>
+        <div id="onlinePocet" class="online-pocet-panel">🟢 Online: <strong>…</strong></div>
+      </div>
     </aside>
 
   </main>
@@ -131,22 +153,11 @@
     </div>
   </section>
 
-  <!-- Kontakt -->
-  <section class="kontakt-section" id="kontakt">
-    <div class="kontakt-inner">
-      <div class="kontakt-text">
-        <div class="kontakt-title">Napište nám</div>
-        <div class="kontakt-popis">Máte dotaz, nápad nebo připomínku? Napište nám!</div>
-      </div>
-      <a href="mailto:info@mojebudky.cz" class="btn-kontakt">✉ info@mojebudky.cz</a>
-    </div>
-  </section>
-
-  <!-- Footer: návštěvnost + online přítomnost -->
+  <!-- Footer -->
   <footer class="footer-bar">
-    <div id="footer-stats">Načítám statistiky návštěvnosti…</div>
+    <span class="footer-copy">© 2024–2026 MojeBudky.cz &nbsp;·&nbsp; Petr Kobelka</span>
     <span class="footer-sep" aria-hidden="true">|</span>
-    <div id="onlinePocet">🟢 Online: <strong>…</strong></div>
+    <a href="mailto:info@mojebudky.cz" class="footer-email">✉ info@mojebudky.cz</a>
   </footer>
 
 </div><!-- #app -->
@@ -162,11 +173,19 @@
     <p class="modal-hint">Zadejte své 6místné ID a heslo</p>
     <div class="modal-form">
       <input type="text" id="loginId" maxlength="6" inputmode="numeric" placeholder="ID (6 číslic)" autocomplete="off" aria-label="ID správce">
-      <input type="password" id="loginHeslo" maxlength="8" placeholder="Heslo (8 znaků)" autocomplete="off" aria-label="Heslo">
+      <div class="heslo-wrap">
+        <input type="password" id="loginHeslo" maxlength="8" placeholder="Heslo (8 znaků)" autocomplete="off" aria-label="Heslo">
+        <button type="button" class="btn-oko" id="btnOko" aria-label="Zobrazit/skrýt heslo" title="Zobrazit heslo">👁</button>
+      </div>
+      <label class="zobrazit-heslo-label">
+        <input type="checkbox" id="cbZobrazitHeslo"> Zobrazit heslo
+      </label>
       <button type="button" id="loginBtn">Přihlásit se</button>
     </div>
     <div id="loginError" class="login-error" hidden>Neplatné ID nebo heslo.</div>
     <div id="loginLoading" class="login-loading" hidden>Ověřuji…</div>
+    <a href="#" class="link-zapomnel" id="linkZapomnel">Zapomněl jsem heslo</a>
+    <div id="zapomnel-msg" class="zapomnel-msg" hidden>Pro obnovení hesla napište na: <strong>info@mojebudky.cz</strong></div>
   </div>
 </div>
 

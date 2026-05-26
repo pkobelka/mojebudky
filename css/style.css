@@ -68,6 +68,135 @@ html, body {
 .search-box button:hover { color: var(--text-light); }
 .btn-login { background: var(--orange); color: white; text-decoration: none; padding: 7px 16px; border-radius: 5px; font-size: 0.88rem; font-weight: 600; white-space: nowrap; transition: background 0.2s; border: none; cursor: pointer; }
 .btn-login:hover { background: var(--orange-dark); }
+.btn-login { border: none; cursor: pointer; }
+
+/* ── LOGIN MODAL ── */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(10, 30, 5, 0.78);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(4px);
+}
+.modal-overlay[hidden] { display: none; }
+
+.modal-box {
+  background: var(--panel-bg);
+  border: 1px solid var(--panel-border);
+  border-radius: 12px;
+  padding: 2rem 2.5rem 1.8rem;
+  max-width: 360px;
+  width: 90%;
+  position: relative;
+  text-align: center;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.55);
+}
+
+.modal-zavrit {
+  position: absolute;
+  top: 0.6rem;
+  right: 0.9rem;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 1.6rem;
+  line-height: 1;
+  cursor: pointer;
+}
+.modal-zavrit:hover { color: var(--text-light); }
+
+.modal-logo-wrap { margin-bottom: 0.8rem; }
+.modal-logo-wrap img { filter: brightness(1.3); }
+
+.modal-nadpis {
+  color: var(--accent-gold);
+  font-size: 1.25rem;
+  margin-bottom: 0.3rem;
+}
+
+.modal-hint {
+  color: var(--text-muted);
+  font-size: 0.82rem;
+  margin-bottom: 1.4rem;
+}
+
+.modal-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.modal-form input {
+  background: rgba(255,255,255,0.07);
+  border: 1px solid var(--panel-border);
+  border-radius: 6px;
+  color: var(--text-light);
+  font-size: 1.1rem;
+  padding: 0.6rem 1rem;
+  text-align: center;
+  letter-spacing: 0.12em;
+  outline: none;
+  width: 100%;
+}
+.modal-form input:focus { border-color: var(--accent-gold); }
+.modal-form input::placeholder { color: var(--text-muted); font-size: 0.85rem; letter-spacing: 0; }
+
+.modal-form button {
+  background: var(--orange);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 0.7rem 1rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+  margin-top: 0.2rem;
+}
+.modal-form button:hover { background: var(--orange-light); }
+.modal-form button:disabled { opacity: 0.6; cursor: default; }
+
+.login-error {
+  color: #ff7070;
+  font-size: 0.88rem;
+  margin-top: 0.75rem;
+}
+.login-loading {
+  color: var(--text-muted);
+  font-size: 0.88rem;
+  margin-top: 0.75rem;
+}
+
+/* ── ADMIN PANEL (po přihlášení) ── */
+.admin-banner {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 900;
+  background: var(--nav-bg);
+  border-top: 2px solid var(--accent-gold);
+  color: var(--text-light);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.6rem 1.5rem;
+  font-size: 0.9rem;
+}
+.admin-banner strong { color: var(--accent-gold); }
+.admin-banner button {
+  background: none;
+  border: 1px solid var(--panel-border);
+  color: var(--text-muted);
+  border-radius: 4px;
+  padding: 0.3rem 0.8rem;
+  cursor: pointer;
+  font-size: 0.82rem;
+}
+.admin-banner button:hover { color: var(--text-light); border-color: var(--text-muted); }
 
 .info-bar { background: var(--bar-bg); color: var(--bar-text); font-size: 0.83rem; padding: 5px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #d0c0a0; min-height: 30px; }
 .info-bar .bar-right { color: var(--tree-mid); font-style: italic; font-size: 0.8rem; }
@@ -127,8 +256,6 @@ html, body {
 @media (max-width: 600px) { .kontakt-inner { flex-direction: column; text-align: center; } }
 
 /* ── FOOTER s návštěvností a online ── */
-.footer-bar { background: var(--footer-bg); color: var(--text-muted); font-size: 0.88rem; padding: 10px 24px; display: flex; justify-content: center; align-items: center; gap: 14px; flex-wrap: wrap; }
-.footer-bar strong { color: #7dd444; font-size: 1.08rem; font-weight: 800; }
 .footer-sep { opacity: 0.35; }
 .online-admins { color: var(--accent-gold); }
 
@@ -246,6 +373,151 @@ html, body {
 .modal-form button:disabled { opacity: 0.6; cursor: default; }
 .login-error { color: #ff7070; font-size: 0.88rem; margin-top: 0.75rem; }
 .login-loading { color: var(--text-muted); font-size: 0.88rem; margin-top: 0.75rem; }
+
+/* ── NAPIŠTE NÁM v navbaru ── */
+.btn-napsat {
+  position: relative;
+  background: rgba(255,255,255,0.1);
+  color: var(--text-light);
+  border: 1px solid rgba(255,255,255,0.22);
+  padding: 7px 14px;
+  border-radius: 5px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background 0.2s;
+}
+.btn-napsat:hover { background: rgba(255,255,255,0.2); color: #fff; }
+.napsat-tip {
+  display: none;
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  background: var(--panel-bg);
+  border: 1px solid var(--panel-border);
+  color: var(--text-light);
+  font-size: 0.83rem;
+  font-weight: 400;
+  line-height: 1.6;
+  padding: 10px 16px;
+  border-radius: 8px;
+  box-shadow: 0 6px 24px rgba(0,0,0,0.5);
+  z-index: 300;
+  min-width: 220px;
+  text-align: left;
+  pointer-events: none;
+}
+.napsat-tip strong { color: var(--accent-gold); }
+.btn-napsat:hover .napsat-tip { display: block; }
+
+/* ── NÁVŠTĚVNOST v pravém panelu ── */
+.navstevnost-panel {
+  border-top: 2px solid var(--orange);
+  padding: 12px 14px 10px;
+  background: rgba(0,0,0,0.15);
+  flex-shrink: 0;
+}
+.navstevnost-title {
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+}
+.navstevnost-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  margin-bottom: 8px;
+}
+.navst-item {
+  background: rgba(255,255,255,0.06);
+  border-radius: 5px;
+  padding: 6px 4px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.navst-cislo {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #7dd444;
+  line-height: 1;
+}
+.navst-label {
+  font-size: 0.65rem;
+  color: var(--text-muted);
+}
+.online-pocet-panel {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  border-top: 1px solid rgba(255,255,255,0.08);
+  padding-top: 7px;
+  margin-top: 4px;
+}
+.online-pocet-panel strong { color: #7dd444; font-size: 1rem; }
+
+/* ── ZOBRAZIT HESLO / OKO ── */
+.heslo-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.heslo-wrap input { padding-right: 42px !important; }
+.btn-oko {
+  position: absolute;
+  right: 10px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.1rem;
+  color: var(--text-muted);
+  padding: 4px;
+  line-height: 1;
+  transition: color 0.15s;
+}
+.btn-oko:hover { color: var(--text-light); }
+.zobrazit-heslo-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-muted);
+  font-size: 0.82rem;
+  cursor: pointer;
+  user-select: none;
+  margin-top: -4px;
+}
+.zobrazit-heslo-label input[type=checkbox] { accent-color: var(--orange); cursor: pointer; }
+.link-zapomnel {
+  display: inline-block;
+  margin-top: 10px;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  text-decoration: underline;
+  text-decoration-style: dotted;
+  transition: color 0.15s;
+}
+.link-zapomnel:hover { color: var(--text-light); }
+.zapomnel-msg {
+  margin-top: 8px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid var(--panel-border);
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+.zapomnel-msg strong { color: var(--accent-gold); }
+
+/* ── FOOTER ── */
+.footer-bar { background: var(--footer-bg); color: var(--text-muted); font-size: 0.82rem; padding: 10px 24px; display: flex; justify-content: center; align-items: center; gap: 14px; flex-wrap: wrap; }
+.footer-copy { color: var(--text-muted); }
+.footer-email { color: var(--text-muted); text-decoration: none; transition: color 0.15s; }
+.footer-email:hover { color: var(--text-light); }
 
 /* ── ADMIN BANNER ── */
 .admin-banner { position: fixed; bottom: 0; left: 0; right: 0; z-index: 900; background: var(--nav-bg); border-top: 2px solid var(--accent-gold); color: var(--text-light); display: flex; align-items: center; justify-content: space-between; padding: 0.6rem 1.5rem; font-size: 0.9rem; }
