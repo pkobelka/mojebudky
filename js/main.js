@@ -1,4 +1,4 @@
-const DNY = ['neděle','pondělí','úterý','středa','čtvrtek','pátek','sobota'];
+const DNY = ['neděle','pondelí','úterý','středa','čtvrtek','pátek','sobota'];
 const MESICE = ['ledna','února','března','dubna','května','června','července','srpna','září','října','listopadu','prosince'];
 
 const PREZDIVKY = {
@@ -15,7 +15,7 @@ let spravciJmena = [];
 function pluralSpravcu(n) {
   if (n === 1) return '1 správce';
   if (n >= 2 && n <= 4) return `${n} správci`;
-  return `${n} správců`;
+  return `${n} správce`;
 }
 
 function najdiSvatekSpravce(svarekJmeno) {
@@ -31,7 +31,7 @@ async function nactiSpravce() {
     spravciJmena = await res.json();
     aktualizujListu();
   } catch(e) {
-    console.error('Chyba načítání správců:', e);
+    console.error('Chyba načítání správce:', e);
   }
 }
 
@@ -205,6 +205,32 @@ function nactiPodekovani(podekovani) {
   wrap.style.display = 'block';
 }
 
+function inicializujPushNotifikace() {
+  const area = document.getElementById('pushNotifArea');
+  if (!area) return;
+
+  if (!('Notification' in window)) {
+    area.innerHTML = '<span class="push-info">⚠️ Notifikace nejsou podporovány</span>';
+    return;
+  }
+
+  function aktualizujStav() {
+    if (Notification.permission === 'granted') {
+      area.innerHTML = '<span class="push-info push-ok">✅ Notifikace povoleny</span>';
+    } else if (Notification.permission === 'denied') {
+      area.innerHTML = '<span class="push-info push-denied">❌ Notifikace blokovány – změňte v nastavení prohlížeče</span>';
+    } else {
+      area.innerHTML = '<button class="btn-push-notif" id="btnPushNotif">🔔 Povolit push notifikace</button>';
+      document.getElementById('btnPushNotif').addEventListener('click', async () => {
+        await Notification.requestPermission();
+        aktualizujStav();
+      });
+    }
+  }
+
+  aktualizujStav();
+}
+
 function inicializujHamburger() {
   const btn = document.getElementById('navHamburger');
   const links = document.getElementById('navLinks');
@@ -258,4 +284,5 @@ document.addEventListener('DOMContentLoaded', () => {
   inicializujMapu();
   inicializujFullscreenMapu();
   inicializujHamburger();
+  inicializujPushNotifikace();
 });
