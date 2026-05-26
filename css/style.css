@@ -484,6 +484,61 @@ html, body {
 }
 .online-pocet-panel strong { color: #7dd444; font-size: 1rem; }
 
+/* ── PŘIDAT NA PLOCHU ── */
+.pridat-na-plochu {
+  border-top: 1px solid var(--panel-border);
+  padding: 10px 14px 12px;
+  background: rgba(0,0,0,0.1);
+  flex-shrink: 0;
+}
+.pridat-title {
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+}
+.pridat-body {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+.pridat-ikona {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  flex-shrink: 0;
+  object-fit: cover;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+}
+.pridat-text {
+  flex: 1;
+  font-size: 0.74rem;
+  line-height: 1.5;
+}
+.pridat-text p {
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+.pridat-navod {
+  color: var(--text-muted);
+  font-size: 0.71rem;
+  margin-bottom: 2px;
+}
+.pridat-navod em {
+  color: var(--text-light);
+  font-style: normal;
+  font-weight: 600;
+}
+.pridat-os { font-weight: 700; color: var(--text-light); }
+.pridat-push {
+  margin-top: 6px;
+  color: var(--accent-gold);
+  font-size: 0.71rem;
+  font-style: italic;
+}
+
 /* ── ZOBRAZIT HESLO / OKO ── */
 .heslo-wrap {
   position: relative;
