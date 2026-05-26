@@ -215,7 +215,7 @@ async function hledejBudku(dotaz) {
     const data = await res.json();
     if (data && data.length > 0) {
       const { lat, lon, display_name } = data[0];
-      mapInstance.flyTo([parseFloat(lat), parseFloat(lon)], 12, { duration: 1.2 });
+      mapInstance.flyTo([parseFloat(lat), parseFloat(lon)], 14, { duration: 1.2 });
     }
   } catch {}
 }
