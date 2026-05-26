@@ -211,7 +211,10 @@ async function inicializujMapu() {
   mapInstance = L.map('map', {
     center: [49.75, 15.7],
     zoom: 8,
-    zoomControl: true
+    zoomControl: true,
+    minZoom: 6,
+    maxBounds: [[46.5, 1.5], [54.5, 24.0]],
+    maxBoundsViscosity: 1.0
   });
 
   L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
