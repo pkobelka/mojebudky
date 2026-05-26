@@ -47,6 +47,7 @@ async function nactiStatistiky() {
 
     nactiPribehy(data.pribehy);
     nactiPartnery(data.partneri);
+    nactiPodekovani(data.podekovani);
 
     const nav = data.navstevnost;
     document.getElementById('footer-stats').innerHTML =
@@ -129,6 +130,12 @@ function nactiPribehy(pribehy) {
         <div class="pribeh-datum">${p.datum}</div>
       </div>
     </div>`).join('');
+}
+
+function nactiPodekovani(seznam) {
+  const el = document.getElementById('podekovaniList');
+  if (!el || !seznam) return;
+  el.innerHTML = seznam.map(j => `<span class="podekovani-item">${j}</span>`).join('');
 }
 
 function nactiPartnery(partneri) {

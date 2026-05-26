@@ -50,6 +50,10 @@
     { "nazev": "Building Expert", "url": null },
     { "nazev": "AVK Litoměřice", "url": null }
   ],
+  "podekovani": [
+    "Alka", "můj Peta", "můj Tom", "Milan H.", "Martin N.",
+    "Laďa Š.", "Luky", "Honza", "Tom", "Pavel V.", "Luboš Ž.", "Radek P."
+  ],
   "navstevnost": {
     "celkem": 14520,
     "dnes": 142,
