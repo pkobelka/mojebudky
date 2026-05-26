@@ -102,7 +102,7 @@ html, body {
 .info-bar .bar-right.bar-svatek { color: var(--orange); font-style: normal; font-weight: 600; }
 .bar-gratulace { color: var(--orange); font-weight: 700; }
 
-.main-content { display: flex; flex: 1; height: calc(100vh - 98px); min-height: 500px; }
+.main-content { display: flex; flex: 1; height: calc(100vh - 148px); min-height: 500px; }
 .panel { background: var(--panel-bg); border: 1px solid var(--panel-border); width: 250px; flex-shrink: 0; display: flex; flex-direction: column; overflow: hidden; }
 .panel-title { background: var(--panel-header); color: var(--text-light); font-size: 0.95rem; font-weight: 700; padding: 10px 14px; letter-spacing: 0.3px; border-bottom: 2px solid var(--orange); flex-shrink: 0; }
 .panel-left .panel-title::before { content: '🌿 '; }
@@ -246,7 +246,10 @@ html, body {
 .druh-pocet-label { color: var(--text-muted); font-size: 0.7rem; margin-left: 2px; }
 
 /* ── PŘIDAT NA PLOCHU ── */
-.pridat-na-plochu { border-top: 1px solid var(--panel-border); padding: 10px 14px 12px; background: rgba(0,0,0,0.1); flex-shrink: 0; }
+.pridat-na-plochu { border-top: 1px solid var(--panel-border); padding: 10px 14px 12px; background: rgba(0,0,0,0.1); flex-shrink: 0; display: none; }
+.oblibene-pc { border-top: 1px solid var(--panel-border); padding: 10px 14px 12px; background: rgba(0,0,0,0.1); flex-shrink: 0; font-size: 0.78rem; color: var(--text-muted); display: block; }
+.oblibene-pc strong { color: var(--accent-gold); display: block; margin-bottom: 4px; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px; }
+.oblibene-pc span { display: block; margin-bottom: 3px; }
 .pridat-title { color: var(--text-muted); font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
 .pridat-body { display: flex; gap: 10px; align-items: flex-start; }
 .pridat-ikona { width: 44px; height: 44px; border-radius: 10px; flex-shrink: 0; object-fit: cover; box-shadow: 0 2px 8px rgba(0,0,0,0.5); }
@@ -285,6 +288,8 @@ html, body {
 }
 
 @media (max-width: 900px) {
+  .pridat-na-plochu { display: block; }
+  .oblibene-pc { display: none; }
   .main-content { flex-direction: column; height: auto; }
   .panel { width: 100%; max-height: 200px; }
   .map-wrapper { height: 55vw; min-height: 340px; }
