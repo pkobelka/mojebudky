@@ -135,9 +135,18 @@
     { "nazev": "METALI", "url": "http://www.metali.cz/?page=sluzby", "logo": "img/METALI.png" }
   ],
   "podekovani": [
+    { "jmeno": "Peťa", "popis": "bez něj by ten projekt nikdy nevznikl" },
+    { "jmeno": "Tomáš", "popis": "díky za SW help" },
+    { "jmeno": "Lukáš", "popis": "za podporu" },
+    { "jmeno": "Tom", "popis": "za podporu" },
+    { "jmeno": "Honza", "popis": "za podporu" },
+    { "jmeno": "Pavel V.", "popis": "hodný stolař" },
+    { "jmeno": "Luboš Ž.", "popis": "AutoCad-master" },
+    { "jmeno": "Radek P.", "popis": "design" },
+    { "jmeno": "Laďa Š.", "popis": "za podporu" },
+    { "jmeno": "Alka", "popis": "za podporu a pochopení ❤️" },
     { "jmeno": "Martin N.", "popis": "vrchní ptákolog" },
-    { "jmeno": "Milan H.", "popis": "druhá polovina projektu" },
-    { "jmeno": "Alka", "popis": "za podporu" }
+    { "jmeno": "Milan H.", "popis": "druhá polovina projektu" }
   ],
   "navstevnost": {
     "celkem": 14520,
