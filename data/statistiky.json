@@ -18,7 +18,7 @@
       "budka_id": 37,
       "ptak": "Sýkora modřinka",
       "ikona": "modrinka",
-      "text": "První modřinka v nové sezóně si vybrala budku nedaleko Boskovice.",
+      "text": "První modřinka v nové sezóně si vybrala budku nedleko Boskovice.",
       "datum": "28. 3. 2024",
       "cas": "07:40"
     },
@@ -57,7 +57,7 @@
       "vedecky": "Parus major",
       "pocet": 22,
       "otvor": "32 mm",
-      "popis": "Největší česká sýkora, snadno poznatelná žlutým břichem s černým pruhem. Nejčastější obyvatel budek v projektu – obsadí téměř každou vhodnou budku.",
+      "popis": "Největší česká sýkora, snadno poznatelná žlutým břichem s čcrným pruhem. Nejlastější obyvatel budek v projektu – osedí téměř každou vhodnou budku.",
       "wiki": "https://cs.wikipedia.org/wiki/S%C3%BDkora_ko%C5%88adra"
     },
     {
@@ -66,7 +66,7 @@
       "vedecky": "Cyanistes caeruleus",
       "pocet": 11,
       "otvor": "28 mm",
-      "popis": "Pestrobarevná sýkorka s modrou čepičkou a žlutým bříškem. Preferuje budky s menším otvorem 28 mm. V projektu hojně zastoupena.",
+      "popis": "Pestrobarevná sýkorka s modrou čepčkou a žlutým bříškem. Preferuje budky s menším otvorem 28 mm. V projektu hojně zastoupena.",
       "wiki": "https://cs.wikipedia.org/wiki/S%C3%BDkora_mod%C5%99inka"
     },
     {
@@ -75,7 +75,7 @@
       "vedecky": "Passer domesticus",
       "pocet": 3,
       "otvor": "32 mm",
-      "popis": "Věrný společník člověka, v posledních dekádách bohužel ubývá. Obsadí budky s větším otvorem, rád se usídlí poblíž lidských obydlí.",
+      "popis": "Věrný společník člověka, v posledních dekadách bohužel ubývá. Obsádí budky s větším otvorem, rád se usídlí poblíž lidských obydíl.",
       "wiki": "https://cs.wikipedia.org/wiki/Vrabec_dom%C3%A1c%C3%AD"
     },
     {
@@ -84,7 +84,7 @@
       "vedecky": "Lophophanes cristatus",
       "pocet": 1,
       "otvor": "28–32 mm",
-      "popis": "Vzácnější sýkora s typickým chocholkem. Hnízdí hlavně v jehličnatých lesích. Výskyt v budce je pro projekt vzácnou odměnou!",
+      "popis": "Vzácnější sýkora s typickým chocholkem. Hndí hlavně v jehličnatých lesích. Výskyt v budce je pro projekt vzácnou odměnou!",
       "wiki": "https://cs.wikipedia.org/wiki/S%C3%BDkora_paruk%C3%A1%C5%99ka"
     },
     {
@@ -93,7 +93,7 @@
       "vedecky": "Garrulus glandarius",
       "pocet": 1,
       "otvor": "45 mm",
-      "popis": "Hlasitý a pestrobarevný zástupce krkavcovitých. V budce je výjimečným hostem – vyžaduje velký otvor a prostornější hnízdní komoru.",
+      "popis": "Hlasitý a pestrobarevný zástupce krkavcovitých. V budce je výjičným hostem – vyžaduje velký otvor a prostonnější hndí komoru.",
       "wiki": "https://cs.wikipedia.org/wiki/Sojka_obecn%C3%A1"
     }
   ],
@@ -113,7 +113,7 @@
     {
       "nazev": "BirdNET",
       "url": "https://birdnet.cornell.edu/",
-      "popis": "Rozpoznávání ptačího zpěvu pomocí AI",
+      "popis": "Rozpoznávání ptačího zpvu pom. AI",
       "ikona": "🎵"
     },
     {
@@ -135,16 +135,16 @@
     { "nazev": "METALI", "url": "http://www.metali.cz/?page=sluzby", "logo": "img/METALI.png" }
   ],
   "podekovani": [
-    { "jmeno": "Peťa", "popis": "bez něj by ten projekt nikdy nevznikl" },
-    { "jmeno": "Tomáš", "popis": "díky za SW help" },
+    { "jmeno": "můj Peťa", "popis": "bez něj by tento projekt nikdy nevznikl" },
+    { "jmeno": "můj Tom", "popis": "za super nakopnutí na WEB" },
     { "jmeno": "Lukáš", "popis": "za podporu" },
     { "jmeno": "Tom", "popis": "za podporu" },
     { "jmeno": "Honza", "popis": "za podporu" },
-    { "jmeno": "Pavel V.", "popis": "hodný stolař" },
+    { "jmeno": "Pavel V.", "popis": "hodný stolář" },
     { "jmeno": "Luboš Ž.", "popis": "AutoCad-master" },
     { "jmeno": "Radek P.", "popis": "design" },
     { "jmeno": "Laďa Š.", "popis": "za podporu" },
-    { "jmeno": "Alka", "popis": "za podporu a pochopení ❤️" },
+    { "jmeno": "Alka ❤️", "popis": "za podporu a pochopení" },
     { "jmeno": "Martin N.", "popis": "vrchní ptákolog" },
     { "jmeno": "Milan H.", "popis": "druhá polovina projektu" }
   ],
