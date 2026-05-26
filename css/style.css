@@ -68,7 +68,6 @@ html, body {
 .search-box button:hover { color: var(--text-light); }
 .btn-login { background: var(--orange); color: white; text-decoration: none; padding: 7px 16px; border-radius: 5px; font-size: 0.88rem; font-weight: 600; white-space: nowrap; transition: background 0.2s; border: none; cursor: pointer; }
 .btn-login:hover { background: var(--orange-dark); }
-.btn-login { border: none; cursor: pointer; }
 
 /* ── LOGIN MODAL ── */
 .modal-overlay {
@@ -239,8 +238,32 @@ html, body {
 .partners-section h3 { color: var(--text-muted); font-size: 0.8rem; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 10px; }
 .podekovani-wrap { margin-top: 10px; font-size: 0.8rem; color: var(--text-muted); }
 .podekovani-label { font-weight: 600; margin-right: 6px; }
-.podekovani-osoba { color: var(--text-light); margin-right: 12px; }
-.podekovani-osoba em { color: var(--text-muted); font-style: italic; font-size: 0.75rem; margin-left: 4px; }
+.podekovani-osoba {
+  position: relative;
+  color: var(--text-light);
+  margin-right: 12px;
+  cursor: default;
+  display: inline-block;
+}
+.pod-tip {
+  display: none;
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(55, 25, 5, 0.96);
+  border: 1px solid var(--orange);
+  color: var(--accent-gold);
+  font-style: italic;
+  font-size: 0.78rem;
+  padding: 5px 18px;
+  border-radius: 30px;
+  white-space: nowrap;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.5);
+  z-index: 100;
+  pointer-events: none;
+}
+.podekovani-osoba:hover .pod-tip { display: block; }
 #partneriList { display: flex; flex-wrap: nowrap; gap: 10px; justify-content: center; align-items: center; overflow-x: auto; padding-bottom: 2px; }
 .partner-item { background: rgba(255,255,255,0.1); color: var(--text-light); padding: 5px 14px; border-radius: 20px; font-size: 0.83rem; text-decoration: none; border: 1px solid rgba(255,255,255,0.15); transition: background 0.2s; white-space: nowrap; flex-shrink: 0; }
 .partner-item:hover { background: rgba(255,255,255,0.18); }
@@ -255,7 +278,7 @@ html, body {
 .btn-kontakt:hover { background: var(--orange-dark); }
 @media (max-width: 600px) { .kontakt-inner { flex-direction: column; text-align: center; } }
 
-/* ── FOOTER s návštěvností a online ── */
+/* ── FOOTER ── */
 .footer-sep { opacity: 0.35; }
 .online-admins { color: var(--accent-gold); }
 
