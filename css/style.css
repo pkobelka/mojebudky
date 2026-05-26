@@ -52,7 +52,7 @@ html, body {
 
 .navbar { background: var(--nav-bg); display: flex; align-items: center; padding: 0 20px; height: 68px; gap: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.4); }
 .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; flex-shrink: 0; }
-.nav-logo-img { width: 30px; height: 40px; }
+.nav-logo-img { width: 44px; height: 58px; }
 .stat-svg-icon { width: 36px; height: 36px; object-fit: contain; }
 .logo-textblock { display: flex; flex-direction: column; line-height: 1.1; }
 .logo-text { color: var(--text-light); font-size: 1.25rem; font-weight: 700; letter-spacing: 0.5px; }
