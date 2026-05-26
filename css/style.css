@@ -120,7 +120,14 @@ html, body {
 #map { width: 100%; height: 100%; }
 
 .panel-right .panel-title::before { content: '📊 '; }
-.stats-grid { padding: 14px; display: flex; flex-direction: column; gap: 12px; flex: 1; }
+
+/* ── SCROLLABLE WRAPPER FOR RIGHT PANEL ── */
+.panel-scroll { overflow-y: auto; flex: 1; min-height: 0; }
+.panel-scroll::-webkit-scrollbar { width: 4px; }
+.panel-scroll::-webkit-scrollbar-track { background: transparent; }
+.panel-scroll::-webkit-scrollbar-thumb { background: var(--panel-border); border-radius: 2px; }
+
+.stats-grid { padding: 14px; display: flex; flex-direction: column; gap: 12px; }
 .stat-item { display: flex; align-items: center; gap: 12px; padding: 10px 12px; background: rgba(255,255,255,0.06); border-radius: 6px; border-left: 3px solid var(--orange); }
 .stat-icon { font-size: 1.6rem; flex-shrink: 0; width: 36px; text-align: center; }
 .stat-value { font-size: 1.8rem; font-weight: 800; color: var(--text-light); line-height: 1; }
@@ -164,6 +171,8 @@ html, body {
 .popup-nazev-hlavni { font-weight: 800; font-size: 1.05rem; color: #3a1a06; }
 .popup-cislo-sub { font-weight: 400; font-size: 0.8rem; color: #a07050; }
 .popup-badge { font-size: 0.78rem; font-weight: 600; }
+.popup-foto { padding: 0; }
+.popup-foto img { width: 100%; display: block; max-height: 200px; object-fit: cover; }
 .popup-ptak { display: flex; align-items: center; gap: 8px; padding: 8px 14px 4px; color: #2d5516; font-weight: 600; font-size: 0.85rem; }
 .popup-bird-icon { flex-shrink: 0; line-height: 0; }
 .popup-detail { padding: 4px 14px 8px; display: flex; flex-direction: column; gap: 3px; }
@@ -204,6 +213,68 @@ html, body {
 .nav-hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
 .nav-hamburger.open span:nth-child(2) { opacity: 0; }
 .nav-hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+/* ── NAPIŠTE NÁM v navbaru ── */
+.btn-napsat { position: relative; background: rgba(255,255,255,0.1); color: var(--text-light); border: 1px solid rgba(255,255,255,0.22); padding: 7px 14px; border-radius: 5px; font-size: 0.88rem; font-weight: 600; text-decoration: none; white-space: nowrap; transition: background 0.2s; }
+.btn-napsat:hover { background: rgba(255,255,255,0.2); color: #fff; }
+.napsat-tip { display: none; position: absolute; top: calc(100% + 10px); right: 0; background: var(--panel-bg); border: 1px solid var(--panel-border); color: var(--text-light); font-size: 0.83rem; font-weight: 400; line-height: 1.6; padding: 10px 16px; border-radius: 8px; box-shadow: 0 6px 24px rgba(0,0,0,0.5); z-index: 300; min-width: 220px; text-align: left; pointer-events: none; }
+.napsat-tip strong { color: var(--accent-gold); }
+.btn-napsat:hover .napsat-tip { display: block; }
+
+/* ── NÁVŠTĚVNOST v pravém panelu ── */
+.navstevnost-panel { border-top: 2px solid var(--orange); padding: 12px 14px 10px; background: rgba(0,0,0,0.15); flex-shrink: 0; }
+.navstevnost-title { color: var(--text-muted); font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+.navstevnost-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 8px; }
+.navst-item { background: rgba(255,255,255,0.06); border-radius: 5px; padding: 6px 4px; text-align: center; display: flex; flex-direction: column; gap: 2px; }
+.navst-cislo { font-size: 1.15rem; font-weight: 800; color: #7dd444; line-height: 1; }
+.navst-label { font-size: 0.65rem; color: var(--text-muted); }
+.online-pocet-panel { font-size: 0.82rem; color: var(--text-muted); border-top: 1px solid rgba(255,255,255,0.08); padding-top: 7px; margin-top: 4px; }
+.online-pocet-panel strong { color: #7dd444; font-size: 1rem; }
+
+/* ── DRUHY PTÁKŮ ── */
+.druhy-panel { border-top: 1px solid var(--panel-border); padding: 10px 14px 12px; background: rgba(0,0,0,0.1); flex-shrink: 0; }
+.druhy-title { color: var(--text-muted); font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+.druhy-list { display: flex; flex-direction: column; gap: 4px; }
+.druh-item { display: flex; align-items: center; gap: 8px; padding: 5px 8px; background: rgba(255,255,255,0.05); border-radius: 5px; cursor: pointer; transition: background 0.15s; }
+.druh-item:hover { background: rgba(255,255,255,0.12); }
+.druh-svg { flex-shrink: 0; line-height: 0; }
+.druh-nazev { flex: 1; color: var(--text-light); font-size: 0.78rem; font-weight: 600; }
+.druh-pocet { color: var(--accent-gold); font-size: 0.82rem; font-weight: 700; }
+.druh-pocet-label { color: var(--text-muted); font-size: 0.7rem; margin-left: 2px; }
+
+/* ── PŘIDAT NA PLOCHU ── */
+.pridat-na-plochu { border-top: 1px solid var(--panel-border); padding: 10px 14px 12px; background: rgba(0,0,0,0.1); flex-shrink: 0; }
+.pridat-title { color: var(--text-muted); font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+.pridat-body { display: flex; gap: 10px; align-items: flex-start; }
+.pridat-ikona { width: 44px; height: 44px; border-radius: 10px; flex-shrink: 0; object-fit: cover; box-shadow: 0 2px 8px rgba(0,0,0,0.5); }
+.pridat-text { flex: 1; font-size: 0.74rem; line-height: 1.5; }
+.pridat-text p { color: var(--text-light); margin-bottom: 4px; }
+.pridat-navod { color: var(--text-light); font-size: 0.71rem; margin-bottom: 2px; }
+.pridat-navod em { color: var(--text-light); font-style: normal; font-weight: 600; }
+.pridat-os { font-weight: 700; color: var(--text-light); }
+.btn-push-notif { display: block; width: 100%; margin-top: 7px; background: var(--orange); color: #fff; border: none; border-radius: 20px; padding: 6px 10px; font-size: 0.74rem; font-weight: 600; cursor: pointer; transition: background 0.2s; text-align: center; }
+.btn-push-notif:hover { background: var(--orange-light); }
+.push-info { display: block; margin-top: 7px; font-size: 0.71rem; font-style: italic; }
+.push-ok { color: #7dd444; }
+.push-denied { color: var(--text-muted); }
+
+/* ── DRUH PTÁKA DETAIL MODAL ── */
+.druh-modal-overlay { position: fixed; inset: 0; z-index: 2000; background: rgba(10,30,5,0.82); display: flex; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
+.druh-modal-overlay[hidden] { display: none; }
+.druh-modal-box { background: var(--panel-bg); border: 1px solid var(--panel-border); border-radius: 12px; padding: 1.5rem 1.8rem; max-width: 400px; width: 92%; position: relative; box-shadow: 0 8px 40px rgba(0,0,0,0.55); }
+.druh-modal-zavrit { position: absolute; top: 0.6rem; right: 0.9rem; background: none; border: none; color: var(--text-muted); font-size: 1.6rem; line-height: 1; cursor: pointer; }
+.druh-modal-zavrit:hover { color: var(--text-light); }
+.druh-modal-header { display: flex; align-items: center; gap: 14px; margin-bottom: 1rem; }
+.druh-modal-icon { flex-shrink: 0; line-height: 0; }
+.druh-modal-nazev { color: var(--accent-gold); font-size: 1.2rem; font-weight: 700; }
+.druh-modal-vedecky { color: var(--text-muted); font-size: 0.82rem; font-style: italic; }
+.druh-modal-popis { color: var(--text-light); font-size: 0.85rem; line-height: 1.6; margin-bottom: 1rem; }
+.druh-modal-info { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 1rem; }
+.druh-modal-info-item { background: rgba(255,255,255,0.06); border-radius: 6px; padding: 8px 10px; }
+.druh-modal-info-label { color: var(--text-muted); font-size: 0.72rem; margin-bottom: 2px; }
+.druh-modal-info-value { color: var(--text-light); font-size: 0.88rem; font-weight: 600; }
+.druh-modal-wiki { display: inline-block; color: var(--orange-light); font-size: 0.82rem; text-decoration: none; transition: color 0.15s; }
+.druh-modal-wiki:hover { color: var(--accent-gold); text-decoration: underline; }
 
 /* Skryjeme sekci 'Přidat na plochu' když běží jako nainstalovaná aplikace */
 @media (display-mode: standalone) {
@@ -251,59 +322,6 @@ html, body {
 }
 
 /* ── PŘIHLAŠOVACÍ MODAL ── */
-.modal-overlay { position: fixed; inset: 0; z-index: 1000; background: rgba(10, 30, 5, 0.78); display: flex; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
-.modal-overlay[hidden] { display: none; }
-.modal-box { background: var(--panel-bg); border: 1px solid var(--panel-border); border-radius: 12px; padding: 2rem 2.5rem 1.8rem; max-width: 360px; width: 90%; position: relative; text-align: center; box-shadow: 0 8px 40px rgba(0,0,0,0.55); }
-.modal-zavrit { position: absolute; top: 0.6rem; right: 0.9rem; background: none; border: none; color: var(--text-muted); font-size: 1.6rem; line-height: 1; cursor: pointer; }
-.modal-zavrit:hover { color: var(--text-light); }
-.modal-logo-wrap { margin-bottom: 0.8rem; }
-.modal-logo-wrap img { filter: brightness(1.3); }
-.modal-nadpis { color: var(--accent-gold); font-size: 1.25rem; margin-bottom: 0.3rem; }
-.modal-hint { color: var(--text-muted); font-size: 0.82rem; margin-bottom: 1.4rem; }
-.modal-form { display: flex; flex-direction: column; gap: 0.75rem; }
-.modal-form input { background: rgba(255,255,255,0.07); border: 1px solid var(--panel-border); border-radius: 6px; color: var(--text-light); font-size: 1.1rem; padding: 0.6rem 1rem; text-align: center; letter-spacing: 0.12em; outline: none; width: 100%; }
-.modal-form input:focus { border-color: var(--accent-gold); }
-.modal-form input::placeholder { color: var(--text-muted); font-size: 0.85rem; letter-spacing: 0; }
-.modal-form button { background: var(--orange); color: #fff; border: none; border-radius: 6px; padding: 0.7rem 1rem; font-size: 1rem; font-weight: 600; cursor: pointer; transition: background 0.2s; margin-top: 0.2rem; }
-.modal-form button:hover { background: var(--orange-light); }
-.modal-form button:disabled { opacity: 0.6; cursor: default; }
-.login-error { color: #ff7070; font-size: 0.88rem; margin-top: 0.75rem; }
-.login-loading { color: var(--text-muted); font-size: 0.88rem; margin-top: 0.75rem; }
-
-/* ── NAPIŠTE NÁM v navbaru ── */
-.btn-napsat { position: relative; background: rgba(255,255,255,0.1); color: var(--text-light); border: 1px solid rgba(255,255,255,0.22); padding: 7px 14px; border-radius: 5px; font-size: 0.88rem; font-weight: 600; text-decoration: none; white-space: nowrap; transition: background 0.2s; }
-.btn-napsat:hover { background: rgba(255,255,255,0.2); color: #fff; }
-.napsat-tip { display: none; position: absolute; top: calc(100% + 10px); right: 0; background: var(--panel-bg); border: 1px solid var(--panel-border); color: var(--text-light); font-size: 0.83rem; font-weight: 400; line-height: 1.6; padding: 10px 16px; border-radius: 8px; box-shadow: 0 6px 24px rgba(0,0,0,0.5); z-index: 300; min-width: 220px; text-align: left; pointer-events: none; }
-.napsat-tip strong { color: var(--accent-gold); }
-.btn-napsat:hover .napsat-tip { display: block; }
-
-/* ── NÁVŠTĚVNOST v pravém panelu ── */
-.navstevnost-panel { border-top: 2px solid var(--orange); padding: 12px 14px 10px; background: rgba(0,0,0,0.15); flex-shrink: 0; }
-.navstevnost-title { color: var(--text-muted); font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
-.navstevnost-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 8px; }
-.navst-item { background: rgba(255,255,255,0.06); border-radius: 5px; padding: 6px 4px; text-align: center; display: flex; flex-direction: column; gap: 2px; }
-.navst-cislo { font-size: 1.15rem; font-weight: 800; color: #7dd444; line-height: 1; }
-.navst-label { font-size: 0.65rem; color: var(--text-muted); }
-.online-pocet-panel { font-size: 0.82rem; color: var(--text-muted); border-top: 1px solid rgba(255,255,255,0.08); padding-top: 7px; margin-top: 4px; }
-.online-pocet-panel strong { color: #7dd444; font-size: 1rem; }
-
-/* ── PŘIDAT NA PLOCHU ── */
-.pridat-na-plochu { border-top: 1px solid var(--panel-border); padding: 10px 14px 12px; background: rgba(0,0,0,0.1); flex-shrink: 0; }
-.pridat-title { color: var(--text-muted); font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
-.pridat-body { display: flex; gap: 10px; align-items: flex-start; }
-.pridat-ikona { width: 44px; height: 44px; border-radius: 10px; flex-shrink: 0; object-fit: cover; box-shadow: 0 2px 8px rgba(0,0,0,0.5); }
-.pridat-text { flex: 1; font-size: 0.74rem; line-height: 1.5; }
-.pridat-text p { color: var(--text-muted); margin-bottom: 4px; }
-.pridat-navod { color: var(--text-muted); font-size: 0.71rem; margin-bottom: 2px; }
-.pridat-navod em { color: var(--text-light); font-style: normal; font-weight: 600; }
-.pridat-os { font-weight: 700; color: var(--text-light); }
-.btn-push-notif { display: block; width: 100%; margin-top: 7px; background: var(--orange); color: #fff; border: none; border-radius: 20px; padding: 6px 10px; font-size: 0.74rem; font-weight: 600; cursor: pointer; transition: background 0.2s; text-align: center; }
-.btn-push-notif:hover { background: var(--orange-light); }
-.push-info { display: block; margin-top: 7px; font-size: 0.71rem; font-style: italic; }
-.push-ok { color: #7dd444; }
-.push-denied { color: var(--text-muted); }
-
-/* ── ZOBRAZIT HESLO / OKO ── */
 .heslo-wrap { position: relative; display: flex; align-items: center; }
 .heslo-wrap input { padding-right: 42px !important; }
 .btn-oko { position: absolute; right: 10px; background: none; border: none; cursor: pointer; font-size: 1.1rem; color: var(--text-muted); padding: 4px; line-height: 1; transition: color 0.15s; }
@@ -314,3 +332,9 @@ html, body {
 .link-zapomnel:hover { color: var(--text-light); }
 .zapomnel-msg { margin-top: 8px; background: rgba(255,255,255,0.06); border: 1px solid var(--panel-border); border-radius: 6px; padding: 8px 12px; font-size: 0.82rem; color: var(--text-muted); line-height: 1.5; }
 .zapomnel-msg strong { color: var(--accent-gold); }
+
+/* ── ADMIN BANNER ── */
+.admin-banner { position: fixed; bottom: 0; left: 0; right: 0; z-index: 900; background: var(--nav-bg); border-top: 2px solid var(--accent-gold); color: var(--text-light); display: flex; align-items: center; justify-content: space-between; padding: 0.6rem 1.5rem; font-size: 0.9rem; }
+.admin-banner strong { color: var(--accent-gold); font-size: inherit; }
+.admin-banner button { background: none; border: 1px solid var(--panel-border); color: var(--text-muted); border-radius: 4px; padding: 0.3rem 0.8rem; cursor: pointer; font-size: 0.82rem; }
+.admin-banner button:hover { color: var(--text-light); border-color: var(--text-muted); }
