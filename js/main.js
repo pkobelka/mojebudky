@@ -230,7 +230,7 @@ function nactiDruhyPtaku(druhy) {
         return `<div class="druh-item" data-id="${d.id}">
           <div class="druh-svg">${icon}</div>
           <span class="druh-nazev">${d.nazev}</span>
-          <span class="druh-pocet">${d.pocet}</span><span class="druh-pocet-label">budek</span>
+          <span class="druh-pocet">${d.pocet}</span><span class="druh-pocet-label">${d.pocet === 1 ? 'budka' : d.pocet <= 4 ? 'budky' : 'budek'}</span>
         </div>`;
       }).join('')}
     </div>`;
