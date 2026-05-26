@@ -346,17 +346,31 @@ function inicializujFullscreenMapu() {
   const navMapa = document.getElementById('nav-mapa');
   const mainContent = document.querySelector('.main-content');
   const btnZpet = document.getElementById('btn-zpet-mapa');
+  const mapWrapper = document.querySelector('.map-wrapper');
   if (!navMapa || !mainContent || !btnZpet) return;
 
-  navMapa.addEventListener('click', e => {
-    e.preventDefault();
+  function rozbalMapu() {
     mainContent.classList.add('mapa-fullscreen');
     btnZpet.style.display = 'block';
     if (typeof mapInstance !== 'undefined' && mapInstance) {
       setTimeout(() => mapInstance.invalidateSize(), 50);
     }
     mainContent.scrollIntoView({ behavior: 'smooth' });
-  });
+  }
+
+  navMapa.addEventListener('click', e => { e.preventDefault(); rozbalMapu(); });
+
+  if (mapWrapper) {
+    const hint = document.createElement('div');
+    hint.className = 'map-hint';
+    hint.textContent = '⛶ Klikněte pro zobrazení na celé ploše';
+    mapWrapper.appendChild(hint);
+
+    mapWrapper.addEventListener('click', e => {
+      if (mainContent.classList.contains('mapa-fullscreen')) return;
+      if (e.target.closest('.leaflet-container, .btn-zpet-mapa')) rozbalMapu();
+    });
+  }
 
   btnZpet.addEventListener('click', () => {
     mainContent.classList.remove('mapa-fullscreen');
