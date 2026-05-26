@@ -38,9 +38,11 @@ function zobrazAdminPanel(loginId) {
     spravciData = null;
     prihlaseneId = null;
     btnPrihlasit.textContent = 'Vstup pro správce';
+    btnPrihlasit.classList.remove('prihlaseny');
   });
 
   btnPrihlasit.textContent = `Budka č. ${cislo}`;
+  btnPrihlasit.classList.add('prihlaseny');
 }
 
 document.addEventListener('DOMContentLoaded', () => {

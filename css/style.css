@@ -202,6 +202,13 @@ html, body {
 }
 .btn-login:hover { background: var(--orange-dark); }
 .btn-login { border: none; cursor: pointer; }
+.btn-login.prihlaseny {
+  background: transparent;
+  color: var(--accent-gold);
+  text-decoration: underline;
+  font-weight: 600;
+  cursor: default;
+}
 
 /* ── LOGIN MODAL ── */
 .modal-overlay {
