@@ -128,4 +128,23 @@ document.addEventListener('DOMContentLoaded', () => {
   [inputId, inputHeslo].forEach(el => {
     el.addEventListener('keydown', (e) => { if (e.key === 'Enter') pokusOPrihlaseni(); });
   });
+
+  const btnOko = document.getElementById('btnOko');
+  const cbZobrazit = document.getElementById('cbZobrazitHeslo');
+  function toggleHeslo(zobrazit) {
+    inputHeslo.type = zobrazit ? 'text' : 'password';
+    if (btnOko) btnOko.textContent = zobrazit ? '🙈' : '👁';
+    if (cbZobrazit) cbZobrazit.checked = zobrazit;
+  }
+  if (btnOko) btnOko.addEventListener('click', () => toggleHeslo(inputHeslo.type === 'password'));
+  if (cbZobrazit) cbZobrazit.addEventListener('change', () => toggleHeslo(cbZobrazit.checked));
+
+  const linkZapomnel = document.getElementById('linkZapomnel');
+  const zapomnelMsg  = document.getElementById('zapomnel-msg');
+  if (linkZapomnel && zapomnelMsg) {
+    linkZapomnel.addEventListener('click', e => {
+      e.preventDefault();
+      zapomnelMsg.hidden = !zapomnelMsg.hidden;
+    });
+  }
 });
