@@ -28,10 +28,12 @@
     const admins = vals.filter(v => v.admin).length;
     const el = document.getElementById('onlinePocet');
     if (!el) return;
-    let txt = `🟢 Online: <strong>${total}</strong>`;
+
+    const totalSlovo = total === 1 ? 'online' : 'online';
+    let txt = `🟢 <strong>${total}</strong> ${totalSlovo}`;
     if (admins > 0) {
-      const slovo = admins === 1 ? 'správce' : admins <= 4 ? 'správci' : 'správců';
-      txt += ` <span class="online-admins">(${admins} ${slovo})</span>`;
+      const aSlovo = admins === 1 ? 'správce' : admins <= 4 ? 'správci' : 'správců';
+      txt += ` <span class="online-admins">(z toho ${admins} ${aSlovo})</span>`;
     }
     el.innerHTML = txt;
   });
