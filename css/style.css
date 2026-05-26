@@ -251,15 +251,16 @@ html, body {
   bottom: calc(100% + 8px);
   left: 50%;
   transform: translateX(-50%);
-  background: rgba(55, 25, 5, 0.96);
-  border: 1px solid var(--orange);
-  color: var(--accent-gold);
+  background: #f0e830;
+  border: 2px solid #3a8a1a;
+  color: #1a4a0a;
   font-style: italic;
+  font-weight: 600;
   font-size: 0.78rem;
   padding: 5px 18px;
   border-radius: 30px;
   white-space: nowrap;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.5);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.4);
   z-index: 100;
   pointer-events: none;
 }
