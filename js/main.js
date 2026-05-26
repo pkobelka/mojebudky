@@ -61,7 +61,7 @@ function aktualizujListu() {
     : '';
 
   bar.innerHTML = `<span class="bar-left">${cal}${sva}${gratulace}${cas}</span>
-    <span class="bar-right">🌿 Pomáháme ptactvu po celé ČR</span>`;
+    <span class="bar-right">🌿 Pomáháme ptactvu nejen po celé ČR</span>`;
 }
 
 function tickCas() {
