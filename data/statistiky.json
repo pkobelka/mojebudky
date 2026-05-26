@@ -135,13 +135,9 @@
     { "nazev": "METALI", "url": null }
   ],
   "podekovani": [
-    { "jmeno": "Peťa", "popis": "Věrná podpora od samého začátku projektu" },
-    { "jmeno": "Tom", "popis": "Technická pomoc a motivace" },
-    { "jmeno": "Lukáš", "popis": "Pomoc s instalací budek v terénu" },
-    { "jmeno": "Honza", "popis": "Záznamy a sběr dat z přírody" },
-    { "jmeno": "Pavel – stolař", "popis": "Výroba a opravy dřevěných budek" },
-    { "jmeno": "Luboš – Acadmaestro", "popis": "Webdesign, grafika a uživatelské rozhraní" },
-    { "jmeno": "Laďa Š.", "popis": "Klíčová podpora projektu a koordinace správců" }
+    { "jmeno": "Martin N.", "popis": "vrchní ptákolog" },
+    { "jmeno": "Milan H.", "popis": "druhá polovina projektu" },
+    { "jmeno": "Alka", "popis": "za podporu" }
   ],
   "navstevnost": {
     "celkem": 14520,
