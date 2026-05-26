@@ -143,11 +143,12 @@ html, body {
 /* ── PARTNERÉ ── */
 .partners-section { background: rgba(26, 58, 10, 0.92); border-top: 2px solid var(--orange); padding: 14px 24px; text-align: center; }
 .partners-section h3 { color: var(--text-light); font-size: 0.9rem; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 10px; }
-.podekovani-wrap { margin-top: 10px; font-size: 0.85rem; color: var(--text-light); }
-.podekovani-label { font-weight: 600; margin-right: 6px; }
-.podekovani-osoba { position: relative; color: var(--text-light); margin-right: 12px; cursor: default; display: inline-block; }
-.pod-tip { display: none; position: absolute; bottom: calc(100% + 8px); left: 50%; transform: translateX(-50%); background: #f0e830; border: 2px solid #3a8a1a; color: #1a4a0a; font-style: italic; font-weight: 600; font-size: 0.78rem; padding: 5px 18px; border-radius: 30px; white-space: nowrap; box-shadow: 0 4px 16px rgba(0,0,0,0.4); z-index: 100; pointer-events: none; }
-.podekovani-osoba:hover .pod-tip { display: block; }
+.podekovani-wrap { margin-top: 14px; border-top: 1px solid rgba(255,255,255,0.12); padding-top: 12px; }
+.podekovani-label { display: block; color: var(--text-muted); font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px; }
+.podekovani-grid { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+.podekovani-osoba { background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.13); border-radius: 8px; padding: 6px 12px; text-align: center; min-width: 100px; }
+.pod-jmeno { display: block; color: var(--accent-gold); font-size: 0.82rem; font-weight: 600; }
+.pod-tip { display: block; color: var(--text-muted); font-size: 0.71rem; font-style: italic; margin-top: 2px; }
 #partneriList { display: flex; flex-wrap: nowrap; gap: 10px; justify-content: center; align-items: center; overflow-x: auto; padding-bottom: 2px; }
 .partner-item { background: rgba(255,255,255,0.1); color: var(--text-light); padding: 5px 14px; border-radius: 20px; font-size: 0.9rem; text-decoration: none; border: 1px solid rgba(255,255,255,0.2); transition: background 0.2s; white-space: nowrap; flex-shrink: 0; }
 .partner-item:hover { background: rgba(255,255,255,0.18); }
@@ -329,6 +330,15 @@ html, body {
   .partner-logo { height: 28px; max-width: 70px; }
   .footer-bar { gap: 8px; padding: 8px 12px; font-size: 0.8rem; }
   .footer-sep { display: none; }
+}
+
+/* ── LANDSCAPE MOBIL ── */
+@media (max-width: 900px) and (orientation: landscape) {
+  .main-content { flex-direction: row; height: calc(100vh - 90px); }
+  .panel { width: 200px; max-height: none; flex-shrink: 0; }
+  .map-wrapper { height: 100%; min-height: unset; }
+  #map { height: 100%; }
+  .info-bar .bar-right { display: block; width: auto; }
 }
 
 /* ── PŘIHLAŠOVACÍ MODAL ── */

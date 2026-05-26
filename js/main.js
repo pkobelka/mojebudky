@@ -209,7 +209,7 @@ function nactiPodekovani(podekovani) {
   const el = document.getElementById('podekovaniList');
   if (!wrap || !el || !podekovani || !podekovani.length) return;
   el.innerHTML = podekovani.map(p =>
-    `<span class="podekovani-osoba">🙏 ${p.jmeno}<span class="pod-tip">${p.popis}</span></span>`
+    `<div class="podekovani-osoba"><span class="pod-jmeno">${p.jmeno}</span><span class="pod-tip">${p.popis}</span></div>`
   ).join('');
   wrap.style.display = 'block';
 }
