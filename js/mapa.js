@@ -193,18 +193,31 @@ function focusBudka(cislo) {
   marker.openPopup();
 }
 
-function hledejBudku(dotaz) {
+async function hledejBudku(dotaz) {
   const q = dotaz.trim().toLowerCase();
   if (!q) return;
+
   const cislo = parseInt(q, 10);
   if (!isNaN(cislo) && markersByCislo[cislo]) {
     focusBudka(cislo);
     return;
   }
+
   const nalezena = budkyData.find(b => b.nazev && b.nazev.toLowerCase().includes(q));
   if (nalezena) {
     focusBudka(nalezena.cislo);
+    return;
   }
+
+  try {
+    const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(dotaz)}&format=json&limit=1&countrycodes=cz,nl`;
+    const res = await fetch(url, { headers: { 'Accept-Language': 'cs' } });
+    const data = await res.json();
+    if (data && data.length > 0) {
+      const { lat, lon, display_name } = data[0];
+      mapInstance.flyTo([parseFloat(lat), parseFloat(lon)], 12, { duration: 1.2 });
+    }
+  } catch {}
 }
 
 async function inicializujMapu() {
