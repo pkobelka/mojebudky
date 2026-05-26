@@ -82,8 +82,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const id    = inputId.value.trim();
     const heslo = inputHeslo.value;
 
-    if (!/^\d{6}$/.test(id)) {
-      loginError.textContent = 'ID musí mít přesně 6 číslic.';
+    if (!/^\d{1,6}$/.test(id)) {
+      loginError.textContent = 'ID musí být číslo (1–6 číslic).';
       loginError.hidden = false;
       return;
     }
