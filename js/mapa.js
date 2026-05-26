@@ -178,10 +178,6 @@ function pridejLegend(map) {
     const div = L.DomUtil.create('div', 'mapa-legenda');
     div.innerHTML = `
       <div class="legenda-polozka">
-        <img src="img/logo.svg" width="20" height="28" alt="">
-        <span>Aktivní budka</span>
-      </div>
-      <div class="legenda-polozka">
         <img src="img/obydleno.svg" width="28" height="28" alt="">
         <span>Osídlená budka</span>
       </div>`;
