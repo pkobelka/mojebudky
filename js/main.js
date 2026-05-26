@@ -1,4 +1,4 @@
-const DNY = ['neděle','pondelí','úterý','středa','čtvrtek','pátek','sobota'];
+const DNY = ['neděle','pondedí','ústerý','středa','čtvrtek','pátek','sobota'];
 const MESICE = ['ledna','února','března','dubna','května','června','července','srpna','září','října','listopadu','prosince'];
 
 const PREZDIVKY = {
@@ -87,6 +87,7 @@ async function nactiStatistiky() {
     nactiAktuality(data.aktuality);
     nactiPartnery(data.partneri);
     nactiPodekovani(data.podekovani);
+    nactiDruhyPtaku(data.druhy_ptaku);
 
     const nav = data.navstevnost;
     const elCelkem = document.getElementById('navst-celkem');
@@ -158,6 +159,14 @@ const BIRD_ICONS = {
   </svg>`
 };
 
+const BIRD_KEY_MAP = {
+  'Sýkora koňadra': 'konadra',
+  'Sýkora modřinka': 'modrinka',
+  'Sýkora parukářka': 'parukarka',
+  'Vrabec domácí': 'vrabec',
+  'Sojka obecná': 'sojka'
+};
+
 function nactiAktuality(aktuality) {
   const el = document.getElementById('aktualityList');
   if (!el || !aktuality) return;
@@ -203,6 +212,88 @@ function nactiPodekovani(podekovani) {
     `<span class="podekovani-osoba">🙏 ${p.jmeno}<span class="pod-tip">${p.popis}</span></span>`
   ).join('');
   wrap.style.display = 'block';
+}
+
+function nactiDruhyPtaku(druhy) {
+  const el = document.getElementById('druhyPanel');
+  if (!el || !druhy || !druhy.length) return;
+
+  const elStatDruhu = document.getElementById('stat-druhu');
+  if (elStatDruhu) elStatDruhu.textContent = druhy.length;
+
+  el.innerHTML = `
+    <div class="druhy-title">🐦 Druhy ptáků v budkách</div>
+    <div class="druhy-list" id="druhyList">
+      ${druhy.map(d => {
+        const key = BIRD_KEY_MAP[d.nazev] || 'konadra';
+        const icon = BIRD_ICONS[key].replace(/width="38" height="38"/, 'width="28" height="28"');
+        return `<div class="druh-item" data-id="${d.id}">
+          <div class="druh-svg">${icon}</div>
+          <span class="druh-nazev">${d.nazev}</span>
+          <span class="druh-pocet">${d.pocet}</span><span class="druh-pocet-label">budek</span>
+        </div>`;
+      }).join('')}
+    </div>`;
+
+  document.getElementById('druhyList').addEventListener('click', e => {
+    const item = e.target.closest('.druh-item');
+    if (!item) return;
+    const druh = druhy.find(d => String(d.id) === item.dataset.id);
+    if (druh) {
+      const key = BIRD_KEY_MAP[druh.nazev] || 'konadra';
+      zobrazModalDruhu(druh, BIRD_ICONS[key]);
+    }
+  });
+}
+
+function zobrazModalDruhu(druh, iconSvg) {
+  let overlay = document.getElementById('druhModalOverlay');
+  if (!overlay) {
+    overlay = document.createElement('div');
+    overlay.id = 'druhModalOverlay';
+    overlay.className = 'druh-modal-overlay';
+    overlay.setAttribute('role', 'dialog');
+    overlay.setAttribute('aria-modal', 'true');
+    document.body.appendChild(overlay);
+    overlay.addEventListener('click', e => {
+      if (e.target === overlay) overlay.hidden = true;
+    });
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape' && !overlay.hidden) overlay.hidden = true;
+    });
+  }
+
+  const bigIcon = iconSvg.replace(/width="38" height="38"/, 'width="56" height="56"');
+
+  overlay.innerHTML = `
+    <div class="druh-modal-box">
+      <button class="druh-modal-zavrit" aria-label="Zavřít">×</button>
+      <div class="druh-modal-header">
+        <div class="druh-modal-icon">${bigIcon}</div>
+        <div>
+          <div class="druh-modal-nazev">${druh.nazev}</div>
+          <div class="druh-modal-vedecky">${druh.vedecky || ''}</div>
+        </div>
+      </div>
+      <p class="druh-modal-popis">${druh.popis || ''}</p>
+      <div class="druh-modal-info">
+        <div class="druh-modal-info-item">
+          <div class="druh-modal-info-label">Počet budek</div>
+          <div class="druh-modal-info-value">${druh.pocet}</div>
+        </div>
+        <div class="druh-modal-info-item">
+          <div class="druh-modal-info-label">Průměr otvoru</div>
+          <div class="druh-modal-info-value">${druh.otvor || '—'}</div>
+        </div>
+      </div>
+      ${druh.wiki ? `<a href="${druh.wiki}" class="druh-modal-wiki" target="_blank" rel="noopener">📖 Více na Wikipedii →</a>` : ''}
+    </div>`;
+
+  overlay.querySelector('.druh-modal-zavrit').addEventListener('click', () => {
+    overlay.hidden = true;
+  });
+
+  overlay.hidden = false;
 }
 
 function inicializujPushNotifikace() {
