@@ -3,23 +3,23 @@ async function sha256hex(text) {
   return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
 }
 
-let spravciData = null;
+let _authSpravciCache = null;
 
-async function nactiSpravce() {
-  if (spravciData) return spravciData;
+async function _nactiAuthSpravce() {
+  if (_authSpravciCache) return _authSpravciCache;
   const res = await fetch('data/spravci.json');
   if (!res.ok) throw new Error('Nelze načíst data správců');
-  spravciData = await res.json();
-  return spravciData;
+  _authSpravciCache = await res.json();
+  return _authSpravciCache;
 }
 
-async function overitPrihlaseni(id, heslo) {
-  const spravci = await nactiSpravce();
+async function _overitPrihlaseni(id, heslo) {
+  const spravci = await _nactiAuthSpravce();
   const hash = await sha256hex(heslo);
   return spravci[id] && spravci[id] === hash;
 }
 
-function zobrazAdminPanel(loginId) {
+function _zobrazAdminPanel(loginId) {
   const cislo = parseInt(loginId.slice(0, 3), 10);
 
   const existujici = document.getElementById('adminBanner');
@@ -34,13 +34,18 @@ function zobrazAdminPanel(loginId) {
   `;
   document.body.appendChild(banner);
 
+  if (typeof window._presenceSetAdmin === 'function') window._presenceSetAdmin(true);
+
   document.getElementById('btnOdhlasit').addEventListener('click', () => {
     banner.remove();
-    spravciData = null;
-    document.getElementById('btnPrihlasit').textContent = 'Vstup pro správce';
+    _authSpravciCache = null;
+    if (typeof window._presenceSetAdmin === 'function') window._presenceSetAdmin(false);
+    const btn = document.getElementById('btnPrihlasit');
+    if (btn) btn.textContent = 'Vstup pro správce';
   });
 
-  document.getElementById('btnPrihlasit').textContent = `Budka ${cislo} ✓`;
+  const btn = document.getElementById('btnPrihlasit');
+  if (btn) btn.textContent = `Budka ${cislo} ✓`;
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -52,6 +57,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const inputHeslo   = document.getElementById('loginHeslo');
   const loginError   = document.getElementById('loginError');
   const loginLoading = document.getElementById('loginLoading');
+
+  if (!btnPrihlasit || !modal) return;
 
   function otevritModal() {
     modal.hidden = false;
@@ -98,10 +105,10 @@ document.addEventListener('DOMContentLoaded', () => {
     loginBtn.disabled = true;
 
     try {
-      const ok = await overitPrihlaseni(id, heslo);
+      const ok = await _overitPrihlaseni(id, heslo);
       if (ok) {
         zavritModal();
-        zobrazAdminPanel(id);
+        _zobrazAdminPanel(id);
       } else {
         loginError.textContent = 'Neplatné ID nebo heslo.';
         loginError.hidden = false;

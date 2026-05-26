@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8">
+  <title>Import správců – MojeBudky</title>
+  <style>
+    body { font-family: sans-serif; max-width: 640px; margin: 40px auto; padding: 0 20px; background: #f5f5f5; }
+    h1 { color: #1a3a0a; }
+    .krok { background: white; border-radius: 10px; padding: 20px; margin-bottom: 16px; box-shadow: 0 1px 4px rgba(0,0,0,.1); }
+    .krok h2 { margin-top: 0; font-size: 1rem; color: #1a3a0a; }
+    .drop-zone { border: 2px dashed #aaa; border-radius: 8px; padding: 30px; text-align: center; cursor: pointer; color: #666; transition: all .2s; }
+    .drop-zone.over { border-color: #c96420; background: #fff5ee; }
+    .drop-zone.nacteno { border-color: #2d8a2d; background: #f0fff0; color: #1a5c1a; }
+    input[type=file] { display: none; }
+    button { background: #c96420; color: white; border: none; padding: 12px 28px; font-size: 1rem; border-radius: 8px; cursor: pointer; }
+    button:disabled { opacity: .5; cursor: not-allowed; }
+    #nahled { font-size: 0.82rem; color: #555; margin-top: 10px; }
+    #log { margin-top: 16px; background: #1e1e1e; color: #ccc; padding: 16px; border-radius: 8px; font-family: monospace; font-size: 0.85rem; white-space: pre-line; min-height: 80px; max-height: 400px; overflow-y: auto; display: none; }
+    .ok { color: #6fcf6f; }
+    .err { color: #f28b82; }
+    .skip { color: #aaa; }
+    .info { color: #88ccff; }
+  </style>
+</head>
+<body>
+  <h1>Import správců budek</h1>
+
+  <div class="krok">
+    <h2>Krok 1 – Ulož Excel jako CSV</h2>
+    <p>V Excelu: <strong>Soubor → Uložit jako → CSV UTF-8</strong><br>
+    Sloupce musí být: <code>ID, generátor, Heslo, Správce</code></p>
+  </div>
+
+  <div class="krok">
+    <h2>Krok 2 – Nahraj soubor CSV</h2>
+    <div class="drop-zone" id="dropZone" onclick="document.getElementById('fileInput').click()">
+      Klikni nebo přetáhni CSV soubor sem
+    </div>
+    <input type="file" id="fileInput" accept=".csv,.txt">
+    <div id="nahled"></div>
+  </div>
+
+  <div class="krok">
+    <h2>Krok 3 – Spusť import</h2>
+    <button id="btn" onclick="spustit()" disabled>Vytvořit účty</button>
+  </div>
+
+  <div id="log"></div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword, updateProfile } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBEAhZNxq3REoy1vExIrnNEXlyFXHzP4uI",
+      authDomain: "moje-budky.firebaseapp.com",
+      projectId: "moje-budky",
+      storageBucket: "moje-budky.firebasestorage.app",
+      messagingSenderId: "325649258561",
+      appId: "1:325649258561:web:b5571c3278d98405320ec0"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    let spravci = [];
+
+    function cistaBunka(s) {
+      return (s || "").trim().replace(/^"(.*)"$/, '$1').trim();
+    }
+
+    function parsujCSV(text) {
+      const radky = text.trim().split(/\r?\n/);
+      const vysledek = [];
+
+      // najdi hlavičku – první řádek s "ID" nebo "Heslo"
+      let hlavickaIndex = 0;
+      let hlavicka = [];
+      for (let i = 0; i < Math.min(5, radky.length); i++) {
+        const sl = radky[i].split(/[;,\t]/);
+        if (sl.some(s => cistaBunka(s).toUpperCase() === "ID") ||
+            sl.some(s => cistaBunka(s).toLowerCase() === "heslo")) {
+          hlavickaIndex = i;
+          hlavicka = sl.map(s => cistaBunka(s).toLowerCase());
+          break;
+        }
+      }
+
+      // indexy sloupců podle názvů
+      const colId     = hlavicka.indexOf("id");
+      const colHeslo  = hlavicka.findIndex(h => h === "heslo");
+      const colJmeno  = hlavicka.findIndex(h => h === "jméno" || h === "jmeno");
+      const colPrijmeni = hlavicka.findIndex(h => h === "příjmení" || h === "prijmeni");
+      const colEmail  = hlavicka.indexOf("email");
+
+      for (let i = hlavickaIndex + 1; i < radky.length; i++) {
+        const sl = radky[i].split(/[;,\t]/);
+        const id    = colId >= 0    ? cistaBunka(sl[colId])    : "";
+        const heslo = colHeslo >= 0 ? cistaBunka(sl[colHeslo]) : "";
+        const jmeno = [
+          colJmeno >= 0    ? cistaBunka(sl[colJmeno])    : "",
+          colPrijmeni >= 0 ? cistaBunka(sl[colPrijmeni]) : ""
+        ].filter(Boolean).join(" ");
+        const email = colEmail >= 0 ? cistaBunka(sl[colEmail]) : "";
+
+        if (id && heslo) vysledek.push({ id, heslo, jmeno, email });
+      }
+      return vysledek;
+    }
+
+    function nactiSoubor(file) {
+      const reader = new FileReader();
+      reader.onload = e => {
+        spravci = parsujCSV(e.target.result);
+        const drop = document.getElementById("dropZone");
+        drop.classList.add("nacteno");
+        drop.textContent = `✓ Načteno ${spravci.length} správců z ${file.name}`;
+        document.getElementById("nahled").textContent =
+          `Prvních 3: ${spravci.slice(0,3).map(s => s.id).join(", ")}…`;
+        document.getElementById("btn").disabled = spravci.length === 0;
+      };
+      reader.readAsText(file, "UTF-8");
+    }
+
+    document.getElementById("fileInput").addEventListener("change", e => {
+      if (e.target.files[0]) nactiSoubor(e.target.files[0]);
+    });
+
+    const drop = document.getElementById("dropZone");
+    drop.addEventListener("dragover", e => { e.preventDefault(); drop.classList.add("over"); });
+    drop.addEventListener("dragleave", () => drop.classList.remove("over"));
+    drop.addEventListener("drop", e => {
+      e.preventDefault();
+      drop.classList.remove("over");
+      if (e.dataTransfer.files[0]) nactiSoubor(e.dataTransfer.files[0]);
+    });
+
+    function log(text, typ) {
+      const el = document.getElementById("log");
+      el.style.display = "block";
+      const span = document.createElement("span");
+      span.className = typ || "";
+      span.textContent = text + "\n";
+      el.appendChild(span);
+      el.scrollTop = el.scrollHeight;
+    }
+
+    window.spustit = async function() {
+      const btn = document.getElementById("btn");
+      btn.disabled = true;
+      const logEl = document.getElementById("log");
+      logEl.textContent = "";
+      logEl.style.display = "block";
+      log(`Spouštím import ${spravci.length} správců…`, "info");
+
+      let ok = 0, preskoceno = 0, chyby = 0;
+
+      const cekej = ms => new Promise(r => setTimeout(r, ms));
+
+      for (const s of spravci) {
+        const email = `${s.id}@mojebudky.cz`;
+        try {
+          const result = await createUserWithEmailAndPassword(auth, email, s.heslo);
+          if (s.jmeno || s.email) await updateProfile(result.user, { displayName: s.jmeno || "" });
+          log(`✓ ${s.id} – ${s.jmeno}`, "ok");
+          ok++;
+          await cekej(3000);
+        } catch (err) {
+          if (err.code === "auth/email-already-in-use") {
+            log(`– ${s.id} již existuje`, "skip");
+            preskoceno++;
+          } else {
+            log(`✗ ${s.id}: ${err.message}`, "err");
+            chyby++;
+          }
+        }
+      }
+
+      log(`\nHotovo! Vytvořeno: ${ok}, přeskočeno: ${preskoceno}, chyby: ${chyby}`, "info");
+      btn.disabled = false;
+    };
+  </script>
+</body>
+</html>

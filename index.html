@@ -6,7 +6,7 @@
   <meta name="description" content="MojeBudky.cz – sledujeme ptačí budky po celé ČR. Živá mapa, statistiky a příběhy z přírody.">
   <title>MojeBudky.cz – Pomáháme ptactvu</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
-  <link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
@@ -36,9 +36,10 @@
         </span>
       </a>
 
-      <ul class="nav-links" role="navigation" aria-label="Hlavní navigace">
-        <li><a href="#mapa" class="active">Mapa Budek</a></li>
-        <li><a href="#pribehy">Příběhy z přírody</a></li>
+      <ul class="nav-links" id="navLinks" role="navigation" aria-label="Hlavní navigace">
+        <li><a href="#mapa" id="nav-mapa">Mapa Budek</a></li>
+        <li><a href="#aktuality">Zprávy z terénu</a></li>
+        <li><a href="#clanky">Zajímavé články</a></li>
         <li><a href="#partneri">Partneři</a></li>
         <li><a href="#kontakt">Kontakt</a></li>
       </ul>
@@ -48,7 +49,12 @@
           <input type="text" placeholder="Hledej budku nebo město" aria-label="Hledat">
           <button aria-label="Hledat">🔍</button>
         </div>
-        <button type="button" class="btn-login" id="btnPrihlasit">Vstup pro správce</button>
+        <div id="authNavArea">
+          <button type="button" class="btn-login" id="btnPrihlasit">Vstup pro správce</button>
+        </div>
+        <button class="nav-hamburger" id="navHamburger" aria-label="Otevřít menu" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
       </div>
     </nav>
 
@@ -61,17 +67,18 @@
   <!-- Hlavní obsah: 3 sloupce -->
   <main class="main-content" id="mapa">
 
-    <!-- Levý panel: Příběhy z přírody -->
-    <aside class="panel panel-left" id="pribehy" aria-label="Příběhy z přírody">
-      <h2 class="panel-title">Příběhy z přírody</h2>
-      <div class="pribehy-list" id="pribehyList">
-        <div style="padding:20px; color:#c8a878; font-size:0.83rem;">Načítám příběhy…</div>
+    <!-- Levý panel: Aktuality z komunity -->
+    <aside class="panel panel-left" id="aktuality" aria-label="Zprávy z terénu">
+      <h2 class="panel-title">Zprávy z terénu</h2>
+      <div class="pribehy-list" id="aktualityList">
+        <div style="padding:20px; color:#c8a878; font-size:0.83rem;">Načítám aktuality…</div>
       </div>
     </aside>
 
     <!-- Mapa -->
     <div class="map-wrapper" role="application" aria-label="Interaktivní mapa budek">
       <div id="map"></div>
+      <button id="btn-zpet-mapa" class="btn-zpet-mapa" style="display:none;" aria-label="Zpět na přehled">← Zpět</button>
     </div>
 
     <!-- Pravý panel: Statistiky -->
@@ -118,6 +125,10 @@
   <section class="partners-section" id="partneri" aria-label="Partneři projektu">
     <h3>Partneři projektu MojeBudky.cz</h3>
     <div id="partneriList" role="list">Načítám…</div>
+    <div class="podekovani-wrap" id="podekovaniWrap" style="display:none">
+      <span class="podekovani-label">Poděkování:</span>
+      <span id="podekovaniList"></span>
+    </div>
   </section>
 
   <!-- Kontakt -->
@@ -125,15 +136,17 @@
     <div class="kontakt-inner">
       <div class="kontakt-text">
         <div class="kontakt-title">Napište nám</div>
-        <div class="kontakt-popis">Máte zájem přidat svou budku? Chcete se stát správcem? Nebo máte jen dotaz?</div>
+        <div class="kontakt-popis">Máte dotaz, nápad nebo připomínku? Napište nám!</div>
       </div>
-      <a href="mailto:info@petrkobelka.cz" class="btn-kontakt">✉ info@petrkobelka.cz</a>
+      <a href="mailto:info@mojebudky.cz" class="btn-kontakt">✉ info@mojebudky.cz</a>
     </div>
   </section>
 
-  <!-- Footer: návštěvnost -->
+  <!-- Footer: návštěvnost + online přítomnost -->
   <footer class="footer-bar">
     <div id="footer-stats">Načítám statistiky návštěvnosti…</div>
+    <span class="footer-sep" aria-hidden="true">|</span>
+    <div id="onlinePocet">🟢 Online: <strong>…</strong></div>
   </footer>
 
 </div><!-- #app -->
@@ -158,9 +171,12 @@
 </div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 <script src="js/svatky.js"></script>
 <script src="js/mapa.js"></script>
 <script src="js/main.js"></script>
 <script src="js/auth.js"></script>
+<script src="js/presence.js"></script>
 </body>
 </html>
