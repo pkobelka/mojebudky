@@ -147,6 +147,12 @@ html, body {
 
 /* ── FOOTER ── */
 .footer-sep { opacity: 0.35; }
+.footer-bar { background: var(--footer-bg); color: var(--text-muted); font-size: 0.82rem; padding: 10px 24px; display: flex; justify-content: center; align-items: center; gap: 14px; flex-wrap: wrap; }
+.footer-copy { color: var(--text-muted); }
+.footer-author { color: var(--accent-gold); text-decoration: none; transition: color 0.15s; }
+.footer-author:hover { color: var(--text-light); text-decoration: underline; }
+.footer-email { color: var(--text-muted); text-decoration: none; transition: color 0.15s; }
+.footer-email:hover { color: var(--text-light); }
 .online-admins { color: var(--accent-gold); }
 
 /* ── POPUP ── */
@@ -198,6 +204,11 @@ html, body {
 .nav-hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
 .nav-hamburger.open span:nth-child(2) { opacity: 0; }
 .nav-hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+/* Skryjeme sekci 'Přidat na plochu' když běží jako nainstalovaná aplikace */
+@media (display-mode: standalone) {
+  .pridat-na-plochu { display: none; }
+}
 
 @media (max-width: 900px) {
   .main-content { flex-direction: column; height: auto; }
@@ -303,9 +314,3 @@ html, body {
 .link-zapomnel:hover { color: var(--text-light); }
 .zapomnel-msg { margin-top: 8px; background: rgba(255,255,255,0.06); border: 1px solid var(--panel-border); border-radius: 6px; padding: 8px 12px; font-size: 0.82rem; color: var(--text-muted); line-height: 1.5; }
 .zapomnel-msg strong { color: var(--accent-gold); }
-
-/* ── FOOTER ── */
-.footer-bar { background: var(--footer-bg); color: var(--text-muted); font-size: 0.82rem; padding: 10px 24px; display: flex; justify-content: center; align-items: center; gap: 14px; flex-wrap: wrap; }
-.footer-copy { color: var(--text-muted); }
-.footer-email { color: var(--text-muted); text-decoration: none; transition: color 0.15s; }
-.footer-email:hover { color: var(--text-light); }
