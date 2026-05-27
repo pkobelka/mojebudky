@@ -372,7 +372,8 @@ function inicializujFullscreenMapu() {
     });
   }
 
-  btnZpet.addEventListener('click', () => {
+  btnZpet.addEventListener('click', e => {
+    e.stopPropagation();
     mainContent.classList.remove('mapa-fullscreen');
     btnZpet.style.display = 'none';
     if (typeof mapInstance !== 'undefined' && mapInstance) {
