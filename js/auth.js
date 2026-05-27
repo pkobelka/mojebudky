@@ -43,8 +43,15 @@ async function _zobrazAdminPanel(loginId) {
   const existujici = document.getElementById('adminBanner');
   if (existujici) existujici.remove();
 
-  const osloveni = (spravceInfo && spravceInfo.osloveni) ? spravceInfo.osloveni : _vokativ(jmeno);
+  const profilLocal = _nacistProfilLocal(loginId);
+  const osloveni = (profilLocal && profilLocal.osloveni) ? profilLocal.osloveni
+    : (spravceInfo && spravceInfo.osloveni) ? spravceInfo.osloveni : _vokativ(jmeno);
   _zobrazToast(`Ahoj ${osloveni}, vítám Tě v komunitě správců mých budek! 🌿 Petr`);
+
+  const jePoprve = !localStorage.getItem('mb_firstlogin_' + loginId);
+  if (jePoprve) {
+    setTimeout(() => _zobrazProfilSpravce(loginId, spravceInfo, budkaText), 4500);
+  }
 
   if (typeof window._presenceSetAdmin === 'function') window._presenceSetAdmin(true);
 
@@ -59,8 +66,7 @@ async function _zobrazAdminPanel(loginId) {
   dropdown.className = 'admin-dropdown';
   dropdown.innerHTML = `
     <div class="admin-dropdown-hlavicka">👤 ${jmeno} &nbsp;·&nbsp; ${budkaText}</div>
-    <button class="admin-dropdown-item" data-akce="karta">🪪 Karta správce</button>
-    <button class="admin-dropdown-item pripravujeme" data-akce="editSpravce">✏️ Editovat správce</button>
+    <button class="admin-dropdown-item" data-akce="karta">🪪 Karta správce / Editovat</button>
     <button class="admin-dropdown-item pripravujeme" data-akce="editBudky">🏠 Editovat budky</button>
     <button class="admin-dropdown-item pripravujeme" data-akce="clanek">📝 Vložit článek</button>
     <div class="admin-dropdown-oddelovac"></div>
@@ -103,8 +109,8 @@ async function _zobrazAdminPanel(loginId) {
       return;
     }
 
-    if (akce === 'karta') {
-      _zobrazKartuSpravce(spravceInfo, jmeno, budkaText);
+    if (akce === 'karta' || akce === 'editSpravce') {
+      _zobrazProfilSpravce(loginId, spravceInfo, budkaText);
       dropdown.classList.remove('open');
       return;
     }
@@ -116,29 +122,124 @@ async function _zobrazAdminPanel(loginId) {
   });
 }
 
-function _zobrazKartuSpravce(info, jmeno, budkaText) {
-  const existujici = document.getElementById('modalKarta');
+function _nacistProfilLocal(loginId) {
+  try { return JSON.parse(localStorage.getItem('mb_profil_' + loginId) || 'null'); } catch { return null; }
+}
+
+function _ulozitProfilLocal(loginId, data) {
+  localStorage.setItem('mb_profil_' + loginId, JSON.stringify(data));
+}
+
+function _zobrazProfilSpravce(loginId, info, budkaText) {
+  const ulozeny = _nacistProfilLocal(loginId);
+  const d = Object.assign({}, info, ulozeny);
+
+  const existujici = document.getElementById('modalProfil');
   if (existujici) existujici.remove();
 
   const modal = document.createElement('div');
-  modal.id = 'modalKarta';
+  modal.id = 'modalProfil';
   modal.className = 'modal-overlay';
   modal.innerHTML = `
-    <div class="modal-box karta-box">
-      <button class="modal-zavrit" id="kartaZavrit">×</button>
-      <h2 class="modal-nadpis">🪪 Karta správce</h2>
-      <div class="karta-grid">
-        <div class="karta-radek"><span class="karta-label">Jméno</span><span class="karta-hodnota">${info ? info.jmeno + ' ' + info.prijmeni : jmeno}</span></div>
-        <div class="karta-radek"><span class="karta-label">Budka</span><span class="karta-hodnota">${budkaText}</span></div>
-        ${info && info.telefon ? `<div class="karta-radek"><span class="karta-label">Telefon</span><span class="karta-hodnota">${info.telefon}</span></div>` : ''}
-        ${info && info.email ? `<div class="karta-radek"><span class="karta-label">E-mail</span><span class="karta-hodnota">${info.email}</span></div>` : ''}
+    <div class="modal-box profil-box">
+      <button class="modal-zavrit" id="profilZavrit">×</button>
+
+      <div class="profil-header">
+        <div class="profil-foto-wrap">
+          <img id="profilFotoNahled" src="${d.foto || 'img/Favikon.png'}" class="profil-foto" alt="Foto správce">
+          <label class="profil-foto-btn" title="Nahrát nebo vyfotit">
+            📷
+            <input type="file" id="profilFotoInput" accept="image/*" capture="environment" style="display:none">
+          </label>
+        </div>
+        <div class="profil-header-text">
+          <div class="profil-nadpis">🪪 Karta správce</div>
+          <div class="profil-budka">${budkaText}</div>
+          <div class="profil-id-wrap">ID: <span class="profil-id">${loginId}</span></div>
+        </div>
+      </div>
+
+      <div class="profil-form">
+        <div class="profil-row">
+          <div class="profil-field">
+            <label>Titul před</label>
+            <input type="text" id="pTitulPred" value="${d.titul_pred || ''}" placeholder="Ing., Mgr., …">
+          </div>
+          <div class="profil-field profil-field--wide">
+            <label>Jméno</label>
+            <input type="text" id="pJmeno" value="${d.jmeno || ''}">
+          </div>
+          <div class="profil-field profil-field--wide">
+            <label>Příjmení</label>
+            <input type="text" id="pPrijmeni" value="${d.prijmeni || ''}">
+          </div>
+          <div class="profil-field">
+            <label>Titul za</label>
+            <input type="text" id="pTitulZa" value="${d.titul_za || ''}" placeholder="Ph.D., …">
+          </div>
+        </div>
+        <div class="profil-row">
+          <div class="profil-field profil-field--wide">
+            <label>Oslovení <span class="profil-hint">— použijeme při přihlášení</span></label>
+            <input type="text" id="pOsloveni" value="${d.osloveni || ''}" placeholder="Ahoj …">
+          </div>
+          <div class="profil-field profil-field--wide">
+            <label>Datum narození
+              <span class="profil-hint profil-narozeniny" title="Popřejeme Vám k narozeninám! 🎂">🎂 popřejeme!</span>
+            </label>
+            <input type="date" id="pDatum" value="${d.datum_narozeni || ''}">
+          </div>
+        </div>
+        <div class="profil-row">
+          <div class="profil-field profil-field--wide">
+            <label>Telefon</label>
+            <input type="tel" id="pTelefon" value="${d.telefon || ''}">
+          </div>
+          <div class="profil-field profil-field--wide">
+            <label>E-mail</label>
+            <input type="email" id="pEmail" value="${d.email || ''}">
+          </div>
+        </div>
+      </div>
+
+      <div class="profil-actions">
+        <button class="profil-btn-ulozit" id="profilUlozit">💾 Uložit změny</button>
+        <span class="profil-ulozeno" id="profilUlozeno" hidden>✓ Uloženo!</span>
       </div>
     </div>
   `;
   document.body.appendChild(modal);
 
-  document.getElementById('kartaZavrit').addEventListener('click', () => modal.remove());
+  document.getElementById('profilZavrit').addEventListener('click', () => modal.remove());
   modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
+
+  document.getElementById('profilFotoInput').addEventListener('change', e => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = ev => { document.getElementById('profilFotoNahled').src = ev.target.result; };
+    reader.readAsDataURL(file);
+  });
+
+  document.getElementById('profilUlozit').addEventListener('click', () => {
+    const foto = document.getElementById('profilFotoNahled').src;
+    const data = {
+      titul_pred:     document.getElementById('pTitulPred').value.trim(),
+      jmeno:          document.getElementById('pJmeno').value.trim(),
+      prijmeni:       document.getElementById('pPrijmeni').value.trim(),
+      titul_za:       document.getElementById('pTitulZa').value.trim(),
+      osloveni:       document.getElementById('pOsloveni').value.trim(),
+      datum_narozeni: document.getElementById('pDatum').value,
+      telefon:        document.getElementById('pTelefon').value.trim(),
+      email:          document.getElementById('pEmail').value.trim(),
+      foto:           foto.startsWith('data:') ? foto : null,
+    };
+    _ulozitProfilLocal(loginId, data);
+    localStorage.setItem('mb_firstlogin_' + loginId, '1');
+    const msg = document.getElementById('profilUlozeno');
+    msg.hidden = false;
+    setTimeout(() => { msg.hidden = true; }, 2500);
+  });
 }
 
 function _vokativ(jmeno) {
