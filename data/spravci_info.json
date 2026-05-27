@@ -514,7 +514,12 @@
     "datum_narozeni": "",
     "spravce": "admin",
     "budka_cislo": 47,
-    "budka_nazev": ""
+    "budka_nazev": "",
+    "budky": [
+      { "cislo": 47, "nazev": "" },
+      { "cislo": 55, "nazev": "" },
+      { "cislo": 57, "nazev": "" }
+    ]
   },
   "048173": {
     "jmeno": "Tomášek",

@@ -1,3 +1,17 @@
+function _czToIso(s) {
+  if (!s) return '';
+  const m = s.match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})$/);
+  if (m) return `${m[3]}-${m[2].padStart(2,'0')}-${m[1].padStart(2,'0')}`;
+  if (/^\d{4}-\d{2}-\d{2}$/.test(s)) return s;
+  return '';
+}
+function _isoToCz(s) {
+  if (!s) return '';
+  const m = s.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (!m) return s;
+  return `${parseInt(m[3])}.${parseInt(m[2])}.${m[1]}`;
+}
+
 async function sha256hex(text) {
   const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
   return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
@@ -113,9 +127,9 @@ async function _zobrazAdminPanel(loginId) {
 
   // HTML pro budky v menu
   const budkyMenuHTML = budkyList.length === 1
-    ? `<button class="admin-dropdown-item" data-akce="editBudky" data-cislo="${budkyList[0].cislo}" data-nazev="${budkyList[0].nazev || ''}">🏠 Editovat budku</button>`
+    ? `<button class="admin-dropdown-item admin-dropdown-budka admin-budka-aktivni" data-akce="editBudky" data-cislo="${budkyList[0].cislo}" data-nazev="${budkyList[0].nazev || ''}">🏠 Editovat budku</button>`
     : `<div class="admin-dropdown-sec">🏠 Moje budky</div>
-       ${budkyList.map(b => `<button class="admin-dropdown-item admin-dropdown-budka" data-akce="editBudky" data-cislo="${b.cislo}" data-nazev="${b.nazev || ''}">Budka č. ${b.cislo}${b.nazev ? ' – ' + b.nazev : ''}</button>`).join('')}`;
+       ${budkyList.map((b, i) => `<button class="admin-dropdown-item admin-dropdown-budka${i === 0 ? ' admin-budka-aktivni' : ''}" data-akce="editBudky" data-cislo="${b.cislo}" data-nazev="${b.nazev || ''}">🏠 Budka č. ${b.cislo}${b.nazev ? ' – ' + b.nazev : ''}</button>`).join('')}`;
 
   const dropdown = document.createElement('div');
   dropdown.id = 'adminDropdown';
@@ -175,6 +189,8 @@ async function _zobrazAdminPanel(loginId) {
       const cislo = parseInt(item.dataset.cislo, 10);
       const nazev = item.dataset.nazev || '';
       const text  = _budkaText({ cislo, nazev });
+      dropdown.querySelectorAll('.admin-dropdown-budka').forEach(b => b.classList.remove('admin-budka-aktivni'));
+      item.classList.add('admin-budka-aktivni');
       _zobrazEditBudky(loginId, spravceInfo, text, cislo, nazev);
       dropdown.classList.remove('open');
       return;
@@ -488,11 +504,11 @@ async function _zobrazEditBudky(loginId, spravceInfo, budkaText, budkaCislo, bud
           </div>
           <div class="profil-field">
             <label>Datum kontroly</label>
-            <input type="text" id="ebKontrola" value="${ulozeno.kontrola || ''}" placeholder="např. 15.4.2025">
+            <input type="date" id="ebKontrola" value="${_czToIso(ulozeno.kontrola) || new Date().toISOString().slice(0,10)}">
           </div>
           <div class="profil-field">
             <label>Datum čištění</label>
-            <input type="text" id="ebCisteni" value="${ulozeno.cisteni || ''}" placeholder="např. 10.3.2025">
+            <input type="date" id="ebCisteni" value="${_czToIso(ulozeno.cisteni) || ''}">
           </div>
         </div>
         <div class="profil-field profil-field--wide">
@@ -602,8 +618,8 @@ async function _zobrazEditBudky(loginId, spravceInfo, budkaText, budkaCislo, bud
     const nazev    = document.getElementById('ebNazev').value.trim();
     const instalace = document.getElementById('ebInstalace').value.trim();
     const rok      = document.getElementById('ebRok').value.trim();
-    const kontrola = document.getElementById('ebKontrola').value.trim();
-    const cisteni  = document.getElementById('ebCisteni').value.trim();
+    const kontrola = _isoToCz(document.getElementById('ebKontrola').value.trim());
+    const cisteni  = _isoToCz(document.getElementById('ebCisteni').value.trim());
     const poznamka = document.getElementById('ebPoznamka').value.trim();
     let kdoHnizdi  = aktualniDruh === '__jiny'
       ? (document.getElementById('ebJinyText').value.trim() || '')
