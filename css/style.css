@@ -58,7 +58,7 @@ html, body {
 .logo-text { color: var(--text-light); font-size: 1.85rem; font-weight: 700; letter-spacing: 0.5px; }
 .logo-autor { color: var(--orange-light); font-size: 0.85rem; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; }
 .nav-links { display: flex; list-style: none; gap: 4px; flex: 1; }
-.nav-links a { color: var(--text-light); text-decoration: none; padding: 12px 22px; border-radius: 4px; font-size: 1.3rem; transition: all 0.2s; white-space: nowrap; }
+.nav-links a { color: var(--text-light); text-decoration: none; padding: 12px 22px; border-radius: 4px; font-size: 1.45rem; transition: all 0.2s; white-space: nowrap; }
 .nav-links a:hover, .nav-links a.active { background: var(--nav-hover); color: var(--text-light); }
 .nav-actions { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
 .search-box { display: flex; background: rgba(255,255,255,0.12); border-radius: 20px; overflow: hidden; }
@@ -100,7 +100,7 @@ html, body {
 .admin-budka-link { color: var(--accent-gold); font-size: 0.85rem; font-style: italic; }
 .btn-login.prihlaseny { background: transparent !important; color: var(--accent-gold) !important; text-decoration: underline; border-color: transparent !important; }
 
-.info-bar { background: var(--bar-bg); color: var(--bar-text); font-size: 1.15rem; padding: 22px 28px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #d0c0a0; min-height: 68px; }
+.info-bar { background: var(--bar-bg); color: var(--bar-text); font-size: 1.15rem; padding: 9px 28px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #d0c0a0; min-height: 48px; }
 .info-bar .bar-right { color: var(--tree-mid); font-style: italic; font-size: 0.95rem; }
 .info-bar .bar-right.bar-svatek { color: var(--orange); font-style: normal; font-weight: 600; }
 .bar-gratulace { color: var(--orange); font-weight: 700; }
@@ -146,9 +146,9 @@ html, body {
 .stat-aktualizace span { color: var(--text-light); font-weight: 600; }
 
 /* ── PARTNERÉ ── */
-.partners-section { background: rgba(26, 58, 10, 0.92); border-top: 2px solid var(--orange); padding: 44px 52px; text-align: center; }
-.partners-section h3 { color: var(--text-light); font-size: 1.25rem; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 16px; }
-.podekovani-wrap { margin-top: 14px; border-top: 1px solid rgba(255,255,255,0.12); padding-top: 12px; }
+.partners-section { background: rgba(26, 58, 10, 0.92); border-top: 2px solid var(--orange); padding: 14px 52px; text-align: center; }
+.partners-section h3 { color: var(--text-light); font-size: 1.25rem; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 10px; }
+.podekovani-wrap { margin-top: 8px; border-top: 1px solid rgba(255,255,255,0.12); padding-top: 8px; }
 .podekovani-label { display: block; color: var(--text-muted); font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px; }
 .podekovani-grid { display: flex; flex-wrap: wrap; gap: 6px 14px; justify-content: center; }
 .podekovani-osoba { position: relative; display: inline-block; cursor: default; }
@@ -163,7 +163,7 @@ html, body {
 
 /* ── FOOTER ── */
 .footer-sep { opacity: 0.35; }
-.footer-bar { background: var(--footer-bg); color: var(--text-light); font-size: 1.05rem; padding: 28px 36px; display: flex; justify-content: center; align-items: center; gap: 14px; flex-wrap: wrap; }
+.footer-bar { background: var(--footer-bg); color: var(--text-light); font-size: 1.05rem; padding: 11px 36px; display: flex; justify-content: center; align-items: center; gap: 14px; flex-wrap: wrap; }
 .footer-copy { color: var(--text-light); }
 .footer-author { color: var(--accent-gold); text-decoration: none; transition: color 0.15s; }
 .footer-author:hover { color: var(--text-light); text-decoration: underline; }
