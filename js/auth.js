@@ -89,7 +89,7 @@ async function _zobrazAdminPanel(loginId) {
 
   const jePoprve = !localStorage.getItem('mb_firstlogin_' + loginId);
   if (jePoprve) {
-    setTimeout(() => _zobrazProfilSpravce(loginId, spravceInfo, budkaText), 4500);
+    setTimeout(() => _zobrazProfilSpravce(loginId, spravceInfo, budkaText), 7000);
   }
 
   if (typeof window._presenceSetAdmin === 'function') window._presenceSetAdmin(true);
@@ -444,7 +444,7 @@ function _zobrazToast(text) {
   setTimeout(() => {
     toast.classList.remove('admin-toast--show');
     setTimeout(() => toast.remove(), 500);
-  }, 4000);
+  }, 6000);
 }
 
 document.addEventListener('DOMContentLoaded', () => {
