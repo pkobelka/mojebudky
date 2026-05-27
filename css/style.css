@@ -188,6 +188,11 @@ html, body {
 .footer-author:hover { color: var(--text-light); text-decoration: underline; }
 .footer-email { color: var(--text-light); text-decoration: none; transition: color 0.15s; }
 .footer-email:hover { color: var(--text-light); }
+.footer-fb { display: inline-flex; align-items: center; gap: 6px; color: #a8c4f0; text-decoration: none; transition: color 0.15s; }
+.footer-fb:hover { color: #6ea8e8; }
+.footer-fb-icon { width: 16px; height: 16px; fill: currentColor; flex-shrink: 0; }
+.nav-fb-link { display: inline-flex !important; align-items: center; gap: 7px; }
+.nav-fb-icon { width: 18px; height: 18px; fill: currentColor; flex-shrink: 0; }
 .online-admins { color: var(--accent-gold); }
 
 /* ── POPUP ── */
