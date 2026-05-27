@@ -168,9 +168,9 @@ html, body {
 .pm-pod-jmeno { background: none; border: none; color: var(--text-light); font-size: 1.25rem; font-weight: 600; text-decoration: underline; text-decoration-style: dotted; text-underline-offset: 4px; cursor: default; font-family: inherit; padding: 0; }
 .pm-pod-jmeno--ma-text { cursor: pointer; color: var(--accent-gold); }
 .pm-pod-jmeno--ma-text:hover { color: #ffe080; }
-.pm-bublina { display: none; position: absolute; bottom: calc(100% + 10px); left: 50%; transform: translateX(-50%); background: var(--nav-bg); border: 1.5px solid var(--accent-gold); border-radius: 14px; padding: 11px 18px; font-size: 1rem; color: var(--text-light); box-shadow: 0 4px 18px rgba(0,0,0,0.5); z-index: 10; min-width: 180px; max-width: 280px; white-space: normal; text-align: center; line-height: 1.45; }
-.pm-bublina::after { content: ''; position: absolute; top: 100%; left: 50%; transform: translateX(-50%); border: 8px solid transparent; border-top-color: var(--accent-gold); }
-.pm-bublina::before { content: ''; position: absolute; top: 100%; left: 50%; transform: translateX(-50%); margin-top: 2px; border: 7px solid transparent; border-top-color: var(--nav-bg); z-index: 1; }
+.pm-bublina { display: none; position: absolute; bottom: calc(100% + 10px); left: 50%; transform: translateX(-50%); background: #f0e830; border: 2px solid #3a8a1a; border-radius: 14px; padding: 11px 18px; font-size: 1rem; color: #1a4a0a; font-weight: 600; font-style: italic; box-shadow: 0 4px 18px rgba(0,0,0,0.5); z-index: 10; min-width: 180px; max-width: 280px; white-space: normal; text-align: center; line-height: 1.45; }
+.pm-bublina::after { content: ''; position: absolute; top: 100%; left: 50%; transform: translateX(-50%); border: 8px solid transparent; border-top-color: #3a8a1a; }
+.pm-bublina::before { content: ''; position: absolute; top: 100%; left: 50%; transform: translateX(-50%); margin-top: 2px; border: 7px solid transparent; border-top-color: #f0e830; z-index: 1; }
 .pm-pod-osoba:hover .pm-bublina { display: block; }
 .pm-bublina--open { display: block; }
 #partneriList { display: flex; flex-wrap: nowrap; gap: 10px; justify-content: center; align-items: center; overflow-x: auto; padding-bottom: 2px; }
