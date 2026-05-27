@@ -239,8 +239,8 @@ async function inicializujMapu() {
 
   try {
     const [resBudky, resSpravci] = await Promise.all([
-      fetch('data/budky.json'),
-      fetch('data/spravci_jmena.json')
+      fetch('data/budky.json?v=20260527k'),
+      fetch('data/spravci_jmena.json?v=20260527k')
     ]);
     const budky = await resBudky.json();
     budkyData = budky;

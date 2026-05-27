@@ -31,7 +31,7 @@ function najdiSvatekSpravce(svarekJmeno) {
 
 async function nactiSpravce() {
   try {
-    const res = await fetch('data/spravci_jmena.json');
+    const res = await fetch('data/spravci_jmena.json?v=20260527k');
     spravciJmena = await res.json();
     aktualizujListu();
   } catch(e) {
@@ -78,7 +78,7 @@ function tickCas() {
 
 async function nactiStatistiky() {
   try {
-    const res = await fetch('data/statistiky.json');
+    const res = await fetch('data/statistiky.json?v=20260527k');
     const data = await res.json();
 
     document.getElementById('stat-osidlenych').textContent = data.osidlenych;
