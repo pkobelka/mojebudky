@@ -324,6 +324,7 @@ document.addEventListener('DOMContentLoaded', () => {
     modal.hidden = true;
   }
 
+  btnPrihlasit._loginHandler = otevritModal;
   btnPrihlasit.addEventListener('click', otevritModal);
   modalZavrit.addEventListener('click', zavritModal);
 
