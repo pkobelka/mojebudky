@@ -43,7 +43,8 @@ async function _zobrazAdminPanel(loginId) {
   const existujici = document.getElementById('adminBanner');
   if (existujici) existujici.remove();
 
-  _zobrazToast(`Ahoj ${_vokativ(jmeno)}, vítám Tě v komunitě správců mých budek! 🌿 Petr`);
+  const osloveni = (spravceInfo && spravceInfo.osloveni) ? spravceInfo.osloveni : _vokativ(jmeno);
+  _zobrazToast(`Ahoj ${osloveni}, vítám Tě v komunitě správců mých budek! 🌿 Petr`);
 
   if (typeof window._presenceSetAdmin === 'function') window._presenceSetAdmin(true);
 

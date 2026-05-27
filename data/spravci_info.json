@@ -1,6 +1,7 @@
 {
   "001400": {
     "jmeno": "Aleš",
+    "osloveni": "Ájo",
     "prijmeni": "HRUBÝ",
     "spravce": "Ája",
     "budka_cislo": 1,
@@ -10,6 +11,7 @@
   },
   "002852": {
     "jmeno": "Květoslava",
+    "osloveni": "Květo",
     "prijmeni": "NOVOTNÁ",
     "spravce": "Květa",
     "budka_cislo": 2,
@@ -17,8 +19,9 @@
     "telefon": "739 578 852",
     "email": ""
   },
-  "003": {
+  "000003": {
     "jmeno": "",
+    "osloveni": "",
     "prijmeni": "",
     "spravce": "Pavel",
     "budka_cislo": 3,
@@ -27,7 +30,8 @@
     "email": ""
   },
   "004112": {
-    "jmeno": "Pepa",
+    "jmeno": "Josef",
+    "osloveni": "Plíšku",
     "prijmeni": "JENIŠ",
     "spravce": "",
     "budka_cislo": 4,
@@ -37,6 +41,7 @@
   },
   "005484": {
     "jmeno": "Josef",
+    "osloveni": "Pepo",
     "prijmeni": "BIBERLE",
     "spravce": "Vali + Viki",
     "budka_cislo": 5,
@@ -46,6 +51,7 @@
   },
   "006187": {
     "jmeno": "Jan",
+    "osloveni": "Honzo",
     "prijmeni": "RICHTER",
     "spravce": "Honza",
     "budka_cislo": 6,
@@ -55,6 +61,7 @@
   },
   "007109": {
     "jmeno": "Jiří",
+    "osloveni": "Jirko",
     "prijmeni": "ABRAHAM",
     "spravce": "Jirka",
     "budka_cislo": 7,
@@ -64,6 +71,7 @@
   },
   "008666": {
     "jmeno": "Karel",
+    "osloveni": "Karle",
     "prijmeni": "FRAJVALD",
     "spravce": "Karel",
     "budka_cislo": 8,
@@ -73,6 +81,7 @@
   },
   "009112": {
     "jmeno": "Josef",
+    "osloveni": "Plíšku",
     "prijmeni": "JENIŠ",
     "spravce": "Plíšek",
     "budka_cislo": 9,
@@ -82,6 +91,7 @@
   },
   "010488": {
     "jmeno": "Jirka",
+    "osloveni": "Jirko",
     "prijmeni": "HAVLÍK st.",
     "spravce": "Jirka",
     "budka_cislo": 10,
@@ -91,6 +101,7 @@
   },
   "011506": {
     "jmeno": "Radim",
+    "osloveni": "Radime",
     "prijmeni": "HERNYCH",
     "spravce": "Štěpánek",
     "budka_cislo": 11,
@@ -100,6 +111,7 @@
   },
   "012112": {
     "jmeno": "Pepa",
+    "osloveni": "Plíšku",
     "prijmeni": "JENIŠ",
     "spravce": "Plíšek",
     "budka_cislo": 12,
@@ -109,6 +121,7 @@
   },
   "013722": {
     "jmeno": "Viktor",
+    "osloveni": "Viktore",
     "prijmeni": "STŘÍBRNÝ",
     "spravce": "Viktor",
     "budka_cislo": 13,
@@ -118,6 +131,7 @@
   },
   "014108": {
     "jmeno": "DIANKA",
+    "osloveni": "Dianko",
     "prijmeni": "💓",
     "spravce": "Dia",
     "budka_cislo": 14,
@@ -127,6 +141,7 @@
   },
   "015491": {
     "jmeno": "Lukáš",
+    "osloveni": "Liky",
     "prijmeni": "VYKYDAL",
     "spravce": "Theodorka",
     "budka_cislo": 15,
@@ -136,6 +151,7 @@
   },
   "016046": {
     "jmeno": "Kamil",
+    "osloveni": "Kamile",
     "prijmeni": "MICHALČÁK",
     "spravce": "Janek",
     "budka_cislo": 16,
@@ -145,6 +161,7 @@
   },
   "017328": {
     "jmeno": "Zdeněk",
+    "osloveni": "Zdendo",
     "prijmeni": "DRÁBEK",
     "spravce": "Niki",
     "budka_cislo": 17,
@@ -154,6 +171,7 @@
   },
   "018173": {
     "jmeno": "Tomáš",
+    "osloveni": "Tome",
     "prijmeni": "KOBELKA",
     "spravce": "Tomášek",
     "budka_cislo": 18,
@@ -163,6 +181,7 @@
   },
   "019358": {
     "jmeno": "Pavel",
+    "osloveni": "Pavle",
     "prijmeni": "MARTÍNEK",
     "spravce": "Pavel",
     "budka_cislo": 19,
@@ -172,6 +191,7 @@
   },
   "020843": {
     "jmeno": "Ladislav",
+    "osloveni": "Laďo",
     "prijmeni": "ŠAFR",
     "spravce": "Kristýnka + Marie",
     "budka_cislo": 20,
@@ -180,7 +200,8 @@
     "email": "safrladislavst@gmail.com"
   },
   "021291": {
-    "jmeno": "Sláva",
+    "jmeno": "Miloslav",
+    "osloveni": "Slávo",
     "prijmeni": "PAROLEK",
     "spravce": "ZŠ",
     "budka_cislo": 21,
@@ -189,7 +210,8 @@
     "email": ""
   },
   "022291": {
-    "jmeno": "Sláva",
+    "jmeno": "Miloslav",
+    "osloveni": "Slávo",
     "prijmeni": "PAROLEK",
     "spravce": "Sláveček + Anežka",
     "budka_cislo": 22,
@@ -198,7 +220,8 @@
     "email": ""
   },
   "023175": {
-    "jmeno": "Anička",
+    "jmeno": "Anna",
+    "osloveni": "Aničko",
     "prijmeni": "SEKERKOVÁ",
     "spravce": "Ivetka",
     "budka_cislo": 23,
@@ -208,6 +231,7 @@
   },
   "024966": {
     "jmeno": "Milan",
+    "osloveni": "Milane",
     "prijmeni": "HÁNA",
     "spravce": "Emily",
     "budka_cislo": 24,
@@ -216,7 +240,8 @@
     "email": ""
   },
   "025053": {
-    "jmeno": "EŘ Milena",
+    "jmeno": "Milena",
+    "osloveni": "Mílo",
     "prijmeni": "SCHUPPLEROVÁ",
     "spravce": "Míla",
     "budka_cislo": 25,
@@ -226,6 +251,7 @@
   },
   "026488": {
     "jmeno": "Jirka",
+    "osloveni": "Jirko",
     "prijmeni": "HAVLÍK st.",
     "spravce": "Adam",
     "budka_cislo": 26,
@@ -235,6 +261,7 @@
   },
   "027714": {
     "jmeno": "Petr",
+    "osloveni": "Peťo",
     "prijmeni": "KOBELKA",
     "spravce": "Péťa",
     "budka_cislo": 27,
@@ -244,6 +271,7 @@
   },
   "028714": {
     "jmeno": "Petr",
+    "osloveni": "Peťo",
     "prijmeni": "KOBELKA",
     "spravce": "Kristýnka",
     "budka_cislo": 28,
@@ -253,6 +281,7 @@
   },
   "029109": {
     "jmeno": "Jiří",
+    "osloveni": "Jirko",
     "prijmeni": "ABRAHAM",
     "spravce": "Laura",
     "budka_cislo": 29,
@@ -262,6 +291,7 @@
   },
   "030424": {
     "jmeno": "Petr",
+    "osloveni": "Péťo",
     "prijmeni": "POPPEL",
     "spravce": "Péťa",
     "budka_cislo": 30,
@@ -271,6 +301,7 @@
   },
   "031859": {
     "jmeno": "Lubor",
+    "osloveni": "Lubore",
     "prijmeni": "BENEŠ",
     "spravce": "Lubor",
     "budka_cislo": 31,
@@ -280,6 +311,7 @@
   },
   "032625": {
     "jmeno": "Karel",
+    "osloveni": "Karle",
     "prijmeni": "PELANT",
     "spravce": "Karel",
     "budka_cislo": 32,
@@ -289,6 +321,7 @@
   },
   "033755": {
     "jmeno": "Dobroš",
+    "osloveni": "Dobro",
     "prijmeni": "CRHA",
     "spravce": "Dobroš",
     "budka_cislo": 33,
@@ -296,8 +329,9 @@
     "telefon": "737 261 755",
     "email": "dobros.dc@gmail.com"
   },
-  "034": {
+  "000034": {
     "jmeno": "",
+    "osloveni": "",
     "prijmeni": "",
     "spravce": "Adík",
     "budka_cislo": 34,
@@ -306,7 +340,8 @@
     "email": ""
   },
   "035051": {
-    "jmeno": "Miro",
+    "jmeno": "Miroslav",
+    "osloveni": "Miro",
     "prijmeni": "ŠOLTÉS",
     "spravce": "Miro",
     "budka_cislo": 35,
@@ -316,6 +351,7 @@
   },
   "036421": {
     "jmeno": "Petr",
+    "osloveni": "P/eťo",
     "prijmeni": "HAUPT",
     "spravce": "Peťa",
     "budka_cislo": 36,
@@ -324,7 +360,8 @@
     "email": "hpetrr@email.cz"
   },
   "037897": {
-    "jmeno": "Stanislav MACH",
+    "jmeno": "Stanislav",
+    "osloveni": "Staňo",
     "prijmeni": "SCHAFFER",
     "spravce": "Standa",
     "budka_cislo": 37,
@@ -334,6 +371,7 @@
   },
   "038812": {
     "jmeno": "Pavel",
+    "osloveni": "Pavle",
     "prijmeni": "LANGER",
     "spravce": "Pavel",
     "budka_cislo": 38,
@@ -343,6 +381,7 @@
   },
   "039508": {
     "jmeno": "Luboš",
+    "osloveni": "Lubore",
     "prijmeni": "ŽÁČEK",
     "spravce": "děti MŠ",
     "budka_cislo": 39,
@@ -352,6 +391,7 @@
   },
   "040779": {
     "jmeno": "Lucie",
+    "osloveni": "Lucko",
     "prijmeni": "KOBELKOVÁ",
     "spravce": "pan správce",
     "budka_cislo": 40,
@@ -361,6 +401,7 @@
   },
   "041843": {
     "jmeno": "Ladislav",
+    "osloveni": "Laďo",
     "prijmeni": "ŠAFR",
     "spravce": "Laďa",
     "budka_cislo": 41,
@@ -370,6 +411,7 @@
   },
   "042335": {
     "jmeno": "Milan",
+    "osloveni": "Milane",
     "prijmeni": "LINDOVSKÝ",
     "spravce": "",
     "budka_cislo": 42,
@@ -379,6 +421,7 @@
   },
   "043471": {
     "jmeno": "Jan",
+    "osloveni": "Honzo",
     "prijmeni": "RADA",
     "spravce": "",
     "budka_cislo": 43,
@@ -388,6 +431,7 @@
   },
   "044221": {
     "jmeno": "Martina",
+    "osloveni": "Marti",
     "prijmeni": "ŠMERÁKOVÁ",
     "spravce": "Ota",
     "budka_cislo": 44,
@@ -397,6 +441,7 @@
   },
   "045358": {
     "jmeno": "Pavel",
+    "osloveni": "Pavle",
     "prijmeni": "MARTÍNEK",
     "spravce": "",
     "budka_cislo": 45,
@@ -406,6 +451,7 @@
   },
   "046337": {
     "jmeno": "Robin",
+    "osloveni": "Robe",
     "prijmeni": "ŠMERÁK",
     "spravce": "",
     "budka_cislo": 46,
@@ -415,6 +461,7 @@
   },
   "047496": {
     "jmeno": "Petr",
+    "osloveni": "Peťo",
     "prijmeni": "KOBELKA",
     "spravce": "admin",
     "budka_cislo": 47,
@@ -424,6 +471,7 @@
   },
   "048173": {
     "jmeno": "Tomášek",
+    "osloveni": "Tome",
     "prijmeni": "",
     "spravce": "",
     "budka_cislo": 48,
@@ -433,6 +481,7 @@
   },
   "049803": {
     "jmeno": "Josef",
+    "osloveni": "Pepo",
     "prijmeni": "TRČKA",
     "spravce": "",
     "budka_cislo": 49,
@@ -441,7 +490,8 @@
     "email": ""
   },
   "050280": {
-    "jmeno": "Honza",
+    "jmeno": "Jan",
+    "osloveni": "Honzo",
     "prijmeni": "PILNÝ",
     "spravce": "",
     "budka_cislo": 50,
@@ -451,6 +501,7 @@
   },
   "051109": {
     "jmeno": "Jiří",
+    "osloveni": "Jirko",
     "prijmeni": "ABRAHAM",
     "spravce": "",
     "budka_cislo": 51,
@@ -460,6 +511,7 @@
   },
   "052188": {
     "jmeno": "Tomáš",
+    "osloveni": "Tome",
     "prijmeni": "KUHN",
     "spravce": "Tomáš",
     "budka_cislo": 52,
@@ -469,6 +521,7 @@
   },
   "053182": {
     "jmeno": "Pavel",
+    "osloveni": "Pavle",
     "prijmeni": "VYROUBAL",
     "spravce": "Standa",
     "budka_cislo": 53,
@@ -478,6 +531,7 @@
   },
   "054595": {
     "jmeno": "Zdeněk",
+    "osloveni": "Zdenku",
     "prijmeni": "VÁVRA",
     "spravce": "",
     "budka_cislo": 54,
@@ -487,6 +541,7 @@
   },
   "055496": {
     "jmeno": "Petr",
+    "osloveni": "Peťo",
     "prijmeni": "KOBELKA",
     "spravce": "admin",
     "budka_cislo": 55,
@@ -496,6 +551,7 @@
   },
   "056724": {
     "jmeno": "Dušan",
+    "osloveni": "Dušo",
     "prijmeni": "DRÁPAL",
     "spravce": "Dušan",
     "budka_cislo": 56,
@@ -505,6 +561,7 @@
   },
   "057496": {
     "jmeno": "Petr",
+    "osloveni": "Peťa",
     "prijmeni": "KOBELKA",
     "spravce": "admin",
     "budka_cislo": 57,
@@ -514,6 +571,7 @@
   },
   "058877": {
     "jmeno": "Věra",
+    "osloveni": "Věro",
     "prijmeni": "RÉDOVÁ",
     "spravce": "",
     "budka_cislo": 58,
@@ -523,6 +581,7 @@
   },
   "059159": {
     "jmeno": "Jana",
+    "osloveni": "Jani",
     "prijmeni": "DÍTĚTOVÁ",
     "spravce": "Jana",
     "budka_cislo": 59,
@@ -532,6 +591,7 @@
   },
   "060986": {
     "jmeno": "Martin",
+    "osloveni": "Martine",
     "prijmeni": "ŠOTOLA Plznička",
     "spravce": "Natálka",
     "budka_cislo": 60,
@@ -541,6 +601,7 @@
   },
   "061111": {
     "jmeno": "Erwin",
+    "osloveni": "Erwin",
     "prijmeni": "SUKKEL",
     "spravce": "Erwin",
     "budka_cislo": 61,
@@ -550,6 +611,7 @@
   },
   "062109": {
     "jmeno": "Jiří",
+    "osloveni": "Jirko",
     "prijmeni": "ABRAHAM",
     "spravce": "Erwin",
     "budka_cislo": 62,
@@ -559,6 +621,7 @@
   },
   "063086": {
     "jmeno": "Jirka",
+    "osloveni": "Jirko",
     "prijmeni": "HAVLÍK ml.",
     "spravce": "Jirka",
     "budka_cislo": 63,
@@ -568,6 +631,7 @@
   },
   "064317": {
     "jmeno": "Tomáš",
+    "osloveni": "Tome",
     "prijmeni": "MULLER",
     "spravce": "Tom",
     "budka_cislo": 64,
@@ -577,6 +641,7 @@
   },
   "065111": {
     "jmeno": "Erwin",
+    "osloveni": "Erwin",
     "prijmeni": "SUKKEL",
     "spravce": "Erwin",
     "budka_cislo": 65,
@@ -586,6 +651,7 @@
   },
   "066966": {
     "jmeno": "Milan",
+    "osloveni": "Milane",
     "prijmeni": "HÁNA",
     "spravce": "Milan st.",
     "budka_cislo": 66,
@@ -595,6 +661,7 @@
   },
   "067038": {
     "jmeno": "Dušan",
+    "osloveni": "Dušane",
     "prijmeni": "NÁDASKÝ",
     "spravce": "Dušan",
     "budka_cislo": 67,
@@ -604,6 +671,7 @@
   },
   "068472": {
     "jmeno": "Milan",
+    "osloveni": "Milane",
     "prijmeni": "KOTOULEK",
     "spravce": "Milan",
     "budka_cislo": 68,
@@ -613,6 +681,7 @@
   },
   "069923": {
     "jmeno": "Hana",
+    "osloveni": "Hani",
     "prijmeni": "ŠLECHTOVÁ",
     "spravce": "Hana",
     "budka_cislo": 69,
@@ -622,6 +691,7 @@
   },
   "070123": {
     "jmeno": "",
+    "osloveni": "",
     "prijmeni": "NAVRÁTIL",
     "spravce": "",
     "budka_cislo": 70,
@@ -631,6 +701,7 @@
   },
   "071775": {
     "jmeno": "Martin",
+    "osloveni": "Martine",
     "prijmeni": "VŠETIČKA",
     "spravce": "",
     "budka_cislo": 71,
@@ -640,6 +711,7 @@
   },
   "072660": {
     "jmeno": "Michal",
+    "osloveni": "Michale",
     "prijmeni": "KNÁPEK",
     "spravce": "",
     "budka_cislo": 72,
@@ -649,6 +721,7 @@
   },
   "073154": {
     "jmeno": "Vlastimil",
+    "osloveni": "Šéfe",
     "prijmeni": "ANTOŠOVSKÝ",
     "spravce": "Vlastik Ant.",
     "budka_cislo": 73,
@@ -658,6 +731,7 @@
   },
   "074488": {
     "jmeno": "Jirka",
+    "osloveni": "Jirka",
     "prijmeni": "HAVLÍK st.",
     "spravce": "Eva",
     "budka_cislo": 74,
@@ -667,6 +741,7 @@
   },
   "075504": {
     "jmeno": "Martin",
+    "osloveni": "Martine",
     "prijmeni": "NOVOTNÝ 🦉",
     "spravce": "Rychnov",
     "budka_cislo": 75,
@@ -676,6 +751,7 @@
   },
   "076918": {
     "jmeno": "Jiří",
+    "osloveni": "Jirko",
     "prijmeni": "BACHMANN",
     "spravce": "Bachman",
     "budka_cislo": 76,
@@ -685,6 +761,7 @@
   },
   "077383": {
     "jmeno": "Pavel",
+    "osloveni": "Pavle",
     "prijmeni": "KISS",
     "spravce": "Kiss",
     "budka_cislo": 77,
@@ -694,6 +771,7 @@
   },
   "078491": {
     "jmeno": "Lukáš",
+    "osloveni": "Luky",
     "prijmeni": "VYKYDAL",
     "spravce": "Lukáš V.",
     "budka_cislo": 78,
@@ -703,6 +781,7 @@
   },
   "079504": {
     "jmeno": "Martin",
+    "osloveni": "Martine",
     "prijmeni": "NOVOTNÝ 🦉",
     "spravce": "Rychnov",
     "budka_cislo": 79,
@@ -712,6 +791,7 @@
   },
   "080491": {
     "jmeno": "Lukáš",
+    "osloveni": "Luky",
     "prijmeni": "VYKYDAL",
     "spravce": "Lukáš V.",
     "budka_cislo": 80,
@@ -721,6 +801,7 @@
   },
   "081442": {
     "jmeno": "Pavel",
+    "osloveni": "Pavle",
     "prijmeni": "VYROUBAL ml.",
     "spravce": "Pajsek",
     "budka_cislo": 81,
@@ -730,6 +811,7 @@
   },
   "082179": {
     "jmeno": "Vlaďka",
+    "osloveni": "Vlaďko",
     "prijmeni": "JANÍKOVÁ",
     "spravce": "Fojťas",
     "budka_cislo": 82,
@@ -739,6 +821,7 @@
   },
   "083676": {
     "jmeno": "Alena",
+    "osloveni": "Alčo",
     "prijmeni": "ŠIRŮČKOVÁ",
     "spravce": "Pavel",
     "budka_cislo": 83,
@@ -748,6 +831,7 @@
   },
   "084730": {
     "jmeno": "Tomáš",
+    "osloveni": "Tome",
     "prijmeni": "ZVEJŠKA",
     "spravce": "Tom",
     "budka_cislo": 84,
@@ -755,8 +839,9 @@
     "telefon": "604 942 730",
     "email": "zvejska.tom@gmail.com"
   },
-  "085": {
+  "000085": {
     "jmeno": "",
+    "osloveni": "",
     "prijmeni": "",
     "spravce": "Pavel",
     "budka_cislo": 85,
@@ -766,6 +851,7 @@
   },
   "086898": {
     "jmeno": "Roman",
+    "osloveni": "Romane",
     "prijmeni": "DOBEŠ",
     "spravce": "Roman",
     "budka_cislo": 86,
@@ -775,6 +861,7 @@
   },
   "087578": {
     "jmeno": "Václav",
+    "osloveni": "Vašku",
     "prijmeni": "STUCHLÝ",
     "spravce": "Vašek",
     "budka_cislo": 87,
@@ -784,6 +871,7 @@
   },
   "088255": {
     "jmeno": "Lucie",
+    "osloveni": "Lucko",
     "prijmeni": "BÁLKOVÁ",
     "spravce": "Lucka",
     "budka_cislo": 88,
@@ -793,6 +881,7 @@
   },
   "089856": {
     "jmeno": "RAFAN",
+    "osloveni": "Jardo",
     "prijmeni": "RAFAN",
     "spravce": "Jarin",
     "budka_cislo": 89,
@@ -800,8 +889,9 @@
     "telefon": "702 287 856",
     "email": "jnovotny45@seznam.cz"
   },
-  "090": {
+  "000090": {
     "jmeno": "Dalibor",
+    "osloveni": "Bore",
     "prijmeni": "ŠEBEK",
     "spravce": "Dalibor",
     "budka_cislo": 90,
@@ -811,6 +901,7 @@
   },
   "091006": {
     "jmeno": "Marcela",
+    "osloveni": "Macku",
     "prijmeni": "PAŘILOVÁ",
     "spravce": "Marcela Pař.",
     "budka_cislo": 91,
@@ -820,6 +911,7 @@
   },
   "092504": {
     "jmeno": "Martin",
+    "osloveni": "Martine",
     "prijmeni": "NOVOTNÝ 🦉",
     "spravce": "Martin Nov",
     "budka_cislo": 92,
@@ -829,6 +921,7 @@
   },
   "093799": {
     "jmeno": "Michaela",
+    "osloveni": "Míšo",
     "prijmeni": "SMEJKALOVÁ",
     "spravce": "Martin Nov",
     "budka_cislo": 93,
@@ -838,6 +931,7 @@
   },
   "094504": {
     "jmeno": "Martin",
+    "osloveni": "Martine",
     "prijmeni": "NOVOTNÝ 🦉",
     "spravce": "Martin Nov",
     "budka_cislo": 94,
@@ -847,6 +941,7 @@
   },
   "095799": {
     "jmeno": "Michaela",
+    "osloveni": "Míšo",
     "prijmeni": "SMEJKALOVÁ",
     "spravce": "Martin Nov",
     "budka_cislo": 95,
@@ -856,6 +951,7 @@
   },
   "096641": {
     "jmeno": "Martina",
+    "osloveni": "Martino",
     "prijmeni": "PAULUSOVÁ",
     "spravce": "Milan H.",
     "budka_cislo": 96,
@@ -865,6 +961,7 @@
   },
   "097641": {
     "jmeno": "Martina",
+    "osloveni": "Martino",
     "prijmeni": "PAULUSOVÁ",
     "spravce": "Martina",
     "budka_cislo": 97,
@@ -874,6 +971,7 @@
   },
   "098591": {
     "jmeno": "Iva",
+    "osloveni": "Ivo",
     "prijmeni": "OPTIČKA",
     "spravce": "Štěpánková",
     "budka_cislo": 98,
@@ -883,6 +981,7 @@
   },
   "099641": {
     "jmeno": "Martina",
+    "osloveni": "Martino",
     "prijmeni": "PAULUSOVÁ",
     "spravce": "Milan H.",
     "budka_cislo": 99,
@@ -892,6 +991,7 @@
   },
   "100977": {
     "jmeno": "Ema",
+    "osloveni": "Emo",
     "prijmeni": "EMUŠKA",
     "spravce": "Ema",
     "budka_cislo": 100,
@@ -901,6 +1001,7 @@
   },
   "101826": {
     "jmeno": "Lukáš",
+    "osloveni": "Luky",
     "prijmeni": "SASÍN",
     "spravce": "Lukáš Sasin",
     "budka_cislo": 101,
@@ -908,8 +1009,9 @@
     "telefon": "606 619 826",
     "email": "lukas.sasin@zemsky.cz"
   },
-  "102": {
+  "000102": {
     "jmeno": "",
+    "osloveni": "",
     "prijmeni": "",
     "spravce": "obec",
     "budka_cislo": 102,
@@ -917,8 +1019,9 @@
     "telefon": "",
     "email": ""
   },
-  "103": {
+  "000103": {
     "jmeno": "",
+    "osloveni": "",
     "prijmeni": "",
     "spravce": "obec",
     "budka_cislo": 103,
@@ -928,6 +1031,7 @@
   },
   "104560": {
     "jmeno": "Jana",
+    "osloveni": "Jani",
     "prijmeni": "DOSEDLOVÁ",
     "spravce": "DPS",
     "budka_cislo": 104,
@@ -935,8 +1039,9 @@
     "telefon": "605 476 560",
     "email": ""
   },
-  "105": {
+  "000105": {
     "jmeno": "",
+    "osloveni": "",
     "prijmeni": "",
     "spravce": "obec",
     "budka_cislo": 105,
@@ -944,8 +1049,9 @@
     "telefon": "",
     "email": ""
   },
-  "106": {
+  "000106": {
     "jmeno": "",
+    "osloveni": "",
     "prijmeni": "",
     "spravce": "obec",
     "budka_cislo": 106,
@@ -955,6 +1061,7 @@
   },
   "107060": {
     "jmeno": "Josef",
+    "osloveni": "Pepo",
     "prijmeni": "BIDMON",
     "spravce": "Pepa",
     "budka_cislo": 107,
@@ -964,6 +1071,7 @@
   },
   "108372": {
     "jmeno": "Marek",
+    "osloveni": "Marku",
     "prijmeni": "KOUTNÝ",
     "spravce": "Koutný",
     "budka_cislo": 108,
@@ -973,6 +1081,7 @@
   },
   "109372": {
     "jmeno": "Marek",
+    "osloveni": "Marku",
     "prijmeni": "KOUTNÝ",
     "spravce": "Koutný",
     "budka_cislo": 109,
@@ -982,6 +1091,7 @@
   },
   "110372": {
     "jmeno": "Marek",
+    "osloveni": "Marku",
     "prijmeni": "KOUTNÝ",
     "spravce": "Koutný",
     "budka_cislo": 110,
@@ -991,6 +1101,7 @@
   },
   "111810": {
     "jmeno": "Oldřich",
+    "osloveni": "Oldo",
     "prijmeni": "SYROVÁTKO",
     "spravce": "Olda",
     "budka_cislo": 111,
@@ -1000,6 +1111,7 @@
   },
   "112776": {
     "jmeno": "Jiří",
+    "osloveni": "Jirko",
     "prijmeni": "FABIÁN",
     "spravce": "J. Fabián",
     "budka_cislo": 112,
@@ -1009,6 +1121,7 @@
   },
   "113776": {
     "jmeno": "Jiří",
+    "osloveni": "Jirko",
     "prijmeni": "FABIÁN",
     "spravce": "J. Fabián",
     "budka_cislo": 113,
@@ -1016,8 +1129,9 @@
     "telefon": "778 882 776",
     "email": "jirin.fabos@seznam.cz"
   },
-  "114": {
+  "000114": {
     "jmeno": "",
+    "osloveni": "",
     "prijmeni": "",
     "spravce": "Tom",
     "budka_cislo": 114,
@@ -1027,6 +1141,7 @@
   },
   "115714": {
     "jmeno": "PEŤA",
+    "osloveni": "Peťo",
     "prijmeni": "PEŤA",
     "spravce": "Kiki",
     "budka_cislo": 115,
@@ -1036,6 +1151,7 @@
   },
   "116109": {
     "jmeno": "Jiří",
+    "osloveni": "Jirko",
     "prijmeni": "ABRAHAM",
     "spravce": "Jirka",
     "budka_cislo": 116,
@@ -1045,6 +1161,7 @@
   },
   "117109": {
     "jmeno": "Jiří",
+    "osloveni": "Jirko",
     "prijmeni": "ABRAHAM",
     "spravce": "Jirka",
     "budka_cislo": 117,
@@ -1054,6 +1171,7 @@
   },
   "118472": {
     "jmeno": "Milan",
+    "osloveni": "Milane",
     "prijmeni": "KOTOULEK",
     "spravce": "Milan",
     "budka_cislo": 118,
@@ -1061,8 +1179,9 @@
     "telefon": "602 518 472",
     "email": ""
   },
-  "119": {
+  "000119": {
     "jmeno": "",
+    "osloveni": "",
     "prijmeni": "",
     "spravce": "obec",
     "budka_cislo": 119,
@@ -1070,8 +1189,9 @@
     "telefon": "",
     "email": ""
   },
-  "120": {
+  "000120": {
     "jmeno": "",
+    "osloveni": "",
     "prijmeni": "",
     "spravce": "obec",
     "budka_cislo": 120,
@@ -1079,8 +1199,9 @@
     "telefon": "",
     "email": ""
   },
-  "121": {
+  "000121": {
     "jmeno": "",
+    "osloveni": "",
     "prijmeni": "",
     "spravce": "obec",
     "budka_cislo": 121,
@@ -1088,8 +1209,9 @@
     "telefon": "",
     "email": ""
   },
-  "122": {
+  "000122": {
     "jmeno": "",
+    "osloveni": "",
     "prijmeni": "",
     "spravce": "obec",
     "budka_cislo": 122,
@@ -1097,8 +1219,9 @@
     "telefon": "",
     "email": ""
   },
-  "123": {
+  "000123": {
     "jmeno": "",
+    "osloveni": "",
     "prijmeni": "",
     "spravce": "obec",
     "budka_cislo": 123,
@@ -1108,6 +1231,7 @@
   },
   "124998": {
     "jmeno": "Dalibor",
+    "osloveni": "Bore",
     "prijmeni": "ŠEBEK",
     "spravce": "Dalibor",
     "budka_cislo": 124,
@@ -1117,6 +1241,7 @@
   },
   "125023": {
     "jmeno": "Martin",
+    "osloveni": "Martine",
     "prijmeni": "GÁLEK",
     "spravce": "Anna",
     "budka_cislo": 125,
@@ -1126,6 +1251,7 @@
   },
   "126843": {
     "jmeno": "Ladislav",
+    "osloveni": "Laďo",
     "prijmeni": "ŠAFR",
     "spravce": "Laďa",
     "budka_cislo": 126,
@@ -1134,7 +1260,8 @@
     "email": "safrladislavst@gmail.com"
   },
   "127736": {
-    "jmeno": "Alice Syrovátková",
+    "jmeno": "Alice",
+    "osloveni": "Alice",
     "prijmeni": "ŠKVRNOVÁ",
     "spravce": "Alice",
     "budka_cislo": 127,
@@ -1144,6 +1271,7 @@
   },
   "128376": {
     "jmeno": "Zdeněk",
+    "osloveni": "Zdenku",
     "prijmeni": "JANOUŠEK",
     "spravce": "vinař",
     "budka_cislo": 128,
@@ -1153,6 +1281,7 @@
   },
   "129863": {
     "jmeno": "Vašek",
+    "osloveni": "Vašku",
     "prijmeni": "SLECHAN",
     "spravce": "Vašek",
     "budka_cislo": 129,
@@ -1162,6 +1291,7 @@
   },
   "130846": {
     "jmeno": "Jakub",
+    "osloveni": "Kubo",
     "prijmeni": "MARTÍNEK",
     "spravce": "Pavel",
     "budka_cislo": 130,
@@ -1171,6 +1301,7 @@
   },
   "131731": {
     "jmeno": "Miroslava",
+    "osloveni": "Mirko",
     "prijmeni": "ČEPOVÁ",
     "spravce": "Jana",
     "budka_cislo": 131,
@@ -1180,6 +1311,7 @@
   },
   "132882": {
     "jmeno": "Jiří",
+    "osloveni": "Jirko",
     "prijmeni": "BERKA",
     "spravce": "Jirka",
     "budka_cislo": 132,
@@ -1189,6 +1321,7 @@
   },
   "133982": {
     "jmeno": "Petr",
+    "osloveni": "Oskare",
     "prijmeni": "SOUKUP",
     "spravce": "Peťa",
     "budka_cislo": 133,
@@ -1198,6 +1331,7 @@
   },
   "134199": {
     "jmeno": "Milan",
+    "osloveni": "Milane",
     "prijmeni": "HORŇÁK",
     "spravce": "Milan",
     "budka_cislo": 134,
@@ -1207,6 +1341,7 @@
   },
   "135164": {
     "jmeno": "Radek",
+    "osloveni": "Radku",
     "prijmeni": "PTÁK",
     "spravce": "Radek",
     "budka_cislo": 135,
@@ -1216,6 +1351,7 @@
   },
   "136754": {
     "jmeno": "Hana",
+    "osloveni": "Hani",
     "prijmeni": "VYKYDALOVÁ",
     "spravce": "Luky",
     "budka_cislo": 136,
@@ -1225,6 +1361,7 @@
   },
   "137044": {
     "jmeno": "Radko",
+    "osloveni": "Radku",
     "prijmeni": "MARTÍNEK",
     "spravce": "Radko",
     "budka_cislo": 137,
@@ -1234,6 +1371,7 @@
   },
   "138120": {
     "jmeno": "Václav",
+    "osloveni": "Vašku",
     "prijmeni": "DVOŘÁK",
     "spravce": "Vašek",
     "budka_cislo": 138,
@@ -1243,6 +1381,7 @@
   },
   "139451": {
     "jmeno": "Stanislav",
+    "osloveni": "Staňo",
     "prijmeni": "KAMENICKÝ",
     "spravce": "Staňa",
     "budka_cislo": 139,
@@ -1252,6 +1391,7 @@
   },
   "140161": {
     "jmeno": "Petr",
+    "osloveni": "Peťo",
     "prijmeni": "KOUTNÝ",
     "spravce": "Petr",
     "budka_cislo": 140,
@@ -1259,8 +1399,9 @@
     "telefon": "739 117 161",
     "email": ""
   },
-  "141": {
+  "000141": {
     "jmeno": "",
+    "osloveni": "",
     "prijmeni": "",
     "spravce": "",
     "budka_cislo": 141,
@@ -1270,6 +1411,7 @@
   },
   "142714": {
     "jmeno": "PEŤA",
+    "osloveni": "Peťo",
     "prijmeni": "PEŤA",
     "spravce": "Péťa DEM",
     "budka_cislo": 142,
@@ -1279,6 +1421,7 @@
   },
   "143118": {
     "jmeno": "Libor",
+    "osloveni": "Libore",
     "prijmeni": "CACH",
     "spravce": "Libor",
     "budka_cislo": 143,
@@ -1288,6 +1431,7 @@
   },
   "144271": {
     "jmeno": "Milan",
+    "osloveni": "?",
     "prijmeni": "MÍKA",
     "spravce": "Ríša",
     "budka_cislo": 144,
@@ -1297,6 +1441,7 @@
   },
   "145990": {
     "jmeno": "Vlasta",
+    "osloveni": "Milane",
     "prijmeni": "NA VRŠÍCH",
     "spravce": "Vlasta",
     "budka_cislo": 145,
@@ -1306,6 +1451,7 @@
   },
   "146648": {
     "jmeno": "Roland",
+    "osloveni": "Rolo",
     "prijmeni": "KOSCHATA",
     "spravce": "Rolo",
     "budka_cislo": 146,
@@ -1315,6 +1461,7 @@
   },
   "147563": {
     "jmeno": "Zuzana",
+    "osloveni": "Zuzko",
     "prijmeni": "KALINČíKOVÁ",
     "spravce": "Zuzka",
     "budka_cislo": 147,
@@ -1324,6 +1471,7 @@
   },
   "148470": {
     "jmeno": "Lukáš",
+    "osloveni": "Luky",
     "prijmeni": "MAREŠ",
     "spravce": "Lukáš",
     "budka_cislo": 148,
@@ -1333,6 +1481,7 @@
   },
   "149513": {
     "jmeno": "Markéta",
+    "osloveni": "Markéto",
     "prijmeni": "PAULOVÁ",
     "spravce": "Markéta",
     "budka_cislo": 149,
@@ -1342,6 +1491,7 @@
   },
   "150837": {
     "jmeno": "Jiří",
+    "osloveni": "Jirko",
     "prijmeni": "PAUL",
     "spravce": "Jirka",
     "budka_cislo": 150,
@@ -1351,6 +1501,7 @@
   },
   "151260": {
     "jmeno": "Ivan",
+    "osloveni": "Ivane",
     "prijmeni": "KAFKA",
     "spravce": "Ivan",
     "budka_cislo": 151,
@@ -1360,6 +1511,7 @@
   },
   "152825": {
     "jmeno": "Sylva",
+    "osloveni": "Sylvo",
     "prijmeni": "ŘEZNÍČKOVÁ",
     "spravce": "Sylva",
     "budka_cislo": 152,
@@ -1369,6 +1521,7 @@
   },
   "153333": {
     "jmeno": "Pavel",
+    "osloveni": "Pavle",
     "prijmeni": "SEJKORA",
     "spravce": "Pavel",
     "budka_cislo": 153,
@@ -1378,6 +1531,7 @@
   },
   "154791": {
     "jmeno": "Petr",
+    "osloveni": "Peťo",
     "prijmeni": "VEDRA",
     "spravce": "Peťa",
     "budka_cislo": 154,
@@ -1387,6 +1541,7 @@
   },
   "155831": {
     "jmeno": "Michal",
+    "osloveni": "Michale",
     "prijmeni": "KOLEŠ",
     "spravce": "Michal",
     "budka_cislo": 155,
@@ -1396,6 +1551,7 @@
   },
   "156840": {
     "jmeno": "Milan",
+    "osloveni": "Milane",
     "prijmeni": "DRDA",
     "spravce": "Milan",
     "budka_cislo": 156,
@@ -1405,6 +1561,7 @@
   },
   "157055": {
     "jmeno": "Aleš",
+    "osloveni": "Aleši",
     "prijmeni": "KRKOŠKA",
     "spravce": "Aleš",
     "budka_cislo": 157,
@@ -1414,6 +1571,7 @@
   },
   "158417": {
     "jmeno": "Roman",
+    "osloveni": "Romane",
     "prijmeni": "PEŠEK-G",
     "spravce": "Roman",
     "budka_cislo": 158,
@@ -1423,6 +1581,7 @@
   },
   "159325": {
     "jmeno": "Veronika",
+    "osloveni": "Verčo",
     "prijmeni": "CAISOVÁ",
     "spravce": "Veronika",
     "budka_cislo": 159,
@@ -1432,6 +1591,7 @@
   },
   "160953": {
     "jmeno": "Roman",
+    "osloveni": "Romane",
     "prijmeni": "BADIN",
     "spravce": "Roman",
     "budka_cislo": 160,
@@ -1441,6 +1601,7 @@
   },
   "161271": {
     "jmeno": "Milan",
+    "osloveni": "Milane",
     "prijmeni": "MÍKA",
     "spravce": "Milan",
     "budka_cislo": 161,
@@ -1450,6 +1611,7 @@
   },
   "162342": {
     "jmeno": "David",
+    "osloveni": "Davide",
     "prijmeni": "ROHÁČEK",
     "spravce": "Michal",
     "budka_cislo": 162,
@@ -1459,6 +1621,7 @@
   },
   "163714": {
     "jmeno": "František",
+    "osloveni": "Franto",
     "prijmeni": "",
     "spravce": "František",
     "budka_cislo": 163,
@@ -1468,6 +1631,7 @@
   },
   "164253": {
     "jmeno": "Marie",
+    "osloveni": "Maruško",
     "prijmeni": "ZEMÁNKOVÁ",
     "spravce": "Marie",
     "budka_cislo": 164,
@@ -1477,6 +1641,7 @@
   },
   "165399": {
     "jmeno": "Karel",
+    "osloveni": "Karle",
     "prijmeni": "ŽÁČEK",
     "spravce": "Karel",
     "budka_cislo": 165,
@@ -1486,6 +1651,7 @@
   },
   "166260": {
     "jmeno": "Ivan",
+    "osloveni": "Ivane",
     "prijmeni": "KAFKA",
     "spravce": "Ivan",
     "budka_cislo": 166,
@@ -1495,6 +1661,7 @@
   },
   "167500": {
     "jmeno": "Miroslav",
+    "osloveni": "Mirku",
     "prijmeni": "RYS",
     "spravce": "Mirek",
     "budka_cislo": 167,
@@ -1504,6 +1671,7 @@
   },
   "168456": {
     "jmeno": "Jakub",
+    "osloveni": "Kubo",
     "prijmeni": "JANOUŠEK",
     "spravce": "",
     "budka_cislo": 168,
@@ -1513,6 +1681,7 @@
   },
   "169377": {
     "jmeno": "Miroslav",
+    "osloveni": "Mirku",
     "prijmeni": "BERAN",
     "spravce": "Miro",
     "budka_cislo": 169,
@@ -1522,6 +1691,7 @@
   },
   "170953": {
     "jmeno": "Roman",
+    "osloveni": "Romane",
     "prijmeni": "BADIN",
     "spravce": "Roman",
     "budka_cislo": 170,
@@ -1531,6 +1701,7 @@
   },
   "171673": {
     "jmeno": "Miloš",
+    "osloveni": "Miloši",
     "prijmeni": "ALTMAN",
     "spravce": "Miloš",
     "budka_cislo": 171,
@@ -1540,6 +1711,7 @@
   },
   "172842": {
     "jmeno": "Vladimír",
+    "osloveni": "Vláďo",
     "prijmeni": "KŘIVONOSKA",
     "spravce": "Vláďa",
     "budka_cislo": 172,
@@ -1549,6 +1721,7 @@
   },
   "173444": {
     "jmeno": "Marcela",
+    "osloveni": "Marcelo",
     "prijmeni": "DVOŘÁKOVÁ",
     "spravce": "Marcela",
     "budka_cislo": 173,
@@ -1558,6 +1731,7 @@
   },
   "174087": {
     "jmeno": "Ludmila",
+    "osloveni": "Lído",
     "prijmeni": "STANIKOVÁ",
     "spravce": "Víťa",
     "budka_cislo": 174,
@@ -1567,6 +1741,7 @@
   },
   "175523": {
     "jmeno": "Víťa",
+    "osloveni": "Víťo",
     "prijmeni": "ABRAHÁM",
     "spravce": "",
     "budka_cislo": 175,
@@ -1576,6 +1751,7 @@
   },
   "176834": {
     "jmeno": "Dušan",
+    "osloveni": "Dušane",
     "prijmeni": "TÉR",
     "spravce": "",
     "budka_cislo": 176,
@@ -1585,6 +1761,7 @@
   },
   "177339": {
     "jmeno": "Gábi",
+    "osloveni": "Gábi",
     "prijmeni": "",
     "spravce": "Gábi",
     "budka_cislo": 177,
@@ -1594,6 +1771,7 @@
   },
   "178517": {
     "jmeno": "Vladimír",
+    "osloveni": "Vláďo",
     "prijmeni": "BUREŠ",
     "spravce": "Vladimír",
     "budka_cislo": 178,
@@ -1601,8 +1779,9 @@
     "telefon": "725 341 517",
     "email": "metali@metali.cz"
   },
-  "179": {
+  "000179": {
     "jmeno": "",
+    "osloveni": "",
     "prijmeni": "",
     "spravce": "Ota",
     "budka_cislo": 179,
@@ -1612,6 +1791,7 @@
   },
   "180646": {
     "jmeno": "Michal",
+    "osloveni": "Michale",
     "prijmeni": "KUNC",
     "spravce": "Michal",
     "budka_cislo": 180,
@@ -1619,8 +1799,9 @@
     "telefon": "602449646",
     "email": ""
   },
-  "181": {
+  "000181": {
     "jmeno": "",
+    "osloveni": "",
     "prijmeni": "",
     "spravce": "Martin",
     "budka_cislo": 181,
@@ -1630,6 +1811,7 @@
   },
   "182055": {
     "jmeno": "Katka",
+    "osloveni": "Katklo",
     "prijmeni": "ČERNÁ",
     "spravce": "Katka",
     "budka_cislo": 182,
@@ -1639,6 +1821,7 @@
   },
   "183457": {
     "jmeno": "Jan",
+    "osloveni": "Honzo",
     "prijmeni": "KUBAŇ",
     "spravce": "Honza",
     "budka_cislo": 183,
@@ -1648,6 +1831,7 @@
   },
   "184002": {
     "jmeno": "Marie",
+    "osloveni": "Mařenko",
     "prijmeni": "BYRTUSOVÁ",
     "spravce": "Marie",
     "budka_cislo": 184,
@@ -1657,6 +1841,7 @@
   },
   "185629": {
     "jmeno": "Jan",
+    "osloveni": "Honzo",
     "prijmeni": "KŘÍŽ",
     "spravce": "Honza",
     "budka_cislo": 185,
@@ -1664,8 +1849,9 @@
     "telefon": "774 041 629",
     "email": ""
   },
-  "186": {
+  "000186": {
     "jmeno": "Martin",
+    "osloveni": "Martine",
     "prijmeni": "NOVOTNÝ 🦉",
     "spravce": "Martin",
     "budka_cislo": 186,
@@ -1673,8 +1859,9 @@
     "telefon": "777 676 504",
     "email": ""
   },
-  "187": {
+  "000187": {
     "jmeno": "",
+    "osloveni": "",
     "prijmeni": "",
     "spravce": "",
     "budka_cislo": 187,
@@ -1682,8 +1869,9 @@
     "telefon": "",
     "email": ""
   },
-  "188": {
+  "000188": {
     "jmeno": "",
+    "osloveni": "",
     "prijmeni": "",
     "spravce": "",
     "budka_cislo": 188,
@@ -1693,6 +1881,7 @@
   },
   "189598": {
     "jmeno": "Vlastimil",
+    "osloveni": "Vlasťo",
     "prijmeni": "DVOŘÁK",
     "spravce": "Vlasta",
     "budka_cislo": 189,
@@ -1702,6 +1891,7 @@
   },
   "190554": {
     "jmeno": "Jan",
+    "osloveni": "Honzo",
     "prijmeni": "GROSSHOF",
     "spravce": "Honza",
     "budka_cislo": 190,
@@ -1711,6 +1901,7 @@
   },
   "191351": {
     "jmeno": "Eva",
+    "osloveni": "Evi",
     "prijmeni": "ĎABOLKOVÁ",
     "spravce": "Eva",
     "budka_cislo": 191,
@@ -1720,6 +1911,7 @@
   },
   "192450": {
     "jmeno": "Miloš",
+    "osloveni": "Miloši",
     "prijmeni": "VÁCLAVEK",
     "spravce": "Miloš",
     "budka_cislo": 192,
@@ -1729,6 +1921,7 @@
   },
   "193471": {
     "jmeno": "Jan",
+    "osloveni": "Honzo",
     "prijmeni": "RADA",
     "spravce": "Lucie",
     "budka_cislo": 193,
@@ -1738,6 +1931,7 @@
   },
   "194612": {
     "jmeno": "Martin",
+    "osloveni": "Martine",
     "prijmeni": "ZAHÁLKA",
     "spravce": "Martin",
     "budka_cislo": 194,
@@ -1747,6 +1941,7 @@
   },
   "195785": {
     "jmeno": "Jiří",
+    "osloveni": "Jirko",
     "prijmeni": "WOLF",
     "spravce": "Jirka",
     "budka_cislo": 195,
@@ -1756,6 +1951,7 @@
   },
   "196963": {
     "jmeno": "Simona",
+    "osloveni": "Simono",
     "prijmeni": "SVIATIKOVÁ",
     "spravce": "Simona",
     "budka_cislo": 196,
@@ -1765,6 +1961,7 @@
   },
   "197450": {
     "jmeno": "Tomáš",
+    "osloveni": "Tome",
     "prijmeni": "KONOPIŠTĚ",
     "spravce": "Tomáš",
     "budka_cislo": 197,
@@ -1774,6 +1971,7 @@
   },
   "198825": {
     "jmeno": "Sylva",
+    "osloveni": "Sylvo",
     "prijmeni": "ŘEZNÍČKOVÁ",
     "spravce": "",
     "budka_cislo": 198,
@@ -1783,6 +1981,7 @@
   },
   "199538": {
     "jmeno": "Radek",
+    "osloveni": "Radku",
     "prijmeni": "NOLC",
     "spravce": "Radek",
     "budka_cislo": 199,
@@ -1790,8 +1989,9 @@
     "telefon": "724 025 538",
     "email": ""
   },
-  "200": {
+  "000200": {
     "jmeno": "",
+    "osloveni": "",
     "prijmeni": "",
     "spravce": "",
     "budka_cislo": 200,
@@ -1799,8 +1999,9 @@
     "telefon": "",
     "email": ""
   },
-  "201": {
+  "000201": {
     "jmeno": "",
+    "osloveni": "",
     "prijmeni": "",
     "spravce": "",
     "budka_cislo": 201,
@@ -1808,8 +2009,9 @@
     "telefon": "",
     "email": ""
   },
-  "202": {
+  "000202": {
     "jmeno": "",
+    "osloveni": "",
     "prijmeni": "",
     "spravce": "",
     "budka_cislo": 202,
@@ -1819,6 +2021,7 @@
   },
   "203008": {
     "jmeno": "Jarda",
+    "osloveni": "Jardo",
     "prijmeni": "ČERNOŠEK",
     "spravce": "",
     "budka_cislo": 203,
@@ -1827,7 +2030,8 @@
     "email": ""
   },
   "204940": {
-    "jmeno": "Josef Správce",
+    "jmeno": "Josef",
+    "osloveni": "Pepo",
     "prijmeni": "KARHAN",
     "spravce": "Josef",
     "budka_cislo": 204,
@@ -1837,6 +2041,7 @@
   },
   "205269": {
     "jmeno": "Pavel",
+    "osloveni": "Pavle",
     "prijmeni": "FERINA",
     "spravce": "Pavel",
     "budka_cislo": 205,
@@ -1846,6 +2051,7 @@
   },
   "206573": {
     "jmeno": "Josef",
+    "osloveni": "Pepíku",
     "prijmeni": "CACÁK",
     "spravce": "",
     "budka_cislo": 206,
@@ -1855,6 +2061,7 @@
   },
   "207540": {
     "jmeno": "Jiří",
+    "osloveni": "Jirko",
     "prijmeni": "NOVÁČEK",
     "spravce": "Jirka",
     "budka_cislo": 207,
@@ -1864,6 +2071,7 @@
   },
   "208540": {
     "jmeno": "Jiří",
+    "osloveni": "Jirko",
     "prijmeni": "NOVÁČEK",
     "spravce": "Jirka",
     "budka_cislo": 208,
@@ -1871,8 +2079,9 @@
     "telefon": "605208540",
     "email": ""
   },
-  "209": {
+  "000209": {
     "jmeno": "",
+    "osloveni": "",
     "prijmeni": "",
     "spravce": "",
     "budka_cislo": 209,
@@ -1880,8 +2089,9 @@
     "telefon": "",
     "email": ""
   },
-  "210": {
+  "000210": {
     "jmeno": "",
+    "osloveni": "",
     "prijmeni": "",
     "spravce": "",
     "budka_cislo": 210,
@@ -1889,8 +2099,9 @@
     "telefon": "",
     "email": ""
   },
-  "211": {
+  "000211": {
     "jmeno": "",
+    "osloveni": "",
     "prijmeni": "",
     "spravce": "",
     "budka_cislo": 211,
@@ -1898,8 +2109,9 @@
     "telefon": "",
     "email": ""
   },
-  "212": {
+  "000212": {
     "jmeno": "",
+    "osloveni": "",
     "prijmeni": "",
     "spravce": "",
     "budka_cislo": 212,
