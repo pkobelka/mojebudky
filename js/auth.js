@@ -141,30 +141,42 @@ function _zobrazKartuSpravce(info, jmeno, budkaText) {
 }
 
 function _vokativ(jmeno) {
+  const prvni = jmeno.trim().split(/\s+/)[0];
+  const normalized = prvni.charAt(0).toUpperCase() + prvni.slice(1).toLowerCase();
+
   const tabulka = {
-    'Aleš':'Aleši','Tomáš':'Tomáši','Lukáš':'Lukáši','Luboš':'Luboši','Ondřej':'Ondřeji',
+    'Aleš':'Aleši','Tomáš':'Tomáši','Lukáš':'Lukáši','Luboš':'Luboši','Miloš':'Miloši',
+    'Ondřej':'Ondřeji','Dobroš':'Dobroši',
     'Jan':'Jane','Martin':'Martine','David':'Davide','Jakub':'Jakube','Filip':'Filipe',
     'Adam':'Adame','Milan':'Milane','Roman':'Romane','Lubor':'Lubore','Viktor':'Viktore',
     'Stanislav':'Stanislave','Miroslav':'Miroslave','Antonín':'Antoníne','Vladimír':'Vladimíre',
+    'Ladislav':'Ladislave','Václav':'Václave','František':'Františku','Jindřich':'Jindřichu',
+    'Libor':'Libore','Jaroslav':'Jaroslave','Ivan':'Ivane','Kamil':'Kamile','Radim':'Radime',
     'Petr':'Petře','Pavel':'Pavle','Karel':'Karle','Michal':'Michale','Daniel':'Daniele',
     'Radek':'Radku','Marek':'Marku','Zdeněk':'Zdeňku','Patrik':'Patriku','Dominik':'Dominiku',
-    'Jiří':'Jiří','Ladislav':'Ladislave','Václav':'Václave','František':'Františku',
+    'Jiří':'Jiří','Josef':'Josefe','Dušan':'Dušane','Oldřich':'Oldo','Erwin':'Erwine',
     'Honza':'Honzo','Ondra':'Ondro','Míra':'Míro','Pepa':'Pepo','Tom':'Tome',
-    'Josef':'Josefe','Jaroslav':'Jaroslave','Libor':'Libore','Jindřich':'Jindřichu',
+    'Jarda':'Jardo','Jirka':'Jirko','Vašek':'Vašku','Tomášek':'Tomášku',
+    'Miro':'Miro','Radko':'Radko','Sláva':'Slávo','Víťa':'Víťo',
+    'Rafan':'Jardo','Peťa':'Peťo','Dianka':'Dianko',
     'Jana':'Jano','Eva':'Evo','Petra':'Petro','Alena':'Aleno','Lenka':'Lenko',
     'Monika':'Moniko','Tereza':'Terezo','Kateřina':'Kateřino','Ivana':'Ivano',
-    'Hana':'Hano','Zuzana':'Zuzano','Lucie':'Lucie','Marie':'Marie',
+    'Hana':'Hano','Zuzana':'Zuzano','Lucie':'Lucie','Marie':'Marie','Alice':'Alice',
     'Martina':'Martino','Markéta':'Markéto','Veronika':'Veroniko','Jitka':'Jitko',
-    'Irena':'Ireno','Renata':'Renato','Dana':'Dano','Romana':'Romano',
-    'Gabriela':'Gabrielo','Božena':'Boženo','Růžena':'Růženo','Blanka':'Blanko',
+    'Irena':'Ireno','Renata':'Renato','Dana':'Dano','Romana':'Romano','Gábi':'Gábi',
+    'Gabriela':'Gabrielo','Michaela':'Michaelo','Marcela':'Marcelo','Simona':'Simono',
+    'Sylva':'Sylvo','Vlasta':'Vlasto','Vlaďka':'Vlaďko','Věra':'Věro','Iva':'Ivo',
+    'Ludmila':'Ludmilo','Miroslava':'Miroslavo','Květoslava':'Květoslavo',
+    'Milena':'Mileno','Vlastimil':'Vlastimile','Anička':'Aničko','Katka':'Katko',
   };
-  if (tabulka[jmeno]) return tabulka[jmeno];
-  if (/[šžč]$/.test(jmeno)) return jmeno + 'i';
-  if (jmeno.endsWith('ej')) return jmeno + 'i';
-  if (jmeno.endsWith('í')) return jmeno;
-  if (jmeno.endsWith('ek')) return jmeno.slice(0, -2) + 'ku';
-  if (jmeno.endsWith('a')) return jmeno.slice(0, -1) + 'o';
-  return jmeno + 'e';
+
+  if (tabulka[normalized]) return tabulka[normalized];
+  if (/[šžč]$/.test(normalized)) return normalized + 'i';
+  if (normalized.endsWith('ej')) return normalized + 'i';
+  if (normalized.endsWith('í')) return normalized;
+  if (normalized.endsWith('ek')) return normalized.slice(0, -2) + 'ku';
+  if (normalized.endsWith('a')) return normalized.slice(0, -1) + 'o';
+  return normalized + 'e';
 }
 
 function _zobrazToast(text) {
