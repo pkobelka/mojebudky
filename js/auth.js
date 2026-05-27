@@ -46,25 +46,101 @@ async function _zobrazAdminPanel(loginId) {
   const banner = document.createElement('div');
   banner.id = 'adminBanner';
   banner.className = 'admin-banner';
-  banner.innerHTML = `
-    <span class="admin-budka-link">Administrace: ${budkaText}</span>
-    <button id="btnOdhlasit">Odhlásit se</button>
-  `;
+  banner.innerHTML = `<span class="admin-budka-link">Administrace: ${budkaText}</span>`;
   document.body.appendChild(banner);
 
   if (typeof window._presenceSetAdmin === 'function') window._presenceSetAdmin(true);
 
-  document.getElementById('btnOdhlasit').addEventListener('click', () => {
-    banner.remove();
-    _authSpravciCache = null;
-    _spravciInfoCache = null;
-    if (typeof window._presenceSetAdmin === 'function') window._presenceSetAdmin(false);
-    const btn = document.getElementById('btnPrihlasit');
-    if (btn) { btn.textContent = 'Vstup pro správce'; btn.classList.remove('prihlaseny'); }
+  const btn = document.getElementById('btnPrihlasit');
+  if (btn) { btn.textContent = `Přihlášen ${jmeno} ▾`; btn.classList.add('prihlaseny'); }
+
+  const existujiciDropdown = document.getElementById('adminDropdown');
+  if (existujiciDropdown) existujiciDropdown.remove();
+
+  const dropdown = document.createElement('div');
+  dropdown.id = 'adminDropdown';
+  dropdown.className = 'admin-dropdown';
+  dropdown.innerHTML = `
+    <div class="admin-dropdown-hlavicka">👤 ${jmeno} &nbsp;·&nbsp; ${budkaText}</div>
+    <button class="admin-dropdown-item" data-akce="karta">🪪 Karta správce</button>
+    <button class="admin-dropdown-item pripravujeme" data-akce="editSpravce">✏️ Editovat správce</button>
+    <button class="admin-dropdown-item pripravujeme" data-akce="editBudky">🏠 Editovat budky</button>
+    <button class="admin-dropdown-item pripravujeme" data-akce="clanek">📝 Vložit článek</button>
+    <div class="admin-dropdown-oddelovac"></div>
+    <button class="admin-dropdown-item odhlasit" data-akce="odhlasit">🚪 Odhlásit se</button>
+  `;
+  document.getElementById('authNavArea').appendChild(dropdown);
+
+  if (btn) {
+    btn.removeEventListener('click', btn._loginHandler);
+    btn._dropdownHandler = (e) => {
+      e.stopPropagation();
+      dropdown.classList.toggle('open');
+    };
+    btn.addEventListener('click', btn._dropdownHandler);
+  }
+
+  document.addEventListener('click', function zavriDropdown(e) {
+    if (!dropdown.contains(e.target) && e.target !== btn) {
+      dropdown.classList.remove('open');
+    }
   });
 
-  const btn = document.getElementById('btnPrihlasit');
-  if (btn) { btn.textContent = `Přihlášen ${jmeno}`; btn.classList.add('prihlaseny'); }
+  dropdown.addEventListener('click', e => {
+    const item = e.target.closest('[data-akce]');
+    if (!item) return;
+    const akce = item.dataset.akce;
+
+    if (akce === 'odhlasit') {
+      dropdown.remove();
+      banner.remove();
+      _authSpravciCache = null;
+      _spravciInfoCache = null;
+      if (typeof window._presenceSetAdmin === 'function') window._presenceSetAdmin(false);
+      if (btn) {
+        btn.textContent = 'Vstup pro správce';
+        btn.classList.remove('prihlaseny');
+        btn.removeEventListener('click', btn._dropdownHandler);
+      }
+      return;
+    }
+
+    if (akce === 'karta') {
+      _zobrazKartuSpravce(spravceInfo, jmeno, budkaText);
+      dropdown.classList.remove('open');
+      return;
+    }
+
+    if (item.classList.contains('pripravujeme')) {
+      item.textContent = item.textContent.replace(' – Připravujeme…', '') + ' – Připravujeme…';
+      setTimeout(() => { item.textContent = item.textContent.replace(' – Připravujeme…', ''); }, 2000);
+    }
+  });
+}
+
+function _zobrazKartuSpravce(info, jmeno, budkaText) {
+  const existujici = document.getElementById('modalKarta');
+  if (existujici) existujici.remove();
+
+  const modal = document.createElement('div');
+  modal.id = 'modalKarta';
+  modal.className = 'modal-overlay';
+  modal.innerHTML = `
+    <div class="modal-box karta-box">
+      <button class="modal-zavrit" id="kartaZavrit">×</button>
+      <h2 class="modal-nadpis">🪪 Karta správce</h2>
+      <div class="karta-grid">
+        <div class="karta-radek"><span class="karta-label">Jméno</span><span class="karta-hodnota">${info ? info.jmeno + ' ' + info.prijmeni : jmeno}</span></div>
+        <div class="karta-radek"><span class="karta-label">Budka</span><span class="karta-hodnota">${budkaText}</span></div>
+        ${info && info.telefon ? `<div class="karta-radek"><span class="karta-label">Telefon</span><span class="karta-hodnota">${info.telefon}</span></div>` : ''}
+        ${info && info.email ? `<div class="karta-radek"><span class="karta-label">E-mail</span><span class="karta-hodnota">${info.email}</span></div>` : ''}
+      </div>
+    </div>
+  `;
+  document.body.appendChild(modal);
+
+  document.getElementById('kartaZavrit').addEventListener('click', () => modal.remove());
+  modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
 }
 
 document.addEventListener('DOMContentLoaded', () => {
