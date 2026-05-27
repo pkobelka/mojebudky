@@ -216,6 +216,8 @@ html, body {
 .popup-historie th { background: #f0e8d8; color: #5a3010; font-weight: 700; padding: 3px 6px; text-align: left; border-bottom: 1px solid #e0d0b8; }
 .popup-historie td { padding: 3px 6px; color: #555; border-bottom: 1px solid #f0e8e0; }
 .popup-historie tr:last-child td { border-bottom: none; }
+.popup-edit-btn { display: block; width: 100%; background: #c96420; color: #fff; border: none; padding: 10px 14px; font-size: 0.92rem; font-weight: 700; cursor: pointer; text-align: center; transition: background 0.15s; font-family: inherit; }
+.popup-edit-btn:hover { background: #a0501a; }
 
 /* ── TOOLTIP ── */
 .budka-tooltip { background: #fffef8; border-radius: 8px; overflow: hidden; font-family: 'Segoe UI', system-ui, sans-serif; font-size: 0.82rem; min-width: 140px; }

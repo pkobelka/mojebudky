@@ -117,6 +117,9 @@ async function _zobrazAdminPanel(loginId) {
 
   if (typeof window._presenceSetAdmin === 'function') window._presenceSetAdmin(true);
 
+  window._aktualniSpravce = { loginId, spravceInfo, budkyList };
+  window._editBudku = _zobrazEditBudky;
+
   const btn = document.getElementById('btnPrihlasit');
   if (btn) { btn.textContent = `Přihlášen ${jmeno} ▾`; btn.classList.add('prihlaseny'); }
 
@@ -171,6 +174,7 @@ async function _zobrazAdminPanel(loginId) {
       _authSpravciCache = null;
       _spravciInfoCache = null;
       if (typeof window._presenceSetAdmin === 'function') window._presenceSetAdmin(false);
+      window._aktualniSpravce = null;
       if (btn) {
         btn.textContent = 'Vstup pro správce';
         btn.classList.remove('prihlaseny');

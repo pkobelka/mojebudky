@@ -285,4 +285,32 @@ async function inicializujMapu() {
     searchBtn.addEventListener('click', () => hledejBudku(searchInput.value));
     searchInput.addEventListener('keydown', e => { if (e.key === 'Enter') hledejBudku(searchInput.value); });
   }
+
+  mapInstance.on('popupopen', e => {
+    const spravce = window._aktualniSpravce;
+    if (!spravce || !window._editBudku) return;
+
+    const popup = e.popup;
+    const el = popup.getElement();
+    if (!el || el.querySelector('.popup-edit-btn')) return;
+
+    const cislo = Object.keys(markersByCislo).map(Number).find(k => markersByCislo[k].getPopup() === popup);
+    if (!cislo) return;
+    if (!spravce.budkyList.some(b => b.cislo === cislo)) return;
+
+    const b = spravce.budkyList.find(b => b.cislo === cislo);
+    const nazev = b ? (b.nazev || '') : '';
+    const text = nazev ? `Budka č. ${cislo} – ${nazev}` : `Budka č. ${cislo}`;
+
+    const btn = document.createElement('button');
+    btn.className = 'popup-edit-btn';
+    btn.textContent = '✏️ Editovat budku';
+    btn.addEventListener('click', () => {
+      popup.close();
+      window._editBudku(spravce.loginId, spravce.spravceInfo, text, cislo, nazev);
+    });
+
+    const content = el.querySelector('.leaflet-popup-content');
+    if (content) content.appendChild(btn);
+  });
 }
