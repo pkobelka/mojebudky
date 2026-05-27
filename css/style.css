@@ -105,7 +105,7 @@ html, body {
 .info-bar .bar-right.bar-svatek { color: var(--orange); font-style: normal; font-weight: 600; }
 .bar-gratulace { color: var(--orange); font-weight: 700; }
 
-.main-content { display: flex; flex: 1; height: calc(100vh - 320px); min-height: 420px; }
+.main-content { display: flex; flex: 1; height: calc(100vh - 430px); min-height: 360px; max-height: 530px; }
 .panel { background: var(--panel-bg); border: 1px solid var(--panel-border); width: 300px; flex-shrink: 0; display: flex; flex-direction: column; overflow: hidden; }
 .panel-title { background: var(--panel-header); color: var(--text-light); font-size: 1.05rem; font-weight: 700; padding: 12px 16px; letter-spacing: 0.3px; border-bottom: 2px solid var(--orange); flex-shrink: 0; }
 .panel-left .panel-title::before { content: '🌿 '; }
@@ -117,9 +117,9 @@ html, body {
 .pribeh-item:hover { background: rgba(255,255,255,0.05); }
 .pribeh-ikona { flex-shrink: 0; width: 44px; height: 44px; }
 .pribeh-text { flex: 1; min-width: 0; }
-.pribeh-druh { color: var(--accent-gold); font-size: 0.95rem; font-weight: 700; margin-bottom: 4px; }
-.pribeh-popis { color: var(--text-light); font-size: 0.88rem; line-height: 1.45; margin-bottom: 5px; opacity: 0.9; }
-.pribeh-datum { color: var(--text-muted); font-size: 0.82rem; }
+.pribeh-druh { color: var(--accent-gold); font-size: 1rem; font-weight: 700; margin-bottom: 4px; }
+.pribeh-popis { color: var(--text-light); font-size: 0.95rem; line-height: 1.45; margin-bottom: 5px; opacity: 0.9; }
+.pribeh-datum { color: var(--text-muted); font-size: 0.86rem; }
 
 .map-wrapper { flex: 1; position: relative; min-width: 0; }
 #map { width: 100%; height: 100%; }
