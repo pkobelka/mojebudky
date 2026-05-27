@@ -376,29 +376,39 @@ function zobrazModalDruhu(druh, iconSvg) {
   }
 
   const bigIcon = iconSvg.replace(/width="38" height="38"/, 'width="110" height="110"');
+  const fotoHTML = druh.foto
+    ? `<div class="druh-modal-foto">
+        <img src="${druh.foto}" alt="${druh.nazev}" class="druh-modal-foto-img"
+             onerror="this.closest('.druh-modal-foto').style.display='none'">
+        ${druh.foto_autor ? `<div class="druh-modal-foto-autor">© ${druh.foto_autor}</div>` : ''}
+       </div>`
+    : '';
 
   overlay.innerHTML = `
-    <div class="druh-modal-box">
+    <div class="druh-modal-box${druh.foto ? ' druh-modal-box--foto' : ''}">
       <button class="druh-modal-zavrit" aria-label="Zavřít">×</button>
-      <div class="druh-modal-header">
-        <div class="druh-modal-icon">${bigIcon}</div>
-        <div>
-          <div class="druh-modal-nazev">${druh.nazev}</div>
-          <div class="druh-modal-vedecky">${druh.vedecky || ''}</div>
+      ${fotoHTML}
+      <div class="druh-modal-content">
+        <div class="druh-modal-header">
+          <div class="druh-modal-icon">${bigIcon}</div>
+          <div>
+            <div class="druh-modal-nazev">${druh.nazev}</div>
+            <div class="druh-modal-vedecky">${druh.vedecky || ''}</div>
+          </div>
         </div>
+        <p class="druh-modal-popis">${druh.popis || ''}</p>
+        <div class="druh-modal-info">
+          <div class="druh-modal-info-item">
+            <div class="druh-modal-info-label">Počet budek</div>
+            <div class="druh-modal-info-value">${druh.pocet}</div>
+          </div>
+          <div class="druh-modal-info-item">
+            <div class="druh-modal-info-label">Průměr otvoru</div>
+            <div class="druh-modal-info-value">${druh.otvor || '—'}</div>
+          </div>
+        </div>
+        ${druh.wiki ? `<a href="${druh.wiki}" class="druh-modal-wiki" target="_blank" rel="noopener">📖 Více na Wikipedii →</a>` : ''}
       </div>
-      <p class="druh-modal-popis">${druh.popis || ''}</p>
-      <div class="druh-modal-info">
-        <div class="druh-modal-info-item">
-          <div class="druh-modal-info-label">Počet budek</div>
-          <div class="druh-modal-info-value">${druh.pocet}</div>
-        </div>
-        <div class="druh-modal-info-item">
-          <div class="druh-modal-info-label">Průměr otvoru</div>
-          <div class="druh-modal-info-value">${druh.otvor || '—'}</div>
-        </div>
-      </div>
-      ${druh.wiki ? `<a href="${druh.wiki}" class="druh-modal-wiki" target="_blank" rel="noopener">📖 Více na Wikipedii →</a>` : ''}
     </div>`;
 
   overlay.querySelector('.druh-modal-zavrit').addEventListener('click', () => {
