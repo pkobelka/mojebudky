@@ -180,6 +180,22 @@ html, body {
 .partner-item--logo { padding: 8px 14px; }
 .partner-logo { height: 56px; max-width: 140px; width: auto; object-fit: contain; display: block; }
 
+/* ── PODPORA PROJEKTU ── */
+.podpora-wrap { position: relative; display: inline-flex; justify-content: center; margin-top: 10px; }
+.podpora-trigger { background: rgba(255,255,255,0.1); color: var(--text-light); border: 1px solid rgba(255,255,255,0.2); border-radius: 20px; padding: 10px 24px; font-size: 1.3rem; font-weight: 600; cursor: pointer; transition: background 0.2s; white-space: nowrap; }
+.podpora-trigger:hover { background: rgba(255,215,0,0.18); border-color: rgba(255,215,0,0.5); color: #f0d800; }
+.podpora-bublina { display: none; position: absolute; bottom: calc(100% + 12px); left: 50%; transform: translateX(-50%); background: #1a2e0a; border: 2px solid rgba(255,215,0,0.4); border-radius: 16px; padding: 22px 24px; width: 420px; max-width: 90vw; box-shadow: 0 8px 40px rgba(0,0,0,0.7); z-index: 200; text-align: left; }
+.podpora-bublina::after { content: ''; position: absolute; top: 100%; left: 50%; transform: translateX(-50%); border: 10px solid transparent; border-top-color: rgba(255,215,0,0.4); }
+.podpora-bublina::before { content: ''; position: absolute; top: 100%; left: 50%; transform: translateX(-50%); margin-top: 2px; border: 9px solid transparent; border-top-color: #1a2e0a; z-index: 1; }
+.podpora-wrap:hover .podpora-bublina,
+.podpora-bublina--open { display: block; }
+.podpora-nadpis { font-size: 1.2rem; font-weight: 800; color: #f0d800; margin-bottom: 12px; display: flex; align-items: center; gap: 10px; }
+.podpora-logo-img { height: 32px; width: auto; }
+.podpora-bublina p { color: var(--text-light); font-size: 0.95rem; line-height: 1.6; margin-bottom: 10px; }
+.podpora-jak { color: #f0d800; font-size: 1rem; font-weight: 700; margin-bottom: 8px; margin-top: 4px; }
+.podpora-bublina a { color: var(--orange-light); font-weight: 600; }
+.podpora-bublina a:hover { color: #f0d800; }
+
 /* ── FOOTER ── */
 .footer-sep { opacity: 0.35; }
 .footer-bar { background: var(--footer-bg); color: var(--text-light); font-size: 1.15rem; padding: 13px 36px; display: flex; justify-content: center; align-items: center; gap: 14px; flex-wrap: wrap; }

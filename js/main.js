@@ -506,6 +506,19 @@ document.addEventListener('DOMContentLoaded', () => {
   inicializujHamburger();
   inicializujPushNotifikace();
 
+  // Podpora projektu – click toggle (mobile)
+  const podporaTrigger = document.getElementById('podporaWrap');
+  if (podporaTrigger) {
+    const bublina = podporaTrigger.querySelector('.podpora-bublina');
+    podporaTrigger.querySelector('.podpora-trigger').addEventListener('click', () => {
+      const open = bublina.classList.toggle('podpora-bublina--open');
+      if (open) {
+        const close = e2 => { if (!podporaTrigger.contains(e2.target)) { bublina.classList.remove('podpora-bublina--open'); document.removeEventListener('click', close); } };
+        setTimeout(() => document.addEventListener('click', close), 0);
+      }
+    });
+  }
+
   // Partneři nav → modal
   document.querySelectorAll('a[href="#partneri"]').forEach(a => {
     a.addEventListener('click', e => { e.preventDefault(); _zobrazPartneriModal(); });
