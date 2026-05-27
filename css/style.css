@@ -48,7 +48,7 @@ html, body {
 @keyframes cloudMove { from { transform: translateX(-300px); } to { transform: translateX(calc(100vw + 300px)); } }
 .bg-trees { position: absolute; bottom: 0; left: 0; right: 0; width: 100%; height: 120px; }
 
-#app { position: relative; z-index: 1; display: flex; flex-direction: column; min-height: 100vh; background: transparent; }
+#app { position: relative; z-index: 1; display: grid; grid-template-rows: auto auto 1fr auto auto; min-height: 100vh; background: transparent; }
 
 .navbar { background: var(--nav-bg); display: flex; align-items: center; padding: 0 28px; height: 140px; gap: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.4); }
 .nav-logo { display: flex; align-items: center; gap: 14px; text-decoration: none; flex-shrink: 0; }
@@ -105,7 +105,7 @@ html, body {
 .info-bar .bar-right.bar-svatek { color: var(--orange); font-style: normal; font-weight: 600; }
 .bar-gratulace { color: var(--orange); font-weight: 700; }
 
-.main-content { display: flex; flex: 1; min-height: 260px; }
+.main-content { display: flex; min-height: 260px; }
 .panel { background: var(--panel-bg); border: 1px solid var(--panel-border); width: 400px; flex-shrink: 0; display: flex; flex-direction: column; overflow: hidden; }
 .panel-title { background: var(--panel-header); color: var(--text-light); font-size: 1.35rem; font-weight: 700; padding: 18px 24px; letter-spacing: 0.3px; border-bottom: 2px solid var(--orange); flex-shrink: 0; }
 .panel-left .panel-title::before { content: '🌿 '; }
@@ -146,7 +146,7 @@ html, body {
 .stat-aktualizace span { color: var(--text-light); font-weight: 600; }
 
 /* ── PARTNERÉ ── */
-.partners-section { background: #1a3a0a; border-top: 2px solid var(--orange); padding: 18px 52px 28px; text-align: center; flex-shrink: 0; display: flex; flex-direction: column; justify-content: center; }
+.partners-section { background: #1a3a0a; border-top: 2px solid var(--orange); padding: 18px 52px 28px; text-align: center; display: flex; flex-direction: column; justify-content: center; }
 .partners-section h3 { color: var(--text-light); font-size: 1.6rem; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 14px; }
 .podekovani-wrap { margin-top: 8px; border-top: 1px solid rgba(255,255,255,0.12); padding-top: 8px; }
 .podekovani-label { display: block; color: var(--text-muted); font-size: 1.2rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px; margin-top: 14px; }
@@ -236,7 +236,7 @@ html, body {
 .budka-marker img { display: block; }
 .aktualita-link { display: inline-block; margin-top: 5px; color: var(--orange-light); font-size: 0.73rem; font-weight: 600; text-decoration: none; letter-spacing: 0.2px; transition: color 0.15s; }
 .aktualita-link:hover { color: var(--accent-gold); text-decoration: underline; }
-.main-content.mapa-fullscreen { flex: 1; }
+.main-content.mapa-fullscreen { min-height: 0; }
 .main-content.mapa-fullscreen .panel { display: none; }
 .main-content.mapa-fullscreen .map-wrapper { flex: 1; height: 100%; }
 .main-content.mapa-fullscreen #map { height: 100%; }
@@ -329,7 +329,7 @@ html, body {
 @media (max-width: 900px) {
   .pridat-na-plochu { display: block; }
   .oblibene-pc { display: none; }
-  .main-content { flex-direction: column; height: auto; }
+  .main-content { flex-direction: column; }
   .panel { width: 100%; max-height: 240px; }
   .map-wrapper { height: 280px; min-height: 220px; }
   #map { height: 280px; min-height: 220px; }
@@ -384,7 +384,7 @@ html, body {
 
 /* ── LANDSCAPE MOBIL ── */
 @media (max-width: 900px) and (orientation: landscape) {
-  .main-content { flex-direction: row; height: calc(100vh - 100px); }
+  .main-content { flex-direction: row; height: calc(100vh - 100px); min-height: unset; }
   .panel { width: 200px; max-height: none; flex-shrink: 0; }
   .map-wrapper { height: 100%; min-height: unset; }
   #map { height: 100%; }
