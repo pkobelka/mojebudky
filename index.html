@@ -6,7 +6,7 @@
   <meta name="description" content="MojeBudky.cz – sledujeme ptáčí budky po celé ČR. Živá mapa, statistiky a příběhy z přírody.">
   <title>MojeBudky.cz – Pomáháme ptactvu</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
-  <link rel="stylesheet" href="css/style.css?v=20260527z">
+  <link rel="stylesheet" href="css/style.css?v=20260528a">
   <link rel="icon" type="image/png" href="img/Favikon.png">
 </head>
 <body>
@@ -38,6 +38,7 @@
       </a>
 
       <ul class="nav-links" id="navLinks" role="navigation" aria-label="Hlavní navigace">
+        <li><button type="button" class="nav-podpora-btn" id="navPodpora">💛 Podpořit projekt</button></li>
         <li><a href="#mapa" id="nav-mapa">Mapa Budek</a></li>
         <li><a href="#aktuality">Zprávy z terénu</a></li>
         <li><a href="#clanky">Zajínavé články</a></li>
@@ -179,24 +180,8 @@
     <h3>Partneři projektu MojeBudky.cz</h3>
     <div id="partneriList" role="list">Načítám…</div>
 
-    <!-- Podpora projektu -->
-    <div class="podpora-wrap" id="podporaWrap">
-      <button type="button" class="podpora-trigger" aria-label="Podpořit projekt MojeBudky">
-        💛 Podpořit projekt
-      </button>
-      <div class="podpora-bublina" role="tooltip">
-        <div class="podpora-nadpis">
-          Fandíte projektu MojeBudky?
-          <img src="img/logo.svg" alt="" class="podpora-logo-img">
-        </div>
-        <p>Celý projekt roste a s ním i radost z každého nového ptačího souseda. Abychom mohli mapu udržovat v chodu, posílat zprávy z terénu a starat se o bezpečný chod celé aplikace, neobejde se to bez provozních nákladů (např. za hosting a zabezpečení webu).</p>
-        <p>Všechno ostatní kolem výroby a kontroly budek děláme s našimi správci čistě dobrovolně a rádi ve svém volném čase. Pokud byste chtěli provoz webu finančně podpořit – ať už jako firma (rádi vás přidáme mezi partnery), nebo jako fanoušek přírody – budeme moc vděční za jakýkoliv příspěvek.</p>
-        <div class="podpora-jak"><strong>Jak můžete pomoci?</strong></div>
-        <p>Staňte se partnerem: Napište nám na <a href="mailto:info@mojebudky.cz">info@mojebudky.cz</a> a domluvíme se na umístění vašeho loga.</p>
-      </div>
-    </div>
 
-    <div class="podekovani-wrap" id="podekovaniWrap" style="display:none">
+<div class="podekovani-wrap" id="podekovaniWrap" style="display:none">
       <span class="podekovani-label">🙏 Poděkování</span>
       <div class="podekovani-grid" id="podekovaniList"></div>
     </div>
@@ -246,7 +231,7 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 <script src="js/svatky.js"></script>
 <script src="js/mapa.js?v=20260527k"></script>
-<script src="js/main.js?v=20260527z"></script>
+<script src="js/main.js?v=20260528a"></script>
 <script src="js/auth.js?v=20260527k"></script>
 <script src="js/presence.js?v=20260527k"></script>
 </body>

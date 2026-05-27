@@ -513,16 +513,31 @@ document.addEventListener('DOMContentLoaded', () => {
   inicializujHamburger();
   inicializujPushNotifikace();
 
-  // Podpora projektu – click toggle (mobile)
-  const podporaTrigger = document.getElementById('podporaWrap');
-  if (podporaTrigger) {
-    const bublina = podporaTrigger.querySelector('.podpora-bublina');
-    podporaTrigger.querySelector('.podpora-trigger').addEventListener('click', () => {
-      const open = bublina.classList.toggle('podpora-bublina--open');
-      if (open) {
-        const close = e2 => { if (!podporaTrigger.contains(e2.target)) { bublina.classList.remove('podpora-bublina--open'); document.removeEventListener('click', close); } };
-        setTimeout(() => document.addEventListener('click', close), 0);
-      }
+  // Podpora projektu – modal z nav tlačítka
+  const navPodpora = document.getElementById('navPodpora');
+  if (navPodpora) {
+    navPodpora.addEventListener('click', () => {
+      if (document.getElementById('modalPodpora')) return;
+      const modal = document.createElement('div');
+      modal.id = 'modalPodpora';
+      modal.className = 'modal-overlay';
+      modal.innerHTML = `
+        <div class="podpora-modal-box">
+          <button class="modal-zavrit" id="modalPodporaZavrit" style="color:#3a4a10">×</button>
+          <div class="podpora-modal-header">
+            <img src="img/logo.svg" alt="" class="podpora-logo-img">
+            <div class="podpora-modal-header-text">Fandíte projektu MojeBudky?</div>
+          </div>
+          <div class="podpora-modal-body">
+            <p>Celý projekt roste a s ním i radost z každého nového ptačího souseda. Abychom mohli mapu udržovat v chodu, posílat zprávy z terénu a starat se o bezpečný chod celé aplikace, neobejde se to bez provozních nákladů (např. za hosting a zabezpečení webu).</p>
+            <p>Všechno ostatní kolem výroby a kontroly budek děláme s našimi správci čistě dobrovolně a rádi ve svém volném čase. Pokud byste chtěli provoz webu finančně podpořit – ať už jako firma (rádi vás přidáme mezi partnery), nebo jako fanoušek přírody – budeme moc vděční za jakýkoliv příspěvek.</p>
+            <div class="podpora-modal-jak">Jak můžete pomoci?</div>
+            <p>Staňte se partnerem: Napište nám na <a href="mailto:info@mojebudky.cz">info@mojebudky.cz</a> a domluvíme se na umístění vašeho loga.</p>
+          </div>
+        </div>`;
+      document.body.appendChild(modal);
+      document.getElementById('modalPodporaZavrit').addEventListener('click', () => modal.remove());
+      modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
     });
   }
 
