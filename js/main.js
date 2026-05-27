@@ -245,7 +245,7 @@ function nactiPartnery(partneri) {
     return p.url
       ? `<a href="${p.url}" class="partner-item${p.logo ? ' partner-item--logo' : ''}" target="_blank" rel="noopener" title="${p.nazev}">${obsah}</a>`
       : `<span class="partner-item${p.logo ? ' partner-item--logo' : ''}" title="${p.nazev}">${obsah}</span>`;
-  }).join('');
+  }).join('') + `<a href="mailto:info@mojebudky.cz" class="partner-item partner-item--logo partner-placeholder" title="Staňte se partnerem projektu MojeBudky.cz">✨&nbsp;Tady může být<br>vaše logo</a>`;
 }
 
 function nactiPodekovani(podekovani) {

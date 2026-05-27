@@ -59,8 +59,8 @@ html, body {
 .logo-text { color: var(--text-light); font-size: 2.4rem; font-weight: 700; letter-spacing: 0.5px; }
 .logo-autor { color: var(--orange-light); font-size: 0.85rem; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; }
 .nav-links { display: flex; list-style: none; gap: 4px; flex: 1; justify-content: center; align-items: center; }
-.nav-links a { color: var(--text-light); text-decoration: none; padding: 14px 24px; border-radius: 4px; font-size: 1.85rem; font-weight: 700; transition: all 0.2s; white-space: nowrap; }
-.nav-links a:hover, .nav-links a.active { background: var(--nav-hover); color: var(--text-light); }
+.nav-links a { color: var(--text-light); text-decoration: none; padding: 12px 22px; border-radius: 10px; font-size: 1.85rem; font-weight: 700; transition: all 0.2s; white-space: nowrap; border: 1.5px solid rgba(255,215,0,0.32); }
+.nav-links a:hover, .nav-links a.active { background: var(--nav-hover); color: var(--text-light); border-color: rgba(255,215,0,0.75); }
 .nav-actions { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
 .search-box { display: flex; background: rgba(255,255,255,0.12); border-radius: 20px; overflow: hidden; }
 .search-box input { background: none; border: none; color: var(--text-light); padding: 10px 16px; font-size: 1.1rem; outline: none; width: 240px; }
@@ -186,6 +186,8 @@ html, body {
 .partner-item:hover { background: rgba(255,255,255,0.22); }
 .partner-item--logo { padding: 8px 14px; }
 .partner-logo { height: 56px; max-width: 140px; width: auto; object-fit: contain; display: block; }
+.partner-placeholder { border-style: dashed; border-color: rgba(255,215,0,0.45); color: var(--accent-gold); text-align: center; line-height: 1.35; font-size: 1.1rem; font-style: italic; opacity: 0.8; white-space: normal; min-width: 130px; }
+.partner-placeholder:hover { opacity: 1; background: rgba(255,215,0,0.12); border-color: rgba(255,215,0,0.85); }
 
 /* ── PODPORA PROJEKTU ── */
 .nav-podpora-btn { background: rgba(255,215,0,0.15); color: #f0d800; border: 1px solid rgba(255,215,0,0.45); border-radius: 20px; padding: 10px 20px; font-size: 1.6rem; font-weight: 700; cursor: pointer; transition: all 0.2s; white-space: nowrap; font-family: inherit; }
