@@ -304,53 +304,103 @@ function _zobrazProfilSpravce(loginId, info, budkaText) {
   });
 }
 
+const _EB_DRUHY = [
+  { id: 'konadra',   nazev: 'Sýkora koňadra' },
+  { id: 'modrinka',  nazev: 'Sýkora modřinka' },
+  { id: 'uhelnicek', nazev: 'Úhelníček' },
+  { id: 'babka',     nazev: 'Sýkora babka' },
+  { id: 'parukarka', nazev: 'Sýk. parukářka' },
+  { id: 'vrabec',    nazev: 'Vrabec domácí' },
+  { id: 'slavik',    nazev: 'Slavík obecný' },
+];
+
 async function _zobrazEditBudky(loginId, spravceInfo, budkaText, budkaCislo, budkaNazev) {
   const existujici = document.getElementById('modalEditBudky');
   if (existujici) existujici.remove();
 
   const db = _getFirebaseDB();
-  let aktualniBudka = {};
+  let ulozeno = {};
   if (db) {
     try {
       const snap = await db.ref(`budky_edit/${budkaCislo}`).once('value');
-      aktualniBudka = snap.val() || {};
+      ulozeno = snap.val() || {};
     } catch {}
   }
 
+  const budkaObj = (window._budkyData || []).find(b => b.cislo === budkaCislo) || {};
   const jmeno = spravceInfo ? spravceInfo.jmeno : loginId;
-  const naposledy = aktualniBudka.ts
-    ? `<div class="eb-naposledy">Naposledy editováno: ${new Date(aktualniBudka.ts).toLocaleString('cs-CZ')}</div>` : '';
+  const gpsText = budkaObj.lat && budkaObj.lng
+    ? `${budkaObj.lat.toFixed(5)}, ${budkaObj.lng.toFixed(5)}`
+    : '—';
+  const otvorText = budkaObj.typ || '—';
+  const vybranyDruh = ulozeno.kdo_hnizdi || '';
+  const naposledy = ulozeno.ts
+    ? `<div class="eb-naposledy">Naposledy editováno: ${new Date(ulozeno.ts).toLocaleString('cs-CZ')}</div>` : '';
+
+  const chipyHTML = _EB_DRUHY.map(d =>
+    `<button type="button" class="eb-chip${vybranyDruh === d.nazev ? ' eb-chip--sel' : ''}" data-druh="${d.nazev}">${d.nazev}</button>`
+  ).join('') +
+  `<button type="button" class="eb-chip eb-chip--jiny" data-druh="__jiny">+ Jiný druh</button>`;
 
   const modal = document.createElement('div');
   modal.id = 'modalEditBudky';
   modal.className = 'modal-overlay';
   modal.innerHTML = `
-    <div class="modal-box profil-box">
+    <div class="modal-box profil-box eb-modal">
       <button class="modal-zavrit" id="editBudkyZavrit">×</button>
       <div class="profil-header">
         <div class="profil-header-text">
           <div class="profil-nadpis">🏠 Editovat budku</div>
           <div class="profil-budka">${budkaText}</div>
         </div>
+        <div class="eb-readonly-info">
+          <span title="GPS souřadnice">📍 ${gpsText}</span>
+          <span title="Průměr vletového otvoru">🕳 ${otvorText}</span>
+        </div>
       </div>
       <div class="profil-form">
         <div class="profil-row">
           <div class="profil-field profil-field--wide">
-            <label>Kdo nyní hnízdí</label>
-            <input type="text" id="ebKdoHnizdi" value="${aktualniBudka.kdo_hnizdi || ''}" placeholder="např. Sýkora koňadra">
+            <label>Název budky</label>
+            <input type="text" id="ebNazev" value="${ulozeno.nazev !== undefined ? ulozeno.nazev : (budkaObj.nazev || '')}" placeholder="Název budky">
+          </div>
+          <div class="profil-field">
+            <label>Datum instalace</label>
+            <input type="text" id="ebInstalace" value="${ulozeno.instalace !== undefined ? ulozeno.instalace : (budkaObj.instalace || '')}" placeholder="např. 3/2022">
+          </div>
+        </div>
+        <div class="profil-row">
+          <div class="profil-field">
+            <label>Rok kontroly</label>
+            <input type="number" id="ebRok" value="${ulozeno.rok || new Date().getFullYear()}" min="2020" max="2099" style="width:90px">
+          </div>
+          <div class="profil-field">
+            <label>Datum kontroly</label>
+            <input type="text" id="ebKontrola" value="${ulozeno.kontrola || ''}" placeholder="např. 15.4.2025">
+          </div>
+          <div class="profil-field">
+            <label>Datum čištění</label>
+            <input type="text" id="ebCisteni" value="${ulozeno.cisteni || ''}" placeholder="např. 10.3.2025">
+          </div>
+        </div>
+        <div class="profil-field profil-field--wide">
+          <label>Kdo nyní sídlí</label>
+          <div class="eb-chipy" id="ebChipy">${chipyHTML}</div>
+          <div class="eb-jiny-wrap" id="ebJinyWrap" style="display:none">
+            <input type="text" id="ebJinyText" placeholder="Název druhu (pošleme žádost adminovi)">
           </div>
         </div>
         <div class="profil-row">
           <div class="profil-field profil-field--wide">
             <label>Poznámka k budce</label>
-            <textarea id="ebPoznamka" rows="3" placeholder="Aktuální stav budky, zajímavosti…">${aktualniBudka.poznamka || ''}</textarea>
+            <textarea id="ebPoznamka" rows="2" placeholder="Aktuální stav budky, zajímavosti…">${ulozeno.poznamka || ''}</textarea>
           </div>
         </div>
         ${naposledy}
       </div>
       <div class="profil-actions">
         <button class="profil-btn-ulozit" id="editBudkyUlozit">💾 Uložit</button>
-        <span class="profil-ulozeno" id="editBudkyUlozeno" hidden>✓ Uloženo!</span>
+        <span class="profil-ulozeno" id="editBudkyUlozeno" hidden></span>
       </div>
     </div>
   `;
@@ -359,29 +409,60 @@ async function _zobrazEditBudky(loginId, spravceInfo, budkaText, budkaCislo, bud
   document.getElementById('editBudkyZavrit').addEventListener('click', () => modal.remove());
   modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
 
+  let aktualniDruh = vybranyDruh;
+  document.getElementById('ebChipy').addEventListener('click', e => {
+    const chip = e.target.closest('.eb-chip');
+    if (!chip) return;
+    if (chip.dataset.druh === '__jiny') {
+      document.getElementById('ebJinyWrap').style.display = 'block';
+      chip.classList.add('eb-chip--sel');
+      document.querySelectorAll('#ebChipy .eb-chip:not(.eb-chip--jiny)').forEach(c => c.classList.remove('eb-chip--sel'));
+      aktualniDruh = '__jiny';
+    } else {
+      document.getElementById('ebJinyWrap').style.display = 'none';
+      const bylVybran = chip.classList.contains('eb-chip--sel');
+      document.querySelectorAll('#ebChipy .eb-chip').forEach(c => c.classList.remove('eb-chip--sel'));
+      if (!bylVybran) { chip.classList.add('eb-chip--sel'); aktualniDruh = chip.dataset.druh; }
+      else aktualniDruh = '';
+    }
+  });
+
   document.getElementById('editBudkyUlozit').addEventListener('click', async () => {
-    const kdoHnizdi = document.getElementById('ebKdoHnizdi').value.trim();
+    const nazev    = document.getElementById('ebNazev').value.trim();
+    const instalace = document.getElementById('ebInstalace').value.trim();
+    const rok      = document.getElementById('ebRok').value.trim();
+    const kontrola = document.getElementById('ebKontrola').value.trim();
+    const cisteni  = document.getElementById('ebCisteni').value.trim();
     const poznamka = document.getElementById('ebPoznamka').value.trim();
+    let kdoHnizdi  = aktualniDruh === '__jiny'
+      ? (document.getElementById('ebJinyText').value.trim() || '')
+      : aktualniDruh;
+
+    if (aktualniDruh === '__jiny' && kdoHnizdi) {
+      if (db) {
+        try { await db.ref('admin_requests/druhy').push({ druh: kdoHnizdi, spravce: loginId, ts: firebase.database.ServerValue.TIMESTAMP }); } catch {}
+      }
+    }
 
     let ok = false;
     if (db) {
       try {
         await db.ref(`budky_edit/${budkaCislo}`).set({
-          kdo_hnizdi: kdoHnizdi,
-          poznamka,
+          nazev, instalace, rok, kontrola, cisteni,
+          kdo_hnizdi: kdoHnizdi, poznamka,
           ts: firebase.database.ServerValue.TIMESTAMP,
-          spravce_id: loginId,
-          jmeno
+          spravce_id: loginId, jmeno
         });
         ok = true;
       } catch {}
     }
 
     if (ok) {
-      let zprava = '';
-      if (kdoHnizdi) zprava += `sídlí ${kdoHnizdi}`;
-      if (poznamka) zprava += (zprava ? ' · ' : '') + poznamka;
-      if (zprava) await _logAktivita(loginId, jmeno, budkaCislo, budkaNazev, zprava);
+      const casti = [];
+      if (kdoHnizdi) casti.push(`sídlí ${kdoHnizdi}`);
+      if (kontrola) casti.push(`kontrola ${kontrola}`);
+      if (cisteni) casti.push(`čištění ${cisteni}`);
+      if (casti.length) await _logAktivita(loginId, jmeno, budkaCislo, nazev || budkaNazev, casti.join(' · '));
     }
 
     const msg = document.getElementById('editBudkyUlozeno');

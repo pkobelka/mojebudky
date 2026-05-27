@@ -39,15 +39,6 @@
       "text": "Po dvou prázdných sezónách se nastěhoval vrabec domácí s partnerkou.",
       "datum": "5. 4. 2025",
       "cas": "08:05"
-    },
-    {
-      "id": 5,
-      "budka_id": 52,
-      "ptak": "Sojka obecná",
-      "ikona": "sojka",
-      "text": "Budka žije svému jménu – sojka obecná si ji vybrala za letní domov.",
-      "datum": "19. 6. 2024",
-      "cas": "16:50"
     }
   ],
   "druhy_ptaku": [
@@ -86,15 +77,6 @@
       "otvor": "28–32 mm",
       "popis": "Vzácnější sýkora s typickým chocholkem. Hndí hlavně v jehličnatých lesích. Výskyt v budce je pro projekt vzácnou odměnou!",
       "wiki": "https://cs.wikipedia.org/wiki/S%C3%BDkora_paruk%C3%A1%C5%99ka"
-    },
-    {
-      "id": "sojka",
-      "nazev": "Sojka obecná",
-      "vedecky": "Garrulus glandarius",
-      "pocet": 1,
-      "otvor": "45 mm",
-      "popis": "Hlasitý a pestrobarevný zástupce krkavcovitých. V budce je výjičným hostem – vyžaduje velký otvor a prostonnější hndí komoru.",
-      "wiki": "https://cs.wikipedia.org/wiki/Sojka_obecn%C3%A1"
     }
   ],
   "aplikace": [

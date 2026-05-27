@@ -414,6 +414,19 @@ html, body {
 .zapomnel-msg { margin-top: 8px; background: rgba(255,255,255,0.06); border: 1px solid var(--panel-border); border-radius: 6px; padding: 8px 12px; font-size: 0.82rem; color: var(--text-muted); line-height: 1.5; }
 .zapomnel-msg strong { color: var(--accent-gold); }
 
+/* ── EDITOVAT BUDKU ── */
+.eb-modal { max-width: 640px; }
+.eb-readonly-info { display: flex; flex-direction: column; gap: 4px; align-items: flex-end; font-size: 0.82rem; color: var(--text-muted); flex-shrink: 0; }
+.eb-chipy { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
+.eb-chip { background: rgba(255,255,255,0.07); border: 1px solid var(--panel-border); color: var(--text-light); border-radius: 20px; padding: 6px 16px; font-size: 0.9rem; cursor: pointer; transition: all 0.15s; }
+.eb-chip:hover { background: rgba(255,255,255,0.14); border-color: var(--accent-gold); }
+.eb-chip--sel { background: var(--orange); border-color: var(--orange); color: #fff; font-weight: 700; }
+.eb-chip--jiny { border-style: dashed; color: var(--text-muted); }
+.eb-chip--jiny.eb-chip--sel { background: #4a7a30; border-color: #6aaa50; border-style: solid; color: #fff; }
+.eb-jiny-wrap { margin-top: 8px; }
+.eb-jiny-wrap input { background: rgba(255,255,255,0.07); border: 1px solid var(--panel-border); border-radius: 8px; color: var(--text-light); font-size: 0.95rem; padding: 8px 12px; outline: none; width: 100%; }
+.eb-jiny-wrap input:focus { border-color: var(--accent-gold); }
+
 /* ── ADMIN BANNER ── */
 .admin-banner { position: fixed; bottom: 0; left: 0; right: 0; z-index: 900; background: var(--nav-bg); border-top: 2px solid var(--accent-gold); color: var(--text-light); display: flex; align-items: center; justify-content: space-between; padding: 0.6rem 1.5rem; font-size: 0.9rem; }
 .admin-banner strong { color: var(--accent-gold); font-size: inherit; }

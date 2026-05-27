@@ -244,6 +244,7 @@ async function inicializujMapu() {
     ]);
     const budky = await resBudky.json();
     budkyData = budky;
+    window._budkyData = budky;
     const spravciList = await resSpravci.json();
     const spravci = Object.fromEntries(spravciList.map(s => [s.cislo, s.jmeno]));
 
