@@ -121,7 +121,7 @@ html, body {
 .pribeh-popis { color: var(--text-light); font-size: 1.12rem; line-height: 1.45; margin-bottom: 5px; opacity: 0.9; }
 .pribeh-datum { color: var(--text-muted); font-size: 1rem; }
 
-.map-wrapper { flex: 1; position: relative; min-width: 0; }
+.map-wrapper { flex: 1; position: relative; min-width: 0; height: 100%; }
 #map { width: 100%; height: 100%; }
 
 .panel-right .panel-title::before { content: '📊 '; }
