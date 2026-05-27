@@ -220,36 +220,36 @@ html, body {
 .online-admins { color: var(--accent-gold); }
 
 /* ── POPUP ── */
-.leaflet-popup-content-wrapper { border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.35); padding: 0; overflow: hidden; }
+.leaflet-popup-content-wrapper { border-radius: 12px; box-shadow: 0 6px 30px rgba(0,0,0,0.45); padding: 0; overflow: hidden; }
 .leaflet-popup-content { margin: 0; width: auto !important; }
-.budka-popup { font-size: 0.88rem; font-family: 'Segoe UI', system-ui, sans-serif; min-width: 280px; }
-.popup-header { padding: 10px 14px 8px; background: #faf6ee; border-bottom: 1px solid #e8dcc8; }
-.popup-cislo { font-weight: 800; font-size: 1rem; color: #3a1a06; margin-bottom: 2px; }
-.popup-nazev-hlavni { font-weight: 800; font-size: 1.05rem; color: #3a1a06; }
-.popup-cislo-sub { font-weight: 400; font-size: 0.8rem; color: #a07050; }
-.popup-badge { font-size: 0.78rem; font-weight: 600; }
+.budka-popup { font-size: 1.15rem; font-family: 'Segoe UI', system-ui, sans-serif; min-width: 420px; }
+.popup-header { padding: 16px 22px 12px; background: #faf6ee; border-bottom: 1px solid #e8dcc8; }
+.popup-cislo { font-weight: 800; font-size: 1.6rem; color: #3a1a06; margin-bottom: 4px; }
+.popup-nazev-hlavni { font-weight: 800; font-size: 1.65rem; color: #3a1a06; }
+.popup-cislo-sub { font-weight: 400; font-size: 1.2rem; color: #a07050; }
+.popup-badge { font-size: 1.2rem; font-weight: 600; }
 .popup-foto { padding: 0; }
-.popup-foto img { width: 100%; display: block; max-height: 200px; object-fit: cover; }
-.popup-ptak { display: flex; align-items: center; gap: 8px; padding: 8px 14px 4px; color: #2d5516; font-weight: 600; font-size: 0.85rem; }
+.popup-foto img { width: 100%; display: block; max-height: 240px; object-fit: cover; }
+.popup-ptak { display: flex; align-items: center; gap: 10px; padding: 12px 22px 6px; color: #2d5516; font-weight: 600; font-size: 1.3rem; }
 .popup-bird-icon { flex-shrink: 0; line-height: 0; }
-.popup-detail { padding: 4px 14px 8px; display: flex; flex-direction: column; gap: 3px; }
-.popup-radek { color: #666; font-size: 0.78rem; }
-.popup-radek strong { color: #444; font-size: inherit; font-weight: 600; }
-.popup-sekce { border-top: 1px solid #e8dcc8; padding: 8px 14px 10px; }
-.popup-sekce-title { font-weight: 700; font-size: 0.8rem; color: #3a1a06; margin-bottom: 6px; }
-.popup-historie { width: 100%; border-collapse: collapse; font-size: 0.75rem; }
-.popup-historie th { background: #f0e8d8; color: #5a3010; font-weight: 700; padding: 3px 6px; text-align: left; border-bottom: 1px solid #e0d0b8; }
-.popup-historie td { padding: 3px 6px; color: #555; border-bottom: 1px solid #f0e8e0; }
+.popup-detail { padding: 8px 22px 14px; display: flex; flex-direction: column; gap: 7px; }
+.popup-radek { color: #555; font-size: 1.15rem; }
+.popup-radek strong { color: #333; font-size: inherit; font-weight: 600; }
+.popup-sekce { border-top: 1px solid #e8dcc8; padding: 12px 22px 16px; }
+.popup-sekce-title { font-weight: 700; font-size: 1.2rem; color: #3a1a06; margin-bottom: 8px; }
+.popup-historie { width: 100%; border-collapse: collapse; font-size: 1.1rem; }
+.popup-historie th { background: #f0e8d8; color: #5a3010; font-weight: 700; padding: 7px 12px; text-align: left; border-bottom: 1px solid #e0d0b8; }
+.popup-historie td { padding: 7px 12px; color: #555; border-bottom: 1px solid #f0e8e0; }
 .popup-historie tr:last-child td { border-bottom: none; }
-.popup-edit-btn { display: block; width: 100%; background: #c96420; color: #fff; border: none; padding: 10px 14px; font-size: 0.92rem; font-weight: 700; cursor: pointer; text-align: center; transition: background 0.15s; font-family: inherit; }
+.popup-edit-btn { display: block; width: 100%; background: #c96420; color: #fff; border: none; padding: 14px 22px; font-size: 1.2rem; font-weight: 700; cursor: pointer; text-align: center; transition: background 0.15s; font-family: inherit; }
 .popup-edit-btn:hover { background: #a0501a; }
 
 /* ── TOOLTIP ── */
-.budka-tooltip { background: #fffef8; border-radius: 8px; overflow: hidden; font-family: 'Segoe UI', system-ui, sans-serif; font-size: 0.82rem; min-width: 140px; }
-.tt-nazev-hlavni { background: #faf6ee; font-weight: 800; font-size: 1rem; color: #3a1a06; padding: 7px 12px 2px; }
-.tt-cislo-sub { padding: 0 12px 4px; color: #a07050; font-size: 0.75rem; }
-.tt-stav { padding: 2px 12px; font-weight: 600; font-size: 0.78rem; }
-.tt-ptak { padding: 2px 12px 7px; color: #2d5516; font-size: 0.78rem; }
+.budka-tooltip { background: #fffef8; border-radius: 10px; overflow: hidden; font-family: 'Segoe UI', system-ui, sans-serif; font-size: 1.05rem; min-width: 200px; }
+.tt-nazev-hlavni { background: #faf6ee; font-weight: 800; font-size: 1.35rem; color: #3a1a06; padding: 10px 16px 4px; }
+.tt-cislo-sub { padding: 0 16px 6px; color: #a07050; font-size: 1rem; }
+.tt-stav { padding: 4px 16px; font-weight: 600; font-size: 1.05rem; }
+.tt-ptak { padding: 4px 16px 10px; color: #2d5516; font-size: 1.05rem; }
 
 /* ── MAPA ── */
 .mapa-legenda { background: rgba(255,255,255,0.95); border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.25); padding: 10px 14px; font-family: 'Segoe UI', system-ui, sans-serif; font-size: 0.8rem; color: #3a2008; display: flex; flex-direction: column; gap: 7px; min-width: 140px; }

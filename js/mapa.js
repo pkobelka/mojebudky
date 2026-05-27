@@ -263,8 +263,8 @@ async function inicializujMapu() {
       });
 
       marker.bindPopup(formatPopup(bData), {
-        minWidth: 280,
-        maxWidth: 280,
+        minWidth: 420,
+        maxWidth: 520,
         className: 'budka-popup-wrap'
       });
 
