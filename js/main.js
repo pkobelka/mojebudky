@@ -449,7 +449,8 @@ function inicializujFullscreenMapu() {
     mainContent.classList.add('mapa-fullscreen');
     btnZpet.style.display = 'block';
     if (typeof mapInstance !== 'undefined' && mapInstance) {
-      setTimeout(() => mapInstance.invalidateSize(), 50);
+      setTimeout(() => mapInstance.invalidateSize(), 100);
+      setTimeout(() => mapInstance.invalidateSize(), 400);
     }
     mainContent.scrollIntoView({ behavior: 'smooth' });
   }

@@ -238,8 +238,8 @@ html, body {
 .aktualita-link:hover { color: var(--accent-gold); text-decoration: underline; }
 .main-content.mapa-fullscreen { min-height: 0; }
 .main-content.mapa-fullscreen .panel { display: none; }
-.main-content.mapa-fullscreen .map-wrapper { flex: 1; height: 100%; }
-.main-content.mapa-fullscreen #map { height: 100%; }
+.main-content.mapa-fullscreen .map-wrapper { flex: 1; position: relative; }
+.main-content.mapa-fullscreen #map { position: absolute; inset: 0; }
 .main-content.mapa-fullscreen .map-hint { display: none; }
 .main-content.mapa-fullscreen ~ .partners-section,
 .main-content.mapa-fullscreen ~ .footer-bar { display: none; }
