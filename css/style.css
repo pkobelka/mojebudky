@@ -51,7 +51,8 @@ html, body {
 #app { position: relative; z-index: 1; display: grid; grid-template-rows: auto auto 1fr auto auto; height: 100vh; overflow: hidden; background: transparent; }
 
 .navbar { background: var(--nav-bg); display: flex; align-items: center; padding: 0 28px; height: 140px; gap: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.4); }
-.nav-logo { display: flex; align-items: center; gap: 14px; text-decoration: none; flex-shrink: 0; }
+.nav-logo { display: flex; align-items: center; gap: 14px; text-decoration: none; flex-shrink: 0; border: 2px solid rgba(255,215,0,0.45); border-radius: 14px; padding: 6px 14px 6px 6px; background: rgba(255,215,0,0.06); transition: border-color 0.2s, background 0.2s; }
+.nav-logo:hover { border-color: rgba(255,215,0,0.8); background: rgba(255,215,0,0.12); }
 .nav-logo-img { width: 80px; height: 106px; }
 .stat-svg-icon { width: 40px; height: 40px; object-fit: contain; }
 .logo-textblock { display: flex; flex-direction: column; line-height: 1.1; }
