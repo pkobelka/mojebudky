@@ -146,12 +146,12 @@ html, body {
 .stat-aktualizace span { color: var(--text-light); font-weight: 600; }
 
 /* ── PARTNERÉ ── */
-.partners-section { background: rgba(26, 58, 10, 0.92); border-top: 2px solid var(--orange); padding: 18px 52px; text-align: center; flex: 1; display: flex; flex-direction: column; justify-content: center; }
-.partners-section h3 { color: var(--text-light); font-size: 1.4rem; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 12px; }
+.partners-section { background: rgba(26, 58, 10, 0.92); border-top: 2px solid var(--orange); padding: 18px 52px; text-align: center; flex: 1; display: flex; flex-direction: column; justify-content: center; max-height: 340px; }
+.partners-section h3 { color: var(--text-light); font-size: 1.6rem; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 14px; }
 .podekovani-wrap { margin-top: 8px; border-top: 1px solid rgba(255,255,255,0.12); padding-top: 8px; }
-.podekovani-label { display: block; color: var(--text-muted); font-size: 1.1rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px; }
-.podekovani-grid { display: flex; flex-wrap: wrap; gap: 6px 16px; justify-content: center; }
-.podekovani-item { color: var(--text-light); font-size: 1.25rem; font-weight: 600; }
+.podekovani-label { display: block; color: var(--text-muted); font-size: 1.2rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px; margin-top: 14px; }
+.podekovani-grid { display: flex; flex-wrap: wrap; gap: 6px 20px; justify-content: center; }
+.podekovani-item { color: var(--text-light); font-size: 1.35rem; font-weight: 600; }
 
 /* ── PARTNEŘI MODAL ── */
 .pm-box { max-width: 860px; width: 94%; padding: 0; overflow: hidden; text-align: center; max-height: 88vh; overflow-y: auto; }
@@ -173,11 +173,11 @@ html, body {
 .pm-bublina::before { content: ''; position: absolute; top: 100%; left: 50%; transform: translateX(-50%); margin-top: 2px; border: 7px solid transparent; border-top-color: #f0e830; z-index: 1; }
 .pm-pod-osoba:hover .pm-bublina { display: block; }
 .pm-bublina--open { display: block; }
-#partneriList { display: flex; flex-wrap: nowrap; gap: 10px; justify-content: center; align-items: center; overflow-x: auto; padding-bottom: 2px; }
-.partner-item { background: rgba(255,255,255,0.1); color: var(--text-light); padding: 9px 22px; border-radius: 20px; font-size: 1.2rem; text-decoration: none; border: 1px solid rgba(255,255,255,0.2); transition: background 0.2s; white-space: nowrap; flex-shrink: 0; }
-.partner-item:hover { background: rgba(255,255,255,0.18); }
-.partner-item--logo { padding: 5px 10px; }
-.partner-logo { height: 44px; max-width: 115px; width: auto; object-fit: contain; display: block; }
+#partneriList { display: flex; flex-wrap: wrap; gap: 14px; justify-content: center; align-items: center; padding-bottom: 4px; }
+.partner-item { background: rgba(255,255,255,0.1); color: var(--text-light); padding: 10px 24px; border-radius: 20px; font-size: 1.3rem; text-decoration: none; border: 1px solid rgba(255,255,255,0.2); transition: background 0.2s; white-space: nowrap; flex-shrink: 0; }
+.partner-item:hover { background: rgba(255,255,255,0.22); }
+.partner-item--logo { padding: 8px 14px; }
+.partner-logo { height: 56px; max-width: 140px; width: auto; object-fit: contain; display: block; }
 
 /* ── FOOTER ── */
 .footer-sep { opacity: 0.35; }
