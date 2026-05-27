@@ -43,7 +43,7 @@ async function _zobrazAdminPanel(loginId) {
   const existujici = document.getElementById('adminBanner');
   if (existujici) existujici.remove();
 
-  _zobrazToast(`Přihlášení bylo úspěšné, vítej v komunitě správců budek! 🌿 ${jmeno}`);
+  _zobrazToast(`Ahoj ${_vokativ(jmeno)}, vítám Tě v komunitě správců mých budek! 🌿 Petr`);
 
   if (typeof window._presenceSetAdmin === 'function') window._presenceSetAdmin(true);
 
@@ -138,6 +138,33 @@ function _zobrazKartuSpravce(info, jmeno, budkaText) {
 
   document.getElementById('kartaZavrit').addEventListener('click', () => modal.remove());
   modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
+}
+
+function _vokativ(jmeno) {
+  const tabulka = {
+    'Aleš':'Aleši','Tomáš':'Tomáši','Lukáš':'Lukáši','Luboš':'Luboši','Ondřej':'Ondřeji',
+    'Jan':'Jane','Martin':'Martine','David':'Davide','Jakub':'Jakube','Filip':'Filipe',
+    'Adam':'Adame','Milan':'Milane','Roman':'Romane','Lubor':'Lubore','Viktor':'Viktore',
+    'Stanislav':'Stanislave','Miroslav':'Miroslave','Antonín':'Antoníne','Vladimír':'Vladimíre',
+    'Petr':'Petře','Pavel':'Pavle','Karel':'Karle','Michal':'Michale','Daniel':'Daniele',
+    'Radek':'Radku','Marek':'Marku','Zdeněk':'Zdeňku','Patrik':'Patriku','Dominik':'Dominiku',
+    'Jiří':'Jiří','Ladislav':'Ladislave','Václav':'Václave','František':'Františku',
+    'Honza':'Honzo','Ondra':'Ondro','Míra':'Míro','Pepa':'Pepo','Tom':'Tome',
+    'Josef':'Josefe','Jaroslav':'Jaroslave','Libor':'Libore','Jindřich':'Jindřichu',
+    'Jana':'Jano','Eva':'Evo','Petra':'Petro','Alena':'Aleno','Lenka':'Lenko',
+    'Monika':'Moniko','Tereza':'Terezo','Kateřina':'Kateřino','Ivana':'Ivano',
+    'Hana':'Hano','Zuzana':'Zuzano','Lucie':'Lucie','Marie':'Marie',
+    'Martina':'Martino','Markéta':'Markéto','Veronika':'Veroniko','Jitka':'Jitko',
+    'Irena':'Ireno','Renata':'Renato','Dana':'Dano','Romana':'Romano',
+    'Gabriela':'Gabrielo','Božena':'Boženo','Růžena':'Růženo','Blanka':'Blanko',
+  };
+  if (tabulka[jmeno]) return tabulka[jmeno];
+  if (/[šžč]$/.test(jmeno)) return jmeno + 'i';
+  if (jmeno.endsWith('ej')) return jmeno + 'i';
+  if (jmeno.endsWith('í')) return jmeno;
+  if (jmeno.endsWith('ek')) return jmeno.slice(0, -2) + 'ku';
+  if (jmeno.endsWith('a')) return jmeno.slice(0, -1) + 'o';
+  return jmeno + 'e';
 }
 
 function _zobrazToast(text) {
