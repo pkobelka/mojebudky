@@ -105,7 +105,7 @@ html, body {
 .info-bar .bar-right.bar-svatek { color: var(--orange); font-style: normal; font-weight: 600; }
 .bar-gratulace { color: var(--orange); font-weight: 700; }
 
-.main-content { display: flex; height: calc(100vh - 450px); min-height: 260px; max-height: 420px; }
+.main-content { display: flex; height: calc(100vh - 350px); min-height: 260px; max-height: 500px; }
 .panel { background: var(--panel-bg); border: 1px solid var(--panel-border); width: 400px; flex-shrink: 0; display: flex; flex-direction: column; overflow: hidden; }
 .panel-title { background: var(--panel-header); color: var(--text-light); font-size: 1.35rem; font-weight: 700; padding: 18px 24px; letter-spacing: 0.3px; border-bottom: 2px solid var(--orange); flex-shrink: 0; }
 .panel-left .panel-title::before { content: '🌿 '; }
