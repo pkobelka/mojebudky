@@ -460,10 +460,10 @@ function inicializujFullscreenMapu() {
   if (mapWrapper) {
     const hint = document.createElement('div');
     hint.className = 'map-hint';
-    hint.textContent = '⛶ Klikněte KDEKOLIV DO MAPY pro zobrazení na celé ploše';
+    hint.textContent = '⛶ Klikněte 2× kdekoliv do mapy pro zobrazení na celé ploše';
     mapWrapper.appendChild(hint);
 
-    mapWrapper.addEventListener('click', e => {
+    mapWrapper.addEventListener('dblclick', e => {
       if (mainContent.classList.contains('mapa-fullscreen')) return;
       if (e.target.closest('.leaflet-container, .btn-zpet-mapa')) rozbalMapu();
     });
