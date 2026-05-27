@@ -519,15 +519,24 @@ async function _zobrazEditBudky(loginId, spravceInfo, budkaText, budkaCislo, bud
           </div>
         </div>
         <div class="profil-row">
+          <div class="profil-field">
+            <label>Foto budky</label>
+            <div class="eb-foto-wrap">
+              ${ulozeno.foto ? `<img src="${ulozeno.foto}" class="eb-foto-nahled" id="ebFotoNahled" alt="Foto budky">` : `<div class="eb-foto-placeholder" id="ebFotoNahled">📷</div>`}
+              <label class="eb-foto-btn" for="ebFotoInput">📷 ${ulozeno.foto ? 'Změnit foto' : 'Přidat foto'}</label>
+              <input type="file" id="ebFotoInput" accept="image/*" capture="environment" style="display:none">
+            </div>
+          </div>
           <div class="profil-field profil-field--wide">
             <label>Poznámka k budce</label>
-            <textarea id="ebPoznamka" rows="2" placeholder="Aktuální stav budky, zajímavosti…">${ulozeno.poznamka || ''}</textarea>
+            <textarea id="ebPoznamka" rows="3" placeholder="Aktuální stav budky, zajímavosti…">${ulozeno.poznamka || ''}</textarea>
           </div>
         </div>
         ${naposledy}
       </div>
       <div class="profil-actions">
         <button class="profil-btn-ulozit" id="editBudkyUlozit">💾 Uložit</button>
+        <button class="profil-btn-ulozit eb-btn-zobrazit" id="editBudkyUlozitZobrazit" style="background:var(--nav-hover)">💾🗺 Uložit a zobrazit</button>
         <span class="profil-ulozeno" id="editBudkyUlozeno" hidden></span>
       </div>
     </div>
@@ -536,6 +545,31 @@ async function _zobrazEditBudky(loginId, spravceInfo, budkaText, budkaCislo, bud
 
   document.getElementById('editBudkyZavrit').addEventListener('click', () => modal.remove());
   modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
+
+  // Foto upload + resize
+  let _fotoBase64 = ulozeno.foto || null;
+  document.getElementById('ebFotoInput').addEventListener('change', e => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = ev => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const MAX = 900;
+        const ratio = Math.min(MAX / img.width, MAX / img.height, 1);
+        canvas.width = Math.round(img.width * ratio);
+        canvas.height = Math.round(img.height * ratio);
+        canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+        _fotoBase64 = canvas.toDataURL('image/jpeg', 0.75);
+        const nahled = document.getElementById('ebFotoNahled');
+        nahled.outerHTML = `<img src="${_fotoBase64}" class="eb-foto-nahled" id="ebFotoNahled" alt="Foto budky">`;
+        document.querySelector('label[for="ebFotoInput"]').textContent = '📷 Změnit foto';
+      };
+      img.src = ev.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
 
   // Rok ±
   const rokInput = document.getElementById('ebRok');
@@ -614,14 +648,14 @@ async function _zobrazEditBudky(loginId, spravceInfo, budkaText, budkaCislo, bud
     }
   });
 
-  document.getElementById('editBudkyUlozit').addEventListener('click', async () => {
-    const nazev    = document.getElementById('ebNazev').value.trim();
+  async function _ulozitBudku() {
+    const nazev     = document.getElementById('ebNazev').value.trim();
     const instalace = document.getElementById('ebInstalace').value.trim();
-    const rok      = document.getElementById('ebRok').value.trim();
-    const kontrola = _isoToCz(document.getElementById('ebKontrola').value.trim());
-    const cisteni  = _isoToCz(document.getElementById('ebCisteni').value.trim());
-    const poznamka = document.getElementById('ebPoznamka').value.trim();
-    let kdoHnizdi  = aktualniDruh === '__jiny'
+    const rok       = document.getElementById('ebRok').value.trim();
+    const kontrola  = _isoToCz(document.getElementById('ebKontrola').value.trim());
+    const cisteni   = _isoToCz(document.getElementById('ebCisteni').value.trim());
+    const poznamka  = document.getElementById('ebPoznamka').value.trim();
+    let kdoHnizdi   = aktualniDruh === '__jiny'
       ? (document.getElementById('ebJinyText').value.trim() || '')
       : aktualniDruh;
 
@@ -634,12 +668,14 @@ async function _zobrazEditBudky(loginId, spravceInfo, budkaText, budkaCislo, bud
     let ok = false;
     if (db) {
       try {
-        await db.ref(`budky_edit/${budkaCislo}`).set({
+        const data = {
           nazev, instalace, rok, kontrola, cisteni,
           kdo_hnizdi: kdoHnizdi, poznamka,
           ts: firebase.database.ServerValue.TIMESTAMP,
           spravce_id: loginId, jmeno
-        });
+        };
+        if (_fotoBase64) data.foto = _fotoBase64;
+        await db.ref(`budky_edit/${budkaCislo}`).set(data);
         ok = true;
       } catch {}
     }
@@ -651,11 +687,40 @@ async function _zobrazEditBudky(loginId, spravceInfo, budkaText, budkaCislo, bud
       if (cisteni) casti.push(`čištění ${cisteni}`);
       if (casti.length) await _logAktivita(loginId, jmeno, budkaCislo, nazev || budkaNazev, casti.join(' · '));
     }
+    return ok;
+  }
 
+  document.getElementById('editBudkyUlozit').addEventListener('click', async () => {
+    const ok = await _ulozitBudku();
     const msg = document.getElementById('editBudkyUlozeno');
     msg.textContent = ok ? '✓ Uloženo!' : '⚠ Nepodařilo se uložit';
     msg.hidden = false;
     setTimeout(() => { msg.hidden = true; }, 2500);
+  });
+
+  document.getElementById('editBudkyUlozitZobrazit').addEventListener('click', async () => {
+    const msg = document.getElementById('editBudkyUlozeno');
+    msg.textContent = '⏳ Ukládám…';
+    msg.hidden = false;
+    const ok = await _ulozitBudku();
+    if (!ok) {
+      msg.textContent = '⚠ Nepodařilo se uložit';
+      return;
+    }
+    modal.remove();
+    const marker = window._markersByCislo && window._markersByCislo[budkaCislo];
+    if (marker) {
+      const mc = document.querySelector('.main-content');
+      if (mc && !mc.classList.contains('mapa-fullscreen')) {
+        const navMapa = document.getElementById('nav-mapa');
+        if (navMapa) navMapa.click();
+      }
+      const map = window._getMapInstance && window._getMapInstance();
+      setTimeout(() => {
+        if (map) map.setView(marker.getLatLng(), Math.max(map.getZoom(), 15));
+        marker.openPopup();
+      }, 300);
+    }
   });
 }
 

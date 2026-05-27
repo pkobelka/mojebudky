@@ -253,9 +253,10 @@ function nactiPodekovani(podekovani) {
   const wrap = document.getElementById('podekovaniWrap');
   const el = document.getElementById('podekovaniList');
   if (!wrap || !el || !podekovani || !podekovani.length) return;
-  el.innerHTML = podekovani.map(p =>
-    `<div class="podekovani-osoba"><span class="pod-jmeno">${p.jmeno}</span><span class="pod-tip">${p.popis}</span></div>`
-  ).join('');
+  el.innerHTML = podekovani.map(p => {
+    const jmeno = typeof p === 'string' ? p : p.jmeno;
+    return `<span class="podekovani-item">${jmeno}</span>`;
+  }).join('');
   wrap.style.display = 'block';
 }
 
@@ -272,9 +273,14 @@ function _zobrazPartneriModal() {
       : `<span class="pm-logo-item" title="${p.nazev}">${img}</span>`;
   }).join('');
 
-  const podHTML = _podekovaniData.map(p =>
-    `<div class="pm-pod-osoba"><span class="pm-pod-jmeno">${p.jmeno}</span><span class="pod-tip">${p.popis}</span></div>`
-  ).join('');
+  const podHTML = _podekovaniData.map((p, i) => {
+    const jmeno = typeof p === 'string' ? p : p.jmeno;
+    const popis = typeof p === 'object' && p.popis ? p.popis : null;
+    return `<div class="pm-pod-osoba" data-idx="${i}">
+      <button type="button" class="pm-pod-jmeno${popis ? ' pm-pod-jmeno--ma-text' : ''}">${jmeno}</button>
+      ${popis ? `<div class="pm-bublina" hidden>${popis}</div>` : ''}
+    </div>`;
+  }).join('');
 
   const modal = document.createElement('div');
   modal.id = 'modalPartneri';
@@ -292,6 +298,16 @@ function _zobrazPartneriModal() {
   document.body.appendChild(modal);
   document.getElementById('modalPartneriZavrit').addEventListener('click', () => modal.remove());
   modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
+
+  modal.querySelectorAll('.pm-pod-jmeno').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const bublina = btn.nextElementSibling;
+      if (!bublina || !bublina.classList.contains('pm-bublina')) return;
+      const jeOtevrena = !bublina.hidden;
+      modal.querySelectorAll('.pm-bublina').forEach(b => { b.hidden = true; });
+      bublina.hidden = jeOtevrena;
+    });
+  });
 }
 
 function nactiDruhyPtaku(druhy) {
@@ -443,7 +459,7 @@ function inicializujFullscreenMapu() {
   if (mapWrapper) {
     const hint = document.createElement('div');
     hint.className = 'map-hint';
-    hint.textContent = '⛶ Klikněte pro zobrazení na celé ploše';
+    hint.textContent = '⛶ Klikněte KDEKOLIV DO MAPY pro zobrazení na celé ploše';
     mapWrapper.appendChild(hint);
 
     mapWrapper.addEventListener('click', e => {

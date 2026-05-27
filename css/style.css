@@ -167,9 +167,13 @@ html, body {
 .pm-podekovani { border-top: 1px solid rgba(255,255,255,0.15); padding: 24px 40px 36px; }
 .pm-pod-label { color: var(--accent-gold); font-size: 1.3rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 18px; }
 .pm-pod-grid { display: flex; flex-wrap: wrap; gap: 10px 22px; justify-content: center; }
-.pm-pod-osoba { position: relative; display: inline-block; cursor: default; }
-.pm-pod-jmeno { color: var(--text-light); font-size: 1.25rem; font-weight: 600; text-decoration: underline; text-decoration-style: dotted; text-underline-offset: 4px; }
-.pm-pod-osoba:hover .pod-tip { display: block; }
+.pm-pod-osoba { position: relative; display: inline-flex; flex-direction: column; align-items: center; }
+.pm-pod-jmeno { background: none; border: none; color: var(--text-light); font-size: 1.25rem; font-weight: 600; text-decoration: underline; text-decoration-style: dotted; text-underline-offset: 4px; cursor: default; font-family: inherit; padding: 0; }
+.pm-pod-jmeno--ma-text { cursor: pointer; color: var(--accent-gold); }
+.pm-pod-jmeno--ma-text:hover { color: #ffe080; }
+.pm-bublina { position: absolute; bottom: calc(100% + 10px); left: 50%; transform: translateX(-50%); background: var(--nav-bg); border: 1.5px solid var(--accent-gold); border-radius: 14px; padding: 11px 18px; font-size: 1rem; color: var(--text-light); white-space: nowrap; box-shadow: 0 4px 18px rgba(0,0,0,0.5); z-index: 10; min-width: 180px; max-width: 280px; white-space: normal; text-align: center; line-height: 1.45; }
+.pm-bublina::after { content: ''; position: absolute; top: 100%; left: 50%; transform: translateX(-50%); border: 8px solid transparent; border-top-color: var(--accent-gold); }
+.pm-bublina::before { content: ''; position: absolute; top: 100%; left: 50%; transform: translateX(-50%); margin-top: 2px; border: 7px solid transparent; border-top-color: var(--nav-bg); z-index: 1; }
 #partneriList { display: flex; flex-wrap: nowrap; gap: 10px; justify-content: center; align-items: center; overflow-x: auto; padding-bottom: 2px; }
 .partner-item { background: rgba(255,255,255,0.1); color: var(--text-light); padding: 7px 18px; border-radius: 20px; font-size: 1.05rem; text-decoration: none; border: 1px solid rgba(255,255,255,0.2); transition: background 0.2s; white-space: nowrap; flex-shrink: 0; }
 .partner-item:hover { background: rgba(255,255,255,0.18); }

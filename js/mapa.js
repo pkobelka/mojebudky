@@ -1,6 +1,8 @@
 let mapInstance = null;
 const markersByCislo = {};
 let budkyData = [];
+window._markersByCislo = markersByCislo;
+window._getMapInstance = () => mapInstance;
 
 const BIRD_SVG = {
   'Sýkora koňadra': `<svg viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg" width="32" height="32">
