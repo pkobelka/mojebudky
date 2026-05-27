@@ -13,6 +13,8 @@ for (const [k, arr] of Object.entries(PREZDIVKY)) arr.forEach(p => KANONICKY[p] 
 let spravciJmena = [];
 let _statickeAktuality = [];
 let _aktualityListenerSet = false;
+let _partneriData = [];
+let _podekovaniData = [];
 
 function pluralSpravcu(n) {
   if (n === 1) return '1 správce';
@@ -233,6 +235,7 @@ function nactiAktuality(aktuality) {
 }
 
 function nactiPartnery(partneri) {
+  _partneriData = partneri || [];
   const el = document.getElementById('partneriList');
   if (!el || !partneri) return;
   el.innerHTML = partneri.map(p => {
@@ -246,6 +249,7 @@ function nactiPartnery(partneri) {
 }
 
 function nactiPodekovani(podekovani) {
+  _podekovaniData = podekovani || [];
   const wrap = document.getElementById('podekovaniWrap');
   const el = document.getElementById('podekovaniList');
   if (!wrap || !el || !podekovani || !podekovani.length) return;
@@ -253,6 +257,41 @@ function nactiPodekovani(podekovani) {
     `<div class="podekovani-osoba"><span class="pod-jmeno">${p.jmeno}</span><span class="pod-tip">${p.popis}</span></div>`
   ).join('');
   wrap.style.display = 'block';
+}
+
+function _zobrazPartneriModal() {
+  const existujici = document.getElementById('modalPartneri');
+  if (existujici) { existujici.remove(); return; }
+
+  const logoHTML = _partneriData.map(p => {
+    const img = p.logo
+      ? `<img src="${p.logo}" alt="${p.nazev}" class="pm-logo-img">`
+      : `<span class="pm-logo-text">${p.nazev}</span>`;
+    return p.url
+      ? `<a href="${p.url}" class="pm-logo-item" target="_blank" rel="noopener" title="${p.nazev}">${img}</a>`
+      : `<span class="pm-logo-item" title="${p.nazev}">${img}</span>`;
+  }).join('');
+
+  const podHTML = _podekovaniData.map(p =>
+    `<div class="pm-pod-osoba"><span class="pm-pod-jmeno">${p.jmeno}</span><span class="pod-tip">${p.popis}</span></div>`
+  ).join('');
+
+  const modal = document.createElement('div');
+  modal.id = 'modalPartneri';
+  modal.className = 'modal-overlay';
+  modal.innerHTML = `
+    <div class="modal-box pm-box">
+      <button class="modal-zavrit" id="modalPartneriZavrit">×</button>
+      <div class="pm-header">🤝 Partneři projektu MojeBudky.cz</div>
+      <div class="pm-loga">${logoHTML}</div>
+      <div class="pm-podekovani">
+        <div class="pm-pod-label">🙏 Poděkování</div>
+        <div class="pm-pod-grid">${podHTML}</div>
+      </div>
+    </div>`;
+  document.body.appendChild(modal);
+  document.getElementById('modalPartneriZavrit').addEventListener('click', () => modal.remove());
+  modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
 }
 
 function nactiDruhyPtaku(druhy) {
@@ -432,4 +471,9 @@ document.addEventListener('DOMContentLoaded', () => {
   inicializujFullscreenMapu();
   inicializujHamburger();
   inicializujPushNotifikace();
+
+  // Partneři nav → modal
+  document.querySelectorAll('a[href="#partneri"]').forEach(a => {
+    a.addEventListener('click', e => { e.preventDefault(); _zobrazPartneriModal(); });
+  });
 });
