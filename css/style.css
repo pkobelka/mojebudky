@@ -151,10 +151,7 @@ html, body {
 .podekovani-wrap { margin-top: 8px; border-top: 1px solid rgba(255,255,255,0.12); padding-top: 8px; }
 .podekovani-label { display: block; color: var(--text-muted); font-size: 1rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px; }
 .podekovani-grid { display: flex; flex-wrap: wrap; gap: 6px 16px; justify-content: center; }
-.podekovani-osoba { position: relative; display: inline-block; cursor: default; }
-.pod-jmeno { color: var(--text-light); font-size: 1.05rem; text-decoration: underline; text-decoration-style: dotted; text-underline-offset: 3px; }
-.pod-tip { display: none; position: absolute; bottom: calc(100% + 8px); left: 50%; transform: translateX(-50%); background: #f0e830; border: 2px solid #3a8a1a; color: #1a4a0a; font-style: italic; font-weight: 600; font-size: 0.85rem; padding: 6px 20px; border-radius: 30px; white-space: nowrap; box-shadow: 0 4px 16px rgba(0,0,0,0.4); z-index: 100; pointer-events: none; }
-.podekovani-osoba:hover .pod-tip { display: block; }
+.podekovani-item { color: var(--text-light); font-size: 1.15rem; font-weight: 600; }
 
 /* ── PARTNEŘI MODAL ── */
 .pm-box { max-width: 860px; width: 94%; padding: 0; overflow: hidden; text-align: center; max-height: 88vh; overflow-y: auto; }
