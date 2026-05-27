@@ -50,15 +50,15 @@ html, body {
 
 #app { position: relative; z-index: 1; display: flex; flex-direction: column; min-height: 100vh; }
 
-.navbar { background: var(--nav-bg); display: flex; align-items: center; padding: 0 28px; height: 122px; gap: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.4); }
+.navbar { background: var(--nav-bg); display: flex; align-items: center; padding: 0 28px; height: 140px; gap: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.4); }
 .nav-logo { display: flex; align-items: center; gap: 14px; text-decoration: none; flex-shrink: 0; }
 .nav-logo-img { width: 80px; height: 106px; }
 .stat-svg-icon { width: 40px; height: 40px; object-fit: contain; }
 .logo-textblock { display: flex; flex-direction: column; line-height: 1.1; }
-.logo-text { color: var(--text-light); font-size: 1.85rem; font-weight: 700; letter-spacing: 0.5px; }
+.logo-text { color: var(--text-light); font-size: 2.1rem; font-weight: 700; letter-spacing: 0.5px; }
 .logo-autor { color: var(--orange-light); font-size: 0.85rem; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; }
 .nav-links { display: flex; list-style: none; gap: 4px; flex: 1; }
-.nav-links a { color: var(--text-light); text-decoration: none; padding: 12px 22px; border-radius: 4px; font-size: 1.45rem; transition: all 0.2s; white-space: nowrap; }
+.nav-links a { color: var(--text-light); text-decoration: none; padding: 14px 24px; border-radius: 4px; font-size: 1.6rem; transition: all 0.2s; white-space: nowrap; }
 .nav-links a:hover, .nav-links a.active { background: var(--nav-hover); color: var(--text-light); }
 .nav-actions { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
 .search-box { display: flex; background: rgba(255,255,255,0.12); border-radius: 20px; overflow: hidden; }
@@ -100,8 +100,8 @@ html, body {
 .admin-budka-link { color: var(--accent-gold); font-size: 0.85rem; font-style: italic; }
 .btn-login.prihlaseny { background: transparent !important; color: var(--accent-gold) !important; text-decoration: underline; border-color: transparent !important; }
 
-.info-bar { background: var(--bar-bg); color: var(--bar-text); font-size: 1.15rem; padding: 9px 28px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #d0c0a0; min-height: 48px; }
-.info-bar .bar-right { color: var(--tree-mid); font-style: italic; font-size: 0.95rem; }
+.info-bar { background: var(--bar-bg); color: var(--bar-text); font-size: 1.3rem; padding: 12px 28px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #d0c0a0; min-height: 58px; }
+.info-bar .bar-right { color: var(--tree-mid); font-style: italic; font-size: 1.1rem; }
 .info-bar .bar-right.bar-svatek { color: var(--orange); font-style: normal; font-weight: 600; }
 .bar-gratulace { color: var(--orange); font-weight: 700; }
 
