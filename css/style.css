@@ -350,6 +350,10 @@ html, body {
   .info-bar .bar-right { display: block; width: auto; }
 }
 
+/* ── PŘIHLAŠOVACÍ TOAST ── */
+.admin-toast { position: fixed; top: 80px; left: 50%; transform: translateX(-50%) translateY(-20px); background: linear-gradient(135deg, #1a4a08, #2d6010); border: 1px solid var(--accent-gold); border-radius: 12px; color: var(--text-light); font-size: 1rem; font-weight: 600; padding: 16px 28px; box-shadow: 0 8px 32px rgba(0,0,0,0.5); z-index: 2000; text-align: center; opacity: 0; transition: opacity 0.4s, transform 0.4s; pointer-events: none; white-space: nowrap; }
+.admin-toast--show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
 /* ── ADMIN DROPDOWN ── */
 #authNavArea { position: relative; }
 .admin-dropdown { display: none; position: absolute; top: calc(100% + 8px); right: 0; background: var(--panel-bg); border: 1px solid var(--accent-gold); border-radius: 10px; min-width: 220px; box-shadow: 0 8px 28px rgba(0,0,0,0.5); z-index: 1200; overflow: hidden; }

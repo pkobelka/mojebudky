@@ -43,6 +43,7 @@ async function _zobrazAdminPanel(loginId) {
   const existujici = document.getElementById('adminBanner');
   if (existujici) existujici.remove();
 
+  _zobrazToast(`Přihlášení bylo úspěšné, vítej v komunitě správců budek! 🌿 ${jmeno}`);
 
   if (typeof window._presenceSetAdmin === 'function') window._presenceSetAdmin(true);
 
@@ -137,6 +138,23 @@ function _zobrazKartuSpravce(info, jmeno, budkaText) {
 
   document.getElementById('kartaZavrit').addEventListener('click', () => modal.remove());
   modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
+}
+
+function _zobrazToast(text) {
+  const existujici = document.getElementById('adminToast');
+  if (existujici) existujici.remove();
+
+  const toast = document.createElement('div');
+  toast.id = 'adminToast';
+  toast.className = 'admin-toast';
+  toast.textContent = text;
+  document.body.appendChild(toast);
+
+  setTimeout(() => toast.classList.add('admin-toast--show'), 50);
+  setTimeout(() => {
+    toast.classList.remove('admin-toast--show');
+    setTimeout(() => toast.remove(), 500);
+  }, 4000);
 }
 
 document.addEventListener('DOMContentLoaded', () => {
