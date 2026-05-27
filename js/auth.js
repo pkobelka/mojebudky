@@ -97,6 +97,8 @@ async function _zobrazAdminPanel(loginId) {
   const btn = document.getElementById('btnPrihlasit');
   if (btn) { btn.textContent = `Přihlášen ${jmeno} ▾`; btn.classList.add('prihlaseny'); }
 
+  const jeAdmin = spravceInfo && spravceInfo.spravce === 'admin';
+
   const existujiciDropdown = document.getElementById('adminDropdown');
   if (existujiciDropdown) existujiciDropdown.remove();
 
@@ -108,10 +110,13 @@ async function _zobrazAdminPanel(loginId) {
     <button class="admin-dropdown-item" data-akce="karta">🪪 Karta správce / Editovat</button>
     <button class="admin-dropdown-item" data-akce="editBudky">🏠 Editovat budku</button>
     <button class="admin-dropdown-item pripravujeme" data-akce="clanek">📝 Vložit článek</button>
+    ${jeAdmin ? `<div class="admin-dropdown-oddelovac"></div><button class="admin-dropdown-item admin-item-zadosti" data-akce="zadosti">📬 Žádosti správců <span class="admin-badge" id="adminBadge" hidden>0</span></button>` : ''}
     <div class="admin-dropdown-oddelovac"></div>
     <button class="admin-dropdown-item odhlasit" data-akce="odhlasit">🚪 Odhlásit se</button>
   `;
   document.getElementById('authNavArea').appendChild(dropdown);
+
+  if (jeAdmin) _sledujZadosti();
 
   if (btn) {
     btn.removeEventListener('click', btn._loginHandler);
@@ -160,10 +165,96 @@ async function _zobrazAdminPanel(loginId) {
       return;
     }
 
+    if (akce === 'zadosti') {
+      _zobrazZadosti();
+      dropdown.classList.remove('open');
+      return;
+    }
+
     if (item.classList.contains('pripravujeme')) {
       item.textContent = item.textContent.replace(' – Připravujeme…', '') + ' – Připravujeme…';
       setTimeout(() => { item.textContent = item.textContent.replace(' – Připravujeme…', ''); }, 2000);
     }
+  });
+}
+
+function _sledujZadosti() {
+  const db = _getFirebaseDB();
+  if (!db) return;
+  db.ref('admin_requests').on('value', snap => {
+    const data = snap.val() || {};
+    let pocet = 0;
+    Object.values(data).forEach(kategorie => {
+      if (typeof kategorie === 'object') {
+        Object.values(kategorie).forEach(z => { if (!z.vyrizeno) pocet++; });
+      }
+    });
+    const badge = document.getElementById('adminBadge');
+    if (!badge) return;
+    if (pocet > 0) { badge.textContent = pocet; badge.hidden = false; }
+    else badge.hidden = true;
+  });
+}
+
+function _zobrazZadosti() {
+  const existujici = document.getElementById('modalZadosti');
+  if (existujici) existujici.remove();
+  const db = _getFirebaseDB();
+  if (!db) { alert('Firebase není dostupná'); return; }
+
+  const modal = document.createElement('div');
+  modal.id = 'modalZadosti';
+  modal.className = 'modal-overlay';
+  modal.innerHTML = `
+    <div class="modal-box profil-box">
+      <button class="modal-zavrit" id="zadostiZavrit">×</button>
+      <div class="profil-header"><div class="profil-header-text">
+        <div class="profil-nadpis">📬 Žádosti správců</div>
+      </div></div>
+      <div class="profil-form" id="zadostiObsah"><div style="color:var(--text-muted)">Načítám…</div></div>
+    </div>`;
+  document.body.appendChild(modal);
+  document.getElementById('zadostiZavrit').addEventListener('click', () => modal.remove());
+  modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
+
+  db.ref('admin_requests').once('value', snap => {
+    const data = snap.val() || {};
+    const container = document.getElementById('zadostiObsah');
+    let html = '';
+    ['gps', 'druhy'].forEach(typ => {
+      const kat = data[typ] || {};
+      const polozky = Object.entries(kat).filter(([,v]) => !v.vyrizeno);
+      if (!polozky.length) return;
+      html += `<div class="zadosti-skupina"><div class="zadosti-typ">${typ === 'gps' ? '📍 Opravy GPS' : '🐦 Nové druhy'}</div>`;
+      polozky.forEach(([klic, z]) => {
+        const cas = z.ts ? new Date(z.ts).toLocaleString('cs-CZ') : '';
+        if (typ === 'gps') {
+          html += `<div class="zadost-item" data-typ="${typ}" data-klic="${klic}">
+            <strong>Budka č. ${z.budka_cislo}</strong> – správce ${z.jmeno || z.spravce}<br>
+            <span class="zadost-detail">Nové souřadnice: ${z.nova_lat}, ${z.nova_lng}</span><br>
+            <span class="zadost-cas">${cas}</span>
+            <button class="zadost-btn-ok" data-typ="${typ}" data-klic="${klic}">✓ Vyřízeno</button>
+          </div>`;
+        } else {
+          html += `<div class="zadost-item" data-typ="${typ}" data-klic="${klic}">
+            <strong>Druh: ${z.druh}</strong> – správce ${z.spravce}<br>
+            <span class="zadost-cas">${cas}</span>
+            <button class="zadost-btn-ok" data-typ="${typ}" data-klic="${klic}">✓ Vyřízeno</button>
+          </div>`;
+        }
+      });
+      html += '</div>';
+    });
+    container.innerHTML = html || '<div style="color:var(--text-muted)">Žádné čekající žádosti 🎉</div>';
+
+    container.addEventListener('click', async e => {
+      const btn = e.target.closest('.zadost-btn-ok');
+      if (!btn) return;
+      await db.ref(`admin_requests/${btn.dataset.typ}/${btn.dataset.klic}/vyrizeno`).set(true);
+      btn.closest('.zadost-item').style.opacity = '0.4';
+      btn.disabled = true;
+      btn.textContent = '✓ Hotovo';
+    });
   });
 }
 
@@ -354,7 +445,7 @@ async function _zobrazEditBudky(loginId, spravceInfo, budkaText, budkaCislo, bud
           <div class="profil-budka">${budkaText}</div>
         </div>
         <div class="eb-readonly-info">
-          <span title="GPS souřadnice">📍 ${gpsText}</span>
+          <span title="GPS souřadnice">📍 ${gpsText} <button type="button" class="eb-gps-hlasit-btn" id="ebGpsHlasitBtn" title="Nahlásit špatné souřadnice">⚠</button></span>
           <span title="Průměr vletového otvoru">🕳 ${otvorText}</span>
         </div>
       </div>
@@ -408,6 +499,53 @@ async function _zobrazEditBudky(loginId, spravceInfo, budkaText, budkaCislo, bud
 
   document.getElementById('editBudkyZavrit').addEventListener('click', () => modal.remove());
   modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
+
+  document.getElementById('ebGpsHlasitBtn').addEventListener('click', () => {
+    const existGps = document.getElementById('ebGpsFormWrap');
+    if (existGps) { existGps.remove(); return; }
+    const jmeno2 = spravceInfo ? spravceInfo.jmeno : loginId;
+    const wrap = document.createElement('div');
+    wrap.id = 'ebGpsFormWrap';
+    wrap.className = 'eb-gps-form-wrap';
+    wrap.innerHTML = `
+      <div class="eb-gps-form-title">📍 Nahlásit správné souřadnice</div>
+      <div class="eb-gps-radek">
+        <input class="eb-gps-input" id="ebGpsLat" placeholder="Zeměpisná šířka (lat)" type="number" step="0.00001" value="${budkaObj.lat || ''}">
+        <input class="eb-gps-input" id="ebGpsLng" placeholder="Zeměpisná délka (lng)" type="number" step="0.00001" value="${budkaObj.lng || ''}">
+      </div>
+      <div class="eb-gps-hint">Souřadnice najdete v Google Maps – klikněte pravým tlačítkem na místo → zkopírujte první číslo (lat) a druhé (lng).</div>
+      <div class="eb-gps-radek">
+        <button class="profil-btn-ulozit eb-gps-odeslat" id="ebGpsOdeslat">📨 Odeslat žádost adminovi</button>
+        <span id="ebGpsMsg" class="profil-ulozeno" hidden></span>
+      </div>`;
+    document.querySelector('#modalEditBudky .profil-form').appendChild(wrap);
+
+    document.getElementById('ebGpsOdeslat').addEventListener('click', async () => {
+      const novaLat = parseFloat(document.getElementById('ebGpsLat').value);
+      const novaLng = parseFloat(document.getElementById('ebGpsLng').value);
+      const msg = document.getElementById('ebGpsMsg');
+      if (!novaLat || !novaLng) { msg.textContent = '⚠ Zadejte obě souřadnice'; msg.hidden = false; return; }
+      if (db) {
+        try {
+          await db.ref('admin_requests/gps').push({
+            budka_cislo: budkaCislo,
+            budka_nazev: budkaNazev,
+            stara_lat: budkaObj.lat || null,
+            stara_lng: budkaObj.lng || null,
+            nova_lat: novaLat,
+            nova_lng: novaLng,
+            spravce: loginId,
+            jmeno: jmeno2,
+            ts: firebase.database.ServerValue.TIMESTAMP,
+            vyrizeno: false
+          });
+          msg.textContent = '✓ Žádost odeslána adminovi!';
+          msg.hidden = false;
+          document.getElementById('ebGpsOdeslat').disabled = true;
+        } catch { msg.textContent = '⚠ Nepodařilo se odeslat'; msg.hidden = false; }
+      }
+    });
+  });
 
   let aktualniDruh = vybranyDruh;
   document.getElementById('ebChipy').addEventListener('click', e => {

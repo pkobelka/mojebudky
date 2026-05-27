@@ -414,6 +414,27 @@ html, body {
 .zapomnel-msg { margin-top: 8px; background: rgba(255,255,255,0.06); border: 1px solid var(--panel-border); border-radius: 6px; padding: 8px 12px; font-size: 0.82rem; color: var(--text-muted); line-height: 1.5; }
 .zapomnel-msg strong { color: var(--accent-gold); }
 
+/* ── ADMIN BADGE & ŽÁDOSTI ── */
+.admin-badge { display: inline-block; background: #e03030; color: #fff; border-radius: 10px; font-size: 0.75rem; font-weight: 700; padding: 1px 7px; margin-left: 6px; vertical-align: middle; }
+.zadosti-skupina { margin-bottom: 16px; }
+.zadosti-typ { color: var(--accent-gold); font-size: 1rem; font-weight: 700; margin-bottom: 8px; }
+.zadost-item { background: rgba(255,255,255,0.05); border: 1px solid var(--panel-border); border-radius: 8px; padding: 12px 14px; margin-bottom: 8px; font-size: 0.95rem; color: var(--text-light); line-height: 1.6; }
+.zadost-detail { color: var(--accent-gold); }
+.zadost-cas { color: var(--text-muted); font-size: 0.82rem; }
+.zadost-btn-ok { margin-top: 8px; background: #2d7a2d; border: none; border-radius: 6px; color: #fff; padding: 6px 16px; font-size: 0.9rem; cursor: pointer; }
+.zadost-btn-ok:hover { background: #3aaa3a; }
+
+/* ── GPS OPRAVA ── */
+.eb-gps-hlasit-btn { background: none; border: none; color: #e09030; cursor: pointer; font-size: 1rem; padding: 0 4px; vertical-align: middle; opacity: 0.8; transition: opacity 0.15s; }
+.eb-gps-hlasit-btn:hover { opacity: 1; }
+.eb-gps-form-wrap { background: rgba(200,120,20,0.12); border: 1px solid rgba(200,140,40,0.4); border-radius: 10px; padding: 16px 18px; margin-top: 8px; display: flex; flex-direction: column; gap: 10px; }
+.eb-gps-form-title { color: var(--accent-gold); font-weight: 700; font-size: 1rem; }
+.eb-gps-radek { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+.eb-gps-input { background: rgba(255,255,255,0.07); border: 1px solid var(--panel-border); border-radius: 8px; color: var(--text-light); font-size: 1rem; padding: 9px 12px; outline: none; flex: 1; min-width: 150px; }
+.eb-gps-input:focus { border-color: var(--accent-gold); }
+.eb-gps-hint { color: var(--text-muted); font-size: 0.82rem; font-style: italic; line-height: 1.4; }
+.eb-gps-odeslat { font-size: 0.95rem !important; padding: 10px 20px !important; }
+
 /* ── EDITOVAT BUDKU ── */
 .eb-modal { max-width: 760px; }
 .eb-readonly-info { display: flex; flex-direction: column; gap: 5px; align-items: flex-end; font-size: 0.95rem; color: var(--text-muted); flex-shrink: 0; }
