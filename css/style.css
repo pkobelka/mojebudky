@@ -132,17 +132,18 @@ html, body {
 .panel-scroll::-webkit-scrollbar-track { background: transparent; }
 .panel-scroll::-webkit-scrollbar-thumb { background: var(--panel-border); border-radius: 2px; }
 
-.stats-grid { padding: 16px; display: flex; flex-direction: column; gap: 14px; }
-.stat-item { display: flex; align-items: center; gap: 14px; padding: 12px 14px; background: rgba(255,255,255,0.06); border-radius: 8px; border-left: 4px solid var(--orange); }
-.stat-icon { font-size: 2.4rem; flex-shrink: 0; width: 52px; text-align: center; }
-.stat-value { font-size: 2.6rem; font-weight: 800; color: var(--text-light); line-height: 1; }
-.stat-label { font-size: 1rem; color: var(--text-muted); margin-top: 3px; }
+.stats-grid { padding: 10px 10px 4px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.stat-item { display: flex; align-items: center; gap: 10px; padding: 10px 10px; background: rgba(255,255,255,0.06); border-radius: 8px; border-left: 4px solid var(--orange); border: 1px solid rgba(255,255,255,0.15); border-left: 4px solid var(--orange); }
+.stat-icon { font-size: 1.8rem; flex-shrink: 0; width: 36px; text-align: center; }
+.stat-value { font-size: 1.9rem; font-weight: 800; color: var(--text-light); line-height: 1; }
+.stat-label { font-size: 0.72rem; color: var(--text-muted); margin-top: 3px; }
 .stat-item:nth-child(2) { border-left-color: #c8a800; background: rgba(230,200,0,0.18); }
 .stat-item:nth-child(2) .stat-value { color: #f0d800; }
 .stat-item:nth-child(2) .stat-label { color: #d4bc30; }
 .stat-item:nth-child(3) { border-left-color: #4488cc; }
 .stat-item:nth-child(4) { border-left-color: #cc8822; }
-.stat-aktualizace { padding: 10px 14px; border-top: 1px solid var(--panel-border); color: var(--text-muted); font-size: 0.75rem; flex-shrink: 0; }
+.stat-box { margin: 8px 10px 0; border: 1px solid rgba(255,255,255,0.18); border-radius: 8px; padding: 10px 12px; background: rgba(255,255,255,0.04); }
+.stat-aktualizace { color: var(--text-muted); font-size: 0.78rem; }
 .stat-aktualizace span { color: var(--text-light); font-weight: 600; }
 
 /* ── PARTNERÉ ── */
@@ -263,17 +264,17 @@ html, body {
 .btn-napsat:hover .napsat-tip { display: block; }
 
 /* ── NÁVŠTĚVNOST v pravém panelu ── */
-.navstevnost-panel { border-top: 2px solid var(--orange); padding: 12px 14px 10px; background: rgba(0,0,0,0.15); flex-shrink: 0; }
-.navstevnost-title { color: var(--text-muted); font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
-.navstevnost-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 8px; }
-.navst-item { background: rgba(255,255,255,0.06); border-radius: 5px; padding: 6px 4px; text-align: center; display: flex; flex-direction: column; gap: 2px; }
-.navst-cislo { font-size: 1.15rem; font-weight: 800; color: #7dd444; line-height: 1; }
-.navst-label { font-size: 0.65rem; color: var(--text-muted); }
-.online-pocet-panel { font-size: 0.82rem; color: var(--text-muted); border-top: 1px solid rgba(255,255,255,0.08); padding-top: 7px; margin-top: 4px; }
+.navstevnost-panel { }
+.navstevnost-title { color: var(--text-muted); font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px; }
+.navstevnost-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 10px; }
+.navst-item { background: rgba(255,255,255,0.06); border-radius: 6px; padding: 8px 4px; text-align: center; display: flex; flex-direction: column; gap: 3px; }
+.navst-cislo { font-size: 1.5rem; font-weight: 800; color: #7dd444; line-height: 1; }
+.navst-label { font-size: 0.72rem; color: var(--text-muted); }
+.online-pocet-panel { font-size: 0.88rem; color: var(--text-muted); border-top: 1px solid rgba(255,255,255,0.12); padding-top: 8px; margin-top: 4px; }
 .online-pocet-panel strong { color: #7dd444; font-size: 1rem; }
 
 /* ── DRUHY PTÁKŮ ── */
-.druhy-panel { border-top: 1px solid var(--panel-border); padding: 10px 14px 12px; background: rgba(0,0,0,0.1); flex-shrink: 0; }
+.druhy-panel { }
 .druhy-title { color: var(--text-muted); font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
 .druhy-list { display: flex; flex-direction: column; gap: 4px; }
 .druh-item { display: flex; align-items: center; gap: 8px; padding: 5px 8px; background: rgba(255,255,255,0.05); border-radius: 5px; cursor: pointer; transition: background 0.15s; }

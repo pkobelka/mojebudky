@@ -6,7 +6,7 @@
   <meta name="description" content="MojeBudky.cz – sledujeme ptáčí budky po celé ČR. Živá mapa, statistiky a příběhy z přírody.">
   <title>MojeBudky.cz – Pomáháme ptactvu</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
-  <link rel="stylesheet" href="css/style.css?v=20260527t">
+  <link rel="stylesheet" href="css/style.css?v=20260527v">
   <link rel="icon" type="image/png" href="img/Favikon.png">
 </head>
 <body>
@@ -91,6 +91,8 @@
     <aside class="panel panel-right" aria-label="Statistiky projektu">
       <h2 class="panel-title">Statistiky</h2>
       <div class="panel-scroll">
+
+        <!-- 2×2 čísla -->
         <div class="stats-grid" id="statsGrid">
           <div class="stat-item">
             <div class="stat-icon"><img src="img/logo.svg" alt="Budka" class="stat-svg-icon"></div>
@@ -121,11 +123,17 @@
             </div>
           </div>
         </div>
-        <div class="stat-aktualizace">
-          Poslední aktualizace: <span id="stat-aktualizace">…</span>
+
+        <!-- Aktualizace -->
+        <div class="stat-box stat-aktualizace">
+          📅 Poslední aktualizace: <span id="stat-aktualizace">…</span>
         </div>
-        <div class="druhy-panel" id="druhyPanel"></div>
-        <div class="navstevnost-panel">
+
+        <!-- Druhy ptáků -->
+        <div class="stat-box druhy-panel" id="druhyPanel"></div>
+
+        <!-- Návštěvnost + online -->
+        <div class="stat-box navstevnost-panel">
           <div class="navstevnost-title">📈 Návštěvnost</div>
           <div class="navstevnost-grid">
             <div class="navst-item">
@@ -143,6 +151,7 @@
           </div>
           <div id="onlinePocet" class="online-pocet-panel">🟢 Online: <strong>…</strong></div>
         </div>
+
         <div class="pridat-na-plochu">
           <div class="pridat-title">📲 Přidej na plochu mobilu</div>
           <div class="pridat-body">
