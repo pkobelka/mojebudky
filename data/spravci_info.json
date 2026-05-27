@@ -415,12 +415,18 @@
   },
   "047496": {
     "jmeno": "Petr",
+    "osloveni": "Peťo",
     "prijmeni": "KOBELKA",
     "spravce": "admin",
     "budka_cislo": 47,
     "budka_nazev": "",
     "telefon": "602356496",
-    "email": ""
+    "email": "",
+    "budky": [
+      { "cislo": 47, "nazev": "" },
+      { "cislo": 55, "nazev": "" },
+      { "cislo": 57, "nazev": "" }
+    ]
   },
   "048173": {
     "jmeno": "Tomášek",
