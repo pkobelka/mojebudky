@@ -154,7 +154,7 @@ function _vokativ(jmeno) {
     'Libor':'Libore','Jaroslav':'Jaroslave','Ivan':'Ivane','Kamil':'Kamile','Radim':'Radime',
     'Petr':'Petře','Pavel':'Pavle','Karel':'Karle','Michal':'Michale','Daniel':'Daniele',
     'Radek':'Radku','Marek':'Marku','Zdeněk':'Zdeňku','Patrik':'Patriku','Dominik':'Dominiku',
-    'Jiří':'Jiří','Josef':'Josefe','Dušan':'Dušane','Oldřich':'Oldo','Erwin':'Erwine',
+    'Jiří':'Jiří','Josef':'Pepo','Dušan':'Dušane','Oldřich':'Oldo','Erwin':'Erwine',
     'Honza':'Honzo','Ondra':'Ondro','Míra':'Míro','Pepa':'Pepo','Tom':'Tome',
     'Jarda':'Jardo','Jirka':'Jirko','Vašek':'Vašku','Tomášek':'Tomášku',
     'Miro':'Miro','Radko':'Radko','Sláva':'Slávo','Víťa':'Víťo',
