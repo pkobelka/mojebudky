@@ -105,7 +105,7 @@ html, body {
 .info-bar .bar-right.bar-svatek { color: var(--orange); font-style: normal; font-weight: 600; }
 .bar-gratulace { color: var(--orange); font-weight: 700; }
 
-.main-content { display: flex; height: 320px; min-height: 220px; }
+.main-content { display: flex; height: calc(100vh - 450px); min-height: 260px; max-height: 420px; }
 .panel { background: var(--panel-bg); border: 1px solid var(--panel-border); width: 400px; flex-shrink: 0; display: flex; flex-direction: column; overflow: hidden; }
 .panel-title { background: var(--panel-header); color: var(--text-light); font-size: 1.35rem; font-weight: 700; padding: 18px 24px; letter-spacing: 0.3px; border-bottom: 2px solid var(--orange); flex-shrink: 0; }
 .panel-left .panel-title::before { content: '🌿 '; }
@@ -146,7 +146,7 @@ html, body {
 .stat-aktualizace span { color: var(--text-light); font-weight: 600; }
 
 /* ── PARTNERÉ ── */
-.partners-section { background: rgba(26, 58, 10, 0.92); border-top: 2px solid var(--orange); padding: 18px 52px; text-align: center; flex: 1; }
+.partners-section { background: rgba(26, 58, 10, 0.92); border-top: 2px solid var(--orange); padding: 18px 52px; text-align: center; }
 .partners-section h3 { color: var(--text-light); font-size: 1.4rem; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 12px; }
 .podekovani-wrap { margin-top: 8px; border-top: 1px solid rgba(255,255,255,0.12); padding-top: 8px; }
 .podekovani-label { display: block; color: var(--text-muted); font-size: 1.1rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px; }
@@ -181,7 +181,7 @@ html, body {
 
 /* ── FOOTER ── */
 .footer-sep { opacity: 0.35; }
-.footer-bar { background: var(--footer-bg); color: var(--text-light); font-size: 1.15rem; padding: 13px 36px; display: flex; justify-content: center; align-items: center; gap: 14px; flex-wrap: wrap; }
+.footer-bar { background: var(--footer-bg); color: var(--text-light); font-size: 1.15rem; padding: 13px 36px; display: flex; justify-content: center; align-items: center; gap: 14px; flex-wrap: wrap; margin-top: auto; }
 .footer-copy { color: var(--text-light); }
 .footer-author { color: var(--accent-gold); text-decoration: none; transition: color 0.15s; }
 .footer-author:hover { color: var(--text-light); text-decoration: underline; }
