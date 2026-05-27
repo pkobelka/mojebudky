@@ -278,7 +278,7 @@ function _zobrazPartneriModal() {
     const popis = typeof p === 'object' && p.popis ? p.popis : null;
     return `<div class="pm-pod-osoba" data-idx="${i}">
       <button type="button" class="pm-pod-jmeno${popis ? ' pm-pod-jmeno--ma-text' : ''}">${jmeno}</button>
-      ${popis ? `<div class="pm-bublina" hidden>${popis}</div>` : ''}
+      ${popis ? `<div class="pm-bublina">${popis}</div>` : ''}
     </div>`;
   }).join('');
 
@@ -303,9 +303,9 @@ function _zobrazPartneriModal() {
     btn.addEventListener('click', () => {
       const bublina = btn.nextElementSibling;
       if (!bublina || !bublina.classList.contains('pm-bublina')) return;
-      const jeOtevrena = !bublina.hidden;
-      modal.querySelectorAll('.pm-bublina').forEach(b => { b.hidden = true; });
-      bublina.hidden = jeOtevrena;
+      const jeOtevrena = bublina.classList.contains('pm-bublina--open');
+      modal.querySelectorAll('.pm-bublina').forEach(b => b.classList.remove('pm-bublina--open'));
+      if (!jeOtevrena) bublina.classList.add('pm-bublina--open');
     });
   });
 }
