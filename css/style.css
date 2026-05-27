@@ -30,7 +30,7 @@ html, body {
 
 .bg-scene {
   position: fixed; inset: 0; z-index: 0;
-  background: linear-gradient(180deg, var(--sky-top) 0%, var(--sky-bottom) 65%, #8ec870 65%, #5a9a2a 80%, #1a3a0a 100%);
+  background: linear-gradient(180deg, var(--sky-top) 0%, var(--sky-bottom) 55%, #8ec870 55%, #3a7a18 65%, #1a3a0a 72%, #1a3a0a 100%);
   pointer-events: none;
 }
 .bg-clouds { position: absolute; width: 100%; height: 60%; overflow: hidden; }
@@ -236,8 +236,10 @@ html, body {
 .budka-marker img { display: block; }
 .aktualita-link { display: inline-block; margin-top: 5px; color: var(--orange-light); font-size: 0.73rem; font-weight: 600; text-decoration: none; letter-spacing: 0.2px; transition: color 0.15s; }
 .aktualita-link:hover { color: var(--accent-gold); text-decoration: underline; }
+.main-content.mapa-fullscreen { height: calc(100vh - 200px); max-height: none; }
 .main-content.mapa-fullscreen .panel { display: none; }
-.main-content.mapa-fullscreen .map-wrapper { flex: 1; }
+.main-content.mapa-fullscreen .map-wrapper { flex: 1; height: 100%; }
+.main-content.mapa-fullscreen #map { height: 100%; }
 .main-content.mapa-fullscreen .map-hint { display: none; }
 .main-content.mapa-fullscreen ~ .partners-section,
 .main-content.mapa-fullscreen ~ .footer-bar { display: none; }
