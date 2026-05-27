@@ -43,11 +43,6 @@ async function _zobrazAdminPanel(loginId) {
   const existujici = document.getElementById('adminBanner');
   if (existujici) existujici.remove();
 
-  const banner = document.createElement('div');
-  banner.id = 'adminBanner';
-  banner.className = 'admin-banner';
-  banner.innerHTML = `<span class="admin-budka-link">Administrace: ${budkaText}</span>`;
-  document.body.appendChild(banner);
 
   if (typeof window._presenceSetAdmin === 'function') window._presenceSetAdmin(true);
 
@@ -93,7 +88,8 @@ async function _zobrazAdminPanel(loginId) {
 
     if (akce === 'odhlasit') {
       dropdown.remove();
-      banner.remove();
+      const b = document.getElementById('adminBanner');
+      if (b) b.remove();
       _authSpravciCache = null;
       _spravciInfoCache = null;
       if (typeof window._presenceSetAdmin === 'function') window._presenceSetAdmin(false);
