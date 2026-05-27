@@ -289,6 +289,13 @@ function _zobrazPartneriModal() {
     <div class="modal-box pm-box">
       <button class="modal-zavrit" id="modalPartneriZavrit">×</button>
       <div class="pm-header">🤝 Partneři projektu MojeBudky.cz</div>
+      <div class="pm-podpora">
+        <div class="pm-podpora-nadpis">💛 Fandíte projektu MojeBudky? <img src="img/logo.svg" alt="" class="podpora-logo-img"></div>
+        <p>Celý projekt roste a s ním i radost z každého nového ptačího souseda. Abychom mohli mapu udržovat v chodu, posílat zprávy z terénu a starat se o bezpečný chod celé aplikace, neobejde se to bez provozních nákladů (např. za hosting a zabezpečení webu).</p>
+        <p>Všechno ostatní kolem výroby a kontroly budek děláme s našimi správci čistě dobrovolně a rádi ve svém volném čase. Pokud byste chtěli provoz webu finančně podpořit – ať už jako firma (rádi vás přidáme mezi partnery), nebo jako fanoušek přírody – budeme moc vděční za jakýkoliv příspěvek.</p>
+        <div class="pm-podpora-jak">Jak můžete pomoci?</div>
+        <p>Staňte se partnerem: Napište nám na <a href="mailto:info@mojebudky.cz">info@mojebudky.cz</a> a domluvíme se na umístění vašeho loga.</p>
+      </div>
       <div class="pm-loga">${logoHTML}</div>
       <div class="pm-podekovani">
         <div class="pm-pod-label">🙏 Poděkování</div>
