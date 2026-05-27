@@ -48,7 +48,7 @@ html, body {
 @keyframes cloudMove { from { transform: translateX(-300px); } to { transform: translateX(calc(100vw + 300px)); } }
 .bg-trees { position: absolute; bottom: 0; left: 0; right: 0; width: 100%; height: 120px; }
 
-#app { position: relative; z-index: 1; display: grid; grid-template-rows: auto auto 1fr auto auto; min-height: 100vh; background: transparent; }
+#app { position: relative; z-index: 1; display: grid; grid-template-rows: auto auto 1fr auto auto; height: 100vh; overflow: hidden; background: transparent; }
 
 .navbar { background: var(--nav-bg); display: flex; align-items: center; padding: 0 28px; height: 140px; gap: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.4); }
 .nav-logo { display: flex; align-items: center; gap: 14px; text-decoration: none; flex-shrink: 0; }
@@ -327,6 +327,7 @@ html, body {
 }
 
 @media (max-width: 900px) {
+  #app { height: auto; min-height: 100vh; overflow: visible; }
   .pridat-na-plochu { display: block; }
   .oblibene-pc { display: none; }
   .main-content { flex-direction: column; }
