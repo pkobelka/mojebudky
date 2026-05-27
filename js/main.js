@@ -445,14 +445,29 @@ function inicializujFullscreenMapu() {
   const mapWrapper = document.querySelector('.map-wrapper');
   if (!navMapa || !mainContent || !btnZpet) return;
 
+  function spocitejVyskyMapy() {
+    const navH = (document.querySelector('.navbar') || {}).offsetHeight || 0;
+    const infoH = (document.querySelector('.info-bar') || {}).offsetHeight || 0;
+    return window.innerHeight - navH - infoH;
+  }
+
   function rozbalMapu() {
     mainContent.classList.add('mapa-fullscreen');
     btnZpet.style.display = 'block';
+    mainContent.style.height = spocitejVyskyMapy() + 'px';
+    if (typeof mapInstance !== 'undefined' && mapInstance) {
+      setTimeout(() => mapInstance.invalidateSize(), 50);
+      setTimeout(() => mapInstance.invalidateSize(), 300);
+    }
+  }
+
+  function sbalMapu() {
+    mainContent.classList.remove('mapa-fullscreen');
+    mainContent.style.height = '';
+    btnZpet.style.display = 'none';
     if (typeof mapInstance !== 'undefined' && mapInstance) {
       setTimeout(() => mapInstance.invalidateSize(), 100);
-      setTimeout(() => mapInstance.invalidateSize(), 400);
     }
-    mainContent.scrollIntoView({ behavior: 'smooth' });
   }
 
   navMapa.addEventListener('click', e => { e.preventDefault(); rozbalMapu(); });
@@ -465,17 +480,19 @@ function inicializujFullscreenMapu() {
 
     mapWrapper.addEventListener('dblclick', e => {
       if (mainContent.classList.contains('mapa-fullscreen')) return;
-      if (e.target.closest('.leaflet-container, .btn-zpet-mapa')) rozbalMapu();
+      if (!e.target.closest('.leaflet-container')) return;
+      e.stopPropagation();
+      // disable Leaflet dblclick zoom temporarily to avoid conflict
+      const map = window._getMapInstance && window._getMapInstance();
+      if (map) map.doubleClickZoom.disable();
+      rozbalMapu();
+      setTimeout(() => { if (map) map.doubleClickZoom.enable(); }, 600);
     });
   }
 
   btnZpet.addEventListener('click', e => {
     e.stopPropagation();
-    mainContent.classList.remove('mapa-fullscreen');
-    btnZpet.style.display = 'none';
-    if (typeof mapInstance !== 'undefined' && mapInstance) {
-      setTimeout(() => mapInstance.invalidateSize(), 50);
-    }
+    sbalMapu();
   });
 }
 
