@@ -48,7 +48,7 @@ html, body {
 @keyframes cloudMove { from { transform: translateX(-300px); } to { transform: translateX(calc(100vw + 300px)); } }
 .bg-trees { position: absolute; bottom: 0; left: 0; right: 0; width: 100%; height: 120px; }
 
-#app { position: relative; z-index: 1; display: flex; flex-direction: column; min-height: 100vh; background: linear-gradient(to bottom, transparent 55%, rgba(26,58,10,0.97) 80%, #1a3a0a 100%); }
+#app { position: relative; z-index: 1; display: flex; flex-direction: column; min-height: 100vh; }
 
 .navbar { background: var(--nav-bg); display: flex; align-items: center; padding: 0 28px; height: 122px; gap: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.4); }
 .nav-logo { display: flex; align-items: center; gap: 14px; text-decoration: none; flex-shrink: 0; }
@@ -146,7 +146,7 @@ html, body {
 .stat-aktualizace span { color: var(--text-light); font-weight: 600; }
 
 /* ── PARTNERÉ ── */
-.partners-section { background: rgba(26, 58, 10, 0.92); border-top: 2px solid var(--orange); padding: 18px 52px; text-align: center; }
+.partners-section { background: rgba(26, 58, 10, 0.92); border-top: 2px solid var(--orange); padding: 18px 52px; text-align: center; flex: 1; display: flex; flex-direction: column; justify-content: center; }
 .partners-section h3 { color: var(--text-light); font-size: 1.4rem; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 12px; }
 .podekovani-wrap { margin-top: 8px; border-top: 1px solid rgba(255,255,255,0.12); padding-top: 8px; }
 .podekovani-label { display: block; color: var(--text-muted); font-size: 1.1rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px; }
@@ -181,7 +181,7 @@ html, body {
 
 /* ── FOOTER ── */
 .footer-sep { opacity: 0.35; }
-.footer-bar { background: var(--footer-bg); color: var(--text-light); font-size: 1.15rem; padding: 13px 36px; display: flex; justify-content: center; align-items: center; gap: 14px; flex-wrap: wrap; margin-top: auto; }
+.footer-bar { background: var(--footer-bg); color: var(--text-light); font-size: 1.15rem; padding: 13px 36px; display: flex; justify-content: center; align-items: center; gap: 14px; flex-wrap: wrap; }
 .footer-copy { color: var(--text-light); }
 .footer-author { color: var(--accent-gold); text-decoration: none; transition: color 0.15s; }
 .footer-author:hover { color: var(--text-light); text-decoration: underline; }
