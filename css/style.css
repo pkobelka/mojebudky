@@ -275,19 +275,19 @@ html, body {
 
 /* ── DRUHY PTÁKŮ ── */
 .druhy-panel { }
-.druhy-title { color: var(--text-muted); font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
-.druhy-list { display: flex; flex-direction: column; gap: 4px; }
-.druh-item { display: flex; align-items: center; gap: 8px; padding: 5px 8px; background: rgba(255,255,255,0.05); border-radius: 5px; cursor: pointer; transition: background 0.15s; }
+.druhy-title { color: var(--text-muted); font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px; }
+.druhy-list { display: flex; flex-direction: column; gap: 6px; }
+.druh-item { display: flex; align-items: center; gap: 10px; padding: 8px 10px; background: rgba(255,255,255,0.05); border-radius: 6px; cursor: pointer; transition: background 0.15s; }
 .druh-item:hover { background: rgba(255,255,255,0.12); }
 .druh-svg { flex-shrink: 0; line-height: 0; }
-.druh-nazev { flex: 1; color: var(--text-light); font-size: 0.78rem; font-weight: 600; }
-.druh-pocet { color: var(--accent-gold); font-size: 0.82rem; font-weight: 700; }
-.druh-pocet-label { color: var(--text-muted); font-size: 0.7rem; margin-left: 2px; }
+.druh-nazev { flex: 1; color: var(--text-light); font-size: 1rem; font-weight: 600; }
+.druh-pocet { color: var(--accent-gold); font-size: 1.05rem; font-weight: 700; }
+.druh-pocet-label { color: var(--text-muted); font-size: 0.82rem; margin-left: 3px; }
 
 /* ── PŘIDAT NA PLOCHU ── */
-.pridat-na-plochu { border-top: 1px solid var(--panel-border); padding: 10px 14px 12px; background: rgba(0,0,0,0.1); flex-shrink: 0; display: none; }
-.oblibene-pc { border-top: 1px solid var(--panel-border); padding: 10px 14px 12px; background: rgba(0,0,0,0.1); flex-shrink: 0; font-size: 0.78rem; color: var(--text-muted); display: block; }
-.oblibene-pc strong { color: var(--accent-gold); display: block; margin-bottom: 4px; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px; }
+.pridat-na-plochu { border-top: 1px solid var(--panel-border); padding: 8px 10px; background: rgba(0,0,0,0.1); flex-shrink: 0; display: none; }
+.oblibene-pc { margin: 8px 10px 6px; border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; padding: 6px 10px; font-size: 0.72rem; color: var(--text-muted); display: block; }
+.oblibene-pc strong { color: var(--accent-gold); display: block; margin-bottom: 3px; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.5px; }
 .oblibene-pc span { display: block; margin-bottom: 3px; }
 .pridat-title { color: var(--text-muted); font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
 .pridat-body { display: flex; gap: 10px; align-items: flex-start; }
