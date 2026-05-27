@@ -6,6 +6,43 @@ async function sha256hex(text) {
 let _authSpravciCache = null;
 let _spravciInfoCache = null;
 
+function _getFirebaseDB() {
+  try { return typeof firebase !== 'undefined' ? firebase.database() : null; } catch { return null; }
+}
+
+async function _nacistProfilFirebase(loginId) {
+  const db = _getFirebaseDB();
+  if (!db) return null;
+  try {
+    const snap = await db.ref(`spravci/${loginId}/profil`).once('value');
+    return snap.val();
+  } catch { return null; }
+}
+
+async function _ulozitProfilFirebase(loginId, data) {
+  const db = _getFirebaseDB();
+  if (!db) return false;
+  try {
+    const { foto, ...bezFota } = data;
+    await db.ref(`spravci/${loginId}/profil`).set(bezFota);
+    return true;
+  } catch { return false; }
+}
+
+async function _logAktivita(loginId, jmeno, budkaCislo, budkaNazev, zprava) {
+  const db = _getFirebaseDB();
+  if (!db) return;
+  try {
+    await db.ref('aktivita').push({
+      ts: firebase.database.ServerValue.TIMESTAMP,
+      loginId, jmeno,
+      budka_cislo: budkaCislo,
+      budka_nazev: budkaNazev || '',
+      zprava
+    });
+  } catch {}
+}
+
 async function _nactiAuthSpravce() {
   if (_authSpravciCache) return _authSpravciCache;
   const res = await fetch('data/spravci.json');
@@ -43,8 +80,10 @@ async function _zobrazAdminPanel(loginId) {
   const existujici = document.getElementById('adminBanner');
   if (existujici) existujici.remove();
 
+  const profilFirebase = await _nacistProfilFirebase(loginId);
   const profilLocal = _nacistProfilLocal(loginId);
-  const osloveni = (profilLocal && profilLocal.osloveni) ? profilLocal.osloveni
+  const profil = profilFirebase ? Object.assign({}, profilLocal, profilFirebase) : profilLocal;
+  const osloveni = (profil && profil.osloveni) ? profil.osloveni
     : (spravceInfo && spravceInfo.osloveni) ? spravceInfo.osloveni : _vokativ(jmeno);
   _zobrazToast(`Ahoj ${osloveni}, vítám Tě v komunitě správců mých budek! 🌿 Petr`);
 
@@ -67,7 +106,7 @@ async function _zobrazAdminPanel(loginId) {
   dropdown.innerHTML = `
     <div class="admin-dropdown-hlavicka">👤 ${jmeno} &nbsp;·&nbsp; ${budkaText}</div>
     <button class="admin-dropdown-item" data-akce="karta">🪪 Karta správce / Editovat</button>
-    <button class="admin-dropdown-item pripravujeme" data-akce="editBudky">🏠 Editovat budky</button>
+    <button class="admin-dropdown-item" data-akce="editBudky">🏠 Editovat budku</button>
     <button class="admin-dropdown-item pripravujeme" data-akce="clanek">📝 Vložit článek</button>
     <div class="admin-dropdown-oddelovac"></div>
     <button class="admin-dropdown-item odhlasit" data-akce="odhlasit">🚪 Odhlásit se</button>
@@ -111,6 +150,12 @@ async function _zobrazAdminPanel(loginId) {
 
     if (akce === 'karta' || akce === 'editSpravce') {
       _zobrazProfilSpravce(loginId, spravceInfo, budkaText);
+      dropdown.classList.remove('open');
+      return;
+    }
+
+    if (akce === 'editBudky') {
+      _zobrazEditBudky(loginId, spravceInfo, budkaText, budkaCislo, budkaNazev);
       dropdown.classList.remove('open');
       return;
     }
@@ -210,6 +255,21 @@ function _zobrazProfilSpravce(loginId, info, budkaText) {
   `;
   document.body.appendChild(modal);
 
+  // Silently update fields from Firebase (may be more recent than localStorage)
+  _nacistProfilFirebase(loginId).then(profilFB => {
+    if (!profilFB || !document.getElementById('modalProfil')) return;
+    const merged = Object.assign({}, d, profilFB);
+    const ef = id => document.getElementById(id);
+    if (ef('pTitulPred')) ef('pTitulPred').value = merged.titul_pred || '';
+    if (ef('pJmeno'))     ef('pJmeno').value     = merged.jmeno || '';
+    if (ef('pPrijmeni'))  ef('pPrijmeni').value  = merged.prijmeni || '';
+    if (ef('pTitulZa'))   ef('pTitulZa').value   = merged.titul_za || '';
+    if (ef('pOsloveni'))  ef('pOsloveni').value  = merged.osloveni || '';
+    if (ef('pDatum'))     ef('pDatum').value      = merged.datum_narozeni || '';
+    if (ef('pTelefon'))   ef('pTelefon').value   = merged.telefon || '';
+    if (ef('pEmail'))     ef('pEmail').value      = merged.email || '';
+  });
+
   document.getElementById('profilZavrit').addEventListener('click', () => modal.remove());
   modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
 
@@ -221,7 +281,7 @@ function _zobrazProfilSpravce(loginId, info, budkaText) {
     reader.readAsDataURL(file);
   });
 
-  document.getElementById('profilUlozit').addEventListener('click', () => {
+  document.getElementById('profilUlozit').addEventListener('click', async () => {
     const foto = document.getElementById('profilFotoNahled').src;
     const data = {
       titul_pred:     document.getElementById('pTitulPred').value.trim(),
@@ -234,9 +294,98 @@ function _zobrazProfilSpravce(loginId, info, budkaText) {
       email:          document.getElementById('pEmail').value.trim(),
       foto:           foto.startsWith('data:') ? foto : null,
     };
+    const fbOK = await _ulozitProfilFirebase(loginId, data);
     _ulozitProfilLocal(loginId, data);
     localStorage.setItem('mb_firstlogin_' + loginId, '1');
     const msg = document.getElementById('profilUlozeno');
+    msg.textContent = fbOK ? '✓ Uloženo do cloudu!' : '✓ Uloženo lokálně';
+    msg.hidden = false;
+    setTimeout(() => { msg.hidden = true; }, 2500);
+  });
+}
+
+async function _zobrazEditBudky(loginId, spravceInfo, budkaText, budkaCislo, budkaNazev) {
+  const existujici = document.getElementById('modalEditBudky');
+  if (existujici) existujici.remove();
+
+  const db = _getFirebaseDB();
+  let aktualniBudka = {};
+  if (db) {
+    try {
+      const snap = await db.ref(`budky_edit/${budkaCislo}`).once('value');
+      aktualniBudka = snap.val() || {};
+    } catch {}
+  }
+
+  const jmeno = spravceInfo ? spravceInfo.jmeno : loginId;
+  const naposledy = aktualniBudka.ts
+    ? `<div class="eb-naposledy">Naposledy editováno: ${new Date(aktualniBudka.ts).toLocaleString('cs-CZ')}</div>` : '';
+
+  const modal = document.createElement('div');
+  modal.id = 'modalEditBudky';
+  modal.className = 'modal-overlay';
+  modal.innerHTML = `
+    <div class="modal-box profil-box">
+      <button class="modal-zavrit" id="editBudkyZavrit">×</button>
+      <div class="profil-header">
+        <div class="profil-header-text">
+          <div class="profil-nadpis">🏠 Editovat budku</div>
+          <div class="profil-budka">${budkaText}</div>
+        </div>
+      </div>
+      <div class="profil-form">
+        <div class="profil-row">
+          <div class="profil-field profil-field--wide">
+            <label>Kdo nyní hnízdí</label>
+            <input type="text" id="ebKdoHnizdi" value="${aktualniBudka.kdo_hnizdi || ''}" placeholder="např. Sýkora koňadra">
+          </div>
+        </div>
+        <div class="profil-row">
+          <div class="profil-field profil-field--wide">
+            <label>Poznámka k budce</label>
+            <textarea id="ebPoznamka" rows="3" placeholder="Aktuální stav budky, zajímavosti…">${aktualniBudka.poznamka || ''}</textarea>
+          </div>
+        </div>
+        ${naposledy}
+      </div>
+      <div class="profil-actions">
+        <button class="profil-btn-ulozit" id="editBudkyUlozit">💾 Uložit</button>
+        <span class="profil-ulozeno" id="editBudkyUlozeno" hidden>✓ Uloženo!</span>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(modal);
+
+  document.getElementById('editBudkyZavrit').addEventListener('click', () => modal.remove());
+  modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
+
+  document.getElementById('editBudkyUlozit').addEventListener('click', async () => {
+    const kdoHnizdi = document.getElementById('ebKdoHnizdi').value.trim();
+    const poznamka = document.getElementById('ebPoznamka').value.trim();
+
+    let ok = false;
+    if (db) {
+      try {
+        await db.ref(`budky_edit/${budkaCislo}`).set({
+          kdo_hnizdi: kdoHnizdi,
+          poznamka,
+          ts: firebase.database.ServerValue.TIMESTAMP,
+          spravce_id: loginId,
+          jmeno
+        });
+        ok = true;
+      } catch {}
+    }
+
+    if (ok) {
+      let zprava = '';
+      if (kdoHnizdi) zprava += `sídlí ${kdoHnizdi}`;
+      if (poznamka) zprava += (zprava ? ' · ' : '') + poznamka;
+      if (zprava) await _logAktivita(loginId, jmeno, budkaCislo, budkaNazev, zprava);
+    }
+
+    const msg = document.getElementById('editBudkyUlozeno');
+    msg.textContent = ok ? '✓ Uloženo!' : '⚠ Nepodařilo se uložit';
     msg.hidden = false;
     setTimeout(() => { msg.hidden = true; }, 2500);
   });

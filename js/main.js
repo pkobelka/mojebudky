@@ -11,6 +11,8 @@ const KANONICKY = {};
 for (const [k, arr] of Object.entries(PREZDIVKY)) arr.forEach(p => KANONICKY[p] = k);
 
 let spravciJmena = [];
+let _statickeAktuality = [];
+let _aktualityListenerSet = false;
 
 function pluralSpravcu(n) {
   if (n === 1) return '1 správce';
@@ -167,10 +169,26 @@ const BIRD_KEY_MAP = {
   'Sojka obecná': 'sojka'
 };
 
-function nactiAktuality(aktuality) {
+function _renderAktualityPanel(staticke, liveEntries) {
   const el = document.getElementById('aktualityList');
-  if (!el || !aktuality) return;
-  el.innerHTML = aktuality.map(p => `
+  if (!el) return;
+
+  const liveHTML = liveEntries.map(v => {
+    const datum = v.ts ? new Date(v.ts).toLocaleDateString('cs-CZ') : '—';
+    const cas = v.ts ? new Date(v.ts).toLocaleTimeString('cs-CZ', { hour: '2-digit', minute: '2-digit' }) : '';
+    const budkaNazevStr = (v.budka_nazev && v.budka_nazev !== String(v.budka_cislo)) ? ` – ${v.budka_nazev}` : '';
+    return `<div class="pribeh-item pribeh-item--live">
+      <div class="pribeh-ikona">🏠</div>
+      <div class="pribeh-text">
+        <div class="pribeh-druh">Správce ${v.jmeno}</div>
+        <div class="pribeh-popis">${v.zprava}</div>
+        <div class="pribeh-datum">${datum} · ${cas}</div>
+        ${v.budka_cislo ? `<a class="aktualita-link" data-budka="${v.budka_cislo}" href="#">→ Budka č. ${v.budka_cislo}${budkaNazevStr}</a>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+
+  const staticHTML = staticke.map(p => `
     <div class="pribeh-item">
       <div class="pribeh-ikona">${BIRD_ICONS[p.ikona] || BIRD_ICONS.konadra}</div>
       <div class="pribeh-text">
@@ -181,14 +199,37 @@ function nactiAktuality(aktuality) {
       </div>
     </div>`).join('');
 
-  el.addEventListener('click', e => {
-    const link = e.target.closest('.aktualita-link');
-    if (!link) return;
-    e.preventDefault();
-    const cislo = parseInt(link.dataset.budka, 10);
-    focusBudka(cislo);
-    document.querySelector('.map-wrapper').scrollIntoView({ behavior: 'smooth' });
+  el.innerHTML = liveHTML + staticHTML;
+}
+
+function _poslechniAktualityFirebase() {
+  if (_aktualityListenerSet) return;
+  const db = typeof firebase !== 'undefined' ? firebase.database() : null;
+  if (!db) return;
+  _aktualityListenerSet = true;
+  db.ref('aktivita').orderByChild('ts').limitToLast(10).on('value', snap => {
+    const entries = [];
+    snap.forEach(child => { entries.unshift(child.val()); });
+    _renderAktualityPanel(_statickeAktuality, entries);
   });
+}
+
+function nactiAktuality(aktuality) {
+  _statickeAktuality = aktuality || [];
+  const el = document.getElementById('aktualityList');
+  if (el && !el._clickSet) {
+    el._clickSet = true;
+    el.addEventListener('click', e => {
+      const link = e.target.closest('.aktualita-link');
+      if (!link) return;
+      e.preventDefault();
+      const cislo = parseInt(link.dataset.budka, 10);
+      focusBudka(cislo);
+      document.querySelector('.map-wrapper').scrollIntoView({ behavior: 'smooth' });
+    });
+  }
+  _renderAktualityPanel(_statickeAktuality, []);
+  _poslechniAktualityFirebase();
 }
 
 function nactiPartnery(partneri) {
