@@ -296,9 +296,9 @@ async function inicializujMapu() {
 
     const cislo = Object.keys(markersByCislo).map(Number).find(k => markersByCislo[k].getPopup() === popup);
     if (!cislo) return;
-    if (!spravce.budkyList.some(b => b.cislo === cislo)) return;
+    if (!spravce.jeAdmin && !spravce.budkyList.some(b => b.cislo === cislo)) return;
 
-    const b = spravce.budkyList.find(b => b.cislo === cislo);
+    const b = spravce.jeAdmin ? { cislo, nazev: '' } : spravce.budkyList.find(b => b.cislo === cislo);
     const nazev = b ? (b.nazev || '') : '';
     const text = nazev ? `Budka č. ${cislo} – ${nazev}` : `Budka č. ${cislo}`;
 

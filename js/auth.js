@@ -59,7 +59,7 @@ async function _logAktivita(loginId, jmeno, budkaCislo, budkaNazev, zprava) {
 
 async function _nactiAuthSpravce() {
   if (_authSpravciCache) return _authSpravciCache;
-  const res = await fetch('data/spravci.json?v=20260527k');
+  const res = await fetch('data/spravci.json?v=20260528c');
   if (!res.ok) throw new Error('Nelze načíst data správců');
   _authSpravciCache = await res.json();
   return _authSpravciCache;
@@ -68,7 +68,7 @@ async function _nactiAuthSpravce() {
 async function _nactiSpravciInfo() {
   if (_spravciInfoCache) return _spravciInfoCache;
   try {
-    const res = await fetch('data/spravci_info.json?v=20260527k');
+    const res = await fetch('data/spravci_info.json?v=20260528c');
     if (res.ok) _spravciInfoCache = await res.json();
   } catch {}
   return _spravciInfoCache;
@@ -117,28 +117,31 @@ async function _zobrazAdminPanel(loginId) {
 
   if (typeof window._presenceSetAdmin === 'function') window._presenceSetAdmin(true);
 
-  window._aktualniSpravce = { loginId, spravceInfo, budkyList };
+  const jeAdmin = !!(spravceInfo && spravceInfo.spravce === 'admin');
+  window._aktualniSpravce = { loginId, spravceInfo, budkyList, jeAdmin };
   window._editBudku = _zobrazEditBudky;
 
   const btn = document.getElementById('btnPrihlasit');
   if (btn) { btn.textContent = `Přihlášen ${jmeno} ▾`; btn.classList.add('prihlaseny'); }
 
-  const jeAdmin = spravceInfo && spravceInfo.spravce === 'admin';
-
   const existujiciDropdown = document.getElementById('adminDropdown');
   if (existujiciDropdown) existujiciDropdown.remove();
 
   // HTML pro budky v menu
-  const budkyMenuHTML = budkyList.length === 1
-    ? `<button class="admin-dropdown-item admin-dropdown-budka admin-budka-aktivni" data-akce="editBudky" data-cislo="${budkyList[0].cislo}" data-nazev="${budkyList[0].nazev || ''}">🏠 Editovat budku</button>`
-    : `<div class="admin-dropdown-sec">🏠 Moje budky</div>
-       ${budkyList.map((b, i) => `<button class="admin-dropdown-item admin-dropdown-budka${i === 0 ? ' admin-budka-aktivni' : ''}" data-akce="editBudky" data-cislo="${b.cislo}" data-nazev="${b.nazev || ''}">🏠 Budka č. ${b.cislo}${b.nazev ? ' – ' + b.nazev : ''}</button>`).join('')}`;
+  const budkyMenuHTML = jeAdmin
+    ? `<div class="admin-dropdown-sec">🔑 Přístup ke všem budkám</div>`
+    : (budkyList.length === 1
+        ? `<button class="admin-dropdown-item admin-dropdown-budka admin-budka-aktivni" data-akce="editBudky" data-cislo="${budkyList[0].cislo}" data-nazev="${budkyList[0].nazev || ''}">🏠 Editovat budku</button>`
+        : `<div class="admin-dropdown-sec">🏠 Moje budky</div>
+           ${budkyList.map((b, i) => `<button class="admin-dropdown-item admin-dropdown-budka${i === 0 ? ' admin-budka-aktivni' : ''}" data-akce="editBudky" data-cislo="${b.cislo}" data-nazev="${b.nazev || ''}">🏠 Budka č. ${b.cislo}${b.nazev ? ' – ' + b.nazev : ''}</button>`).join('')}`);
+
+  const hlavickaText = jeAdmin ? 'Administrátor' : (budkyList.length === 1 ? budkaText : budkyList.length + ' budky');
 
   const dropdown = document.createElement('div');
   dropdown.id = 'adminDropdown';
   dropdown.className = 'admin-dropdown';
   dropdown.innerHTML = `
-    <div class="admin-dropdown-hlavicka">👤 ${jmeno} &nbsp;·&nbsp; ${budkyList.length === 1 ? budkaText : budkyList.length + ' budky'}</div>
+    <div class="admin-dropdown-hlavicka">👤 ${jmeno} &nbsp;·&nbsp; ${hlavickaText}</div>
     <button class="admin-dropdown-item" data-akce="karta">🪪 Karta správce / Editovat</button>
     ${budkyMenuHTML}
     <button class="admin-dropdown-item pripravujeme" data-akce="clanek">📝 Vložit článek</button>

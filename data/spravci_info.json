@@ -1912,5 +1912,14 @@
     "budka_nazev": "",
     "telefon": "",
     "email": ""
+  },
+  "602356": {
+    "jmeno": "Petr",
+    "prijmeni": "KOBELKA",
+    "spravce": "admin",
+    "budka_cislo": 0,
+    "budka_nazev": "Administrátor",
+    "telefon": "",
+    "email": "p.kobelka@gmail.com"
   }
 }

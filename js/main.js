@@ -366,7 +366,7 @@ function zobrazModalDruhu(druh, iconSvg) {
     });
   }
 
-  const bigIcon = iconSvg.replace(/width="38" height="38"/, 'width="56" height="56"');
+  const bigIcon = iconSvg.replace(/width="38" height="38"/, 'width="90" height="90"');
 
   overlay.innerHTML = `
     <div class="druh-modal-box">
