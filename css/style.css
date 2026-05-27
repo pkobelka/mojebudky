@@ -143,8 +143,8 @@ html, body {
 .stat-item:nth-child(3) { border-left-color: #4488cc; }
 .stat-item:nth-child(4) { border-left-color: #cc8822; }
 .stat-box { margin: 8px 10px 0; border: 1px solid rgba(255,255,255,0.18); border-radius: 8px; padding: 10px 12px; background: rgba(255,255,255,0.04); }
-.stat-aktualizace { color: var(--text-muted); font-size: 0.78rem; }
-.stat-aktualizace span { color: var(--text-light); font-weight: 600; }
+.stat-aktualizace { color: var(--text-muted); font-size: 0.9rem; }
+.stat-aktualizace span { color: var(--text-light); font-weight: 700; font-size: 0.95rem; }
 
 /* ── PARTNERÉ ── */
 .partners-section { background: #1a3a0a; border-top: 2px solid var(--orange); padding: 18px 52px 28px; text-align: center; display: flex; flex-direction: column; justify-content: center; }
@@ -280,9 +280,9 @@ html, body {
 .druh-item { display: flex; align-items: center; gap: 10px; padding: 8px 10px; background: rgba(255,255,255,0.05); border-radius: 6px; cursor: pointer; transition: background 0.15s; }
 .druh-item:hover { background: rgba(255,255,255,0.12); }
 .druh-svg { flex-shrink: 0; line-height: 0; }
-.druh-nazev { flex: 1; color: var(--text-light); font-size: 1rem; font-weight: 600; }
-.druh-pocet { color: var(--accent-gold); font-size: 1.05rem; font-weight: 700; }
-.druh-pocet-label { color: var(--text-muted); font-size: 0.82rem; margin-left: 3px; }
+.druh-nazev { flex: 1; color: var(--text-light); font-size: 1.12rem; font-weight: 600; }
+.druh-pocet { color: var(--accent-gold); font-size: 1.15rem; font-weight: 700; }
+.druh-pocet-label { color: var(--text-muted); font-size: 0.88rem; margin-left: 3px; }
 
 /* ── PŘIDAT NA PLOCHU ── */
 .pridat-na-plochu { border-top: 1px solid var(--panel-border); padding: 8px 10px; background: rgba(0,0,0,0.1); flex-shrink: 0; display: none; }
