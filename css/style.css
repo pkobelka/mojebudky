@@ -437,6 +437,22 @@ html, body {
 
 /* ── EDITOVAT BUDKU ── */
 .eb-modal { max-width: 760px; }
+.eb-rok-ctrl { display: flex; align-items: center; gap: 0; }
+.eb-rok-btn { background: var(--orange); color: #fff; border: none; border-radius: 8px; width: 48px; height: 48px; font-size: 1.2rem; cursor: pointer; flex-shrink: 0; transition: background 0.15s; touch-action: manipulation; }
+.eb-rok-btn:hover { background: var(--orange-dark); }
+.eb-rok-btn:active { transform: scale(0.92); }
+.eb-rok-val { font-size: 1.4rem; font-weight: 800; color: var(--text-light); padding: 0 18px; min-width: 80px; text-align: center; }
+.eb-gps-hlasit-btn { background: none; border: none; color: var(--text-muted); font-size: 0.82rem; cursor: pointer; padding: 2px 6px; border-radius: 4px; transition: color 0.15s; }
+.eb-gps-hlasit-btn:hover { color: #ffcc44; }
+.eb-gps-form-wrap { background: rgba(255,200,0,0.06); border: 1px solid rgba(255,200,0,0.25); border-radius: 8px; padding: 14px 16px; margin-top: 12px; display: flex; flex-direction: column; gap: 10px; }
+.eb-gps-form-title { color: var(--accent-gold); font-weight: 700; font-size: 0.95rem; }
+.eb-gps-radek { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+.eb-gps-input { background: rgba(255,255,255,0.07); border: 1px solid var(--panel-border); border-radius: 6px; color: var(--text-light); font-size: 1rem; padding: 8px 12px; outline: none; flex: 1; min-width: 140px; }
+.eb-gps-input:focus { border-color: var(--accent-gold); }
+.eb-gps-hint { color: var(--text-muted); font-size: 0.8rem; font-style: italic; line-height: 1.4; }
+.eb-gps-odeslat { font-size: 0.95rem !important; padding: 10px 20px !important; }
+.admin-dropdown-sec { padding: 6px 16px 2px; font-size: 0.75rem; color: var(--accent-gold); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+.admin-dropdown-budka { padding-left: 28px !important; font-size: 0.92rem; }
 .eb-readonly-info { display: flex; flex-direction: column; gap: 5px; align-items: flex-end; font-size: 0.95rem; color: var(--text-muted); flex-shrink: 0; }
 .eb-chipy { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 8px; }
 .eb-chip { background: rgba(255,255,255,0.07); border: 2px solid var(--panel-border); color: var(--text-light); border-radius: 24px; padding: 10px 22px; font-size: 1.05rem; cursor: pointer; transition: all 0.15s; }

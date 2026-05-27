@@ -71,11 +71,20 @@ async function _zobrazAdminPanel(loginId) {
   const spravceInfo = info && info[loginId];
 
   const jmeno = spravceInfo ? spravceInfo.jmeno : loginId;
-  const budkaCislo = spravceInfo ? spravceInfo.budka_cislo : parseInt(loginId, 10);
-  const budkaNazev = spravceInfo ? spravceInfo.budka_nazev : '';
-  const budkaText = budkaNazev && budkaNazev !== String(budkaCislo)
-    ? `Budka č. ${budkaCislo} – ${budkaNazev}`
-    : `Budka č. ${budkaCislo}`;
+
+  // Normalizace: budky[] (budoucí) nebo single budka_cislo
+  const budkyList = (spravceInfo && spravceInfo.budky && spravceInfo.budky.length)
+    ? spravceInfo.budky
+    : [{ cislo: spravceInfo ? spravceInfo.budka_cislo : parseInt(loginId, 10),
+         nazev: spravceInfo ? (spravceInfo.budka_nazev || '') : '' }];
+
+  const _budkaText = (b) => (b.nazev && b.nazev !== String(b.cislo))
+    ? `Budka č. ${b.cislo} – ${b.nazev}` : `Budka č. ${b.cislo}`;
+
+  // Pro zpětnou kompatibilitu (profil, log…)
+  const budkaCislo = budkyList[0].cislo;
+  const budkaNazev = budkyList[0].nazev;
+  const budkaText  = _budkaText(budkyList[0]);
 
   const existujici = document.getElementById('adminBanner');
   if (existujici) existujici.remove();
@@ -102,13 +111,19 @@ async function _zobrazAdminPanel(loginId) {
   const existujiciDropdown = document.getElementById('adminDropdown');
   if (existujiciDropdown) existujiciDropdown.remove();
 
+  // HTML pro budky v menu
+  const budkyMenuHTML = budkyList.length === 1
+    ? `<button class="admin-dropdown-item" data-akce="editBudky" data-cislo="${budkyList[0].cislo}" data-nazev="${budkyList[0].nazev || ''}">🏠 Editovat budku</button>`
+    : `<div class="admin-dropdown-sec">🏠 Moje budky</div>
+       ${budkyList.map(b => `<button class="admin-dropdown-item admin-dropdown-budka" data-akce="editBudky" data-cislo="${b.cislo}" data-nazev="${b.nazev || ''}">Budka č. ${b.cislo}${b.nazev ? ' – ' + b.nazev : ''}</button>`).join('')}`;
+
   const dropdown = document.createElement('div');
   dropdown.id = 'adminDropdown';
   dropdown.className = 'admin-dropdown';
   dropdown.innerHTML = `
-    <div class="admin-dropdown-hlavicka">👤 ${jmeno} &nbsp;·&nbsp; ${budkaText}</div>
+    <div class="admin-dropdown-hlavicka">👤 ${jmeno} &nbsp;·&nbsp; ${budkyList.length === 1 ? budkaText : budkyList.length + ' budky'}</div>
     <button class="admin-dropdown-item" data-akce="karta">🪪 Karta správce / Editovat</button>
-    <button class="admin-dropdown-item" data-akce="editBudky">🏠 Editovat budku</button>
+    ${budkyMenuHTML}
     <button class="admin-dropdown-item pripravujeme" data-akce="clanek">📝 Vložit článek</button>
     ${jeAdmin ? `<div class="admin-dropdown-oddelovac"></div><button class="admin-dropdown-item admin-item-zadosti" data-akce="zadosti">📬 Žádosti správců <span class="admin-badge" id="adminBadge" hidden>0</span></button>` : ''}
     <div class="admin-dropdown-oddelovac"></div>
@@ -120,10 +135,7 @@ async function _zobrazAdminPanel(loginId) {
 
   if (btn) {
     btn.removeEventListener('click', btn._loginHandler);
-    btn._dropdownHandler = (e) => {
-      e.stopPropagation();
-      dropdown.classList.toggle('open');
-    };
+    btn._dropdownHandler = (e) => { e.stopPropagation(); dropdown.classList.toggle('open'); };
     btn.addEventListener('click', btn._dropdownHandler);
   }
 
@@ -160,7 +172,10 @@ async function _zobrazAdminPanel(loginId) {
     }
 
     if (akce === 'editBudky') {
-      _zobrazEditBudky(loginId, spravceInfo, budkaText, budkaCislo, budkaNazev);
+      const cislo = parseInt(item.dataset.cislo, 10);
+      const nazev = item.dataset.nazev || '';
+      const text  = _budkaText({ cislo, nazev });
+      _zobrazEditBudky(loginId, spravceInfo, text, cislo, nazev);
       dropdown.classList.remove('open');
       return;
     }
@@ -396,13 +411,14 @@ function _zobrazProfilSpravce(loginId, info, budkaText) {
 }
 
 const _EB_DRUHY = [
-  { id: 'konadra',   nazev: 'Sýkora koňadra' },
-  { id: 'modrinka',  nazev: 'Sýkora modřinka' },
-  { id: 'uhelnicek', nazev: 'Úhelníček' },
-  { id: 'babka',     nazev: 'Sýkora babka' },
+  { id: 'konadra',   nazev: 'Sýk. koňadra' },
+  { id: 'modrinka',  nazev: 'Sýk. modřinka' },
+  { id: 'uhelnicek', nazev: 'Sýk. úhelníček' },
+  { id: 'babka',     nazev: 'Sýk. babka' },
   { id: 'parukarka', nazev: 'Sýk. parukářka' },
   { id: 'vrabec',    nazev: 'Vrabec domácí' },
   { id: 'slavik',    nazev: 'Slavík obecný' },
+  { id: 'neznam',    nazev: 'Osídlena – nevím kdo' },
 ];
 
 async function _zobrazEditBudky(loginId, spravceInfo, budkaText, budkaCislo, budkaNazev) {
@@ -461,9 +477,14 @@ async function _zobrazEditBudky(loginId, spravceInfo, budkaText, budkaCislo, bud
           </div>
         </div>
         <div class="profil-row">
-          <div class="profil-field">
+          <div class="profil-field" style="flex:0 0 auto">
             <label>Rok kontroly</label>
-            <input type="number" id="ebRok" value="${ulozeno.rok || new Date().getFullYear()}" min="2020" max="2099" style="width:90px">
+            <div class="eb-rok-ctrl">
+              <button type="button" class="eb-rok-btn" id="ebRokMinus">◀</button>
+              <span class="eb-rok-val" id="ebRokVal">${ulozeno.rok || new Date().getFullYear()}</span>
+              <button type="button" class="eb-rok-btn" id="ebRokPlus">▶</button>
+            </div>
+            <input type="hidden" id="ebRok" value="${ulozeno.rok || new Date().getFullYear()}">
           </div>
           <div class="profil-field">
             <label>Datum kontroly</label>
@@ -499,6 +520,18 @@ async function _zobrazEditBudky(loginId, spravceInfo, budkaText, budkaCislo, bud
 
   document.getElementById('editBudkyZavrit').addEventListener('click', () => modal.remove());
   modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
+
+  // Rok ±
+  const rokInput = document.getElementById('ebRok');
+  const rokVal   = document.getElementById('ebRokVal');
+  document.getElementById('ebRokMinus').addEventListener('click', () => {
+    const v = Math.max(2000, parseInt(rokInput.value) - 1);
+    rokInput.value = rokVal.textContent = v;
+  });
+  document.getElementById('ebRokPlus').addEventListener('click', () => {
+    const v = Math.min(2099, parseInt(rokInput.value) + 1);
+    rokInput.value = rokVal.textContent = v;
+  });
 
   document.getElementById('ebGpsHlasitBtn').addEventListener('click', () => {
     const existGps = document.getElementById('ebGpsFormWrap');
