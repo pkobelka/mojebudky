@@ -157,12 +157,12 @@ html, body {
 .podekovani-item { color: var(--text-light); font-size: 1.35rem; font-weight: 600; }
 
 /* ── PARTNEŘI MODAL ── */
-.pm-box { max-width: 860px; width: 94%; padding: 0; overflow: hidden; text-align: center; max-height: 88vh; overflow-y: auto; }
-.pm-header { background: linear-gradient(135deg, #0f2a04, #1e4a0a); color: var(--accent-gold); font-size: 1.7rem; font-weight: 800; padding: 28px 40px; border-bottom: 2px solid var(--accent-gold); letter-spacing: 0.3px; }
-.pm-podpora { border-bottom: 1px solid rgba(255,215,0,0.25); padding: 24px 40px 20px; background: rgba(255,215,0,0.04); }
-.pm-podpora-nadpis { font-size: 1.25rem; font-weight: 800; color: #f0d800; margin-bottom: 12px; display: flex; align-items: center; gap: 10px; }
-.pm-podpora p { color: var(--text-light); font-size: 1rem; line-height: 1.65; margin-bottom: 10px; }
-.pm-podpora-jak { color: #f0d800; font-size: 1.05rem; font-weight: 700; margin: 12px 0 6px; }
+.pm-box { max-width: 960px; width: 96%; padding: 0; overflow: hidden; text-align: center; max-height: 92vh; overflow-y: auto; }
+.pm-header { background: linear-gradient(135deg, #0f2a04, #1e4a0a); color: var(--accent-gold); font-size: 2rem; font-weight: 800; padding: 32px 48px; border-bottom: 2px solid var(--accent-gold); letter-spacing: 0.3px; }
+.pm-podpora { border-bottom: 1px solid rgba(255,215,0,0.25); padding: 30px 48px 26px; background: rgba(255,215,0,0.04); }
+.pm-podpora-nadpis { font-size: 1.6rem; font-weight: 800; color: #f0d800; margin-bottom: 16px; display: flex; align-items: center; gap: 12px; }
+.pm-podpora p { color: var(--text-light); font-size: 1.3rem; line-height: 1.75; margin-bottom: 14px; }
+.pm-podpora-jak { color: #f0d800; font-size: 1.35rem; font-weight: 700; margin: 16px 0 8px; }
 .pm-podpora a { color: var(--orange-light); font-weight: 600; }
 .pm-podpora a:hover { color: #f0d800; }
 .pm-loga { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 20px 28px; padding: 32px 40px 24px; }
@@ -170,11 +170,11 @@ html, body {
 .pm-logo-item:hover { background: rgba(255,255,255,0.18); transform: scale(1.05); }
 .pm-logo-img { height: 64px; max-width: 160px; width: auto; object-fit: contain; display: block; }
 .pm-logo-text { color: var(--text-light); font-size: 1.15rem; font-weight: 600; }
-.pm-podekovani { border-top: 1px solid rgba(255,255,255,0.15); padding: 24px 40px 36px; }
-.pm-pod-label { color: var(--accent-gold); font-size: 1.3rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 18px; }
-.pm-pod-grid { display: flex; flex-wrap: wrap; gap: 10px 22px; justify-content: center; }
+.pm-podekovani { border-top: 1px solid rgba(255,255,255,0.15); padding: 28px 48px 40px; }
+.pm-pod-label { color: var(--accent-gold); font-size: 1.5rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 20px; }
+.pm-pod-grid { display: flex; flex-wrap: wrap; gap: 12px 26px; justify-content: center; }
 .pm-pod-osoba { position: relative; display: inline-flex; flex-direction: column; align-items: center; }
-.pm-pod-jmeno { background: none; border: none; color: var(--text-light); font-size: 1.25rem; font-weight: 600; text-decoration: underline; text-decoration-style: dotted; text-underline-offset: 4px; cursor: default; font-family: inherit; padding: 0; }
+.pm-pod-jmeno { background: none; border: none; color: var(--text-light); font-size: 1.4rem; font-weight: 600; text-decoration: underline; text-decoration-style: dotted; text-underline-offset: 4px; cursor: default; font-family: inherit; padding: 0; }
 .pm-pod-jmeno--ma-text { cursor: pointer; color: var(--accent-gold); }
 .pm-pod-jmeno--ma-text:hover { color: #ffe080; }
 .pm-bublina { display: none; position: absolute; bottom: calc(100% + 10px); left: 50%; transform: translateX(-50%); background: #f0e830; border: 2px solid #3a8a1a; border-radius: 14px; padding: 11px 18px; font-size: 1rem; color: #1a4a0a; font-weight: 600; font-style: italic; box-shadow: 0 4px 18px rgba(0,0,0,0.5); z-index: 10; min-width: 180px; max-width: 280px; white-space: normal; text-align: center; line-height: 1.45; }
