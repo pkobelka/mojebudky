@@ -324,6 +324,15 @@ function nactiDruhyPtaku(druhy) {
   const elStatDruhu = document.getElementById('stat-druhu');
   if (elStatDruhu) elStatDruhu.textContent = druhy.length;
 
+  const elIkony = document.getElementById('stat-druhu-ikony');
+  if (elIkony) {
+    const top4 = [...druhy].sort((a, b) => b.pocet - a.pocet).slice(0, 4);
+    elIkony.innerHTML = top4.map(d => {
+      const key = BIRD_KEY_MAP[d.nazev] || 'konadra';
+      return BIRD_ICONS[key].replace(/width="38" height="38"/, 'width="22" height="22"');
+    }).join('');
+  }
+
   el.innerHTML = `
     <div class="druhy-title">🐦 Druhy ptáků v budkách</div>
     <div class="druhy-list" id="druhyList">
@@ -366,7 +375,7 @@ function zobrazModalDruhu(druh, iconSvg) {
     });
   }
 
-  const bigIcon = iconSvg.replace(/width="38" height="38"/, 'width="90" height="90"');
+  const bigIcon = iconSvg.replace(/width="38" height="38"/, 'width="110" height="110"');
 
   overlay.innerHTML = `
     <div class="druh-modal-box">
