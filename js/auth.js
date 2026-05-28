@@ -59,7 +59,7 @@ async function _logAktivita(loginId, jmeno, budkaCislo, budkaNazev, zprava) {
 
 async function _nactiAuthSpravce() {
   if (_authSpravciCache) return _authSpravciCache;
-  const res = await fetch('data/spravci.json?v=20260528j');
+  const res = await fetch('data/spravci.json?v=20260528k', { cache: 'no-store' });
   if (!res.ok) throw new Error('Nelze načíst data správců');
   _authSpravciCache = await res.json();
   return _authSpravciCache;
@@ -68,7 +68,7 @@ async function _nactiAuthSpravce() {
 async function _nactiSpravciInfo() {
   if (_spravciInfoCache) return _spravciInfoCache;
   try {
-    const res = await fetch('data/spravci_info.json?v=20260528j');
+    const res = await fetch('data/spravci_info.json?v=20260528k', { cache: 'no-store' });
     if (res.ok) _spravciInfoCache = await res.json();
   } catch {}
   return _spravciInfoCache;
