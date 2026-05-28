@@ -73,21 +73,21 @@ html, body {
 /* ── LOGIN MODAL ── */
 .modal-overlay { position: fixed; inset: 0; z-index: 1000; background: rgba(10, 30, 5, 0.78); display: flex; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
 .modal-overlay[hidden] { display: none; }
-.modal-box { background: var(--panel-bg); border: 1px solid var(--panel-border); border-radius: 12px; padding: 2rem 2.5rem 1.8rem; max-width: 360px; width: 90%; position: relative; text-align: center; box-shadow: 0 8px 40px rgba(0,0,0,0.55); }
-.modal-box-login { max-width: 460px; }
-.modal-uvitani { color: var(--text-muted); font-size: 0.84rem; line-height: 1.6; margin-bottom: 1.2rem; padding: 0.8rem 1rem; background: rgba(255,255,255,0.04); border-radius: 8px; border: 1px solid var(--panel-border); }
+.modal-box { background: var(--panel-bg); border: 1px solid var(--panel-border); border-radius: 16px; padding: 3rem 3.5rem 2.8rem; max-width: 560px; width: 94%; position: relative; text-align: center; box-shadow: 0 8px 40px rgba(0,0,0,0.55); }
+.modal-box-login { max-width: 640px; }
+.modal-uvitani { color: var(--text-muted); font-size: 1.1rem; line-height: 1.7; margin-bottom: 1.8rem; padding: 1.2rem 1.4rem; background: rgba(255,255,255,0.04); border-radius: 10px; border: 1px solid var(--panel-border); }
 .modal-uvitani strong { color: var(--accent-gold); }
-.modal-zavrit { position: absolute; top: 0.6rem; right: 0.9rem; background: none; border: none; color: var(--text-muted); font-size: 1.6rem; line-height: 1; cursor: pointer; }
+.modal-zavrit { position: absolute; top: 0.9rem; right: 1.2rem; background: none; border: none; color: var(--text-muted); font-size: 2rem; line-height: 1; cursor: pointer; }
 .modal-zavrit:hover { color: var(--text-light); }
-.modal-logo-wrap { margin-bottom: 0.8rem; }
-.modal-logo-wrap img { filter: brightness(1.3); }
-.modal-nadpis { color: var(--accent-gold); font-size: 1.25rem; margin-bottom: 0.3rem; }
-.modal-hint { color: var(--text-muted); font-size: 0.82rem; margin-bottom: 1.4rem; }
-.modal-form { display: flex; flex-direction: column; gap: 0.75rem; }
-.modal-form input { background: rgba(255,255,255,0.07); border: 1px solid var(--panel-border); border-radius: 6px; color: var(--text-light); font-size: 1.1rem; padding: 0.6rem 1rem; text-align: center; letter-spacing: 0.12em; outline: none; width: 100%; }
+.modal-logo-wrap { margin-bottom: 1.2rem; }
+.modal-logo-wrap img { filter: brightness(1.3); width: 80px; }
+.modal-nadpis { color: var(--accent-gold); font-size: 1.9rem; margin-bottom: 0.5rem; }
+.modal-hint { color: var(--text-muted); font-size: 1.1rem; margin-bottom: 2rem; }
+.modal-form { display: flex; flex-direction: column; gap: 1.1rem; }
+.modal-form input { background: rgba(255,255,255,0.07); border: 1px solid var(--panel-border); border-radius: 8px; color: var(--text-light); font-size: 1.5rem; padding: 1rem 1.4rem; text-align: center; letter-spacing: 0.12em; outline: none; width: 100%; }
 .modal-form input:focus { border-color: var(--accent-gold); }
-.modal-form input::placeholder { color: var(--text-muted); font-size: 0.85rem; letter-spacing: 0; }
-.modal-form button { background: var(--orange); color: #fff; border: none; border-radius: 6px; padding: 0.7rem 1rem; font-size: 1rem; font-weight: 600; cursor: pointer; transition: background 0.2s; margin-top: 0.2rem; }
+.modal-form input::placeholder { color: var(--text-muted); font-size: 1.1rem; letter-spacing: 0; }
+.modal-form button { background: var(--orange); color: #fff; border: none; border-radius: 8px; padding: 1.1rem 1.4rem; font-size: 1.4rem; font-weight: 600; cursor: pointer; transition: background 0.2s; margin-top: 0.4rem; }
 .modal-form button:hover { background: var(--orange-light); }
 .modal-form button:disabled { opacity: 0.6; cursor: default; }
 .login-error { color: #ff7070; font-size: 0.88rem; margin-top: 0.75rem; }
@@ -454,15 +454,15 @@ html, body {
 
 /* ── ADMIN DROPDOWN ── */
 #authNavArea { position: relative; }
-.admin-dropdown { display: none; position: absolute; top: calc(100% + 8px); right: 0; background: var(--panel-bg); border: 1px solid var(--accent-gold); border-radius: 10px; min-width: 220px; box-shadow: 0 8px 28px rgba(0,0,0,0.5); z-index: 1200; overflow: hidden; }
+.admin-dropdown { display: none; position: absolute; top: calc(100% + 8px); right: 0; background: var(--panel-bg); border: 1px solid var(--accent-gold); border-radius: 14px; min-width: 320px; box-shadow: 0 10px 36px rgba(0,0,0,0.55); z-index: 1200; overflow: hidden; }
 .admin-dropdown.open { display: block; }
-.admin-dropdown-hlavicka { padding: 10px 16px; font-size: 0.78rem; color: var(--accent-gold); border-bottom: 1px solid var(--panel-border); font-weight: 600; }
-.admin-dropdown-item { display: block; width: 100%; text-align: left; background: none; border: none; color: var(--text-light); font-size: 0.88rem; padding: 10px 16px; cursor: pointer; transition: background 0.15s; }
+.admin-dropdown-hlavicka { padding: 14px 22px; font-size: 1.1rem; color: var(--accent-gold); border-bottom: 1px solid var(--panel-border); font-weight: 700; }
+.admin-dropdown-item { display: block; width: 100%; text-align: left; background: none; border: none; color: var(--text-light); font-size: 1.2rem; padding: 14px 22px; cursor: pointer; transition: background 0.15s; font-family: inherit; }
 .admin-dropdown-item:hover { background: rgba(255,255,255,0.07); }
 .admin-dropdown-item.pripravujeme { color: var(--text-muted); }
 .admin-dropdown-item.odhlasit { color: #e07070; }
 .admin-dropdown-item.odhlasit:hover { background: rgba(220,80,80,0.1); }
-.admin-dropdown-oddelovac { border-top: 1px solid var(--panel-border); margin: 4px 0; }
+.admin-dropdown-oddelovac { border-top: 1px solid var(--panel-border); margin: 6px 0; }
 
 /* ── KARTA SPRÁVCE ── */
 .karta-box { max-width: 360px; }
@@ -520,8 +520,8 @@ html, body {
 .eb-gps-input:focus { border-color: var(--accent-gold); }
 .eb-gps-hint { color: var(--text-muted); font-size: 0.8rem; font-style: italic; line-height: 1.4; }
 .eb-gps-odeslat { font-size: 0.95rem !important; padding: 10px 20px !important; }
-.admin-dropdown-sec { padding: 6px 16px 2px; font-size: 0.75rem; color: var(--accent-gold); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
-.admin-dropdown-budka { font-size: 0.92rem; }
+.admin-dropdown-sec { padding: 10px 22px 4px; font-size: 1rem; color: var(--accent-gold); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+.admin-dropdown-budka { font-size: 1.2rem; }
 .admin-budka-aktivni { color: var(--accent-gold) !important; font-weight: 700 !important; text-decoration: underline; text-underline-offset: 3px; text-shadow: 0 0 10px rgba(212,160,64,0.7); }
 
 /* Date inputs v tmavém formuláři */
