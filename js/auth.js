@@ -25,6 +25,10 @@ function zobrazAdminPanel(loginId) {
   const existujici = document.getElementById('adminBanner');
   if (existujici) existujici.remove();
 
+  const btn = document.getElementById('btnPrihlasit');
+  btn.textContent = '✓ Přihlášen';
+  btn.style.background = '#3a9a3a';
+
   const banner = document.createElement('div');
   banner.id = 'adminBanner';
   banner.className = 'admin-banner';
@@ -37,7 +41,8 @@ function zobrazAdminPanel(loginId) {
   document.getElementById('btnOdhlasit').addEventListener('click', () => {
     banner.remove();
     spravciData = null;
-    document.getElementById('btnPrihlasit').textContent = 'Vstup pro správce';
+    btn.textContent = 'Přihlásit se';
+    btn.style.background = '';
   });
 
   document.getElementById('btnPrihlasit').textContent = `Budka ${cislo} ✓`;
