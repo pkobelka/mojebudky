@@ -3,10 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="MojeBudky.cz – sledujeme ptačí budky po celé ČR. Živá mapa, statistiky a příběhy z přírody.">
+  <meta name="description" content="MojeBudky.cz – sledujeme ptáčí budky po celé ČR. Živá mapa, statistiky a příběhy z přírody.">
   <title>MojeBudky.cz – Pomáháme ptactvu</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
-  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/style.css?v=20260528m">
+  <link rel="icon" type="image/png" href="img/Favikon.png">
 </head>
 <body>
 
@@ -35,20 +36,32 @@
           <span class="logo-autor">PETR KOBELKA</span>
         </span>
       </a>
+      <button type="button" class="nav-podpora-btn" id="navPodpora">💛 Podpořit projekt</button>
 
-      <ul class="nav-links" role="navigation" aria-label="Hlavní navigace">
-        <li><a href="#mapa" class="active">Mapa Budek</a></li>
-        <li><a href="#pribehy">Příběhy z přírody</a></li>
+      <ul class="nav-links" id="navLinks" role="navigation" aria-label="Hlavní navigace">
+        <li><a href="#mapa" id="nav-mapa">Mapa Budek</a></li>
+        <li><a href="#aktuality">Zprávy z terénu</a></li>
+        <li><a href="#clanky">Zajínavé články</a></li>
         <li><a href="#partneri">Podporovatelé</a></li>
-        <li><a href="#kontakt">Kontakt</a></li>
+        <li><a href="https://www.facebook.com/mojebudky" class="nav-fb-link" target="_blank" rel="noopener" aria-label="Facebook MojeBudky"><svg class="nav-fb-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><circle cx="12" cy="12" r="12" fill="#1877f2"/><path d="M16.5 8H14c-.3 0-.5.2-.5.5V10h3l-.4 2.5H13.5V18h-2.5v-5.5H9V10h2V8.5C11 6.6 12.1 5.5 14 5.5c.9 0 2.5.1 2.5.1V8z" fill="#fff"/></svg>MojeBudky</a></li>
+        <li class="nav-napsat-mobile"><a href="mailto:info@mojebudky.cz">✉ Napište nám</a></li>
       </ul>
 
       <div class="nav-actions">
         <div class="search-box">
-          <input type="text" placeholder="Hledejte budku nebo město…" aria-label="Hledat">
+          <input type="text" placeholder="Hledej budku nebo město" aria-label="Hledat">
           <button aria-label="Hledat">🔍</button>
         </div>
-        <button type="button" class="btn-login" id="btnPrihlasit">Přihlásit se</button>
+        <div id="authNavArea">
+          <a href="mailto:info@mojebudky.cz" class="btn-napsat" aria-label="Napište nám">
+            ✉ Napište nám
+            <span class="napsat-tip">Dotaz, nápad nebo zájem o partnerrství?<br><strong>info@mojebudky.cz</strong></span>
+          </a>
+          <button type="button" class="btn-login" id="btnPrihlasit">Vstup pro správce</button>
+        </div>
+        <button class="nav-hamburger" id="navHamburger" aria-label="Otevřít menu" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
       </div>
     </nav>
 
@@ -61,54 +74,102 @@
   <!-- Hlavní obsah: 3 sloupce -->
   <main class="main-content" id="mapa">
 
-    <!-- Levý panel: Příběhy z přírody -->
-    <aside class="panel panel-left" id="pribehy" aria-label="Příběhy z přírody">
-      <h2 class="panel-title">Příběhy z přírody</h2>
-      <div class="pribehy-list" id="pribehyList">
-        <div style="padding:20px; color:#c8a878; font-size:0.83rem;">Načítám příběhy…</div>
+    <!-- Levý panel: Aktuality z komunity -->
+    <aside class="panel panel-left" id="aktuality" aria-label="Zprávy z terénu">
+      <h2 class="panel-title">Zprávy z terénu</h2>
+      <div class="pribehy-list" id="aktualityList">
+        <div style="padding:20px; color:#c8a878; font-size:0.83rem;">Načítám aktuality…</div>
       </div>
     </aside>
 
     <!-- Mapa -->
     <div class="map-wrapper" role="application" aria-label="Interaktivní mapa budek">
       <div id="map"></div>
+      <button id="btn-zpet-mapa" class="btn-zpet-mapa" style="display:none;" aria-label="Zpět na přehled">← Zpět</button>
     </div>
 
     <!-- Pravý panel: Statistiky -->
     <aside class="panel panel-right" aria-label="Statistiky projektu">
       <h2 class="panel-title">Statistiky</h2>
-      <div class="stats-grid" id="statsGrid">
-        <div class="stat-item">
-          <div class="stat-icon"><img src="img/logo.svg" alt="Budka" class="stat-svg-icon"></div>
-          <div>
-            <div class="stat-value" id="stat-celkem">…</div>
-            <div class="stat-label">Celkem budek</div>
+      <div class="panel-scroll">
+
+        <!-- 2×2 čísla -->
+        <div class="stats-grid" id="statsGrid">
+          <div class="stat-item">
+            <div class="stat-icon"><img src="img/logo.svg" alt="Budka" class="stat-svg-icon"></div>
+            <div>
+              <div class="stat-value" id="stat-celkem">…</div>
+              <div class="stat-label">Celkem budek</div>
+            </div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-icon"><img src="img/obydleno.svg" alt="Osídlená budka" class="stat-svg-icon"></div>
+            <div>
+              <div class="stat-value" id="stat-osidlenych">…</div>
+              <div class="stat-label">Osídlených budek</div>
+            </div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-icon">👤</div>
+            <div>
+              <div class="stat-value" id="stat-spravcu">…</div>
+              <div class="stat-label">Registrovaných správců</div>
+            </div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-icon stat-icon-druhy" id="stat-druhu-ikony">🐦</div>
+            <div>
+              <div class="stat-value" id="stat-druhu">…</div>
+              <div class="stat-label">Druhů ptáků</div>
+            </div>
           </div>
         </div>
-        <div class="stat-item">
-          <div class="stat-icon"><img src="img/obydleno.svg" alt="Osídlená budka" class="stat-svg-icon"></div>
-          <div>
-            <div class="stat-value" id="stat-osidlenych">…</div>
-            <div class="stat-label">Osídlených budek</div>
+
+        <!-- Aktualizace -->
+        <div class="stat-box stat-aktualizace">
+          📅 Poslední aktualizace: <span id="stat-aktualizace">…</span>
+        </div>
+
+        <!-- Druhy ptáků -->
+        <div class="stat-box druhy-panel" id="druhyPanel"></div>
+
+        <!-- Návštěvnost + online -->
+        <div class="stat-box navstevnost-panel">
+          <div class="navstevnost-title">📈 Návštěvnost</div>
+          <div class="navstevnost-grid">
+            <div class="navst-item">
+              <span class="navst-cislo" id="navst-celkem">…</span>
+              <span class="navst-label">Celkem</span>
+            </div>
+            <div class="navst-item">
+              <span class="navst-cislo" id="navst-dnes">…</span>
+              <span class="navst-label">Dnes</span>
+            </div>
+            <div class="navst-item">
+              <span class="navst-cislo" id="navst-vcera">…</span>
+              <span class="navst-label">Včera</span>
+            </div>
+          </div>
+          <div id="onlinePocet" class="online-pocet-panel">🟢 Online: <strong>…</strong></div>
+        </div>
+
+        <div class="pridat-na-plochu">
+          <div class="pridat-title">📲 Přidej na plochu mobilu</div>
+          <div class="pridat-body">
+            <img src="img/Favikon.png" alt="MojeBudky ikona" class="pridat-ikona">
+            <div class="pridat-text">
+              <p>Mějte MojeBudky vždy po ruce jako aplikaci.</p>
+              <div class="pridat-navod"><span class="pridat-os">🍎 iOS:</span> Sdílet → <em>Přidat na plochu</em></div>
+              <div class="pridat-navod"><span class="pridat-os">🤖 Android:</span> Menu → <em>Přidat na plochu</em></div>
+              <div id="pushNotifArea"></div>
+            </div>
           </div>
         </div>
-        <div class="stat-item">
-          <div class="stat-icon">👤</div>
-          <div>
-            <div class="stat-value" id="stat-spravcu">…</div>
-            <div class="stat-label">Registrovaných správců</div>
-          </div>
+        <div class="oblibene-pc">
+          <strong>☆ Uložit do oblíbených</strong>
+          <span>Windows / Linux: <kbd>Ctrl + D</kbd></span>
+          <span>Mac: <kbd>Cmd + D</kbd></span>
         </div>
-        <div class="stat-item">
-          <div class="stat-icon">🐦</div>
-          <div>
-            <div class="stat-value" id="stat-druhu">4</div>
-            <div class="stat-label">Druhů ptáků</div>
-          </div>
-        </div>
-      </div>
-      <div class="stat-aktualizace">
-        Poslední aktualizace: <span id="stat-aktualizace">…</span>
       </div>
     </aside>
 
@@ -118,49 +179,60 @@
   <section class="partners-section" id="partneri" aria-label="Podporovatelé projektu">
     <h3>Podporovatelé projektu MojeBudky.cz</h3>
     <div id="partneriList" role="list">Načítám…</div>
-  </section>
 
-  <!-- Kontakt -->
-  <section class="kontakt-section" id="kontakt">
-    <div class="kontakt-inner">
-      <div class="kontakt-text">
-        <div class="kontakt-title">Napište nám</div>
-        <div class="kontakt-popis">Máte zájem přidat svou budku? Chcete se stát správcem? Nebo máte jen dotaz?</div>
-      </div>
-      <a href="mailto:info@petrkobelka.cz" class="btn-kontakt">✉ info@petrkobelka.cz</a>
+
+<div class="podekovani-wrap" id="podekovaniWrap" style="display:none">
+      <span class="podekovani-label">🙏 Poděkování</span>
+      <div class="podekovani-grid" id="podekovaniList"></div>
     </div>
   </section>
 
-  <!-- Footer: návštěvnost -->
+  <!-- Footer -->
   <footer class="footer-bar">
-    <div id="footer-stats">Načítám statistiky návštěvnosti…</div>
+    <span class="footer-copy">© 2024–2026 MojeBudky.cz &nbsp;·&nbsp; <a href="https://www.petrkobelka.cz" class="footer-author" target="_blank" rel="noopener">Petr Kobelka</a></span>
+    <span class="footer-sep" aria-hidden="true">|</span>
+    <a href="mailto:info@mojebudky.cz" class="footer-email">✉ info@mojebudky.cz</a>
+    <span class="footer-sep" aria-hidden="true">|</span>
+    <a href="https://www.facebook.com/mojebudky" class="footer-fb" target="_blank" rel="noopener" aria-label="Facebook MojeBudky"><svg class="footer-fb-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.41c0-3.025 1.792-4.697 4.533-4.697 1.312 0 2.686.236 2.686.236v2.97h-1.513c-1.491 0-1.956.93-1.956 1.886v2.269h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"/></svg> facebook.com/mojebudky</a>
   </footer>
 
 </div><!-- #app -->
 
 <!-- Přihlašovací modal -->
-<div id="modalPrihlaseni" class="modal-overlay" role="dialog" aria-modal="true" aria-label="Přihlášení správce" hidden>
-  <div class="modal-box">
+<div id="modalPrihlaseni" class="modal-overlay" role="dialog" aria-modal="true" aria-label="Přihlašení správce" hidden>
+  <div class="modal-box modal-box-login">
     <button class="modal-zavrit" id="modalZavrit" aria-label="Zavřít">×</button>
     <div class="modal-logo-wrap">
-      <img src="img/logo.svg" alt="" aria-hidden="true" width="48">
+      <img src="img/logo.svg" alt="" aria-hidden="true" width="56">
     </div>
-    <h2 class="modal-nadpis">Vstup pro správce</h2>
+    <h2 class="modal-nadpis">Vítejte v administraci</h2>
+    <p class="modal-uvitani">Zde spravujete svou ptačí budku v projektu <strong>MojeBudky.cz</strong>.<br>Po přihlášení budete mít přístup ke kartě správce, editaci budky a dalším funkcím.</p>
     <p class="modal-hint">Zadejte své ID a heslo</p>
     <div class="modal-form">
-      <input type="text" id="loginId" maxlength="6" inputmode="numeric" placeholder="Vaše ID" autocomplete="off" aria-label="ID správce">
-      <input type="password" id="loginHeslo" maxlength="8" placeholder="Heslo (8 znaků)" autocomplete="off" aria-label="Heslo">
+      <input type="text" id="loginId" maxlength="6" inputmode="numeric" placeholder="ID (6 číslic)" autocomplete="off" aria-label="ID správce">
+      <div class="heslo-wrap">
+        <input type="password" id="loginHeslo" maxlength="8" placeholder="Heslo (8 znaků)" autocomplete="off" aria-label="Heslo">
+        <button type="button" class="btn-oko" id="btnOko" aria-label="Zobrazit/skrýt heslo" title="Zobrazit heslo">👁</button>
+      </div>
+      <label class="zobrazit-heslo-label">
+        <input type="checkbox" id="cbZobrazitHeslo"> Zobrazit heslo
+      </label>
       <button type="button" id="loginBtn">Přihlásit se</button>
     </div>
     <div id="loginError" class="login-error" hidden>Neplatné ID nebo heslo.</div>
     <div id="loginLoading" class="login-loading" hidden>Ověřuji…</div>
+    <a href="#" class="link-zapomnel" id="linkZapomnel">Zapomněl jsem heslo</a>
+    <div id="zapomnel-msg" class="zapomnel-msg" hidden>Pro obnovení hesla napište na: <strong>info@mojebudky.cz</strong></div>
   </div>
 </div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 <script src="js/svatky.js"></script>
-<script src="js/mapa.js"></script>
-<script src="js/main.js"></script>
-<script src="js/auth.js"></script>
+<script src="js/mapa.js?v=20260528g"></script>
+<script src="js/main.js?v=20260528i"></script>
+<script src="js/auth.js?v=20260528m"></script>
+<script src="js/presence.js?v=20260527k"></script>
 </body>
 </html>

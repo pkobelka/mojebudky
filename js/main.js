@@ -1,5 +1,43 @@
-const DNY = ['neděle','pondělí','úterý','středa','čtvrtek','pátek','sobota'];
+const DNY = ['neděle','pondedí','ústerý','středa','čtvrtek','pátek','sobota'];
 const MESICE = ['ledna','února','března','dubna','května','června','července','srpna','září','října','listopadu','prosince'];
+
+const PREZDIVKY = {
+  'Jiří': ['Jirka'], 'Josef': ['Pepa'], 'Jan': ['Honza'],
+  'Tomáš': ['Tomášek'], 'Václav': ['Vašek'], 'Miroslav': ['Miro'],
+  'Petra': ['Peťa'], 'Kateřina': ['Katka'], 'Anna': ['Anička'],
+  'Vladimíra': ['Vlaďka'], 'Gabriela': ['Gábi'],
+};
+const KANONICKY = {};
+for (const [k, arr] of Object.entries(PREZDIVKY)) arr.forEach(p => KANONICKY[p] = k);
+
+let spravciJmena = [];
+let _statickeAktuality = [];
+let _aktualityListenerSet = false;
+let _partneriData = [];
+let _podekovaniData = [];
+
+function pluralSpravcu(n) {
+  if (n === 1) return '1 správce';
+  if (n >= 2 && n <= 4) return `${n} správci`;
+  return `${n} správce`;
+}
+
+function najdiSvatekSpravce(svarekJmeno) {
+  if (!svarekJmeno || !spravciJmena.length) return [];
+  const kanon = KANONICKY[svarekJmeno] || svarekJmeno;
+  const hledej = new Set([kanon, svarekJmeno, ...(PREZDIVKY[kanon] || [])]);
+  return spravciJmena.filter(s => hledej.has(s.jmeno));
+}
+
+async function nactiSpravce() {
+  try {
+    const res = await fetch('data/spravci_jmena.json?v=20260527k');
+    spravciJmena = await res.json();
+    aktualizujListu();
+  } catch(e) {
+    console.error('Chyba načítání správce:', e);
+  }
+}
 
 function formatDatum(d) {
   return `${d.getDate()}. ${MESICE[d.getMonth()]} ${d.getFullYear()}`;
@@ -21,8 +59,13 @@ function aktualizujListu() {
   const sva = svarek ? `&nbsp;| Svátek má: <strong>${svarek}</strong>` : '';
   const cas = `&nbsp;| ⏰ <span id="liveCas">${formatCas(d)}</span>`;
 
-  bar.innerHTML = `<span class="bar-left">${cal}${sva}${cas}</span>
-    <span class="bar-right">🌿 Pomáháme ptactvu po celé ČR</span>`;
+  const oslavenci = svarek ? najdiSvatekSpravce(svarek) : [];
+  const gratulace = oslavenci.length > 0
+    ? `&nbsp;| 🎂 <span class="bar-gratulace">${pluralSpravcu(oslavenci.length)} slaví svátek – gratulujeme!</span>`
+    : '';
+
+  bar.innerHTML = `<span class="bar-left">${cal}${sva}${gratulace}${cas}</span>
+    <span class="bar-right">🌿 Pomáháme ptactvu nejen po celé ČR</span>`;
 }
 
 function tickCas() {
@@ -35,7 +78,7 @@ function tickCas() {
 
 async function nactiStatistiky() {
   try {
-    const res = await fetch('data/statistiky.json');
+    const res = await fetch('data/statistiky.json?v=20260527k');
     const data = await res.json();
 
     document.getElementById('stat-osidlenych').textContent = data.osidlenych;
@@ -45,15 +88,18 @@ async function nactiStatistiky() {
     const cas = `${ted.getDate()}.${ted.getMonth()+1}. ${String(ted.getHours()).padStart(2,'0')}:${String(ted.getMinutes()).padStart(2,'0')}`;
     document.getElementById('stat-aktualizace').textContent = cas;
 
-    nactiPribehy(data.pribehy);
+    nactiAktuality(data.aktuality);
     nactiPartnery(data.partneri);
+    nactiPodekovani(data.podekovani);
+    nactiDruhyPtaku(data.druhy_ptaku);
 
     const nav = data.navstevnost;
-    document.getElementById('footer-stats').innerHTML =
-      `Počet návštěv: Celkem: <strong>${nav.celkem.toLocaleString('cs-CZ')}</strong>
-       | Dnes: <strong>${nav.dnes}</strong>
-       | Včera: <strong>${nav.vcera}</strong>
-       | Předevčírem: <strong>${nav.predvcírem}</strong>`;
+    const elCelkem = document.getElementById('navst-celkem');
+    const elDnes   = document.getElementById('navst-dnes');
+    const elVcera  = document.getElementById('navst-vcera');
+    if (elCelkem) elCelkem.textContent = nav.celkem.toLocaleString('cs-CZ');
+    if (elDnes)   elDnes.textContent   = nav.dnes;
+    if (elVcera)  elVcera.textContent  = nav.vcera;
   } catch(e) {
     console.error('Chyba načítání statistik:', e);
   }
@@ -117,33 +163,405 @@ const BIRD_ICONS = {
   </svg>`
 };
 
-function nactiPribehy(pribehy) {
-  const el = document.getElementById('pribehyList');
-  if (!el || !pribehy) return;
-  el.innerHTML = pribehy.map(p => `
+const BIRD_KEY_MAP = {
+  'Sýkora koňadra': 'konadra',
+  'Sýkora modřinka': 'modrinka',
+  'Sýkora parukářka': 'parukarka',
+  'Vrabec domácí': 'vrabec',
+  'Sojka obecná': 'sojka'
+};
+
+function _renderAktualityPanel(staticke, liveEntries) {
+  const el = document.getElementById('aktualityList');
+  if (!el) return;
+
+  const liveHTML = liveEntries.map(v => {
+    const datum = v.ts ? new Date(v.ts).toLocaleDateString('cs-CZ') : '—';
+    const cas = v.ts ? new Date(v.ts).toLocaleTimeString('cs-CZ', { hour: '2-digit', minute: '2-digit' }) : '';
+    const budkaNazevStr = (v.budka_nazev && v.budka_nazev !== String(v.budka_cislo)) ? ` – ${v.budka_nazev}` : '';
+    return `<div class="pribeh-item pribeh-item--live">
+      <div class="pribeh-ikona">🏠</div>
+      <div class="pribeh-text">
+        <div class="pribeh-druh">Správce ${v.jmeno}</div>
+        <div class="pribeh-popis">${v.zprava}</div>
+        <div class="pribeh-datum">${datum} · ${cas}</div>
+        ${v.budka_cislo ? `<a class="aktualita-link" data-budka="${v.budka_cislo}" href="#">→ Budka č. ${v.budka_cislo}${budkaNazevStr}</a>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+
+  const staticHTML = staticke.map(p => `
     <div class="pribeh-item">
       <div class="pribeh-ikona">${BIRD_ICONS[p.ikona] || BIRD_ICONS.konadra}</div>
       <div class="pribeh-text">
         <div class="pribeh-druh">${p.ptak}</div>
         <div class="pribeh-popis">${p.text}</div>
-        <div class="pribeh-datum">${p.datum}</div>
+        <div class="pribeh-datum">${p.datum}${p.cas ? ` · ${p.cas}` : ''}</div>
+        ${p.budka_id ? `<a class="aktualita-link" data-budka="${p.budka_id}" href="#">→ Budka č. ${p.budka_id}</a>` : ''}
       </div>
     </div>`).join('');
+
+  el.innerHTML = liveHTML + staticHTML;
+}
+
+function _poslechniAktualityFirebase() {
+  if (_aktualityListenerSet) return;
+  const db = typeof firebase !== 'undefined' ? firebase.database() : null;
+  if (!db) return;
+  _aktualityListenerSet = true;
+  db.ref('aktivita').orderByChild('ts').limitToLast(10).on('value', snap => {
+    const entries = [];
+    snap.forEach(child => { entries.unshift(child.val()); });
+    _renderAktualityPanel(_statickeAktuality, entries);
+  });
+}
+
+function nactiAktuality(aktuality) {
+  _statickeAktuality = aktuality || [];
+  const el = document.getElementById('aktualityList');
+  if (el && !el._clickSet) {
+    el._clickSet = true;
+    el.addEventListener('click', e => {
+      const link = e.target.closest('.aktualita-link');
+      if (!link) return;
+      e.preventDefault();
+      const cislo = parseInt(link.dataset.budka, 10);
+      focusBudka(cislo);
+      document.querySelector('.map-wrapper').scrollIntoView({ behavior: 'smooth' });
+    });
+  }
+  _renderAktualityPanel(_statickeAktuality, []);
+  _poslechniAktualityFirebase();
 }
 
 function nactiPartnery(partneri) {
+  _partneriData = partneri || [];
   const el = document.getElementById('partneriList');
   if (!el || !partneri) return;
-  el.innerHTML = partneri.map(p =>
-    p.url
-      ? `<a href="${p.url}" class="partner-item" target="_blank" rel="noopener">${p.nazev}</a>`
-      : `<span class="partner-item">${p.nazev}</span>`
-  ).join('');
+  el.innerHTML = partneri.map(p => {
+    const obsah = p.logo
+      ? `<img src="${p.logo}" alt="${p.nazev}" class="partner-logo">`
+      : p.nazev;
+    return p.url
+      ? `<a href="${p.url}" class="partner-item${p.logo ? ' partner-item--logo' : ''}" target="_blank" rel="noopener" title="${p.nazev}">${obsah}</a>`
+      : `<span class="partner-item${p.logo ? ' partner-item--logo' : ''}" title="${p.nazev}">${obsah}</span>`;
+  }).join('') + `<a href="mailto:info@mojebudky.cz" class="partner-item partner-item--logo partner-placeholder" title="Staňte se partnerem projektu MojeBudky.cz">✨&nbsp;Tady může být<br>vaše logo</a>`;
+}
+
+function nactiPodekovani(podekovani) {
+  _podekovaniData = podekovani || [];
+  const wrap = document.getElementById('podekovaniWrap');
+  const el = document.getElementById('podekovaniList');
+  if (!wrap || !el || !podekovani || !podekovani.length) return;
+  el.innerHTML = podekovani.map(p => {
+    const jmeno = typeof p === 'string' ? p : p.jmeno;
+    return `<span class="podekovani-item">${jmeno}</span>`;
+  }).join('');
+  wrap.style.display = 'block';
+}
+
+function _zobrazPartneriModal() {
+  const existujici = document.getElementById('modalPartneri');
+  if (existujici) { existujici.remove(); return; }
+
+  const logoHTML = _partneriData.map(p => {
+    const img = p.logo
+      ? `<img src="${p.logo}" alt="${p.nazev}" class="pm-logo-img">`
+      : `<span class="pm-logo-text">${p.nazev}</span>`;
+    return p.url
+      ? `<a href="${p.url}" class="pm-logo-item" target="_blank" rel="noopener" title="${p.nazev}">${img}</a>`
+      : `<span class="pm-logo-item" title="${p.nazev}">${img}</span>`;
+  }).join('');
+
+  const podHTML = _podekovaniData.map((p, i) => {
+    const jmeno = typeof p === 'string' ? p : p.jmeno;
+    const popis = typeof p === 'object' && p.popis ? p.popis : null;
+    return `<div class="pm-pod-osoba" data-idx="${i}">
+      <button type="button" class="pm-pod-jmeno${popis ? ' pm-pod-jmeno--ma-text' : ''}">${jmeno}</button>
+      ${popis ? `<div class="pm-bublina">${popis}</div>` : ''}
+    </div>`;
+  }).join('');
+
+  const modal = document.createElement('div');
+  modal.id = 'modalPartneri';
+  modal.className = 'modal-overlay';
+  modal.innerHTML = `
+    <div class="modal-box pm-box">
+      <button class="modal-zavrit" id="modalPartneriZavrit">×</button>
+      <div class="pm-header">🤝 Partneři projektu MojeBudky.cz</div>
+      <div class="pm-podpora">
+        <div class="pm-podpora-nadpis">💛 Fandíte projektu MojeBudky? <img src="img/logo.svg" alt="" class="podpora-logo-img"></div>
+        <p>Celý projekt roste a s ním i radost z každého nového ptačího souseda. Abychom mohli mapu udržovat v chodu, posílat zprávy z terénu a starat se o bezpečný chod celé aplikace, neobejde se to bez provozních nákladů (např. za hosting a zabezpečení webu).</p>
+        <p>Všechno ostatní kolem výroby a kontroly budek děláme s našimi správci čistě dobrovolně a rádi ve svém volném čase. Pokud byste chtěli provoz webu finančně podpořit – ať už jako firma (rádi vás přidáme mezi partnery), nebo jako fanoušek přírody – budeme moc vděční za jakýkoliv příspěvek.</p>
+        <div class="pm-podpora-jak">Jak můžete pomoci?</div>
+        <p>Staňte se partnerem: Napište nám na <a href="mailto:info@mojebudky.cz">info@mojebudky.cz</a> a domluvíme se na umístění vašeho loga.</p>
+      </div>
+      <div class="pm-loga">${logoHTML}</div>
+      <div class="pm-podekovani">
+        <div class="pm-pod-label">🙏 Poděkování</div>
+        <div class="pm-pod-grid">${podHTML}</div>
+      </div>
+    </div>`;
+  document.body.appendChild(modal);
+  document.getElementById('modalPartneriZavrit').addEventListener('click', () => modal.remove());
+  modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
+
+  modal.querySelectorAll('.pm-pod-jmeno').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const bublina = btn.nextElementSibling;
+      if (!bublina || !bublina.classList.contains('pm-bublina')) return;
+      const jeOtevrena = bublina.classList.contains('pm-bublina--open');
+      modal.querySelectorAll('.pm-bublina').forEach(b => b.classList.remove('pm-bublina--open'));
+      if (!jeOtevrena) bublina.classList.add('pm-bublina--open');
+    });
+  });
+}
+
+function nactiDruhyPtaku(druhy) {
+  const el = document.getElementById('druhyPanel');
+  if (!el || !druhy || !druhy.length) return;
+
+  const elStatDruhu = document.getElementById('stat-druhu');
+  if (elStatDruhu) elStatDruhu.textContent = druhy.length;
+
+  const elIkony = document.getElementById('stat-druhu-ikony');
+  if (elIkony) {
+    const top4 = [...druhy].sort((a, b) => b.pocet - a.pocet).slice(0, 4);
+    elIkony.innerHTML = top4.map(d => {
+      const key = BIRD_KEY_MAP[d.nazev] || 'konadra';
+      return BIRD_ICONS[key].replace(/width="38" height="38"/, 'width="22" height="22"');
+    }).join('');
+  }
+
+  el.innerHTML = `
+    <div class="druhy-title">🐦 Druhy ptáků v budkách</div>
+    <div class="druhy-list" id="druhyList">
+      ${druhy.map(d => {
+        const key = BIRD_KEY_MAP[d.nazev] || 'konadra';
+        const icon = BIRD_ICONS[key].replace(/width="38" height="38"/, 'width="28" height="28"');
+        return `<div class="druh-item" data-id="${d.id}">
+          <div class="druh-svg">${icon}</div>
+          <span class="druh-nazev">${d.nazev}</span>
+          <span class="druh-pocet">${d.pocet}</span><span class="druh-pocet-label">${d.pocet === 1 ? 'budka' : d.pocet <= 4 ? 'budky' : 'budek'}</span>
+        </div>`;
+      }).join('')}
+    </div>`;
+
+  document.getElementById('druhyList').addEventListener('click', e => {
+    const item = e.target.closest('.druh-item');
+    if (!item) return;
+    const druh = druhy.find(d => String(d.id) === item.dataset.id);
+    if (druh) {
+      const key = BIRD_KEY_MAP[druh.nazev] || 'konadra';
+      zobrazModalDruhu(druh, BIRD_ICONS[key]);
+    }
+  });
+}
+
+function zobrazModalDruhu(druh, iconSvg) {
+  let overlay = document.getElementById('druhModalOverlay');
+  if (!overlay) {
+    overlay = document.createElement('div');
+    overlay.id = 'druhModalOverlay';
+    overlay.className = 'druh-modal-overlay';
+    overlay.setAttribute('role', 'dialog');
+    overlay.setAttribute('aria-modal', 'true');
+    document.body.appendChild(overlay);
+    overlay.addEventListener('click', e => {
+      if (e.target === overlay) overlay.hidden = true;
+    });
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape' && !overlay.hidden) overlay.hidden = true;
+    });
+  }
+
+  const bigIcon = iconSvg.replace(/width="38" height="38"/, 'width="110" height="110"');
+  const fotoHTML = druh.foto
+    ? `<div class="druh-modal-foto">
+        <img src="${druh.foto}" alt="${druh.nazev}" class="druh-modal-foto-img"
+             onerror="this.closest('.druh-modal-foto').style.display='none'">
+        ${druh.foto_autor ? `<div class="druh-modal-foto-autor">© ${druh.foto_autor}</div>` : ''}
+       </div>`
+    : '';
+
+  overlay.innerHTML = `
+    <div class="druh-modal-box${druh.foto ? ' druh-modal-box--foto' : ''}">
+      <button class="druh-modal-zavrit" aria-label="Zavřít">×</button>
+      ${fotoHTML}
+      <div class="druh-modal-content">
+        <div class="druh-modal-header">
+          <div class="druh-modal-icon">${bigIcon}</div>
+          <div>
+            <div class="druh-modal-nazev">${druh.nazev}</div>
+            <div class="druh-modal-vedecky">${druh.vedecky || ''}</div>
+          </div>
+        </div>
+        <p class="druh-modal-popis">${druh.popis || ''}</p>
+        <div class="druh-modal-info">
+          <div class="druh-modal-info-item">
+            <div class="druh-modal-info-label">Počet budek</div>
+            <div class="druh-modal-info-value">${druh.pocet}</div>
+          </div>
+          <div class="druh-modal-info-item">
+            <div class="druh-modal-info-label">Průměr otvoru</div>
+            <div class="druh-modal-info-value">${druh.otvor || '—'}</div>
+          </div>
+        </div>
+        ${druh.wiki ? `<a href="${druh.wiki}" class="druh-modal-wiki" target="_blank" rel="noopener">📖 Více na Wikipedii →</a>` : ''}
+      </div>
+    </div>`;
+
+  overlay.querySelector('.druh-modal-zavrit').addEventListener('click', () => {
+    overlay.hidden = true;
+  });
+
+  overlay.hidden = false;
+}
+
+function inicializujPushNotifikace() {
+  const area = document.getElementById('pushNotifArea');
+  if (!area) return;
+
+  if (!('Notification' in window)) {
+    area.innerHTML = '<span class="push-info">⚠️ Notifikace nejsou podporovány</span>';
+    return;
+  }
+
+  function aktualizujStav() {
+    if (Notification.permission === 'granted') {
+      area.innerHTML = '<span class="push-info push-ok">✅ Notifikace povoleny</span>';
+    } else if (Notification.permission === 'denied') {
+      area.innerHTML = '<span class="push-info push-denied">❌ Notifikace blokovány – změňte v nastavení prohlížeče</span>';
+    } else {
+      area.innerHTML = '<button class="btn-push-notif" id="btnPushNotif">🔔 Povolit push notifikace</button>';
+      document.getElementById('btnPushNotif').addEventListener('click', async () => {
+        await Notification.requestPermission();
+        aktualizujStav();
+      });
+    }
+  }
+
+  aktualizujStav();
+}
+
+function inicializujHamburger() {
+  const btn = document.getElementById('navHamburger');
+  const links = document.getElementById('navLinks');
+  if (!btn || !links) return;
+
+  btn.addEventListener('click', () => {
+    const open = links.classList.toggle('open');
+    btn.classList.toggle('open', open);
+    btn.setAttribute('aria-expanded', open);
+  });
+
+  links.addEventListener('click', e => {
+    if (e.target.tagName === 'A') {
+      links.classList.remove('open');
+      btn.classList.remove('open');
+      btn.setAttribute('aria-expanded', false);
+    }
+  });
+}
+
+function inicializujFullscreenMapu() {
+  const navMapa = document.getElementById('nav-mapa');
+  const mainContent = document.querySelector('.main-content');
+  const btnZpet = document.getElementById('btn-zpet-mapa');
+  const mapWrapper = document.querySelector('.map-wrapper');
+  if (!navMapa || !mainContent || !btnZpet) return;
+
+  function spocitejVyskyMapy() {
+    const navH = (document.querySelector('.navbar') || {}).offsetHeight || 0;
+    const infoH = (document.querySelector('.info-bar') || {}).offsetHeight || 0;
+    return window.innerHeight - navH - infoH;
+  }
+
+  function rozbalMapu() {
+    mainContent.classList.add('mapa-fullscreen');
+    btnZpet.style.display = 'block';
+    mainContent.style.height = spocitejVyskyMapy() + 'px';
+    if (typeof mapInstance !== 'undefined' && mapInstance) {
+      setTimeout(() => mapInstance.invalidateSize(), 50);
+      setTimeout(() => mapInstance.invalidateSize(), 300);
+    }
+  }
+
+  function sbalMapu() {
+    mainContent.classList.remove('mapa-fullscreen');
+    mainContent.style.height = '';
+    btnZpet.style.display = 'none';
+    if (typeof mapInstance !== 'undefined' && mapInstance) {
+      setTimeout(() => mapInstance.invalidateSize(), 100);
+    }
+  }
+
+  navMapa.addEventListener('click', e => { e.preventDefault(); rozbalMapu(); });
+
+  if (mapWrapper) {
+    const hint = document.createElement('div');
+    hint.className = 'map-hint';
+    hint.textContent = '⛶ Klikněte 2× kdekoliv do mapy pro zobrazení na celé ploše';
+    mapWrapper.appendChild(hint);
+
+    mapWrapper.addEventListener('dblclick', e => {
+      if (mainContent.classList.contains('mapa-fullscreen')) return;
+      if (!e.target.closest('.leaflet-container')) return;
+      e.stopPropagation();
+      // disable Leaflet dblclick zoom temporarily to avoid conflict
+      const map = window._getMapInstance && window._getMapInstance();
+      if (map) map.doubleClickZoom.disable();
+      rozbalMapu();
+      setTimeout(() => { if (map) map.doubleClickZoom.enable(); }, 600);
+    });
+  }
+
+  btnZpet.addEventListener('click', e => {
+    e.stopPropagation();
+    sbalMapu();
+  });
 }
 
 document.addEventListener('DOMContentLoaded', () => {
   aktualizujListu();
   setInterval(tickCas, 30000);
   nactiStatistiky();
+  nactiSpravce();
   inicializujMapu();
+  inicializujFullscreenMapu();
+  inicializujHamburger();
+  inicializujPushNotifikace();
+
+  // Podpora projektu – modal z nav tlačítka
+  const navPodpora = document.getElementById('navPodpora');
+  if (navPodpora) {
+    navPodpora.addEventListener('click', () => {
+      if (document.getElementById('modalPodpora')) return;
+      const modal = document.createElement('div');
+      modal.id = 'modalPodpora';
+      modal.className = 'modal-overlay';
+      modal.innerHTML = `
+        <div class="podpora-modal-box">
+          <button class="modal-zavrit" id="modalPodporaZavrit" style="color:#3a4a10">×</button>
+          <div class="podpora-modal-header">
+            <img src="img/logo.svg" alt="" class="podpora-logo-img">
+            <div class="podpora-modal-header-text">Fandíte projektu MojeBudky?</div>
+          </div>
+          <div class="podpora-modal-body">
+            <p>Celý projekt roste a s ním i radost z každého nového ptačího souseda. Abychom mohli mapu udržovat v chodu, posílat zprávy z terénu a starat se o bezpečný chod celé aplikace, neobejde se to bez provozních nákladů (např. za hosting a zabezpečení webu).</p>
+            <p>Všechno ostatní kolem výroby a kontroly budek děláme s našimi správci čistě dobrovolně a rádi ve svém volném čase. Pokud byste chtěli provoz webu finančně podpořit – ať už jako firma (rádi vás přidáme mezi partnery), nebo jako fanoušek přírody – budeme moc vděční za jakýkoliv příspěvek.</p>
+            <div class="podpora-modal-jak">Jak můžete pomoci?</div>
+            <p>Staňte se partnerem: Napište nám na <a href="mailto:info@mojebudky.cz">info@mojebudky.cz</a> a domluvíme se na umístění vašeho loga.</p>
+          </div>
+        </div>`;
+      document.body.appendChild(modal);
+      document.getElementById('modalPodporaZavrit').addEventListener('click', () => modal.remove());
+      modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
+    });
+  }
+
+  // Partneři nav → modal
+  document.querySelectorAll('a[href="#partneri"]').forEach(a => {
+    a.addEventListener('click', e => { e.preventDefault(); _zobrazPartneriModal(); });
+  });
 });

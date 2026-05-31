@@ -34,8 +34,13 @@
     "lat": 49.7523,
     "lng": 16.65639,
     "ptak": null,
-    "stav": "aktivni",
-    "historie": null
+    "stav": "osidlena",
+    "historie": [
+      {
+        "rok": 2025,
+        "obsazeno": null
+      }
+    ]
   },
   {
     "cislo": 3,
@@ -100,8 +105,13 @@
     "lat": 49.76633,
     "lng": 16.66217,
     "ptak": null,
-    "stav": "aktivni",
-    "historie": null
+    "stav": "osidlena",
+    "historie": [
+      {
+        "rok": 2025,
+        "obsazeno": null
+      }
+    ]
   },
   {
     "cislo": 9,
@@ -132,8 +142,8 @@
     "instalace": "3/2022",
     "lat": 49.62993,
     "lng": 16.70605,
-    "ptak": null,
-    "stav": "aktivni",
+    "ptak": "Sýkora koňadra",
+    "stav": "osidlena",
     "historie": null
   },
   {
@@ -199,8 +209,13 @@
     "lat": 49.77518,
     "lng": 16.43609,
     "ptak": null,
-    "stav": "aktivni",
-    "historie": null
+    "stav": "osidlena",
+    "historie": [
+      {
+        "rok": 2025,
+        "obsazeno": null
+      }
+    ]
   },
   {
     "cislo": 18,
@@ -287,8 +302,13 @@
     "lat": 49.71371,
     "lng": 16.75398,
     "ptak": null,
-    "stav": "aktivni",
-    "historie": null
+    "stav": "osidlena",
+    "historie": [
+      {
+        "rok": 2025,
+        "obsazeno": null
+      }
+    ]
   },
   {
     "cislo": 26,
@@ -553,7 +573,7 @@
   },
   {
     "cislo": 48,
-    "nazev": "U Kapličky",
+    "nazev": "U Kaplčky",
     "typ": "32mm",
     "instalace": "2/2023",
     "lat": 50.07565,
@@ -603,8 +623,13 @@
     "lat": 50.11252,
     "lng": 13.30312,
     "ptak": null,
-    "stav": "aktivni",
-    "historie": null
+    "stav": "osidlena",
+    "historie": [
+      {
+        "rok": 2025,
+        "obsazeno": null
+      }
+    ]
   },
   {
     "cislo": 53,
@@ -644,8 +669,8 @@
     "nazev": null,
     "typ": "32mm",
     "instalace": "11/2024",
-    "lat": 50.11236,
-    "lng": 13.30465,
+    "lat": 49.33713,
+    "lng": 16.55514,
     "ptak": null,
     "stav": "aktivni",
     "historie": null
@@ -729,8 +754,13 @@
     "lat": 49.63241,
     "lng": 16.71791,
     "ptak": null,
-    "stav": "aktivni",
-    "historie": null
+    "stav": "osidlena",
+    "historie": [
+      {
+        "rok": 2025,
+        "obsazeno": null
+      }
+    ]
   },
   {
     "cislo": 64,
@@ -879,8 +909,13 @@
     "lat": 49.73805,
     "lng": 16.71311,
     "ptak": null,
-    "stav": "aktivni",
-    "historie": null
+    "stav": "osidlena",
+    "historie": [
+      {
+        "rok": 2025,
+        "obsazeno": null
+      }
+    ]
   },
   {
     "cislo": 74,
@@ -978,8 +1013,13 @@
     "lat": 49.11077,
     "lng": 17.34846,
     "ptak": null,
-    "stav": "aktivni",
-    "historie": null
+    "stav": "osidlena",
+    "historie": [
+      {
+        "rok": 2025,
+        "obsazeno": null
+      }
+    ]
   },
   {
     "cislo": 83,
@@ -1313,8 +1353,13 @@
     "lat": 50.25932,
     "lng": 17.39522,
     "ptak": null,
-    "stav": "aktivni",
-    "historie": null
+    "stav": "osidlena",
+    "historie": [
+      {
+        "rok": 2025,
+        "obsazeno": null
+      }
+    ]
   },
   {
     "cislo": 113,
@@ -1379,8 +1424,13 @@
     "lat": 49.76908,
     "lng": 16.66371,
     "ptak": null,
-    "stav": "aktivni",
-    "historie": null
+    "stav": "osidlena",
+    "historie": [
+      {
+        "rok": 2025,
+        "obsazeno": null
+      }
+    ]
   },
   {
     "cislo": 119,
@@ -1456,8 +1506,13 @@
     "lat": 49.13289,
     "lng": 17.43931,
     "ptak": null,
-    "stav": "aktivni",
-    "historie": null
+    "stav": "osidlena",
+    "historie": [
+      {
+        "rok": 2025,
+        "obsazeno": null
+      }
+    ]
   },
   {
     "cislo": 126,
@@ -1467,8 +1522,13 @@
     "lat": 49.72513,
     "lng": 16.6453,
     "ptak": null,
-    "stav": "aktivni",
-    "historie": null
+    "stav": "osidlena",
+    "historie": [
+      {
+        "rok": 2025,
+        "obsazeno": null
+      }
+    ]
   },
   {
     "cislo": 127,
@@ -1602,8 +1662,13 @@
     "lat": 49.61137,
     "lng": 16.66712,
     "ptak": null,
-    "stav": "aktivni",
-    "historie": null
+    "stav": "osidlena",
+    "historie": [
+      {
+        "rok": 2025,
+        "obsazeno": null
+      }
+    ]
   },
   {
     "cislo": 138,
@@ -1629,8 +1694,13 @@
     "lat": 49.19144,
     "lng": 16.7775,
     "ptak": null,
-    "stav": "aktivni",
-    "historie": null
+    "stav": "osidlena",
+    "historie": [
+      {
+        "rok": 2025,
+        "obsazeno": null
+      }
+    ]
   },
   {
     "cislo": 140,
@@ -1673,8 +1743,13 @@
     "lat": 49.69948,
     "lng": 16.64035,
     "ptak": null,
-    "stav": "aktivni",
-    "historie": null
+    "stav": "osidlena",
+    "historie": [
+      {
+        "rok": 2025,
+        "obsazeno": null
+      }
+    ]
   },
   {
     "cislo": 144,
@@ -1717,8 +1792,13 @@
     "lat": 49.1739,
     "lng": 20.21984,
     "ptak": null,
-    "stav": "aktivni",
-    "historie": null
+    "stav": "osidlena",
+    "historie": [
+      {
+        "rok": 2025,
+        "obsazeno": null
+      }
+    ]
   },
   {
     "cislo": 148,
@@ -1739,8 +1819,13 @@
     "lat": 49.69189,
     "lng": 14.03173,
     "ptak": null,
-    "stav": "aktivni",
-    "historie": null
+    "stav": "osidlena",
+    "historie": [
+      {
+        "rok": 2025,
+        "obsazeno": null
+      }
+    ]
   },
   {
     "cislo": 150,
@@ -1749,9 +1834,14 @@
     "instalace": "10.5.2025",
     "lat": 49.42279,
     "lng": 12.75017,
-    "ptak": null,
-    "stav": "aktivni",
-    "historie": null
+    "ptak": "Sýkora koňadra",
+    "stav": "osidlena",
+    "historie": [
+      {
+        "rok": 2025,
+        "obsazeno": "Sýkora koňadra"
+      }
+    ]
   },
   {
     "cislo": 151,
@@ -1761,8 +1851,13 @@
     "lat": 49.0018,
     "lng": 14.53287,
     "ptak": null,
-    "stav": "aktivni",
-    "historie": null
+    "stav": "osidlena",
+    "historie": [
+      {
+        "rok": 2025,
+        "obsazeno": null
+      }
+    ]
   },
   {
     "cislo": 152,
@@ -1832,7 +1927,7 @@
   },
   {
     "cislo": 158,
-    "nazev": "Jíťa",
+    "nazev": "Jítťa",
     "typ": "32mm",
     "instalace": "1.6.2025",
     "lat": 49.74493,
@@ -1849,8 +1944,13 @@
     "lat": 48.98261,
     "lng": 13.77355,
     "ptak": null,
-    "stav": "aktivni",
-    "historie": null
+    "stav": "osidlena",
+    "historie": [
+      {
+        "rok": 2025,
+        "obsazeno": null
+      }
+    ]
   },
   {
     "cislo": 160,
@@ -1948,8 +2048,13 @@
     "lat": 49.01043,
     "lng": 14.50653,
     "ptak": null,
-    "stav": "aktivni",
-    "historie": null
+    "stav": "osidlena",
+    "historie": [
+      {
+        "rok": 2025,
+        "obsazeno": null
+      }
+    ]
   },
   {
     "cislo": 169,
@@ -2069,6 +2174,7 @@
     "lat": 49.76355,
     "lng": 16.65569,
     "ptak": null,
+    "foto": "img/179.jpg",
     "stav": "aktivni",
     "historie": null
   },
@@ -2085,7 +2191,7 @@
   },
   {
     "cislo": 181,
-    "nazev": "Na Smuteční vrbě",
+    "nazev": "Na Smutební vrbě",
     "typ": "32mm",
     "instalace": "14.10.2025",
     "lat": 49.83837,
@@ -2102,8 +2208,13 @@
     "lat": 50.01142,
     "lng": 14.44528,
     "ptak": null,
-    "stav": "aktivni",
-    "historie": null
+    "stav": "osidlena",
+    "historie": [
+      {
+        "rok": 2025,
+        "obsazeno": null
+      }
+    ]
   },
   {
     "cislo": 183,
@@ -2132,7 +2243,7 @@
     "nazev": "Kostelec",
     "typ": "32mm",
     "instalace": "6.7.2025",
-    "lat": 13.51046,
+    "lat": 49.83499,
     "lng": 13.51046,
     "ptak": null,
     "stav": "aktivni",
@@ -2173,7 +2284,7 @@
   },
   {
     "cislo": 191,
-    "nazev": "Ptačí domeček na Salisově",
+    "nazev": "Ptáčí domeček na Salisově",
     "typ": "32mm",
     "instalace": "27.7.2025",
     "lat": 50.27665,
@@ -2212,8 +2323,13 @@
     "lat": 50.31826,
     "lng": 15.71731,
     "ptak": null,
-    "stav": "aktivni",
-    "historie": null
+    "stav": "osidlena",
+    "historie": [
+      {
+        "rok": 2025,
+        "obsazeno": null
+      }
+    ]
   },
   {
     "cislo": 195,
@@ -2245,8 +2361,13 @@
     "lat": 49.75189,
     "lng": 14.63183,
     "ptak": null,
-    "stav": "aktivni",
-    "historie": null
+    "stav": "osidlena",
+    "historie": [
+      {
+        "rok": 2025,
+        "obsazeno": null
+      }
+    ]
   },
   {
     "cislo": 198,
