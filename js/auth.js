@@ -74,6 +74,78 @@ async function _nactiSpravciInfo() {
   return _spravciInfoCache;
 }
 
+// VAPID klíč: vygeneruj v Firebase Console → Project Settings → Cloud Messaging → Web Push certificates
+const _VAPID_KEY = '';
+
+async function _registrovatPushNotifikace(loginId) {
+  if (!('Notification' in window) || !('serviceWorker' in navigator)) return;
+  try {
+    const perm = await Notification.requestPermission();
+    if (perm !== 'granted') return;
+    // Lokální notifikace fungují ihned; FCM push (na pozadí) vyžaduje VAPID klíč
+    if (!_VAPID_KEY || typeof firebase === 'undefined') return;
+    await navigator.serviceWorker.ready;
+    const messaging = firebase.messaging();
+    const token = await messaging.getToken({ vapidKey: _VAPID_KEY });
+    if (token) {
+      const db = _getFirebaseDB();
+      if (db) await db.ref(`fcm_tokens/${loginId}`).set({ token, ts: Date.now() });
+    }
+  } catch {}
+}
+
+function _zobrazNarozeninovoNotifikaci(jmeno, osloveni, jeAdmin, narozeninciDnes) {
+  if (!('Notification' in window) || Notification.permission !== 'granted') return;
+  if (jeAdmin && narozeninciDnes && narozeninciDnes.length > 0) {
+    const seznam = narozeninciDnes.map(n => n.jmeno).join(', ');
+    new Notification('🎂 Narozeniny v komunitě!', {
+      body: `Dnes slaví: ${seznam} — nezapomeň popřát!`,
+      icon: '/img/Favikon.png',
+      badge: '/img/Favikon.png',
+      tag: 'mb-narozeniny-admin'
+    });
+  } else if (!jeAdmin && jmeno) {
+    new Notification(`🎂 Všechno nejlepší, ${osloveni || jmeno}!`, {
+      body: 'Celá komunita správců MojeBudky Ti přeje k narozeninám! 🌿',
+      icon: '/img/Favikon.png',
+      badge: '/img/Favikon.png',
+      tag: 'mb-narozeniny'
+    });
+  }
+}
+
+async function _zkontrolovatNarozeniny(loginId, spravceInfo, jeAdmin) {
+  const dnes = new Date();
+  const klic = `${String(dnes.getMonth()+1).padStart(2,'0')}-${String(dnes.getDate()).padStart(2,'0')}`;
+
+  let jeNarozeniny = false;
+  if (spravceInfo && spravceInfo.datum_narozeni) {
+    const d = spravceInfo.datum_narozeni;
+    let den, mes;
+    if (d.includes('.')) { const p = d.split('.'); den = parseInt(p[0]); mes = parseInt(p[1]); }
+    else if (d.includes('-')) { const p = d.split('-'); mes = parseInt(p[1]); den = parseInt(p[2]); }
+    if (mes && den && mes === dnes.getMonth()+1 && den === dnes.getDate()) jeNarozeniny = true;
+  }
+
+  let narozeninciDnes = [];
+  if (jeAdmin) {
+    try {
+      const res = await fetch('data/narozeniny.json');
+      if (res.ok) {
+        const data = await res.json();
+        narozeninciDnes = data[klic] || [];
+      }
+    } catch {}
+  }
+
+  if (jeNarozeniny || (jeAdmin && narozeninciDnes.length > 0)) {
+    const oslav = spravceInfo ? spravceInfo.osloveni || spravceInfo.jmeno : '';
+    setTimeout(() => _zobrazNarozeninovoNotifikaci(
+      spravceInfo ? spravceInfo.jmeno : '', oslav, jeAdmin, narozeninciDnes
+    ), 2000);
+  }
+}
+
 async function _overitPrihlaseni(id, heslo) {
   const spravci = await _nactiAuthSpravce();
   const hash = await sha256hex(heslo);
@@ -130,6 +202,10 @@ async function _zobrazAdminPanel(loginId) {
   }
 
   if (typeof window._presenceSetAdmin === 'function') window._presenceSetAdmin(true);
+
+  // Push notifikace: permission + narozeniny
+  _registrovatPushNotifikace(loginId);
+  _zkontrolovatNarozeniny(loginId, spravceInfo, jeAdmin);
 
   window._aktualniSpravce = { loginId, spravceInfo, budkyList, jeAdmin };
   window._editBudku = _zobrazEditBudky;

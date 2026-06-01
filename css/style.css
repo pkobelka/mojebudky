@@ -119,6 +119,7 @@ html, body {
 .info-bar .bar-right { color: var(--tree-mid); font-style: italic; font-size: 1.1rem; }
 .info-bar .bar-right.bar-svatek { color: var(--orange); font-style: normal; font-weight: 600; }
 .bar-gratulace { color: var(--orange); font-weight: 700; }
+.bar-narozeniny { color: #e05cbf; font-weight: 700; }
 
 .main-content { display: flex; min-height: 260px; }
 .panel { background: var(--panel-bg); border: 1px solid var(--panel-border); width: 400px; flex-shrink: 0; display: flex; flex-direction: column; overflow: hidden; }

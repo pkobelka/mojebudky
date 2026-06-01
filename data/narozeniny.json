@@ -1,0 +1,384 @@
+{
+  "01-04": [
+    {
+      "jmeno": "Tomáš",
+      "osloveni": "Tome"
+    }
+  ],
+  "01-06": [
+    {
+      "jmeno": "David",
+      "osloveni": "Davide"
+    }
+  ],
+  "01-09": [
+    {
+      "jmeno": "Lubor",
+      "osloveni": "Lubore"
+    },
+    {
+      "jmeno": "Jan",
+      "osloveni": "Honzo"
+    },
+    {
+      "jmeno": "Jan",
+      "osloveni": "Honzo"
+    }
+  ],
+  "01-11": [
+    {
+      "jmeno": "Květoslava",
+      "osloveni": "Květo"
+    }
+  ],
+  "01-20": [
+    {
+      "jmeno": "Pavel",
+      "osloveni": "Pavle"
+    }
+  ],
+  "01-30": [
+    {
+      "jmeno": "Jana",
+      "osloveni": "Jani"
+    }
+  ],
+  "01-31": [
+    {
+      "jmeno": "Josef",
+      "osloveni": "Pepíku"
+    }
+  ],
+  "02-05": [
+    {
+      "jmeno": "Josef",
+      "osloveni": "Plíšku"
+    },
+    {
+      "jmeno": "Pepa",
+      "osloveni": "Plíšku"
+    }
+  ],
+  "02-06": [
+    {
+      "jmeno": "Milan",
+      "osloveni": "Milane"
+    }
+  ],
+  "02-07": [
+    {
+      "jmeno": "Lucie",
+      "osloveni": "Lucko"
+    }
+  ],
+  "02-27": [
+    {
+      "jmeno": "Josef",
+      "osloveni": "Pepo"
+    }
+  ],
+  "03-16": [
+    {
+      "jmeno": "Martin",
+      "osloveni": "Martine"
+    },
+    {
+      "jmeno": "Martin",
+      "osloveni": "Martine"
+    },
+    {
+      "jmeno": "Martin",
+      "osloveni": "Martine"
+    },
+    {
+      "jmeno": "Martin",
+      "osloveni": "Martine"
+    }
+  ],
+  "03-19": [
+    {
+      "jmeno": "Jiří",
+      "osloveni": "Jirko"
+    }
+  ],
+  "03-20": [
+    {
+      "jmeno": "Stanislav",
+      "osloveni": "Staňo"
+    }
+  ],
+  "03-21": [
+    {
+      "jmeno": "Milena",
+      "osloveni": "Mílo"
+    }
+  ],
+  "03-28": [
+    {
+      "jmeno": "Milan",
+      "osloveni": "Milane"
+    }
+  ],
+  "04-06": [
+    {
+      "jmeno": "Pavel",
+      "osloveni": "Pavle"
+    },
+    {
+      "jmeno": "Pavel",
+      "osloveni": "Pavle"
+    }
+  ],
+  "04-09": [
+    {
+      "jmeno": "Karel",
+      "osloveni": "Karle"
+    }
+  ],
+  "04-14": [
+    {
+      "jmeno": "Kamil",
+      "osloveni": "Kamile"
+    }
+  ],
+  "04-17": [
+    {
+      "jmeno": "Martina",
+      "osloveni": "Marti"
+    }
+  ],
+  "04-18": [
+    {
+      "jmeno": "Václav",
+      "osloveni": "Vašku"
+    }
+  ],
+  "04-25": [
+    {
+      "jmeno": "Ladislav",
+      "osloveni": "Laďo"
+    },
+    {
+      "jmeno": "Ladislav",
+      "osloveni": "Laďo"
+    },
+    {
+      "jmeno": "Ladislav",
+      "osloveni": "Laďo"
+    }
+  ],
+  "04-26": [
+    {
+      "jmeno": "Jirka",
+      "osloveni": "Jirko"
+    }
+  ],
+  "05-02": [
+    {
+      "jmeno": "Petr",
+      "osloveni": "Péťo"
+    }
+  ],
+  "05-05": [
+    {
+      "jmeno": "Jan",
+      "osloveni": "Honzo"
+    },
+    {
+      "jmeno": "RAFAN",
+      "osloveni": "Jardo"
+    }
+  ],
+  "05-07": [
+    {
+      "jmeno": "Jiří",
+      "osloveni": "Jirko"
+    },
+    {
+      "jmeno": "Jiří",
+      "osloveni": "Jirko"
+    },
+    {
+      "jmeno": "Jiří",
+      "osloveni": "Jirko"
+    },
+    {
+      "jmeno": "Jiří",
+      "osloveni": "Jirko"
+    },
+    {
+      "jmeno": "Jiří",
+      "osloveni": "Jirko"
+    },
+    {
+      "jmeno": "Jiří",
+      "osloveni": "Jirko"
+    }
+  ],
+  "05-31": [
+    {
+      "jmeno": "Miroslava",
+      "osloveni": "Mirko"
+    }
+  ],
+  "06-24": [
+    {
+      "jmeno": "Luboš",
+      "osloveni": "Lubore"
+    }
+  ],
+  "06-27": [
+    {
+      "jmeno": "Petr",
+      "osloveni": "P/eťo"
+    }
+  ],
+  "07-07": [
+    {
+      "jmeno": "Dobroš",
+      "osloveni": "Dobro"
+    }
+  ],
+  "07-10": [
+    {
+      "jmeno": "Libor",
+      "osloveni": "Libore"
+    }
+  ],
+  "07-24": [
+    {
+      "jmeno": "Ema",
+      "osloveni": "Emo"
+    }
+  ],
+  "07-28": [
+    {
+      "jmeno": "Petr",
+      "osloveni": "Peťo"
+    },
+    {
+      "jmeno": "Petr",
+      "osloveni": "Peťo"
+    },
+    {
+      "jmeno": "PEŤA",
+      "osloveni": "Peťo"
+    },
+    {
+      "jmeno": "PEŤA",
+      "osloveni": "Peťo"
+    }
+  ],
+  "08-11": [
+    {
+      "jmeno": "DIANKA",
+      "osloveni": "Dianko"
+    }
+  ],
+  "09-07": [
+    {
+      "jmeno": "Tomáš",
+      "osloveni": "Tome"
+    },
+    {
+      "jmeno": "Tomášek",
+      "osloveni": "Tome"
+    }
+  ],
+  "09-10": [
+    {
+      "jmeno": "Václav",
+      "osloveni": "Vašku"
+    }
+  ],
+  "10-06": [
+    {
+      "jmeno": "Zdeněk",
+      "osloveni": "Zdendo"
+    }
+  ],
+  "10-22": [
+    {
+      "jmeno": "Alena",
+      "osloveni": "Alčo"
+    }
+  ],
+  "11-08": [
+    {
+      "jmeno": "Jiří",
+      "osloveni": "Jirko"
+    }
+  ],
+  "12-08": [
+    {
+      "jmeno": "Marcela",
+      "osloveni": "Macku"
+    }
+  ],
+  "12-09": [
+    {
+      "jmeno": "Pavel",
+      "osloveni": "Pavle"
+    }
+  ],
+  "12-11": [
+    {
+      "jmeno": "Karel",
+      "osloveni": "Karle"
+    }
+  ],
+  "12-12": [
+    {
+      "jmeno": "Josef",
+      "osloveni": "Plíšku"
+    },
+    {
+      "jmeno": "Jirka",
+      "osloveni": "Jirko"
+    },
+    {
+      "jmeno": "Jirka",
+      "osloveni": "Jirko"
+    },
+    {
+      "jmeno": "Jirka",
+      "osloveni": "Jirka"
+    }
+  ],
+  "12-15": [
+    {
+      "jmeno": "Ivan",
+      "osloveni": "Ivane"
+    },
+    {
+      "jmeno": "Ivan",
+      "osloveni": "Ivane"
+    }
+  ],
+  "12-23": [
+    {
+      "jmeno": "Aleš",
+      "osloveni": "Ájo"
+    }
+  ],
+  "12-28": [
+    {
+      "jmeno": "Miloš",
+      "osloveni": "Miloši"
+    }
+  ],
+  "12-29": [
+    {
+      "jmeno": "Lukáš",
+      "osloveni": "Liky"
+    },
+    {
+      "jmeno": "Lukáš",
+      "osloveni": "Luky"
+    },
+    {
+      "jmeno": "Lukáš",
+      "osloveni": "Luky"
+    }
+  ]
+}

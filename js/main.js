@@ -15,6 +15,7 @@ let _statickeAktuality = [];
 let _aktualityListenerSet = false;
 let _partneriData = [];
 let _podekovaniData = [];
+let _narozeniniceDnes = [];  // správci s narozeninami dnes
 
 function pluralSpravcu(n) {
   if (n === 1) return '1 správce';
@@ -33,10 +34,22 @@ async function nactiSpravce() {
   try {
     const res = await fetch('data/spravci_jmena.json?v=20260527k');
     spravciJmena = await res.json();
-    aktualizujListu();
   } catch(e) {
     console.error('Chyba načítání správce:', e);
   }
+  await nactiNarozeniny();
+  aktualizujListu();
+}
+
+async function nactiNarozeniny() {
+  try {
+    const res = await fetch('data/narozeniny.json?v=20260601');
+    if (!res.ok) return;
+    const data = await res.json();
+    const d = new Date();
+    const klic = `${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+    _narozeniniceDnes = data[klic] || [];
+  } catch {}
 }
 
 function formatDatum(d) {
@@ -61,9 +74,14 @@ function aktualizujListu() {
     ? ` &nbsp;<span class="bar-gratulace">🎂 slaví ho ${pluralSpravcu(oslavenci.length)} z naší komunity!</span>`
     : '';
   const sva = svarek ? `&nbsp;| Svátek má: <strong>${svarek}</strong>${oslavenciText}` : '';
+
+  const narozBar = _narozeniniceDnes.length > 0
+    ? `&nbsp;| 🎂 <span class="bar-narozeniny">Narozeniny slaví: <strong>${_narozeniniceDnes.map(n => n.jmeno).join(', ')}</strong> – gratulujeme!</span>`
+    : '';
+
   const cas = `&nbsp;| ⏰ <span id="liveCas">${formatCas(d)}</span>`;
 
-  bar.innerHTML = `<span class="bar-left">${cal}${sva}${cas}</span>
+  bar.innerHTML = `<span class="bar-left">${cal}${sva}${narozBar}${cas}</span>
     <span class="bar-right">🌿 Pomáháme ptactvu nejen po celé ČR</span>`;
 }
 
