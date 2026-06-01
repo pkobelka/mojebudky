@@ -257,19 +257,23 @@ function _zobrazUvitaciModal(loginId, spravceInfo, budkyList, onContinue) {
       <div class="uvitani-logo-wrap">
         <img src="img/logo.svg" class="uvitani-logo" alt="MojeBudky">
       </div>
-      <div class="uvitani-nadpis">Vítej v rodině MojeBudky! 🌿</div>
-      <div class="uvitani-zprava">
-        „Ahoj ${jmeno}, jsem rád, že ses připojil/a k projektu a že se poctivě staráš
-        o ${budkyText}. Záleží mi na tom, aby každá měla svého poctivého správce
-        a my všichni ostatní věděli, kdo v ní bydlí. Díky moc! <strong>Petr</strong>"
-      </div>
-      <div class="uvitani-co">
-        <div class="uvitani-co-item">🏠 Edituj svoji budku — kdo v ní sídlí, foto, poznámky</div>
-        <div class="uvitani-co-item">📅 Hlásej kontroly a čištění</div>
-        <div class="uvitani-co-item">🗺️ Vidíš ji na mapě mezi ostatními budkami</div>
-      </div>
-      <div class="uvitani-actions">
-        <button class="profil-btn-ulozit uvitani-btn" id="uvitaniContinue">🪪 Vyplnit profil správce →</button>
+      <div class="uvitani-obsah">
+        <div class="uvitani-zprava">
+          <p>Ahoj <strong>${jmeno}</strong>,</p>
+          <p>mám velkou radost, že Tě mohu přivítat na novém webu projektu MojeBudky. Vznikal dlouhé dny a stály za ním desítky hodin práce, proto věřím, že se Ti bude líbit a najdeš na něm vše, co potřebuješ.</p>
+          <p>Především Ti ale chci poděkovat za péči, kterou věnuješ budkám v terénu. Velmi si vážím lidí, kteří jsou ochotni věnovat svůj čas a energii přírodě. Záleží mi na tom, aby každá budka měla svého zodpovědného správce, a nikdy bych ji nesvěřil někomu, u koho bych měl byť jen malou pochybnost.</p>
+          <p>Děkuji, že jsi jeho součástí a pomáháš společně s námi vytvářet lepší podmínky pro život ptáků v naší krajině.</p>
+          <p>Ještě jednou vítej a velké díky za všechen čas, péči a energii, které projektu věnuješ!</p>
+          <p class="uvitani-podpis">Petr 🐦🌿</p>
+        </div>
+        <div class="uvitani-co">
+          <div class="uvitani-co-item">🏠 Edituj svoji budku — kdo v ní sídlí, foto, poznámky</div>
+          <div class="uvitani-co-item">📅 Hlásej kontroly a čištění</div>
+          <div class="uvitani-co-item">🗺️ Vidíš ji na mapě mezi ostatními budkami</div>
+        </div>
+        <div class="uvitani-actions">
+          <button class="profil-btn-ulozit uvitani-btn" id="uvitaniContinue">🪪 Vyplnit profil správce →</button>
+        </div>
       </div>
     </div>`;
   document.body.appendChild(modal);
