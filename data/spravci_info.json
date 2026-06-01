@@ -39,7 +39,21 @@
     "telefon": "604 239 112",
     "email": "",
     "osloveni": "Plíšku",
-    "datum_narozeni": "05.02.1964"
+    "datum_narozeni": "05.02.1964",
+    "budky": [
+      {
+        "cislo": 4,
+        "nazev": ""
+      },
+      {
+        "cislo": 9,
+        "nazev": "Plíšek 2"
+      },
+      {
+        "cislo": 12,
+        "nazev": "Plíšek 1"
+      }
+    ]
   },
   "005484": {
     "jmeno": "Josef",
@@ -71,7 +85,33 @@
     "telefon": "720 600 109",
     "email": "novohradka@volny.cz",
     "osloveni": "Jirko",
-    "datum_narozeni": "07.05.1962"
+    "datum_narozeni": "07.05.1962",
+    "budky": [
+      {
+        "cislo": 7,
+        "nazev": "Jirka"
+      },
+      {
+        "cislo": 29,
+        "nazev": "Laura"
+      },
+      {
+        "cislo": 51,
+        "nazev": "Ester"
+      },
+      {
+        "cislo": 62,
+        "nazev": "Erwin Werkplaats"
+      },
+      {
+        "cislo": 116,
+        "nazev": "Karolína"
+      },
+      {
+        "cislo": 117,
+        "nazev": "Julie"
+      }
+    ]
   },
   "008666": {
     "jmeno": "Karel",
@@ -103,7 +143,21 @@
     "telefon": "731 589 488",
     "email": "",
     "osloveni": "Jirko",
-    "datum_narozeni": "12.12.1952"
+    "datum_narozeni": "12.12.1952",
+    "budky": [
+      {
+        "cislo": 10,
+        "nazev": ""
+      },
+      {
+        "cislo": 26,
+        "nazev": "Adam"
+      },
+      {
+        "cislo": 74,
+        "nazev": ""
+      }
+    ]
   },
   "011506": {
     "jmeno": "Radim",
@@ -156,7 +210,21 @@
     "telefon": "602 356 491",
     "email": "vykydal00@gmail.com",
     "osloveni": "Liky",
-    "datum_narozeni": "29.12.1983"
+    "datum_narozeni": "29.12.1983",
+    "budky": [
+      {
+        "cislo": 15,
+        "nazev": "Theodorka"
+      },
+      {
+        "cislo": 78,
+        "nazev": "Thea - Přemky"
+      },
+      {
+        "cislo": 80,
+        "nazev": "Thea - Rozstání"
+      }
+    ]
   },
   "016046": {
     "jmeno": "Kamil",
@@ -189,7 +257,17 @@
     "telefon": "777 693 173",
     "email": "",
     "osloveni": "Tome",
-    "datum_narozeni": "07.09.1985"
+    "datum_narozeni": "07.09.1985",
+    "budky": [
+      {
+        "cislo": 18,
+        "nazev": "Tomášek"
+      },
+      {
+        "cislo": 48,
+        "nazev": "U Kapličky"
+      }
+    ]
   },
   "019358": {
     "jmeno": "Pavel",
@@ -200,7 +278,17 @@
     "telefon": "737 257 358",
     "email": "pavel.martinek.mart@seznam.cz",
     "osloveni": "Pavle",
-    "datum_narozeni": "06.04.1958"
+    "datum_narozeni": "06.04.1958",
+    "budky": [
+      {
+        "cislo": 19,
+        "nazev": "Pavel"
+      },
+      {
+        "cislo": 45,
+        "nazev": ""
+      }
+    ]
   },
   "020843": {
     "jmeno": "Ladislav",
@@ -211,7 +299,21 @@
     "telefon": "603 261 843",
     "email": "safrladislavst@gmail.com",
     "osloveni": "Laďo",
-    "datum_narozeni": "25.04.1954"
+    "datum_narozeni": "25.04.1954",
+    "budky": [
+      {
+        "cislo": 20,
+        "nazev": "Kristýnka + Marie"
+      },
+      {
+        "cislo": 41,
+        "nazev": "Laďa"
+      },
+      {
+        "cislo": 126,
+        "nazev": ""
+      }
+    ]
   },
   "021291": {
     "jmeno": "Miloslav",
@@ -221,7 +323,17 @@
     "budka_nazev": "ZŠ",
     "telefon": "604 302 291",
     "email": "",
-    "osloveni": "Slávo"
+    "osloveni": "Slávo",
+    "budky": [
+      {
+        "cislo": 21,
+        "nazev": "ZŠ"
+      },
+      {
+        "cislo": 22,
+        "nazev": "Sláveček+Anežka"
+      }
+    ]
   },
   "022291": {
     "jmeno": "Miloslav",
@@ -251,7 +363,17 @@
     "budka_nazev": "Emily",
     "telefon": "733121966",
     "email": "",
-    "osloveni": "Milane"
+    "osloveni": "Milane",
+    "budky": [
+      {
+        "cislo": 24,
+        "nazev": "Emily"
+      },
+      {
+        "cislo": 66,
+        "nazev": ""
+      }
+    ]
   },
   "025053": {
     "jmeno": "Milena",
@@ -284,7 +406,25 @@
     "telefon": "777 662 714",
     "email": "info@petrkobelka.cz",
     "osloveni": "Peťo",
-    "datum_narozeni": "28.07.1984"
+    "datum_narozeni": "28.07.1984",
+    "budky": [
+      {
+        "cislo": 27,
+        "nazev": "Péťa"
+      },
+      {
+        "cislo": 28,
+        "nazev": "Kristýnka"
+      },
+      {
+        "cislo": 115,
+        "nazev": "Kiki"
+      },
+      {
+        "cislo": 142,
+        "nazev": "Péťa"
+      }
+    ]
   },
   "028714": {
     "jmeno": "Petr",
@@ -456,7 +596,17 @@
     "telefon": "602 356 471",
     "email": "jan.rada.009@gmail.com",
     "osloveni": "Honzo",
-    "datum_narozeni": "09.01.1979"
+    "datum_narozeni": "09.01.1979",
+    "budky": [
+      {
+        "cislo": 43,
+        "nazev": "Anežka"
+      },
+      {
+        "cislo": 193,
+        "nazev": "Lucie"
+      }
+    ]
   },
   "044221": {
     "jmeno": "Martina",
@@ -656,7 +806,17 @@
     "budka_nazev": "Erwin Thuis",
     "telefon": "624 526 111",
     "email": "",
-    "osloveni": "Erwin"
+    "osloveni": "Erwin",
+    "budky": [
+      {
+        "cislo": 61,
+        "nazev": "Erwin Thuis"
+      },
+      {
+        "cislo": 65,
+        "nazev": "Ërwin 3"
+      }
+    ]
   },
   "062109": {
     "jmeno": "Jiří",
@@ -729,7 +889,17 @@
     "budka_nazev": "Hanička",
     "telefon": "602 518 472",
     "email": "",
-    "osloveni": "Milane"
+    "osloveni": "Milane",
+    "budky": [
+      {
+        "cislo": 68,
+        "nazev": "Hanička"
+      },
+      {
+        "cislo": 118,
+        "nazev": "Tadeáš"
+      }
+    ]
   },
   "069923": {
     "jmeno": "Hana",
@@ -799,7 +969,29 @@
     "budka_nazev": "",
     "telefon": "777 676 504",
     "email": "",
-    "osloveni": "Martine"
+    "osloveni": "Martine",
+    "budky": [
+      {
+        "cislo": 75,
+        "nazev": ""
+      },
+      {
+        "cislo": 79,
+        "nazev": ""
+      },
+      {
+        "cislo": 92,
+        "nazev": ""
+      },
+      {
+        "cislo": 94,
+        "nazev": ""
+      },
+      {
+        "cislo": 186,
+        "nazev": "Na Lípě"
+      }
+    ]
   },
   "076918": {
     "jmeno": "Jiří",
@@ -988,7 +1180,17 @@
     "budka_nazev": "",
     "telefon": "777 079 799",
     "email": "",
-    "osloveni": "Míšo"
+    "osloveni": "Míšo",
+    "budky": [
+      {
+        "cislo": 93,
+        "nazev": ""
+      },
+      {
+        "cislo": 95,
+        "nazev": ""
+      }
+    ]
   },
   "094504": {
     "jmeno": "Martin",
@@ -1019,7 +1221,21 @@
     "budka_nazev": "",
     "telefon": "728 177 641",
     "email": "",
-    "osloveni": "Martino"
+    "osloveni": "Martino",
+    "budky": [
+      {
+        "cislo": 96,
+        "nazev": ""
+      },
+      {
+        "cislo": 97,
+        "nazev": ""
+      },
+      {
+        "cislo": 99,
+        "nazev": ""
+      }
+    ]
   },
   "097641": {
     "jmeno": "Martina",
@@ -1137,7 +1353,21 @@
     "budka_nazev": "Marek",
     "telefon": "602 581 372",
     "email": "marek.koutny@bmh.cz",
-    "osloveni": "Marku"
+    "osloveni": "Marku",
+    "budky": [
+      {
+        "cislo": 108,
+        "nazev": "Marek"
+      },
+      {
+        "cislo": 109,
+        "nazev": "PODLAS"
+      },
+      {
+        "cislo": 110,
+        "nazev": "Maty"
+      }
+    ]
   },
   "109372": {
     "jmeno": "Marek",
@@ -1177,7 +1407,17 @@
     "budka_nazev": "",
     "telefon": "778 882 776",
     "email": "jirin.fabos@seznam.cz",
-    "osloveni": "Jirko"
+    "osloveni": "Jirko",
+    "budky": [
+      {
+        "cislo": 112,
+        "nazev": ""
+      },
+      {
+        "cislo": 113,
+        "nazev": ""
+      }
+    ]
   },
   "113776": {
     "jmeno": "Jiří",
@@ -1499,7 +1739,17 @@
     "budka_nazev": "Markéta",
     "telefon": "602 833 271",
     "email": "mmika.vak@gmail.com",
-    "osloveni": "?"
+    "osloveni": "?",
+    "budky": [
+      {
+        "cislo": 144,
+        "nazev": "Markéta"
+      },
+      {
+        "cislo": 161,
+        "nazev": ""
+      }
+    ]
   },
   "145990": {
     "jmeno": "Vlasta",
@@ -1571,7 +1821,17 @@
     "telefon": "725 505 260",
     "email": "ivan.kafka@energieag.cz",
     "osloveni": "Ivane",
-    "datum_narozeni": "15.12.1975"
+    "datum_narozeni": "15.12.1975",
+    "budky": [
+      {
+        "cislo": 151,
+        "nazev": "Ivan"
+      },
+      {
+        "cislo": 166,
+        "nazev": ""
+      }
+    ]
   },
   "152825": {
     "jmeno": "Sylva",
@@ -1581,7 +1841,17 @@
     "budka_nazev": "",
     "telefon": "603 899 825",
     "email": "",
-    "osloveni": "Sylvo"
+    "osloveni": "Sylvo",
+    "budky": [
+      {
+        "cislo": 152,
+        "nazev": ""
+      },
+      {
+        "cislo": 198,
+        "nazev": ""
+      }
+    ]
   },
   "153333": {
     "jmeno": "Pavel",
@@ -1661,7 +1931,17 @@
     "budka_nazev": "",
     "telefon": "606 666 953",
     "email": "roman.badin@vakberoun.cz",
-    "osloveni": "Romane"
+    "osloveni": "Romane",
+    "budky": [
+      {
+        "cislo": 160,
+        "nazev": ""
+      },
+      {
+        "cislo": 170,
+        "nazev": ""
+      }
+    ]
   },
   "161271": {
     "jmeno": "Milan",
@@ -2131,7 +2411,17 @@
     "budka_nazev": "Tonča",
     "telefon": "605208540",
     "email": "",
-    "osloveni": "Jirko"
+    "osloveni": "Jirko",
+    "budky": [
+      {
+        "cislo": 207,
+        "nazev": "Tonča"
+      },
+      {
+        "cislo": 208,
+        "nazev": "Manča"
+      }
+    ]
   },
   "208540": {
     "jmeno": "Jiří",
