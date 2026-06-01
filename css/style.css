@@ -205,7 +205,7 @@ html, body {
 .partner-placeholder:hover { background: linear-gradient(135deg, #ffe840 0%, #f5d030 100%); border-color: #8a6a04; box-shadow: 0 4px 16px rgba(200,160,0,0.55); transform: scale(1.04); }
 
 /* ── PODPORA PROJEKTU ── */
-.nav-podpora-btn { background: rgba(255,215,0,0.15); color: #f0d800; border: 1px solid rgba(255,215,0,0.45); border-radius: 20px; padding: 10px 20px; font-size: 1.6rem; font-weight: 700; cursor: pointer; transition: all 0.2s; white-space: nowrap; font-family: inherit; }
+.nav-podpora-btn { background: rgba(255,215,0,0.15); color: #f0d800; border: 1px solid rgba(255,215,0,0.45); border-radius: 20px; padding: 10px 20px; font-size: 2.4rem; font-weight: 700; cursor: pointer; transition: all 0.2s; white-space: nowrap; font-family: inherit; }
 .nav-podpora-btn:hover { background: rgba(255,215,0,0.28); color: #ffe040; border-color: rgba(255,215,0,0.8); }
 /* Modal podpora – světlé okno */
 .podpora-modal-box { background: linear-gradient(160deg, #fffdf0 0%, #fff8d6 100%); border: 2px solid #e8c840; border-radius: 20px; padding: 0; max-width: 580px; width: 94%; position: relative; box-shadow: 0 12px 60px rgba(0,0,0,0.55); overflow: hidden; }
