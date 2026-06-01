@@ -501,7 +501,8 @@ function inicializujHamburger() {
 function inicializujFullscreenMapu() {
   const navMapa = document.getElementById('nav-mapa');
   const mainContent = document.querySelector('.main-content');
-  const btnZpet = document.getElementById('btn-zpet-mapa');
+  const btnZpet   = document.getElementById('btn-zpet-mapa');
+  const btnZpetTR = document.getElementById('btn-zpet-mapa-tr');
   const mapWrapper = document.querySelector('.map-wrapper');
   if (!navMapa || !mainContent || !btnZpet) return;
 
@@ -514,6 +515,7 @@ function inicializujFullscreenMapu() {
   function rozbalMapu() {
     mainContent.classList.add('mapa-fullscreen');
     btnZpet.style.display = 'block';
+    if (btnZpetTR) btnZpetTR.style.display = 'block';
     mainContent.style.height = spocitejVyskyMapy() + 'px';
     if (typeof mapInstance !== 'undefined' && mapInstance) {
       setTimeout(() => mapInstance.invalidateSize(), 50);
@@ -525,6 +527,7 @@ function inicializujFullscreenMapu() {
     mainContent.classList.remove('mapa-fullscreen');
     mainContent.style.height = '';
     btnZpet.style.display = 'none';
+    if (btnZpetTR) btnZpetTR.style.display = 'none';
     if (typeof mapInstance !== 'undefined' && mapInstance) {
       setTimeout(() => mapInstance.invalidateSize(), 100);
     }
@@ -550,10 +553,8 @@ function inicializujFullscreenMapu() {
     });
   }
 
-  btnZpet.addEventListener('click', e => {
-    e.stopPropagation();
-    sbalMapu();
-  });
+  btnZpet.addEventListener('click', e => { e.stopPropagation(); sbalMapu(); });
+  if (btnZpetTR) btnZpetTR.addEventListener('click', e => { e.stopPropagation(); sbalMapu(); });
 }
 
 function inicializujSplash() {

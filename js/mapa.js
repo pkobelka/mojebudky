@@ -244,10 +244,12 @@ async function inicializujMapu() {
     center: [49.75, 15.7],
     zoom: 8,
     zoomControl: true,
-    minZoom: 6,
-    maxBounds: [[46.5, 1.5], [54.5, 24.0]],
+    minZoom: 5,
+    maxBounds: [[45.5, 3.5], [55.5, 20.5]],
     maxBoundsViscosity: 1.0
   });
+  // Zabrán zoom pod minZoom i kolečkem myši
+  mapInstance.setMinZoom(5);
 
   L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
     attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> © <a href="https://carto.com/">CARTO</a>',

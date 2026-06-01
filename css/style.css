@@ -294,6 +294,7 @@ html, body {
 .map-wrapper:hover .map-hint { opacity: 1; }
 .btn-zpet-mapa { position: absolute; top: 16px; left: 16px; z-index: 1000; background: var(--orange); color: #fff; border: none; border-radius: 8px; padding: 14px 30px; font-size: 1.3rem; font-weight: 700; cursor: pointer; box-shadow: 0 4px 16px rgba(0,0,0,0.5); transition: background 0.2s; }
 .btn-zpet-mapa:hover { background: var(--orange-dark); }
+.btn-zpet-mapa--tr { left: auto; right: 16px; }
 
 /* ── HAMBURGER ── */
 .nav-hamburger { display: none; flex-direction: column; justify-content: center; gap: 5px; background: none; border: none; cursor: pointer; padding: 6px; margin-left: 6px; }
