@@ -16,3 +16,5 @@ Thumbs.db
 .idea/
 nastavit_heslo.html
 nastavit_heslo.py
+sms_log.txt
+hesla.csv
