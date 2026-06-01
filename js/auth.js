@@ -511,6 +511,9 @@ function _ulozitProfilLocal(loginId, data) {
 function _zobrazProfilSpravce(loginId, info, budkaText) {
   const ulozeny = _nacistProfilLocal(loginId);
   const d = Object.assign({}, info, ulozeny);
+  // Jméno a příjmení vždy z JSON — autoritativní data z CSV, háčky zaručeny
+  if (info && info.jmeno)    d.jmeno    = info.jmeno;
+  if (info && info.prijmeni) d.prijmeni = info.prijmeni;
 
   const existujici = document.getElementById('modalProfil');
   if (existujici) existujici.remove();
