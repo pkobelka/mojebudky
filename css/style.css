@@ -172,11 +172,11 @@ html, body {
 .pm-logo-text { color: var(--text-light); font-size: 1.15rem; font-weight: 600; }
 .pm-podekovani { border-top: 1px solid rgba(255,255,255,0.15); padding: 28px 48px 40px; }
 .pm-pod-label { color: var(--accent-gold); font-size: 1.5rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 20px; }
-.pm-pod-grid { display: flex; flex-wrap: wrap; gap: 12px 26px; justify-content: center; }
+.pm-pod-grid { display: flex; flex-wrap: wrap; gap: 12px 16px; justify-content: center; }
 .pm-pod-osoba { position: relative; display: inline-flex; flex-direction: column; align-items: center; }
-.pm-pod-jmeno { background: none; border: none; color: var(--text-light); font-size: 1.4rem; font-weight: 600; text-decoration: underline; text-decoration-style: dotted; text-underline-offset: 4px; cursor: default; font-family: inherit; padding: 0; }
-.pm-pod-jmeno--ma-text { cursor: pointer; color: var(--accent-gold); }
-.pm-pod-jmeno--ma-text:hover { color: #ffe080; }
+.pm-pod-jmeno { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.2); border-radius: 50px; color: var(--text-light); font-size: 1.4rem; font-weight: 600; text-decoration: none; cursor: default; font-family: inherit; padding: 7px 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.18); transition: background 0.2s, box-shadow 0.2s; }
+.pm-pod-jmeno--ma-text { cursor: pointer; color: var(--accent-gold); border-color: rgba(212,160,64,0.4); }
+.pm-pod-jmeno--ma-text:hover { background: rgba(212,160,64,0.15); box-shadow: 0 4px 14px rgba(0,0,0,0.28); color: #ffe080; }
 .pm-bublina { display: none; position: absolute; bottom: calc(100% + 10px); left: 50%; transform: translateX(-50%); background: #f0e830; border: 2px solid #3a8a1a; border-radius: 14px; padding: 11px 18px; font-size: 1rem; color: #1a4a0a; font-weight: 600; font-style: italic; box-shadow: 0 4px 18px rgba(0,0,0,0.5); z-index: 10; min-width: 180px; max-width: 280px; white-space: normal; text-align: center; line-height: 1.45; }
 .pm-bublina::after { content: ''; position: absolute; top: 100%; left: 50%; transform: translateX(-50%); border: 8px solid transparent; border-top-color: #3a8a1a; }
 .pm-bublina::before { content: ''; position: absolute; top: 100%; left: 50%; transform: translateX(-50%); margin-top: 2px; border: 7px solid transparent; border-top-color: #f0e830; z-index: 1; }
