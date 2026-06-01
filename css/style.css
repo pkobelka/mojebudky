@@ -135,7 +135,7 @@ html, body {
 .pribeh-popis { color: var(--text-light); font-size: 1.12rem; line-height: 1.45; margin-bottom: 5px; opacity: 0.9; }
 .pribeh-datum { color: var(--text-muted); font-size: 1rem; }
 
-.map-wrapper { flex: 1; position: relative; min-width: 0; height: 100%; }
+.map-wrapper { flex: 1; position: relative; min-width: 280px; height: 100%; }
 #map { position: absolute; inset: 0; }
 
 .panel-right .panel-title::before { content: '📊 '; }
@@ -467,10 +467,10 @@ html, body {
 
 /* ── ADMIN DROPDOWN ── */
 #authNavArea { position: relative; }
-.admin-dropdown { display: none; position: absolute; top: calc(100% + 8px); right: 0; background: var(--panel-bg); border: 1px solid var(--accent-gold); border-radius: 14px; min-width: 320px; box-shadow: 0 10px 36px rgba(0,0,0,0.55); z-index: 1200; overflow: hidden; }
+.admin-dropdown { display: none; position: absolute; top: calc(100% + 8px); right: 0; background: var(--panel-bg); border: 1px solid var(--accent-gold); border-radius: 20px; min-width: 640px; box-shadow: 0 10px 36px rgba(0,0,0,0.55); z-index: 1200; overflow: hidden; }
 .admin-dropdown.open { display: block; }
-.admin-dropdown-hlavicka { padding: 14px 22px; font-size: 1.1rem; color: var(--accent-gold); border-bottom: 1px solid var(--panel-border); font-weight: 700; }
-.admin-dropdown-item { display: block; width: 100%; text-align: left; background: none; border: none; color: var(--text-light); font-size: 1.2rem; padding: 14px 22px; cursor: pointer; transition: background 0.15s; font-family: inherit; }
+.admin-dropdown-hlavicka { padding: 28px 44px; font-size: 2.2rem; color: var(--accent-gold); border-bottom: 1px solid var(--panel-border); font-weight: 700; }
+.admin-dropdown-item { display: block; width: 100%; text-align: left; background: none; border: none; color: var(--text-light); font-size: 2.4rem; padding: 28px 44px; cursor: pointer; transition: background 0.15s; font-family: inherit; }
 .admin-dropdown-item:hover { background: rgba(255,255,255,0.07); }
 .admin-dropdown-item.pripravujeme { color: var(--text-muted); }
 .admin-dropdown-item.odhlasit { color: #e07070; }
@@ -533,8 +533,8 @@ html, body {
 .eb-gps-input:focus { border-color: var(--accent-gold); }
 .eb-gps-hint { color: var(--text-muted); font-size: 0.8rem; font-style: italic; line-height: 1.4; }
 .eb-gps-odeslat { font-size: 0.95rem !important; padding: 10px 20px !important; }
-.admin-dropdown-sec { padding: 10px 22px 4px; font-size: 1rem; color: var(--accent-gold); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
-.admin-dropdown-budka { font-size: 1.2rem; }
+.admin-dropdown-sec { padding: 20px 44px 8px; font-size: 2rem; color: var(--accent-gold); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+.admin-dropdown-budka { font-size: 2.4rem; }
 .admin-budka-aktivni { color: var(--accent-gold) !important; font-weight: 700 !important; text-decoration: underline; text-underline-offset: 3px; text-shadow: 0 0 10px rgba(212,160,64,0.7); }
 
 /* Date inputs v tmavém formuláři */
