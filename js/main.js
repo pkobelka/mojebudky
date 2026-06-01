@@ -288,7 +288,7 @@ function _zobrazPartneriModal() {
   modal.innerHTML = `
     <div class="modal-box pm-box">
       <button class="modal-zavrit" id="modalPartneriZavrit">×</button>
-      <div class="pm-header">🤝 Partneři projektu MojeBudky.cz</div>
+      <div class="pm-header">🤝 Podporovatelé projektu MojeBudky.cz</div>
       <div class="pm-podpora">
         <div class="pm-podpora-nadpis">💛 Fandíte projektu MojeBudky? <img src="img/logo.svg" alt="" class="podpora-logo-img"></div>
         <p>Celý projekt roste a s ním i radost z každého nového ptačího souseda. Abychom mohli mapu udržovat v chodu, posílat zprávy z terénu a starat se o bezpečný chod celé aplikace, neobejde se to bez provozních nákladů (např. za hosting a zabezpečení webu).</p>
