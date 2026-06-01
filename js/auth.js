@@ -244,6 +244,7 @@ function _zobrazUvitaciModal(loginId, spravceInfo, budkyList, onContinue) {
   if (existujici) existujici.remove();
 
   const jmeno = spravceInfo ? spravceInfo.jmeno : loginId;
+  const osloveni = (spravceInfo && spravceInfo.osloveni) ? spravceInfo.osloveni : _vokativ(jmeno);
 
   const budkyText = budkyList.length === 1
     ? `budku č. ${budkyList[0].cislo}${budkyList[0].nazev ? ' – ' + budkyList[0].nazev : ''}`
@@ -259,7 +260,7 @@ function _zobrazUvitaciModal(loginId, spravceInfo, budkyList, onContinue) {
       </div>
       <div class="uvitani-obsah">
         <div class="uvitani-zprava">
-          <p>Ahoj <strong>${jmeno}</strong>,</p>
+          <p>Ahoj <strong>${osloveni}</strong>,</p>
           <p>mám velkou radost, že Tě mohu přivítat na novém webu projektu MojeBudky. Vznikal dlouhé dny a stály za ním desítky hodin práce, proto věřím, že se Ti bude líbit a najdeš na něm vše, co potřebuješ.</p>
           <p>Především Ti ale chci poděkovat za péči, kterou věnuješ budkám v terénu. Velmi si vážím lidí, kteří jsou ochotni věnovat svůj čas a energii přírodě. Záleží mi na tom, aby každá budka měla svého zodpovědného správce, a nikdy bych ji nesvěřil někomu, u koho bych měl byť jen malou pochybnost.</p>
           <p>Děkuji, že jsi jeho součástí a pomáháš společně s námi vytvářet lepší podmínky pro život ptáků v naší krajině.</p>
