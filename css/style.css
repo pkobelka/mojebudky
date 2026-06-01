@@ -63,11 +63,11 @@ html, body {
 .nav-links a:hover, .nav-links a.active { background: var(--nav-hover); color: var(--text-light); border-color: rgba(255,215,0,0.75); }
 .nav-actions { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
 .search-box { display: flex; background: rgba(255,255,255,0.12); border-radius: 20px; overflow: hidden; }
-.search-box input { background: none; border: none; color: var(--text-light); padding: 10px 16px; font-size: 1.1rem; outline: none; width: 240px; }
+.search-box input { background: none; border: none; color: var(--text-light); padding: 13px 20px; font-size: 1.5rem; outline: none; width: 320px; }
 .search-box input::placeholder { color: var(--text-muted); }
-.search-box button { background: none; border: none; color: var(--text-muted); padding: 8px 12px; cursor: pointer; font-size: 1rem; }
+.search-box button { background: none; border: none; color: var(--text-muted); padding: 10px 14px; cursor: pointer; font-size: 1.3rem; }
 .search-box button:hover { color: var(--text-light); }
-.btn-login { background: var(--orange); color: white; text-decoration: none; padding: 12px 26px; border-radius: 6px; font-size: 1.1rem; font-weight: 600; white-space: nowrap; transition: background 0.2s; border: none; cursor: pointer; }
+.btn-login { background: var(--orange); color: white; text-decoration: none; padding: 16px 34px; border-radius: 8px; font-size: 1.5rem; font-weight: 600; white-space: nowrap; transition: background 0.2s; border: none; cursor: pointer; }
 .btn-login:hover { background: var(--orange-dark); }
 
 /* ── SPLASH / UVÍTACÍ OKNO ── */
@@ -295,7 +295,7 @@ html, body {
 .nav-hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 
 /* ── NAPIŠTE NÁM v navbaru ── */
-.btn-napsat { position: relative; background: rgba(255,255,255,0.1); color: var(--text-light); border: 1px solid rgba(255,255,255,0.22); padding: 7px 14px; border-radius: 5px; font-size: 0.88rem; font-weight: 600; text-decoration: none; white-space: nowrap; transition: background 0.2s; }
+.btn-napsat { position: relative; background: rgba(255,255,255,0.1); color: var(--text-light); border: 1px solid rgba(255,255,255,0.22); padding: 10px 19px; border-radius: 7px; font-size: 1.2rem; font-weight: 600; text-decoration: none; white-space: nowrap; transition: background 0.2s; }
 .btn-napsat:hover { background: rgba(255,255,255,0.2); color: #fff; }
 .napsat-tip { display: none; position: absolute; top: calc(100% + 10px); right: 0; background: var(--panel-bg); border: 1px solid var(--panel-border); color: var(--text-light); font-size: 0.83rem; font-weight: 400; line-height: 1.6; padding: 10px 16px; border-radius: 8px; box-shadow: 0 6px 24px rgba(0,0,0,0.5); z-index: 300; min-width: 220px; text-align: left; pointer-events: none; }
 .napsat-tip strong { color: var(--accent-gold); }
