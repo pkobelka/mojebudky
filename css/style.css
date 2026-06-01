@@ -208,13 +208,13 @@ html, body {
 .nav-podpora-btn { background: rgba(255,215,0,0.15); color: #f0d800; border: 1px solid rgba(255,215,0,0.45); border-radius: 20px; padding: 10px 20px; font-size: 2.4rem; font-weight: 700; cursor: pointer; transition: all 0.2s; white-space: nowrap; font-family: inherit; }
 .nav-podpora-btn:hover { background: rgba(255,215,0,0.28); color: #ffe040; border-color: rgba(255,215,0,0.8); }
 /* Modal podpora – světlé okno */
-.podpora-modal-box { background: linear-gradient(160deg, #fffdf0 0%, #fff8d6 100%); border: 2px solid #e8c840; border-radius: 20px; padding: 0; max-width: 580px; width: 94%; position: relative; box-shadow: 0 12px 60px rgba(0,0,0,0.55); overflow: hidden; }
-.podpora-modal-header { background: linear-gradient(135deg, #3a6010, #2a4a08); padding: 22px 32px; display: flex; align-items: center; gap: 14px; }
-.podpora-modal-header-text { color: #f0d800; font-size: 1.35rem; font-weight: 800; }
-.podpora-logo-img { height: 36px; width: auto; }
-.podpora-modal-body { padding: 24px 32px 28px; }
-.podpora-modal-body p { color: #2a1a04; font-size: 1.05rem; line-height: 1.7; margin-bottom: 14px; }
-.podpora-modal-jak { color: #3a6010; font-size: 1.1rem; font-weight: 800; margin: 16px 0 8px; }
+.podpora-modal-box { background: linear-gradient(160deg, #fffdf0 0%, #fff8d6 100%); border: 2px solid #e8c840; border-radius: 24px; padding: 0; max-width: 696px; width: 94%; position: relative; box-shadow: 0 12px 60px rgba(0,0,0,0.55); overflow: hidden; }
+.podpora-modal-header { background: linear-gradient(135deg, #3a6010, #2a4a08); padding: 26px 38px; display: flex; align-items: center; gap: 17px; }
+.podpora-modal-header-text { color: #f0d800; font-size: 1.6rem; font-weight: 800; }
+.podpora-logo-img { height: 43px; width: auto; }
+.podpora-modal-body { padding: 29px 38px 34px; }
+.podpora-modal-body p { color: #2a1a04; font-size: 1.26rem; line-height: 1.7; margin-bottom: 14px; }
+.podpora-modal-jak { color: #3a6010; font-size: 1.32rem; font-weight: 800; margin: 16px 0 8px; }
 .podpora-modal-body a { color: var(--orange); font-weight: 700; }
 .podpora-modal-body a:hover { color: var(--orange-dark); }
 
