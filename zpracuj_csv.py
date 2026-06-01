@@ -75,10 +75,13 @@ def parse_historie(s):
         species_raw = re.sub(r'\s+\d+x?\s*$', '', species_raw).strip()
         species_raw = re.sub(r'\s*[:;(].*$', '', species_raw).strip()
 
-        if 'nic' in species_raw.lower():
+        sl = species_raw.lower()
+        if 'nic' in sl or sl in ('ne', 'prázdno', 'prazdno', '0'):
             results.append({'rok': yr, 'obsazeno': None})
         else:
             druh = normaliz_druh(species_raw)
+            if druh is None and sl not in ('', '-'):
+                druh = 'nezjisteno'
             results.append({'rok': yr, 'obsazeno': druh})
 
     return sorted(results, key=lambda x: x['rok'], reverse=True)
@@ -127,7 +130,7 @@ def zpracuj(csv_path, json_path):
         stav = 'aktivni'
         for h in sorted(historie, key=lambda x: x['rok'], reverse=True):
             if h['obsazeno']:
-                ptak = h['obsazeno']
+                ptak = h['obsazeno']          # může být druh nebo 'nezjisteno'
                 stav = 'osidlena'
                 break
 

@@ -59,7 +59,18 @@ const BIRD_SVG = {
   </svg>`
 };
 
-function vytvorIkonu(stav) {
+function vytvorIkonu(b) {
+  const stav = b.stav;
+  const nezjisteno = stav === 'osidlena' && (!b.ptak || b.ptak === 'nezjisteno');
+  if (nezjisteno) {
+    return L.divIcon({
+      html: `<div class="budka-marker budka-nezjisteno"><img src="img/obydleno.svg" width="44" height="44" alt=""><span class="budka-otaznik">?</span></div>`,
+      iconSize: [44, 44],
+      iconAnchor: [22, 44],
+      popupAnchor: [0, -46],
+      className: ''
+    });
+  }
   if (stav === 'osidlena') {
     return L.divIcon({
       html: `<div class="budka-marker budka-osidlena"><img src="img/obydleno.svg" width="44" height="44" alt=""></div>`,
@@ -79,10 +90,13 @@ function vytvorIkonu(stav) {
 }
 
 function formatTooltip(b) {
+  const nezjisteno = b.stav === 'osidlena' && (!b.ptak || b.ptak === 'nezjisteno');
   const isOsidlena = b.stav === 'osidlena';
-  const stavColor = isOsidlena ? '#3a9a3a' : '#7B3810';
-  const stavLabel = isOsidlena ? '🟢 Osídlená' : '🟤 Aktivní';
-  const ptakRadek = b.ptak ? `<div class="tt-ptak">🐦 ${b.ptak}</div>` : '';
+  const stavColor = nezjisteno ? '#b8860b' : isOsidlena ? '#3a9a3a' : '#7B3810';
+  const stavLabel = nezjisteno ? '🟡 Obsazená' : isOsidlena ? '🟢 Osídlená' : '🟤 Aktivní';
+  const ptakRadek = (b.ptak && b.ptak !== 'nezjisteno')
+    ? `<div class="tt-ptak">🐦 ${b.ptak}</div>`
+    : nezjisteno ? `<div class="tt-ptak" style="color:#b8860b">❓ Druh zatím nezjištěn</div>` : '';
   if (b.nazev) {
     return `<div class="budka-tooltip">
       <div class="tt-nazev-hlavni" style="border-left:3px solid ${stavColor}">${b.nazev}</div>
@@ -125,18 +139,21 @@ function formatHistorie(historie) {
 }
 
 function formatPopup(b) {
+  const nezjisteno = b.stav === 'osidlena' && (!b.ptak || b.ptak === 'nezjisteno');
   const isOsidlena = b.stav === 'osidlena';
-  const stavColor = isOsidlena ? '#3a9a3a' : '#7B3810';
-  const stavLabel = isOsidlena ? '🟢 Osídlená' : '🟤 Aktivní';
+  const stavColor = nezjisteno ? '#b8860b' : isOsidlena ? '#3a9a3a' : '#7B3810';
+  const stavLabel = nezjisteno ? '🟡 Obsazená' : isOsidlena ? '🟢 Osídlená' : '🟤 Aktivní';
 
   const nadpis = b.nazev
     ? `<span class="popup-nazev-hlavni">${b.nazev}</span><span class="popup-cislo-sub"> · č. ${b.cislo}</span>`
     : `Budka č. ${b.cislo}`;
 
   const birdSvg = b.ptak && BIRD_SVG[b.ptak] ? BIRD_SVG[b.ptak] : null;
-  const ptakBlock = b.ptak
-    ? `<div class="popup-ptak">${birdSvg ? `<span class="popup-bird-icon">${birdSvg}</span>` : '🐦'}<span>${b.ptak}</span></div>`
-    : '';
+  const ptakBlock = nezjisteno
+    ? `<div class="popup-ptak" style="color:#b8860b">❓ <span>Druh zatím nezjištěn</span></div>`
+    : b.ptak
+      ? `<div class="popup-ptak">${birdSvg ? `<span class="popup-bird-icon">${birdSvg}</span>` : '🐦'}<span>${b.ptak}</span></div>`
+      : '';
 
   const fotoBlock = b.foto
     ? `<div class="popup-foto"><img src="${b.foto}" alt="Foto budky č. ${b.cislo}"></div>`
@@ -253,7 +270,7 @@ async function inicializujMapu() {
     budky.forEach(b => {
       if (!b.lat || !b.lng) return;
       const bData = { ...b, spravce: spravci[b.cislo] || null };
-      const marker = L.marker([b.lat, b.lng], { icon: vytvorIkonu(b.stav) });
+      const marker = L.marker([b.lat, b.lng], { icon: vytvorIkonu(b) });
 
       marker.bindTooltip(formatTooltip(bData), {
         direction: 'top',
