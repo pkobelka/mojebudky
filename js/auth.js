@@ -266,13 +266,8 @@ function _zobrazUvitaciModal(loginId, spravceInfo, budkyList, onContinue) {
           <p>Ještě jednou vítej a velké díky za všechen čas, péči a energii, které projektu věnuješ!</p>
           <p class="uvitani-podpis">Petr 🐦🌿</p>
         </div>
-        <div class="uvitani-co">
-          <div class="uvitani-co-item">🏠 Edituj svoji budku — kdo v ní sídlí, foto, poznámky</div>
-          <div class="uvitani-co-item">📅 Hlásej kontroly a čištění</div>
-          <div class="uvitani-co-item">🗺️ Vidíš ji na mapě mezi ostatními budkami</div>
-        </div>
         <div class="uvitani-actions">
-          <button class="profil-btn-ulozit uvitani-btn" id="uvitaniContinue">🪪 Vyplnit profil správce →</button>
+          <button class="profil-btn-ulozit uvitani-btn" id="uvitaniContinue">Pokračuj →</button>
         </div>
       </div>
     </div>`;
