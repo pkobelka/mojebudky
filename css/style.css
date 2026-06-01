@@ -230,8 +230,14 @@ html, body {
 .footer-fb { display: inline-flex; align-items: center; gap: 6px; color: #a8c4f0; text-decoration: none; transition: color 0.15s; }
 .footer-fb:hover { color: #6ea8e8; }
 .footer-fb-icon { width: 16px; height: 16px; fill: currentColor; flex-shrink: 0; }
-.nav-fb-link { display: inline-flex !important; align-items: center; gap: 7px; }
+.footer-li { display: inline-flex; align-items: center; gap: 6px; color: var(--text-muted); font-style: italic; font-size: 0.9rem; }
+.footer-li-icon { width: 16px; height: 16px; flex-shrink: 0; opacity: 0.7; }
+.nav-fb-link { display: inline-flex !important; align-items: center; gap: 0; }
 .nav-fb-icon { width: 32px; height: 32px; flex-shrink: 0; }
+.nav-social-wrap { display: flex !important; align-items: center; gap: 8px; padding: 0 8px; border: none !important; }
+.nav-linkedin-wrap { display: inline-flex; align-items: center; gap: 4px; opacity: 0.7; cursor: default; }
+.nav-li-icon { width: 30px; height: 30px; flex-shrink: 0; }
+.nav-li-badge { font-size: 0.75rem; color: var(--text-muted); font-style: italic; white-space: nowrap; }
 .online-admins { color: var(--accent-gold); }
 
 /* ── POPUP ── */
@@ -481,10 +487,10 @@ html, body {
 
 /* ── ADMIN DROPDOWN ── */
 #authNavArea { position: relative; }
-.admin-dropdown { display: none; position: absolute; top: calc(100% + 8px); right: 0; background: var(--panel-bg); border: 1px solid var(--accent-gold); border-radius: 20px; min-width: 640px; box-shadow: 0 10px 36px rgba(0,0,0,0.55); z-index: 1200; overflow: hidden; }
+.admin-dropdown { display: none; position: absolute; top: calc(100% + 8px); right: 0; background: var(--panel-bg); border: 1px solid var(--accent-gold); border-radius: 17px; min-width: 544px; box-shadow: 0 10px 36px rgba(0,0,0,0.55); z-index: 1200; overflow: hidden; }
 .admin-dropdown.open { display: block; }
-.admin-dropdown-hlavicka { padding: 28px 44px; font-size: 2.2rem; color: var(--accent-gold); border-bottom: 1px solid var(--panel-border); font-weight: 700; }
-.admin-dropdown-item { display: block; width: 100%; text-align: left; background: none; border: none; color: var(--text-light); font-size: 2.4rem; padding: 28px 44px; cursor: pointer; transition: background 0.15s; font-family: inherit; }
+.admin-dropdown-hlavicka { padding: 24px 37px; font-size: 1.87rem; color: var(--accent-gold); border-bottom: 1px solid var(--panel-border); font-weight: 700; }
+.admin-dropdown-item { display: block; width: 100%; text-align: left; background: none; border: none; color: var(--text-light); font-size: 2.04rem; padding: 24px 37px; cursor: pointer; transition: background 0.15s; font-family: inherit; }
 .admin-dropdown-item:hover { background: rgba(255,255,255,0.07); }
 .admin-dropdown-item.pripravujeme { color: var(--text-muted); }
 .admin-dropdown-item.odhlasit { color: #e07070; }
@@ -562,8 +568,8 @@ html, body {
 .eb-gps-input:focus { border-color: var(--accent-gold); }
 .eb-gps-hint { color: var(--text-muted); font-size: 0.8rem; font-style: italic; line-height: 1.4; }
 .eb-gps-odeslat { font-size: 0.95rem !important; padding: 10px 20px !important; }
-.admin-dropdown-sec { padding: 20px 44px 8px; font-size: 2rem; color: var(--accent-gold); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
-.admin-dropdown-budka { font-size: 2.4rem; }
+.admin-dropdown-sec { padding: 17px 37px 7px; font-size: 1.7rem; color: var(--accent-gold); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+.admin-dropdown-budka { font-size: 2.04rem; }
 .admin-budka-aktivni { color: var(--accent-gold) !important; font-weight: 700 !important; text-decoration: underline; text-underline-offset: 3px; text-shadow: 0 0 10px rgba(212,160,64,0.7); }
 
 /* Date inputs v tmavém formuláři */
