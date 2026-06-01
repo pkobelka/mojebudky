@@ -453,7 +453,9 @@ html, body {
 .profil-foto-btn:hover { background: var(--orange-light); }
 .profil-header-text { flex: 1; }
 .profil-nadpis { color: var(--accent-gold); font-size: 1.5rem; font-weight: 700; margin-bottom: 6px; }
-.profil-budka { color: var(--text-light); font-size: 1.1rem; margin-bottom: 8px; }
+.profil-budka { color: var(--text-light); font-size: 1.1rem; margin-bottom: 4px; }
+.profil-budka--hlavni { font-weight: 700; margin-bottom: 2px; }
+.profil-budka--dalsi { font-size: 0.95rem; color: var(--text-muted); margin-bottom: 2px; }
 .profil-id-wrap { font-size: 0.95rem; color: var(--text-muted); }
 .profil-id { color: var(--accent-gold); font-weight: 700; letter-spacing: 1px; }
 .profil-form { padding: 28px 36px; display: flex; flex-direction: column; gap: 20px; }

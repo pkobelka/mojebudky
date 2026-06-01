@@ -541,7 +541,17 @@ function _zobrazProfilSpravce(loginId, info, budkaText) {
         </div>
         <div class="profil-header-text">
           <div class="profil-nadpis">🪪 Karta správce</div>
-          <div class="profil-budka">${budkaText}</div>
+          ${(() => {
+            const budky = info && info.budky && info.budky.length > 1 ? info.budky : null;
+            if (budky) {
+              return budky.map((b, i) => {
+                const txt = (b.nazev && b.nazev !== String(b.cislo))
+                  ? `Budka č. ${b.cislo} – ${b.nazev}` : `Budka č. ${b.cislo}`;
+                return `<div class="profil-budka${i === 0 ? ' profil-budka--hlavni' : ' profil-budka--dalsi'}">${i === 0 ? '' : '🏡 '}${txt}</div>`;
+              }).join('');
+            }
+            return `<div class="profil-budka">${budkaText}</div>`;
+          })()}
           <div class="profil-id-wrap">ID: <span class="profil-id">${loginId}</span></div>
         </div>
       </div>
