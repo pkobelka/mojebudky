@@ -77,7 +77,13 @@ async function _nactiSpravciInfo() {
 async function _overitPrihlaseni(id, heslo) {
   const spravci = await _nactiAuthSpravce();
   const hash = await sha256hex(heslo);
-  return spravci[id] && spravci[id] === hash;
+  if (spravci[id] && spravci[id] === hash) return id;
+  try {
+    const n = parseInt(id, 10);
+    const k = Object.keys(spravci).find(key => parseInt(key, 10) === n);
+    if (k && spravci[k] === hash) return k;
+  } catch {}
+  return null;
 }
 
 async function _zobrazAdminPanel(loginId) {
@@ -1052,10 +1058,10 @@ document.addEventListener('DOMContentLoaded', () => {
     loginBtn.disabled = true;
 
     try {
-      const ok = await _overitPrihlaseni(id, heslo);
-      if (ok) {
+      const kanonId = await _overitPrihlaseni(id, heslo);
+      if (kanonId) {
         zavritModal();
-        _zobrazAdminPanel(id);
+        _zobrazAdminPanel(kanonId);
       } else {
         loginError.textContent = 'Neplatné ID nebo heslo.';
         loginError.hidden = false;
