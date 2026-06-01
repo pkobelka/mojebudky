@@ -437,6 +437,41 @@ html, body {
   .footer-sep { display: none; }
   .map-hint { font-size: 1rem; padding: 10px 16px; }
   .btn-zpet-mapa { font-size: 1rem; padding: 10px 18px; }
+
+  /* Admin dropdown — full-width na mobilu */
+  .admin-dropdown { position: fixed; top: 58px; left: 8px; right: 8px; width: auto; min-width: unset; border-radius: 12px; max-height: 80vh; overflow-y: auto; }
+  .admin-dropdown-hlavicka { padding: 16px 20px; font-size: 1.4rem; }
+  .admin-dropdown-item { font-size: 1.35rem; padding: 16px 20px; }
+  .admin-dropdown-sec { padding: 12px 20px 6px; font-size: 1.1rem; }
+  .admin-dropdown-budka { font-size: 1.35rem; }
+
+  /* Admin banner — kompakt */
+  .admin-banner { flex-wrap: wrap; gap: 6px; padding: 8px 12px; font-size: 0.82rem; }
+
+  /* Karta správce — mobilní layout */
+  .profil-box { width: 98%; }
+  .profil-header { padding: 18px 16px; gap: 14px; }
+  .profil-foto { width: 72px; height: 72px; }
+  .profil-nadpis { font-size: 1.2rem; }
+  .profil-budka { font-size: 0.95rem; }
+  .profil-form { padding: 16px; gap: 14px; }
+  .profil-row { flex-direction: column; gap: 10px; }
+  .profil-field--wide { flex: 1; min-width: unset; }
+  .profil-actions { padding: 14px 16px 20px; }
+
+  /* Modaly obecně — plná šířka */
+  .modal-box { width: 98% !important; max-width: unset !important; }
+  .uvitani-box { max-width: 98% !important; }
+  .uvitani-zprava { margin: 16px 16px 0; font-size: 1rem; }
+  .uvitani-logo-wrap { padding: 20px 16px 16px; }
+
+  /* Detail ptáka — foto pod text */
+  .druh-modal-box--foto { flex-direction: column; }
+  .druh-modal-foto { width: 100%; max-height: 200px; }
+  .druh-modal-foto-img { width: 100%; height: 200px; object-fit: cover; }
+
+  /* Info bar — svátek a narozeniny na druhém řádku */
+  .bar-gratulace, .bar-narozeniny { display: block; font-size: 0.8rem; }
 }
 
 /* ── LANDSCAPE MOBIL ── */
