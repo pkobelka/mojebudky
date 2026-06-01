@@ -70,6 +70,19 @@ html, body {
 .btn-login { background: var(--orange); color: white; text-decoration: none; padding: 12px 26px; border-radius: 6px; font-size: 1.1rem; font-weight: 600; white-space: nowrap; transition: background 0.2s; border: none; cursor: pointer; }
 .btn-login:hover { background: var(--orange-dark); }
 
+/* ── SPLASH / UVÍTACÍ OKNO ── */
+.splash-overlay { position: fixed; inset: 0; z-index: 2000; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; backdrop-filter: blur(3px); transition: opacity 0.8s ease; }
+.splash-overlay.fade-out { opacity: 0; pointer-events: none; }
+.splash-box { background: linear-gradient(160deg, #d4f5d4 0%, #a8e6a8 50%, #7dd67d 100%); border-radius: 24px; padding: 60px 80px 50px; text-align: center; max-width: 720px; width: 92%; box-shadow: 0 16px 60px rgba(0,0,0,0.5); animation: splashIn 0.5s ease; }
+@keyframes splashIn { from { transform: scale(0.85); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+.splash-logo { width: 110px; height: auto; margin-bottom: 24px; filter: drop-shadow(0 4px 12px rgba(0,0,0,0.2)); }
+.splash-nadpis { color: #1a5a1a; font-size: 2.6rem; font-weight: 800; margin-bottom: 12px; letter-spacing: 0.3px; }
+.splash-podnadpis { color: #2d7a2d; font-size: 1.25rem; font-weight: 500; margin-bottom: 24px; line-height: 1.5; }
+.splash-ikony { font-size: 2.2rem; margin-bottom: 28px; letter-spacing: 8px; }
+.splash-bar { background: rgba(0,0,0,0.12); border-radius: 50px; height: 6px; overflow: hidden; }
+.splash-bar-fill { background: #1a7a1a; height: 100%; border-radius: 50px; width: 0%; animation: splashProgress 3.5s linear forwards; }
+@keyframes splashProgress { from { width: 0%; } to { width: 100%; } }
+
 /* ── LOGIN MODAL ── */
 .modal-overlay { position: fixed; inset: 0; z-index: 1000; background: rgba(10, 30, 5, 0.78); display: flex; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
 .modal-overlay[hidden] { display: none; }

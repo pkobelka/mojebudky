@@ -522,7 +522,21 @@ function inicializujFullscreenMapu() {
   });
 }
 
+function inicializujSplash() {
+  const splash = document.getElementById('splashScreen');
+  if (!splash) return;
+  splash.addEventListener('click', () => {
+    splash.classList.add('fade-out');
+    setTimeout(() => splash.remove(), 800);
+  });
+  setTimeout(() => {
+    splash.classList.add('fade-out');
+    setTimeout(() => splash.remove(), 800);
+  }, 4000);
+}
+
 document.addEventListener('DOMContentLoaded', () => {
+  inicializujSplash();
   aktualizujListu();
   setInterval(tickCas, 30000);
   nactiStatistiky();
