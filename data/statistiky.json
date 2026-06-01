@@ -84,10 +84,46 @@
       "vedecky": "Lophophanes cristatus",
       "pocet": 1,
       "otvor": "28–32 mm",
-      "popis": "Vzácnější sýkora s typickým chocholkem. Hndí hlavně v jehličnatých lesích. Výskyt v budce je pro projekt vzácnou odměnou!",
+      "popis": "Vzácnější sýkora s typickým chocholkem. Hnízdí hlavně v jehličnatých lesích. Výskyt v budce je pro projekt vzácnou odměnou!",
       "wiki": "https://cs.wikipedia.org/wiki/S%C3%BDkora_paruk%C3%A1%C5%99ka",
       "zpev": "https://xeno-canto.org/species/Lophophanes-cristatus",
       "foto": "https://commons.wikimedia.org/wiki/Special:FilePath/Lophophanes_cristatus_(Paridae).jpg?width=600",
+      "foto_autor": "Wikimedia Commons CC BY-SA"
+    },
+    {
+      "id": "babka",
+      "nazev": "Sýkora babka",
+      "vedecky": "Poecile palustris",
+      "pocet": 0,
+      "otvor": "28–32 mm",
+      "popis": "Nenápadná sýkorka hnědohnědé barvy s černou čepičkou. Žije převážně v listnatých lesích a sadech. V budkách hnízdí méně často než příbuzné druhy.",
+      "wiki": "https://cs.wikipedia.org/wiki/S%C3%BDkora_babka",
+      "zpev": "https://xeno-canto.org/species/Poecile-palustris",
+      "foto": "https://commons.wikimedia.org/wiki/Special:FilePath/Marsh_tit_(Poecile_palustris).jpg?width=600",
+      "foto_autor": "Wikimedia Commons CC BY-SA"
+    },
+    {
+      "id": "uhelnicek",
+      "nazev": "Sýkora úhelníček",
+      "vedecky": "Periparus ater",
+      "pocet": 0,
+      "otvor": "28 mm",
+      "popis": "Nejmenší česká sýkora s typickou bílou skvrnou na týlu. Preferuje jehličnaté lesy. Ochotně obsadí budku s malým otvorem 28 mm.",
+      "wiki": "https://cs.wikipedia.org/wiki/S%C3%BDkora_%C3%BAheln%C3%AD%C4%8Dek",
+      "zpev": "https://xeno-canto.org/species/Periparus-ater",
+      "foto": "https://commons.wikimedia.org/wiki/Special:FilePath/Coal_tit_(Periparus_ater)_2.jpg?width=600",
+      "foto_autor": "Wikimedia Commons CC BY-SA"
+    },
+    {
+      "id": "slavik",
+      "nazev": "Slavík obecný",
+      "vedecky": "Luscinia megarhynchos",
+      "pocet": 0,
+      "otvor": "32–35 mm",
+      "popis": "Pěvec proslulý svým nočním zpěvem. Nenápadné hnědé zbarvení ukrývá hudebního virtuosa – jeho zpěv patří k nejkrásnějším v přírodě.",
+      "wiki": "https://cs.wikipedia.org/wiki/Slav%C3%ADk_obecn%C3%BD",
+      "zpev": "https://xeno-canto.org/species/Luscinia-megarhynchos",
+      "foto": "https://commons.wikimedia.org/wiki/Special:FilePath/Luscinia_megarhynchos_-_Common_Nightingale.jpg?width=600",
       "foto_autor": "Wikimedia Commons CC BY-SA"
     }
   ],

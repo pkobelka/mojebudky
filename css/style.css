@@ -524,7 +524,7 @@ html, body {
 .eb-gps-odeslat { font-size: 0.95rem !important; padding: 10px 20px !important; }
 
 /* ── EDITOVAT BUDKU ── */
-.eb-modal { max-width: 760px; }
+.eb-modal { max-width: 646px; }
 .eb-rok-ctrl { display: flex; align-items: center; gap: 0; }
 .eb-rok-btn { background: var(--orange); color: #fff; border: none; border-radius: 8px; width: 48px; height: 48px; font-size: 1.2rem; cursor: pointer; flex-shrink: 0; transition: background 0.15s; touch-action: manipulation; }
 .eb-rok-btn:hover { background: var(--orange-dark); }
@@ -548,7 +548,7 @@ html, body {
 .profil-field input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(0.8) sepia(1) saturate(2) hue-rotate(10deg); cursor: pointer; width: 20px; height: 20px; }
 .eb-readonly-info { display: flex; flex-direction: column; gap: 5px; align-items: flex-end; font-size: 0.95rem; color: var(--text-muted); flex-shrink: 0; }
 .eb-chipy { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 8px; }
-.eb-chip { background: rgba(255,255,255,0.07); border: 2px solid var(--panel-border); color: var(--text-light); border-radius: 24px; padding: 10px 22px; font-size: 1.05rem; cursor: pointer; transition: all 0.15s; }
+.eb-chip { background: rgba(255,255,255,0.07); border: 2px solid var(--panel-border); color: var(--text-light); border-radius: 24px; padding: 8px 18px; font-size: 0.89rem; cursor: pointer; transition: all 0.15s; }
 .eb-chip:hover { background: rgba(255,255,255,0.14); border-color: var(--accent-gold); }
 .eb-chip--sel { background: var(--orange); border-color: var(--orange); color: #fff; font-weight: 700; }
 .eb-chip--jiny { border-style: dashed; color: var(--text-muted); }
