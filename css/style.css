@@ -51,9 +51,9 @@ html, body {
 #app { position: relative; z-index: 1; display: grid; grid-template-rows: auto auto 1fr auto auto; height: 100vh; overflow: hidden; background: transparent; }
 
 .navbar { background: var(--nav-bg); display: flex; align-items: center; padding: 0 28px; height: 140px; gap: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.4); }
-.nav-logo { display: flex; align-items: center; gap: 14px; text-decoration: none; flex-shrink: 0; border: 2px solid rgba(255,215,0,0.45); border-radius: 14px; padding: 6px 14px 6px 6px; background: rgba(255,215,0,0.06); transition: border-color 0.2s, background 0.2s; }
+.nav-logo { display: flex; align-items: center; gap: 14px; text-decoration: none; flex-shrink: 0; border: 2px solid rgba(255,215,0,0.45); border-radius: 14px; padding: 4px 14px 4px 6px; background: rgba(255,215,0,0.06); transition: border-color 0.2s, background 0.2s; }
 .nav-logo:hover { border-color: rgba(255,215,0,0.8); background: rgba(255,215,0,0.12); }
-.nav-logo-img { width: 100px; height: 133px; }
+.nav-logo-img { width: 88px; height: 117px; }
 .stat-svg-icon { width: 40px; height: 40px; object-fit: contain; }
 .logo-textblock { display: flex; flex-direction: column; line-height: 1.1; }
 .logo-text { color: var(--text-light); font-size: 3rem; font-weight: 700; letter-spacing: 0.5px; }
@@ -363,6 +363,9 @@ html, body {
 .druh-modal-info-item { background: rgba(255,255,255,0.06); border-radius: 10px; padding: 16px 20px; }
 .druh-modal-info-label { color: var(--text-muted); font-size: 1.05rem; margin-bottom: 6px; }
 .druh-modal-info-value { color: var(--text-light); font-size: 1.5rem; font-weight: 600; }
+.druh-modal-links { display: flex; flex-direction: column; gap: 10px; margin-top: 4px; }
+.druh-modal-zpev { display: inline-flex; align-items: center; gap: 8px; background: linear-gradient(135deg, #1a5a1a, #2d8a2d); color: #fff; font-size: 1.2rem; font-weight: 700; padding: 12px 22px; border-radius: 50px; text-decoration: none; transition: all 0.2s; box-shadow: 0 3px 12px rgba(0,0,0,0.3); width: fit-content; }
+.druh-modal-zpev:hover { background: linear-gradient(135deg, #2d8a2d, #3aaa3a); transform: translateY(-2px); box-shadow: 0 5px 18px rgba(0,0,0,0.4); }
 .druh-modal-wiki { display: inline-block; color: var(--orange-light); font-size: 1.25rem; text-decoration: none; transition: color 0.15s; }
 .druh-modal-wiki:hover { color: var(--accent-gold); text-decoration: underline; }
 

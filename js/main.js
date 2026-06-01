@@ -1,4 +1,4 @@
-const DNY = ['neděle','pondedí','ústerý','středa','čtvrtek','pátek','sobota'];
+const DNY = ['neděle','pondělí','úterý','středa','čtvrtek','pátek','sobota'];
 const MESICE = ['ledna','února','března','dubna','května','června','července','srpna','září','října','listopadu','prosince'];
 
 const PREZDIVKY = {
@@ -407,7 +407,10 @@ function zobrazModalDruhu(druh, iconSvg) {
             <div class="druh-modal-info-value">${druh.otvor || '—'}</div>
           </div>
         </div>
-        ${druh.wiki ? `<a href="${druh.wiki}" class="druh-modal-wiki" target="_blank" rel="noopener">📖 Více na Wikipedii →</a>` : ''}
+        <div class="druh-modal-links">
+          ${druh.zpev ? `<a href="${druh.zpev}" class="druh-modal-zpev" target="_blank" rel="noopener">🎵 Chceš si poslechnout, jak zpívá?</a>` : ''}
+          ${druh.wiki ? `<a href="${druh.wiki}" class="druh-modal-wiki" target="_blank" rel="noopener">📖 Více na Wikipedii →</a>` : ''}
+        </div>
       </div>
     </div>`;
 
