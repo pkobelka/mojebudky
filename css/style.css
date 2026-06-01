@@ -516,6 +516,18 @@ html, body {
 .zadost-btn-ok { margin-top: 8px; background: #2d7a2d; border: none; border-radius: 6px; color: #fff; padding: 6px 16px; font-size: 0.9rem; cursor: pointer; }
 .zadost-btn-ok:hover { background: #3aaa3a; }
 
+/* ── UVÍTACÍ MODAL (první přihlášení) ── */
+.uvitani-box { max-width: 560px; padding: 0 0 36px; text-align: center; overflow: hidden; }
+.uvitani-logo-wrap { background: linear-gradient(135deg, #1a3318 0%, #2a5a28 100%); padding: 32px 36px 24px; }
+.uvitani-logo { width: 150px; }
+.uvitani-nadpis { font-size: 1.55rem; font-weight: 800; color: var(--accent-gold); margin: 22px 32px 0; line-height: 1.3; }
+.uvitani-zprava { margin: 18px 32px 0; color: var(--text-light); font-size: 1.05rem; line-height: 1.75; border-left: 3px solid #3a8a3a; padding: 12px 18px; text-align: left; background: rgba(255,255,255,0.04); border-radius: 0 8px 8px 0; font-style: italic; }
+.uvitani-co { margin: 20px 32px 0; display: flex; flex-direction: column; gap: 10px; text-align: left; }
+.uvitani-co-item { color: var(--text-light); font-size: 1rem; padding: 10px 16px; background: rgba(255,255,255,0.05); border-radius: 8px; line-height: 1.4; }
+.uvitani-actions { margin: 24px 32px 0; }
+.uvitani-btn { width: 100%; font-size: 1.15rem !important; padding: 16px 24px !important; background: linear-gradient(135deg, #1a5a1a, #2d8a2d) !important; }
+.uvitani-btn:hover { background: linear-gradient(135deg, #236023, #3aaa3a) !important; }
+
 /* ── GPS OPRAVA ── */
 .eb-gps-hlasit-btn { background: none; border: none; color: #e09030; cursor: pointer; font-size: 1rem; padding: 0 4px; vertical-align: middle; opacity: 0.8; transition: opacity 0.15s; }
 .eb-gps-hlasit-btn:hover { opacity: 1; }

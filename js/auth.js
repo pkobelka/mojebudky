@@ -85,6 +85,7 @@ async function _zobrazAdminPanel(loginId) {
   const spravceInfo = info && info[loginId];
 
   const jmeno = spravceInfo ? spravceInfo.jmeno : loginId;
+  const jeAdmin = !!(spravceInfo && spravceInfo.spravce === 'admin');
 
   // Normalizace: budky[] (budoucí) nebo single budka_cislo
   const budkyList = (spravceInfo && spravceInfo.budky && spravceInfo.budky.length)
@@ -108,16 +109,22 @@ async function _zobrazAdminPanel(loginId) {
   const profil = profilFirebase ? Object.assign({}, profilLocal, profilFirebase) : profilLocal;
   const osloveni = (profil && profil.osloveni) ? profil.osloveni
     : (spravceInfo && spravceInfo.osloveni) ? spravceInfo.osloveni : _vokativ(jmeno);
-  _zobrazToast(`Ahoj ${osloveni}, vítám Tě v komunitě správců mých budek! 🌿 Petr`);
-
-  const jePoprve = !localStorage.getItem('mb_firstlogin_' + loginId);
-  if (jePoprve) {
-    setTimeout(() => _zobrazProfilSpravce(loginId, spravceInfo, budkaText), 7000);
+  if (!jeAdmin && !localStorage.getItem('mb_welcomed_' + loginId)) {
+    localStorage.setItem('mb_welcomed_' + loginId, '1');
+    setTimeout(() => {
+      _zobrazUvitaciModal(loginId, spravceInfo, budkyList, () => {
+        _zobrazProfilSpravce(loginId, spravceInfo, budkaText);
+      });
+    }, 800);
+  } else {
+    _zobrazToast(`Ahoj ${osloveni}, vítám Tě v komunitě správců mých budek! 🌿 Petr`);
+    if (!jeAdmin && !localStorage.getItem('mb_firstlogin_' + loginId)) {
+      setTimeout(() => _zobrazProfilSpravce(loginId, spravceInfo, budkaText), 7000);
+    }
   }
 
   if (typeof window._presenceSetAdmin === 'function') window._presenceSetAdmin(true);
 
-  const jeAdmin = !!(spravceInfo && spravceInfo.spravce === 'admin');
   window._aktualniSpravce = { loginId, spravceInfo, budkyList, jeAdmin };
   window._editBudku = _zobrazEditBudky;
 
@@ -229,6 +236,47 @@ async function _zobrazAdminPanel(loginId) {
       item.textContent = item.textContent.replace(' – Připravujeme…', '') + ' – Připravujeme…';
       setTimeout(() => { item.textContent = item.textContent.replace(' – Připravujeme…', ''); }, 2000);
     }
+  });
+}
+
+function _zobrazUvitaciModal(loginId, spravceInfo, budkyList, onContinue) {
+  const existujici = document.getElementById('modalUvitani');
+  if (existujici) existujici.remove();
+
+  const jmeno = spravceInfo ? spravceInfo.jmeno : loginId;
+
+  const budkyText = budkyList.length === 1
+    ? `budku č. ${budkyList[0].cislo}${budkyList[0].nazev ? ' – ' + budkyList[0].nazev : ''}`
+    : `budky č. ${budkyList.map(b => b.cislo).join(', ')}`;
+
+  const modal = document.createElement('div');
+  modal.id = 'modalUvitani';
+  modal.className = 'modal-overlay';
+  modal.innerHTML = `
+    <div class="modal-box uvitani-box">
+      <div class="uvitani-logo-wrap">
+        <img src="img/logo.svg" class="uvitani-logo" alt="MojeBudky">
+      </div>
+      <div class="uvitani-nadpis">Vítej v rodině MojeBudky! 🌿</div>
+      <div class="uvitani-zprava">
+        „Ahoj ${jmeno}, jsem rád, že ses připojil/a k projektu a že se poctivě staráš
+        o ${budkyText}. Záleží mi na tom, aby každá měla svého poctivého správce
+        a my všichni ostatní věděli, kdo v ní bydlí. Díky moc! <strong>Petr</strong>"
+      </div>
+      <div class="uvitani-co">
+        <div class="uvitani-co-item">🏠 Edituj svoji budku — kdo v ní sídlí, foto, poznámky</div>
+        <div class="uvitani-co-item">📅 Hlásej kontroly a čištění</div>
+        <div class="uvitani-co-item">🗺️ Vidíš ji na mapě mezi ostatními budkami</div>
+      </div>
+      <div class="uvitani-actions">
+        <button class="profil-btn-ulozit uvitani-btn" id="uvitaniContinue">🪪 Vyplnit profil správce →</button>
+      </div>
+    </div>`;
+  document.body.appendChild(modal);
+
+  document.getElementById('uvitaniContinue').addEventListener('click', () => {
+    modal.remove();
+    if (onContinue) onContinue();
   });
 }
 
