@@ -209,10 +209,24 @@ function _poslechniAktualityFirebase() {
   const db = typeof firebase !== 'undefined' ? firebase.database() : null;
   if (!db) return;
   _aktualityListenerSet = true;
+
+  let _liveEntries = [];
+  let _fbAktuality = [];
+
+  function _rerender() {
+    _renderAktualityPanel([..._fbAktuality, ..._statickeAktuality], _liveEntries);
+  }
+
   db.ref('aktivita').orderByChild('ts').limitToLast(10).on('value', snap => {
-    const entries = [];
-    snap.forEach(child => { entries.unshift(child.val()); });
-    _renderAktualityPanel(_statickeAktuality, entries);
+    _liveEntries = [];
+    snap.forEach(child => { _liveEntries.unshift(child.val()); });
+    _rerender();
+  });
+
+  db.ref('aktuality').orderByChild('ts').limitToLast(20).on('value', snap => {
+    _fbAktuality = [];
+    snap.forEach(child => { _fbAktuality.unshift(child.val()); });
+    _rerender();
   });
 }
 

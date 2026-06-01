@@ -144,8 +144,12 @@ async function _zobrazAdminPanel(loginId) {
     <div class="admin-dropdown-hlavicka">👤 ${jmeno} &nbsp;·&nbsp; ${hlavickaText}</div>
     <button class="admin-dropdown-item" data-akce="karta">🪪 Karta správce / Editovat</button>
     ${budkyMenuHTML}
-    <button class="admin-dropdown-item pripravujeme" data-akce="clanek">📝 Vložit článek</button>
-    ${jeAdmin ? `<div class="admin-dropdown-oddelovac"></div><button class="admin-dropdown-item admin-item-zadosti" data-akce="zadosti">📬 Žádosti správců <span class="admin-badge" id="adminBadge" hidden>0</span></button>` : ''}
+    ${jeAdmin
+      ? `<button class="admin-dropdown-item" data-akce="aktualita">📰 Přidat aktualitu</button>
+         <div class="admin-dropdown-oddelovac"></div>
+         <button class="admin-dropdown-item" data-akce="aktivita">📊 Aktivita správců</button>
+         <button class="admin-dropdown-item admin-item-zadosti" data-akce="zadosti">📬 Žádosti správců <span class="admin-badge" id="adminBadge" hidden>0</span></button>`
+      : `<button class="admin-dropdown-item pripravujeme" data-akce="clanek">📝 Vložit článek</button>`}
     <div class="admin-dropdown-oddelovac"></div>
     <button class="admin-dropdown-item odhlasit" data-akce="odhlasit">🚪 Odhlásit se</button>
   `;
@@ -209,9 +213,161 @@ async function _zobrazAdminPanel(loginId) {
       return;
     }
 
+    if (akce === 'aktivita') {
+      _zobrazAdminAktivitu();
+      dropdown.classList.remove('open');
+      return;
+    }
+
+    if (akce === 'aktualita') {
+      _zobrazPridatAktualitu();
+      dropdown.classList.remove('open');
+      return;
+    }
+
     if (item.classList.contains('pripravujeme')) {
       item.textContent = item.textContent.replace(' – Připravujeme…', '') + ' – Připravujeme…';
       setTimeout(() => { item.textContent = item.textContent.replace(' – Připravujeme…', ''); }, 2000);
+    }
+  });
+}
+
+function _zobrazAdminAktivitu() {
+  const existujici = document.getElementById('modalAktivita');
+  if (existujici) existujici.remove();
+  const db = _getFirebaseDB();
+  if (!db) { alert('Firebase není dostupná'); return; }
+
+  const modal = document.createElement('div');
+  modal.id = 'modalAktivita';
+  modal.className = 'modal-overlay';
+  modal.innerHTML = `
+    <div class="modal-box profil-box">
+      <button class="modal-zavrit" id="aktivitaZavrit">×</button>
+      <div class="profil-header"><div class="profil-header-text">
+        <div class="profil-nadpis">📊 Aktivita správců</div>
+        <div class="profil-budka" style="color:var(--text-muted);font-size:0.9rem">posledních 50 záznamů</div>
+      </div></div>
+      <div class="profil-form" id="aktivitaObsah"><div style="color:var(--text-muted)">Načítám…</div></div>
+    </div>`;
+  document.body.appendChild(modal);
+  document.getElementById('aktivitaZavrit').addEventListener('click', () => modal.remove());
+  modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
+
+  db.ref('aktivita').orderByChild('ts').limitToLast(50).once('value', snap => {
+    const entries = [];
+    snap.forEach(child => entries.unshift(child.val()));
+    const container = document.getElementById('aktivitaObsah');
+    if (!entries.length) {
+      container.innerHTML = '<div style="color:var(--text-muted)">Zatím žádná aktivita 🌿</div>';
+      return;
+    }
+    container.innerHTML = `<div class="aktivita-seznam">${entries.map(v => {
+      const datum = v.ts ? new Date(v.ts).toLocaleDateString('cs-CZ') : '—';
+      const cas   = v.ts ? new Date(v.ts).toLocaleTimeString('cs-CZ', { hour: '2-digit', minute: '2-digit' }) : '';
+      const budka = v.budka_cislo ? `Budka č. ${v.budka_cislo}${v.budka_nazev ? ' – ' + v.budka_nazev : ''}` : '';
+      return `<div class="zadost-item">
+        <strong>${v.jmeno || v.loginId}</strong>${budka ? ` · <span class="zadost-detail">${budka}</span>` : ''}<br>
+        <span>${v.zprava}</span><br>
+        <span class="zadost-cas">${datum} · ${cas}</span>
+      </div>`;
+    }).join('')}</div>`;
+  });
+}
+
+function _zobrazPridatAktualitu() {
+  const existujici = document.getElementById('modalAktualita');
+  if (existujici) existujici.remove();
+  const db = _getFirebaseDB();
+
+  const DRUHY = [
+    { id: 'konadra',   nazev: 'Sýkora koňadra' },
+    { id: 'modrinka',  nazev: 'Sýkora modřinka' },
+    { id: 'parukarka', nazev: 'Sýkora parukářka' },
+    { id: 'vrabec',    nazev: 'Vrabec domácí' },
+    { id: 'babka',     nazev: 'Sýkora babka' },
+    { id: 'uhelnicek', nazev: 'Sýkora úhelníček' },
+    { id: 'slavik',    nazev: 'Slavík obecný' },
+  ];
+  const NAZVY = Object.fromEntries(DRUHY.map(d => [d.id, d.nazev]));
+
+  const dnes = new Date();
+  const datumDefault = `${dnes.getDate()}. ${dnes.getMonth() + 1}. ${dnes.getFullYear()}`;
+
+  const modal = document.createElement('div');
+  modal.id = 'modalAktualita';
+  modal.className = 'modal-overlay';
+  modal.innerHTML = `
+    <div class="modal-box profil-box" style="max-width:560px">
+      <button class="modal-zavrit" id="aktualitaZavrit">×</button>
+      <div class="profil-header"><div class="profil-header-text">
+        <div class="profil-nadpis">📰 Přidat aktualitu</div>
+      </div></div>
+      <div class="profil-form">
+        <div class="profil-row">
+          <div class="profil-field profil-field--wide">
+            <label>Druh ptáka</label>
+            <select id="aktPtak" class="profil-select">
+              ${DRUHY.map(d => `<option value="${d.id}">${d.nazev}</option>`).join('')}
+            </select>
+          </div>
+          <div class="profil-field">
+            <label>Č. budky</label>
+            <input type="number" id="aktBudka" min="1" max="999" placeholder="např. 69">
+          </div>
+        </div>
+        <div class="profil-row">
+          <div class="profil-field profil-field--wide">
+            <label>Datum</label>
+            <input type="text" id="aktDatum" value="${datumDefault}" placeholder="14. 10. 2024">
+          </div>
+          <div class="profil-field">
+            <label>Čas</label>
+            <input type="text" id="aktCas" placeholder="09:15">
+          </div>
+        </div>
+        <div class="profil-field">
+          <label>Text aktuality</label>
+          <textarea id="aktText" rows="3" placeholder="Popis aktuality…"></textarea>
+        </div>
+        <div id="aktMsg" class="profil-ulozeno" hidden></div>
+      </div>
+      <div class="profil-actions">
+        <button class="profil-btn-ulozit" id="aktUlozit">💾 Uložit aktualitu</button>
+      </div>
+    </div>`;
+  document.body.appendChild(modal);
+  document.getElementById('aktualitaZavrit').addEventListener('click', () => modal.remove());
+  modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
+
+  document.getElementById('aktUlozit').addEventListener('click', async () => {
+    const ikona  = document.getElementById('aktPtak').value;
+    const budkaId = parseInt(document.getElementById('aktBudka').value) || null;
+    const datum  = document.getElementById('aktDatum').value.trim();
+    const cas    = document.getElementById('aktCas').value.trim();
+    const text   = document.getElementById('aktText').value.trim();
+    const msg    = document.getElementById('aktMsg');
+    msg.hidden   = true;
+
+    if (!text)  { msg.textContent = '⚠ Zadejte text aktuality'; msg.hidden = false; return; }
+    if (!datum) { msg.textContent = '⚠ Zadejte datum'; msg.hidden = false; return; }
+
+    const polozka = {
+      ikona, ptak: NAZVY[ikona] || ikona, text, datum,
+      cas: cas || null, budka_id: budkaId,
+      ts: typeof firebase !== 'undefined' ? firebase.database.ServerValue.TIMESTAMP : Date.now(),
+    };
+
+    if (db) {
+      try {
+        await db.ref('aktuality').push(polozka);
+        msg.textContent = '✓ Aktualita uložena!';
+        msg.hidden = false;
+        setTimeout(() => modal.remove(), 1500);
+      } catch { msg.textContent = '⚠ Nepodařilo se uložit'; msg.hidden = false; }
+    } else {
+      msg.textContent = '⚠ Firebase není dostupná';
+      msg.hidden = false;
     }
   });
 }

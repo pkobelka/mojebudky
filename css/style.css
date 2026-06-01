@@ -464,6 +464,10 @@ html, body {
 .profil-field input { background: rgba(255,255,255,0.07); border: 1px solid var(--panel-border); border-radius: 8px; color: var(--text-light); font-size: 1.15rem; padding: 12px 16px; outline: none; transition: border-color 0.2s; width: 100%; box-sizing: border-box; }
 .profil-field input:focus { border-color: var(--accent-gold); background: rgba(255,255,255,0.1); }
 .profil-field input[readonly] { opacity: 0.5; cursor: not-allowed; }
+.profil-select { background: rgba(255,255,255,0.07); border: 1px solid var(--panel-border); border-radius: 8px; color: var(--text-light); font-size: 1.15rem; padding: 12px 16px; outline: none; transition: border-color 0.2s; width: 100%; box-sizing: border-box; cursor: pointer; }
+.profil-select:focus { border-color: var(--accent-gold); background: rgba(255,255,255,0.1); }
+.profil-select option { background: #1a2a1a; color: var(--text-light); }
+.aktivita-seznam { display: flex; flex-direction: column; gap: 0; max-height: 60vh; overflow-y: auto; }
 .profil-hint { color: var(--text-muted); font-size: 0.85rem; font-style: italic; text-transform: none; letter-spacing: 0; margin-left: 4px; }
 .profil-narozeniny { cursor: help; }
 .profil-actions { padding: 22px 36px 30px; display: flex; align-items: center; gap: 16px; border-top: 1px solid var(--panel-border); }
