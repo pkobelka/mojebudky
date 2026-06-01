@@ -29,8 +29,7 @@
     const el = document.getElementById('onlinePocet');
     if (!el) return;
 
-    const totalSlovo = total === 1 ? 'online' : 'online';
-    let txt = `🟢 <strong>${total}</strong> ${totalSlovo}`;
+    let txt = `🟢 <strong>${total}</strong> online`;
     if (admins > 0) {
       const aSlovo = admins === 1 ? 'správce' : admins <= 4 ? 'správci' : 'správců';
       txt += ` <span class="online-admins">(z toho ${admins} ${aSlovo})</span>`;
@@ -38,7 +37,27 @@
     el.innerHTML = txt;
   });
 
+  // Volá se z auth.js po přihlášení — přidá jméno, budky a loginId do presence záznamu
   window._presenceSetAdmin = function (isAdmin) {
     if (myRef) myRef.update({ admin: !!isAdmin });
+  };
+
+  window._presenceSetSpravce = function (loginId, jmeno, budkyList, jeAdmin) {
+    if (!myRef) return;
+    const budky = (budkyList || []).map(b => b.cislo).join(', ');
+    myRef.update({
+      loginId,
+      jmeno: jmeno || loginId,
+      budky,
+      admin: !!jeAdmin,
+      prihlaseniTs: firebase.database.ServerValue.TIMESTAMP
+    });
+    // Zaloguj přihlášení do historie
+    db.ref('prihlaseni').push({
+      ts: firebase.database.ServerValue.TIMESTAMP,
+      loginId,
+      jmeno: jmeno || loginId,
+      budky
+    });
   };
 })();

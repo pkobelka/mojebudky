@@ -201,7 +201,9 @@ async function _zobrazAdminPanel(loginId) {
     }
   }
 
-  if (typeof window._presenceSetAdmin === 'function') window._presenceSetAdmin(true);
+  if (typeof window._presenceSetAdmin === 'function') window._presenceSetAdmin(jeAdmin);
+  if (typeof window._presenceSetSpravce === 'function')
+    window._presenceSetSpravce(loginId, jmeno, budkyList, jeAdmin);
 
   // Push notifikace: permission + narozeniny
   _registrovatPushNotifikace(loginId);
@@ -236,7 +238,9 @@ async function _zobrazAdminPanel(loginId) {
     ${jeAdmin
       ? `<button class="admin-dropdown-item" data-akce="aktualita">📰 Přidat aktualitu</button>
          <div class="admin-dropdown-oddelovac"></div>
+         <button class="admin-dropdown-item" data-akce="online">🟢 Kdo je online</button>
          <button class="admin-dropdown-item" data-akce="aktivita">📊 Aktivita správců</button>
+         <button class="admin-dropdown-item" data-akce="historie">📜 Historie přihlášení</button>
          <button class="admin-dropdown-item admin-item-zadosti" data-akce="zadosti">📬 Žádosti správců <span class="admin-badge" id="adminBadge" hidden>0</span></button>`
       : `<button class="admin-dropdown-item pripravujeme" data-akce="clanek">📝 Vložit článek</button>`}
     <div class="admin-dropdown-oddelovac"></div>
@@ -310,6 +314,18 @@ async function _zobrazAdminPanel(loginId) {
 
     if (akce === 'aktualita') {
       _zobrazPridatAktualitu();
+      dropdown.classList.remove('open');
+      return;
+    }
+
+    if (akce === 'online') {
+      _zobrazKdoJeOnline();
+      dropdown.classList.remove('open');
+      return;
+    }
+
+    if (akce === 'historie') {
+      _zobrazHistoriePrihlaseni();
       dropdown.classList.remove('open');
       return;
     }
@@ -588,6 +604,101 @@ function _nacistProfilLocal(loginId) {
 
 function _ulozitProfilLocal(loginId, data) {
   localStorage.setItem('mb_profil_' + loginId, JSON.stringify(data));
+}
+
+function _formatTs(ts) {
+  if (!ts) return '–';
+  const d = new Date(ts);
+  return `${d.getDate()}.${d.getMonth()+1}. ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+}
+
+function _zobrazKdoJeOnline() {
+  const existujici = document.getElementById('modalOnline');
+  if (existujici) existujici.remove();
+  const db = _getFirebaseDB();
+  if (!db) return;
+
+  const modal = document.createElement('div');
+  modal.id = 'modalOnline';
+  modal.className = 'modal-overlay';
+  modal.innerHTML = `
+    <div class="modal-box profil-box">
+      <button class="modal-zavrit" id="onlineZavrit">×</button>
+      <div class="profil-header"><div class="profil-header-text">
+        <div class="profil-nadpis">🟢 Kdo je online</div>
+      </div></div>
+      <div class="aktivita-seznam" id="onlineList" style="padding:24px 36px">
+        <em style="color:var(--text-muted)">Načítám…</em>
+      </div>
+    </div>`;
+  document.body.appendChild(modal);
+  document.getElementById('onlineZavrit').addEventListener('click', () => modal.remove());
+  modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
+
+  db.ref('presence').on('value', snap => {
+    const el = document.getElementById('onlineList');
+    if (!el) return;
+    const zaznamy = Object.values(snap.val() || {});
+    if (!zaznamy.length) {
+      el.innerHTML = '<em style="color:var(--text-muted)">Nikdo není online.</em>';
+      return;
+    }
+    zaznamy.sort((a, b) => (b.ts || 0) - (a.ts || 0));
+    el.innerHTML = zaznamy.map(z => `
+      <div class="aktivita-radek">
+        <span class="akt-ikona">${z.admin ? '🔑' : '👤'}</span>
+        <span class="akt-text">
+          <strong>${z.jmeno || '–'}</strong>${z.budky ? ` · Budka č. ${z.budky}` : ''}
+          ${z.admin ? ' <span class="badge-admin">admin</span>' : ''}
+        </span>
+        <span class="akt-cas">${_formatTs(z.ts)}</span>
+      </div>`).join('');
+  });
+}
+
+function _zobrazHistoriePrihlaseni() {
+  const existujici = document.getElementById('modalHistorie');
+  if (existujici) existujici.remove();
+  const db = _getFirebaseDB();
+  if (!db) return;
+
+  const modal = document.createElement('div');
+  modal.id = 'modalHistorie';
+  modal.className = 'modal-overlay';
+  modal.innerHTML = `
+    <div class="modal-box profil-box">
+      <button class="modal-zavrit" id="historieZavrit">×</button>
+      <div class="profil-header"><div class="profil-header-text">
+        <div class="profil-nadpis">📜 Historie přihlášení</div>
+        <div style="color:var(--text-muted);font-size:0.9rem">posledních 50 přihlášení</div>
+      </div></div>
+      <div class="aktivita-seznam" id="historieList" style="padding:24px 36px">
+        <em style="color:var(--text-muted)">Načítám…</em>
+      </div>
+    </div>`;
+  document.body.appendChild(modal);
+  document.getElementById('historieZavrit').addEventListener('click', () => modal.remove());
+  modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
+
+  db.ref('prihlaseni').orderByChild('ts').limitToLast(50).once('value', snap => {
+    const el = document.getElementById('historieList');
+    if (!el) return;
+    const zaznamy = Object.values(snap.val() || {});
+    if (!zaznamy.length) {
+      el.innerHTML = '<em style="color:var(--text-muted)">Žádná history zatím.</em>';
+      return;
+    }
+    zaznamy.sort((a, b) => (b.ts || 0) - (a.ts || 0));
+    el.innerHTML = zaznamy.map(z => `
+      <div class="aktivita-radek">
+        <span class="akt-ikona">🔐</span>
+        <span class="akt-text">
+          <strong>${z.jmeno || z.loginId || '–'}</strong>
+          ${z.budky ? ` · Budka č. ${z.budky}` : ''}
+        </span>
+        <span class="akt-cas">${_formatTs(z.ts)}</span>
+      </div>`).join('');
+  });
 }
 
 function _zobrazProfilSpravce(loginId, info, budkaText) {
