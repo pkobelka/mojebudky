@@ -581,10 +581,9 @@ function _zobrazProfilSpravce(loginId, info, budkaText) {
             <input type="text" id="pOsloveni" value="${d.osloveni || ''}" placeholder="Ahoj …">
           </div>
           <div class="profil-field profil-field--wide">
-            <label>Datum narození
-              <span class="profil-hint profil-narozeniny" title="Popřejeme Vám k narozeninám! 🎂">🎂 popřejeme!</span>
-            </label>
+            <label>Datum narození</label>
             <input type="date" id="pDatum" value="${d.datum_narozeni || ''}">
+            <span class="profil-hint profil-hint--under">🎂 Celá komunita správců Vám popřeje k narozeninám!</span>
           </div>
         </div>
         <div class="profil-row">
@@ -595,6 +594,7 @@ function _zobrazProfilSpravce(loginId, info, budkaText) {
           <div class="profil-field profil-field--wide">
             <label>E-mail</label>
             <input type="email" id="pEmail" value="${d.email || ''}">
+            <span class="profil-hint profil-hint--under">📩 Pro důležité zprávy od správy MojeBudky</span>
           </div>
         </div>
       </div>

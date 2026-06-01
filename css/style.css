@@ -472,6 +472,7 @@ html, body {
 .aktivita-seznam { display: flex; flex-direction: column; gap: 0; max-height: 60vh; overflow-y: auto; }
 .profil-hint { color: var(--text-muted); font-size: 0.85rem; font-style: italic; text-transform: none; letter-spacing: 0; margin-left: 4px; }
 .profil-narozeniny { cursor: help; }
+.profil-hint--under { display: block; margin-left: 0; margin-top: 5px; font-size: 0.82rem; }
 .profil-actions { padding: 22px 36px 30px; display: flex; align-items: center; gap: 16px; border-top: 1px solid var(--panel-border); }
 .profil-btn-ulozit { background: var(--orange); color: #fff; border: none; border-radius: 8px; padding: 14px 36px; font-size: 1.2rem; font-weight: 700; cursor: pointer; transition: background 0.2s; }
 .profil-btn-ulozit:hover { background: var(--orange-light); }

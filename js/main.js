@@ -56,15 +56,14 @@ function aktualizujListu() {
   if (!bar) return;
 
   const cal = `📅 ${DNY[d.getDay()].charAt(0).toUpperCase() + DNY[d.getDay()].slice(1)} ${formatDatum(d)}`;
-  const sva = svarek ? `&nbsp;| Svátek má: <strong>${svarek}</strong>` : '';
+  const oslavenci = svarek ? najdiSvatekSpravce(svarek) : [];
+  const oslavenciText = oslavenci.length > 0
+    ? ` &nbsp;<span class="bar-gratulace">🎂 slaví ho ${pluralSpravcu(oslavenci.length)} z naší komunity!</span>`
+    : '';
+  const sva = svarek ? `&nbsp;| Svátek má: <strong>${svarek}</strong>${oslavenciText}` : '';
   const cas = `&nbsp;| ⏰ <span id="liveCas">${formatCas(d)}</span>`;
 
-  const oslavenci = svarek ? najdiSvatekSpravce(svarek) : [];
-  const gratulace = oslavenci.length > 0
-    ? `&nbsp;| 🎂 <span class="bar-gratulace">${pluralSpravcu(oslavenci.length)} slaví svátek – gratulujeme!</span>`
-    : '';
-
-  bar.innerHTML = `<span class="bar-left">${cal}${sva}${gratulace}${cas}</span>
+  bar.innerHTML = `<span class="bar-left">${cal}${sva}${cas}</span>
     <span class="bar-right">🌿 Pomáháme ptactvu nejen po celé ČR</span>`;
 }
 
