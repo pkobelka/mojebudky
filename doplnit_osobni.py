@@ -57,6 +57,24 @@ json_path = 'data/spravci_info.json'
 with open(json_path, encoding='utf-8') as f:
     info = json.load(f)
 
+# Číselný index: int(key) → key  (řeší "003" vs "000003" vs "3")
+_num_index = {}
+for k in info:
+    try:
+        _num_index[int(k)] = k
+    except ValueError:
+        pass
+
+def _najdi_id(raw):
+    """Najde klíč v JSON pro dané ID z CSV (ignoruje leading zeros)."""
+    raw = raw.strip()
+    if raw in info:
+        return raw
+    try:
+        return _num_index.get(int(raw))
+    except ValueError:
+        return None
+
 # ── Načtení CSV ───────────────────────────────────────────────────
 with open(csv_path, newline='', encoding='utf-8-sig') as f:
     content = f.read()
@@ -100,18 +118,14 @@ preskoceno    = 0
 for row in rows[1:]:
     if not row or len(row) <= id_col:
         continue
-    login_id = row[id_col].strip()
-    if not login_id:
+    raw_id = row[id_col].strip()
+    if not raw_id:
         continue
 
-    # Pokus o doplnění vedoucích nul (2852 → 002852)
-    if login_id not in info:
-        padded = login_id.zfill(6)
-        if padded in info:
-            login_id = padded
-        else:
-            preskoceno += 1
-            continue
+    login_id = _najdi_id(raw_id)
+    if not login_id:
+        preskoceno += 1
+        continue
 
     zaznam = info[login_id]
 
