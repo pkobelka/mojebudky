@@ -132,7 +132,7 @@ html, body {
 .pribeh-item:hover { background: rgba(255,255,255,0.05); }
 .pribeh-ikona { flex-shrink: 0; width: 44px; height: 44px; }
 .pribeh-text { flex: 1; min-width: 0; }
-.pribeh-druh { color: var(--accent-gold); font-size: 1.2rem; font-weight: 700; margin-bottom: 4px; }
+.pribeh-druh { color: var(--accent-gold); font-size: 1.55rem; font-weight: 700; margin-bottom: 4px; }
 .pribeh-popis { color: var(--text-light); font-size: 1.12rem; line-height: 1.45; margin-bottom: 5px; opacity: 0.9; }
 .pribeh-datum { color: var(--text-muted); font-size: 1rem; }
 
