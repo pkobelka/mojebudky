@@ -149,13 +149,31 @@ async function _zkontrolovatNarozeniny(loginId, spravceInfo, jeAdmin) {
 async function _overitPrihlaseni(id, heslo) {
   const spravci = await _nactiAuthSpravce();
   const hash = await sha256hex(heslo);
-  if (spravci[id] && spravci[id] === hash) return id;
-  try {
-    const n = parseInt(id, 10);
-    const k = Object.keys(spravci).find(key => parseInt(key, 10) === n);
-    if (k && spravci[k] === hash) return k;
-  } catch {}
-  return null;
+
+  // Nejdřív zkus kanonické ID
+  let kanonId = null;
+  if (spravci[id]) {
+    kanonId = id;
+  } else {
+    try {
+      const n = parseInt(id, 10);
+      kanonId = Object.keys(spravci).find(k => parseInt(k, 10) === n) || null;
+    } catch {}
+  }
+  if (!kanonId) return null;
+
+  // Firebase heslo má přednost před JSON (pro resety)
+  const db = _getFirebaseDB();
+  if (db) {
+    try {
+      const snap = await db.ref(`hesla/${kanonId}`).once('value');
+      const fbHash = snap.val();
+      if (fbHash) return fbHash === hash ? kanonId : null;
+    } catch {}
+  }
+
+  // Fallback na spravci.json
+  return spravci[kanonId] === hash ? kanonId : null;
 }
 
 async function _zobrazAdminPanel(loginId) {
@@ -208,6 +226,16 @@ async function _zobrazAdminPanel(loginId) {
   // Push notifikace: permission + narozeniny
   _registrovatPushNotifikace(loginId);
   _zkontrolovatNarozeniny(loginId, spravceInfo, jeAdmin);
+
+  // Upozornění na chybějící e-mail (pro obnovu hesla)
+  if (!jeAdmin) {
+    const emailVyplnen = (profil && profil.email) || (spravceInfo && spravceInfo.email);
+    if (!emailVyplnen) {
+      setTimeout(() => _zobrazToast(
+        '📩 Doplň prosím svůj e-mail v Kartě správce — budeme ho potřebovat pro obnovu hesla.'
+      ), 8000);
+    }
+  }
 
   window._aktualniSpravce = { loginId, spravceInfo, budkyList, jeAdmin };
   window._editBudku = _zobrazEditBudky;
@@ -1180,6 +1208,196 @@ function _vokativ(jmeno) {
   return normalized + 'e';
 }
 
+// ── OBNOVA HESLA přes EmailJS ──────────────────────────────────────
+// Nastav v EmailJS: https://www.emailjs.com  (zdarma 200 mailů/měsíc)
+const _EMAILJS_SERVICE_ID  = '';   // např. 'service_abc123'
+const _EMAILJS_TEMPLATE_ID = '';   // např. 'template_xyz789'
+const _EMAILJS_PUBLIC_KEY  = '';   // Public Key z Account → API Keys
+
+async function _najdiEmailProId(loginId) {
+  const db = _getFirebaseDB();
+  if (db) {
+    try {
+      const snap = await db.ref(`spravci/${loginId}/profil`).once('value');
+      const profil = snap.val();
+      if (profil && profil.email) return profil.email;
+    } catch {}
+  }
+  const local = _nacistProfilLocal(loginId);
+  return (local && local.email) ? local.email : null;
+}
+
+async function _odeslatResetMail(loginId, email, jmeno, token) {
+  if (!_EMAILJS_SERVICE_ID || !_EMAILJS_PUBLIC_KEY) return false;
+  const resetLink = `${location.origin}${location.pathname}?reset=${token}`;
+  try {
+    await emailjs.send(_EMAILJS_SERVICE_ID, _EMAILJS_TEMPLATE_ID, {
+      to_email:   email,
+      to_name:    jmeno || loginId,
+      reset_link: resetLink,
+      platnost:   '1 hodinu',
+    }, _EMAILJS_PUBLIC_KEY);
+    return true;
+  } catch { return false; }
+}
+
+function _zobrazZapomenuteHeslo() {
+  const existujici = document.getElementById('modalReset');
+  if (existujici) existujici.remove();
+
+  const modal = document.createElement('div');
+  modal.id = 'modalReset';
+  modal.className = 'modal-overlay';
+  modal.innerHTML = `
+    <div class="modal-box" style="max-width:420px;padding:40px 36px;text-align:center">
+      <button class="modal-zavrit" id="resetZavrit">×</button>
+      <div style="font-size:2rem;margin-bottom:8px">🔑</div>
+      <h3 style="color:var(--accent-gold);margin:0 0 8px">Zapomenuté heslo</h3>
+      <p style="color:var(--text-muted);font-size:0.95rem;margin:0 0 24px">
+        Zadej své ID — pošleme ti odkaz na nové heslo e-mailem.
+      </p>
+      <input type="text" id="resetId" placeholder="Tvoje ID (např. 4112)"
+        style="width:100%;padding:10px 14px;border-radius:8px;border:1px solid var(--accent-gold);
+               background:var(--panel-bg);color:var(--text-light);font-size:1rem;
+               box-sizing:border-box;margin-bottom:16px">
+      <button id="resetOdeslat" style="width:100%;padding:12px;background:var(--orange);
+        color:#fff;border:none;border-radius:8px;font-size:1rem;font-weight:700;cursor:pointer">
+        Odeslat odkaz
+      </button>
+      <div id="resetMsg" style="margin-top:14px;font-size:0.9rem;min-height:20px"></div>
+    </div>`;
+  document.body.appendChild(modal);
+
+  document.getElementById('resetZavrit').addEventListener('click', () => modal.remove());
+  modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
+
+  document.getElementById('resetOdeslat').addEventListener('click', async () => {
+    const idRaw = document.getElementById('resetId').value.trim();
+    const msg   = document.getElementById('resetMsg');
+    const btn   = document.getElementById('resetOdeslat');
+
+    if (!idRaw) { msg.style.color = '#e07070'; msg.textContent = 'Zadej ID.'; return; }
+
+    btn.disabled = true;
+    btn.textContent = '⏳ Odesílám…';
+    msg.textContent = '';
+
+    if (!_EMAILJS_SERVICE_ID) {
+      msg.style.color = '#e07070';
+      msg.textContent = 'EmailJS není nastaveno — kontaktuj Petra.';
+      btn.disabled = false; btn.textContent = 'Odeslat odkaz';
+      return;
+    }
+
+    // Najdi kanonické ID
+    const spravci = await _nactiAuthSpravce().catch(() => null);
+    let kanonId = spravci ? (spravci[idRaw] ? idRaw : null) : null;
+    if (!kanonId && spravci) {
+      try { const n = parseInt(idRaw,10); kanonId = Object.keys(spravci).find(k => parseInt(k,10) === n) || null; } catch {}
+    }
+    if (!kanonId) {
+      msg.style.color = '#e07070'; msg.textContent = 'ID nenalezeno.';
+      btn.disabled = false; btn.textContent = 'Odeslat odkaz'; return;
+    }
+
+    const email = await _najdiEmailProId(kanonId);
+    if (!email) {
+      msg.style.color = '#e07070';
+      msg.innerHTML = 'Nemáš vyplněný e-mail v profilu.<br>Přihlas se a doplň ho v <strong>Kartě správce</strong>.';
+      btn.disabled = false; btn.textContent = 'Odeslat odkaz'; return;
+    }
+
+    // Vygeneruj token a ulož do Firebase
+    const token = Array.from(crypto.getRandomValues(new Uint8Array(24))).map(b=>b.toString(16).padStart(2,'0')).join('');
+    const db = _getFirebaseDB();
+    if (db) {
+      await db.ref(`reset_tokens/${token}`).set({
+        loginId: kanonId,
+        ts: Date.now(),
+        expiry: Date.now() + 3600000  // 1 hodina
+      });
+    }
+
+    const info = await _nactiSpravciInfo();
+    const jmeno = (info && info[kanonId]) ? (info[kanonId].jmeno || kanonId) : kanonId;
+    const ok = await _odeslatResetMail(kanonId, email, jmeno, token);
+
+    if (ok) {
+      msg.style.color = '#8fc870';
+      msg.innerHTML = `✓ Odkaz odeslán na <strong>${email.replace(/(.{3}).+(@.+)/, '$1…$2')}</strong>.<br>Platí 1 hodinu.`;
+      btn.textContent = 'Odesláno ✓';
+    } else {
+      msg.style.color = '#e07070'; msg.textContent = 'Chyba odesílání — zkus to znovu.';
+      btn.disabled = false; btn.textContent = 'Odeslat odkaz';
+    }
+  });
+}
+
+function _zobrazFormularNoveHeslo(token) {
+  const modal = document.createElement('div');
+  modal.className = 'modal-overlay';
+  modal.innerHTML = `
+    <div class="modal-box" style="max-width:420px;padding:40px 36px;text-align:center">
+      <div style="font-size:2rem;margin-bottom:8px">🔐</div>
+      <h3 style="color:var(--accent-gold);margin:0 0 20px">Nové heslo</h3>
+      <input type="password" id="noveHeslo1" placeholder="Nové heslo (min. 6 znaků)"
+        style="width:100%;padding:10px 14px;border-radius:8px;border:1px solid var(--accent-gold);
+               background:var(--panel-bg);color:var(--text-light);font-size:1rem;
+               box-sizing:border-box;margin-bottom:12px">
+      <input type="password" id="noveHeslo2" placeholder="Heslo znovu"
+        style="width:100%;padding:10px 14px;border-radius:8px;border:1px solid var(--accent-gold);
+               background:var(--panel-bg);color:var(--text-light);font-size:1rem;
+               box-sizing:border-box;margin-bottom:16px">
+      <button id="noveHesloUlozit" style="width:100%;padding:12px;background:var(--orange);
+        color:#fff;border:none;border-radius:8px;font-size:1rem;font-weight:700;cursor:pointer">
+        Uložit nové heslo
+      </button>
+      <div id="noveHesloMsg" style="margin-top:14px;font-size:0.9rem;min-height:20px"></div>
+    </div>`;
+  document.body.appendChild(modal);
+
+  document.getElementById('noveHesloUlozit').addEventListener('click', async () => {
+    const h1  = document.getElementById('noveHeslo1').value;
+    const h2  = document.getElementById('noveHeslo2').value;
+    const msg = document.getElementById('noveHesloMsg');
+    const btn = document.getElementById('noveHesloUlozit');
+
+    if (h1.length < 6) { msg.style.color='#e07070'; msg.textContent='Heslo musí mít alespoň 6 znaků.'; return; }
+    if (h1 !== h2)     { msg.style.color='#e07070'; msg.textContent='Hesla se neshodují.'; return; }
+
+    btn.disabled = true; btn.textContent = '⏳ Ukládám…';
+
+    const db = _getFirebaseDB();
+    if (!db) { msg.style.color='#e07070'; msg.textContent='Firebase nedostupná.'; btn.disabled=false; btn.textContent='Uložit nové heslo'; return; }
+
+    // Ověř token
+    const snapToken = await db.ref(`reset_tokens/${token}`).once('value');
+    const tokenData = snapToken.val();
+    if (!tokenData || tokenData.expiry < Date.now()) {
+      msg.style.color='#e07070'; msg.textContent='Odkaz expiroval nebo je neplatný. Požádej o nový.';
+      btn.disabled=false; btn.textContent='Uložit nové heslo'; return;
+    }
+
+    const hash = await sha256hex(h1);
+    await db.ref(`hesla/${tokenData.loginId}`).set(hash);
+    await db.ref(`reset_tokens/${token}`).remove();
+
+    // Odstraň ?reset= z URL
+    history.replaceState(null, '', location.pathname);
+
+    msg.style.color='#8fc870'; msg.textContent='✓ Heslo změněno! Nyní se můžeš přihlásit.';
+    btn.textContent='Hotovo ✓';
+    setTimeout(() => modal.remove(), 3000);
+  });
+}
+
+// Při načtení stránky: zkontroluj ?reset= v URL
+document.addEventListener('DOMContentLoaded', () => {
+  const params = new URLSearchParams(location.search);
+  const resetToken = params.get('reset');
+  if (resetToken) setTimeout(() => _zobrazFormularNoveHeslo(resetToken), 500);
+});
+
 function _zobrazToast(text) {
   const existujici = document.getElementById('adminToast');
   if (existujici) existujici.remove();
@@ -1290,11 +1508,11 @@ document.addEventListener('DOMContentLoaded', () => {
   if (cbZobrazit) cbZobrazit.addEventListener('change', () => toggleHeslo(cbZobrazit.checked));
 
   const linkZapomnel = document.getElementById('linkZapomnel');
-  const zapomnelMsg  = document.getElementById('zapomnel-msg');
-  if (linkZapomnel && zapomnelMsg) {
+  if (linkZapomnel) {
     linkZapomnel.addEventListener('click', e => {
       e.preventDefault();
-      zapomnelMsg.hidden = !zapomnelMsg.hidden;
+      document.getElementById('modalPrihlaseni').hidden = true;
+      _zobrazZapomenuteHeslo();
     });
   }
 });
