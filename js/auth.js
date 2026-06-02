@@ -205,18 +205,28 @@ async function _zobrazAdminPanel(loginId) {
   const profil = profilFirebase ? Object.assign({}, profilLocal, profilFirebase) : profilLocal;
   const osloveni = (profil && profil.osloveni) ? profil.osloveni
     : (spravceInfo && spravceInfo.osloveni) ? spravceInfo.osloveni : _vokativ(jmeno);
-  if (!jeAdmin && !localStorage.getItem('mb_welcomed_' + loginId)) {
-    localStorage.setItem('mb_welcomed_' + loginId, '1');
-    setTimeout(() => {
-      _zobrazUvitaciModal(loginId, spravceInfo, budkyList, () => {
-        _zobrazProfilSpravce(loginId, spravceInfo, budkaText);
-      });
-    }, 800);
-  } else {
-    _zobrazToast(`Ahoj ${osloveni}, vítám Tě v komunitě správců mých budek! 🌿 Petr`);
-    if (!jeAdmin && !localStorage.getItem('mb_firstlogin_' + loginId)) {
-      setTimeout(() => _zobrazProfilSpravce(loginId, spravceInfo, budkaText), 7000);
+  const slibPotvrzen = !!(localStorage.getItem('mb_slib_' + loginId) || (profilFirebase && profilFirebase.slibPotvrzen));
+
+  function _pokracovatPoPrihlaseni() {
+    if (!jeAdmin && !localStorage.getItem('mb_welcomed_' + loginId)) {
+      localStorage.setItem('mb_welcomed_' + loginId, '1');
+      setTimeout(() => {
+        _zobrazUvitaciModal(loginId, spravceInfo, budkyList, () => {
+          _zobrazProfilSpravce(loginId, spravceInfo, budkaText);
+        });
+      }, 800);
+    } else {
+      _zobrazToast(`Ahoj ${osloveni}, vítám Tě v komunitě správců mých budek! 🌿 Petr`);
+      if (!jeAdmin && !localStorage.getItem('mb_firstlogin_' + loginId)) {
+        setTimeout(() => _zobrazProfilSpravce(loginId, spravceInfo, budkaText), 7000);
+      }
     }
+  }
+
+  if (!jeAdmin && !slibPotvrzen) {
+    setTimeout(() => _zobrazSlibModal(loginId, _pokracovatPoPrihlaseni), 400);
+  } else {
+    _pokracovatPoPrihlaseni();
   }
 
   if (typeof window._presenceSetAdmin === 'function') window._presenceSetAdmin(jeAdmin);
@@ -369,6 +379,92 @@ async function _zobrazAdminPanel(loginId) {
       item.textContent = item.textContent.replace(' – Připravujeme…', '') + ' – Připravujeme…';
       setTimeout(() => { item.textContent = item.textContent.replace(' – Připravujeme…', ''); }, 2000);
     }
+  });
+}
+
+function _zobrazSlibModal(loginId, onPotvrzeno) {
+  const existujici = document.getElementById('modalSlib');
+  if (existujici) existujici.remove();
+
+  const dnes = new Date();
+  const datumText = dnes.toLocaleDateString('cs-CZ', { day: 'numeric', month: 'long', year: 'numeric' });
+
+  const modal = document.createElement('div');
+  modal.id = 'modalSlib';
+  modal.className = 'modal-overlay slib-overlay';
+  modal.innerHTML = `
+    <div class="slib-outer">
+      <div class="slib-box">
+        <span class="slib-corner slib-tl" aria-hidden="true">✦</span>
+        <span class="slib-corner slib-tr" aria-hidden="true">✦</span>
+        <span class="slib-corner slib-bl" aria-hidden="true">✦</span>
+        <span class="slib-corner slib-br" aria-hidden="true">✦</span>
+
+        <div class="slib-header">
+          <img src="img/logo.svg" alt="MojeBudky logo" class="slib-logo">
+          <div class="slib-logo-nazev">MojeBudky.cz</div>
+        </div>
+
+        <div class="slib-ornament" aria-hidden="true"><span></span><span>✦</span><span></span></div>
+
+        <h2 class="slib-nadpis">Slib správce a člena komunity</h2>
+        <p class="slib-subtitle">MojeBudky</p>
+
+        <div class="slib-ornament slib-ornament--bird" aria-hidden="true"><span></span><span>🦅</span><span></span></div>
+
+        <div class="slib-text">
+          <p class="slib-uvod">Vstupem do komunity MojeBudky přijímám roli odpovědného správce.<br><strong>Slibuji, že:</strong></p>
+          <ul class="slib-list">
+            <li><strong>Budu chránit bezpečí ptactva</strong> a nikdy nebudu budku ani její obyvatele zbytečně rušit, zejména v citlivém období hnízdění.</li>
+            <li><strong>Povedu poctivé záznamy</strong> v naší aplikaci, aby moje pozorování pomáhala mapovat a chránit ptačí život.</li>
+            <li><strong>Budu pečovat o svěřenou budku</strong> a udržovat ji v čistotě a dobrém technickém stavu.</li>
+            <li><strong>Budu jednat v duchu přátelství</strong> a vzájemné pomoci vůči ostatním členům naší komunity.</li>
+          </ul>
+          <p class="slib-zaver"><em>S vědomím toho, že každý správný krok pomáhá vracet život do naší přírody,<br>se stávám hrdým členem MojeBudky.</em></p>
+        </div>
+
+        <div class="slib-ornament" aria-hidden="true"><span></span><span>✦</span><span></span></div>
+
+        <div class="slib-podpis-radek">
+          <span class="slib-datum-label">Datum přistoupení:</span>
+          <span class="slib-datum">${datumText}</span>
+        </div>
+
+        <label class="slib-checkbox-wrap">
+          <input type="checkbox" id="slibCheckbox" class="slib-cb-input">
+          <span class="slib-cb-box" aria-hidden="true"></span>
+          <span class="slib-cb-text">Slíbena poctivá péče o budku a respekt k pravidlům komunity</span>
+        </label>
+
+        <button class="slib-btn" id="slibBtn" disabled>Vstoupit do profilu</button>
+      </div>
+    </div>`;
+  document.body.appendChild(modal);
+
+  const checkbox = document.getElementById('slibCheckbox');
+  const btn = document.getElementById('slibBtn');
+
+  checkbox.addEventListener('change', () => {
+    btn.disabled = !checkbox.checked;
+    btn.classList.toggle('slib-btn--active', checkbox.checked);
+  });
+
+  btn.addEventListener('click', async () => {
+    if (!checkbox.checked) return;
+    btn.disabled = true;
+    btn.textContent = '⏳ Zaznamenávám…';
+
+    const db = _getFirebaseDB();
+    if (db) {
+      try {
+        await db.ref(`spravci/${loginId}/profil/slibPotvrzen`).set(true);
+        await db.ref(`spravci/${loginId}/profil/slibDatum`).set(new Date().toISOString());
+      } catch {}
+    }
+    localStorage.setItem('mb_slib_' + loginId, '1');
+
+    modal.classList.add('slib-fade-out');
+    setTimeout(() => { modal.remove(); if (onPotvrzeno) onPotvrzeno(); }, 700);
   });
 }
 
