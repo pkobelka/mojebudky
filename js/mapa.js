@@ -245,7 +245,7 @@ async function inicializujMapu() {
     zoom: 8,
     zoomControl: true,
     minZoom: 5,
-    maxBounds: [[45.5, 3.5], [55.5, 20.5]],
+    maxBounds: [[45.0, 3.0], [55.5, 23.0]],
     maxBoundsViscosity: 1.0
   });
   // Zabrán zoom pod minZoom i kolečkem myši
