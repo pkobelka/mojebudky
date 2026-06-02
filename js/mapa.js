@@ -155,9 +155,14 @@ function formatPopup(b) {
       ? `<div class="popup-ptak">${birdSvg ? `<span class="popup-bird-icon">${birdSvg}</span>` : '🐦'}<span>${b.ptak}</span></div>`
       : '';
 
-  const fotoBlock = b.foto
-    ? `<div class="popup-foto"><img src="${b.foto}" alt="Foto budky č. ${b.cislo}"></div>`
-    : '';
+  const cisloStr = String(b.cislo).padStart(3, '0');
+  const fotoSrc = b.foto || `img/budky/${b.cislo}.jpg`;
+  const fotoBlock = `<div class="popup-foto popup-foto--auto" data-src="${fotoSrc}">
+    <img src="${fotoSrc}" alt="Foto budky č. ${b.cislo}"
+         style="cursor:zoom-in"
+         onerror="this.closest('.popup-foto--auto').style.display='none'"
+         onclick="(function(s){var o=document.createElement('div');o.className='foto-zoom-overlay';o.innerHTML='<img src=\\''+s+'\\'><span class=\\'foto-zoom-zavrit\\'>×</span>';document.body.appendChild(o);o.addEventListener('click',function(){o.remove()})})(this.src)">
+  </div>`;
 
   const spravceBlock = b.spravce
     ? `<div class="popup-radek">👤 Správce: <strong>${b.spravce}</strong></div>`
