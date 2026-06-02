@@ -164,8 +164,8 @@ html, body {
 .stat-aktualizace { color: var(--text-muted); font-size: 0.9rem; }
 .stat-aktualizace span { color: var(--text-light); font-weight: 700; font-size: 0.95rem; }
 
-/* ── DESATERO TILE (v pravém panelu) ── */
-.desatero-tile { cursor: pointer; margin: 8px 10px 0; display: flex; align-items: center; gap: 12px; border: 2px solid #c8960a; border-left: 5px solid #c8960a; border-radius: 8px; padding: 12px 14px; background: rgba(200,150,10,0.18); transition: background 0.2s; user-select: none; box-shadow: 0 0 10px rgba(200,150,10,0.15); }
+/* ── DESATERO TILE (v pravém panelu – uvnitř stats-grid) ── */
+.desatero-tile { cursor: pointer; display: flex; align-items: center; gap: 12px; border: 2px solid #c8960a; border-left: 5px solid #c8960a; border-radius: 8px; padding: 12px 14px; background: rgba(200,150,10,0.18); transition: background 0.2s; user-select: none; box-shadow: 0 0 10px rgba(200,150,10,0.15); }
 .desatero-tile:hover, .desatero-tile:focus { background: rgba(200,150,10,0.22); outline: none; box-shadow: 0 0 0 2px rgba(200,150,10,0.5); }
 .desatero-tile-ikona { font-size: 1.6rem; flex-shrink: 0; }
 .desatero-tile-text { flex: 1; min-width: 0; }
@@ -194,11 +194,11 @@ html, body {
 .desatero-ornament--bird span:nth-child(2) { font-size: 1.5rem; }
 .desatero-nadpis { font-family: 'UnifrakturMaguntia', serif; color: var(--text-light); font-size: 2.8rem; font-weight: 400; margin-bottom: 6px; line-height: 1.2; text-shadow: 0 2px 12px rgba(200,150,10,0.2); }
 .desatero-podnadpis { color: var(--text-muted); font-size: 1.1rem; font-style: italic; margin-bottom: 2px; }
-.desatero-list { list-style: none; counter-reset: desatero; display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; padding: 0; margin-top: 28px; text-align: left; }
-.desatero-list li { counter-increment: desatero; background: rgba(255,255,255,0.03); border: 1px solid rgba(200,150,10,0.22); border-radius: 10px; padding: 20px 22px 20px 64px; color: var(--text-muted); font-size: 1.07rem; line-height: 1.65; position: relative; transition: border-color 0.2s, background 0.2s; }
+.desatero-list { list-style: none; counter-reset: desatero; display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; padding: 0; margin-top: 28px; text-align: left; }
+.desatero-list li { counter-increment: desatero; background: rgba(255,255,255,0.03); border: 1px solid rgba(200,150,10,0.22); border-radius: 10px; padding: 28px 24px 28px 72px; color: var(--text-muted); font-size: 1.2rem; line-height: 1.7; position: relative; transition: border-color 0.2s, background 0.2s; }
 .desatero-list li:hover { border-color: rgba(200,150,10,0.5); background: rgba(255,255,255,0.05); }
-.desatero-list li::before { content: counter(desatero); position: absolute; left: 16px; top: 18px; width: 32px; height: 32px; background: #c8960a; color: #0c1f05; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.95rem; }
-.desatero-list li strong { color: var(--text-light); display: block; margin-bottom: 5px; font-size: 1.12rem; }
+.desatero-list li::before { content: counter(desatero); position: absolute; left: 18px; top: 26px; width: 36px; height: 36px; background: #c8960a; color: #0c1f05; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1rem; }
+.desatero-list li strong { color: var(--text-light); display: block; margin-bottom: 7px; font-size: 1.25rem; }
 @media (max-width: 900px) {
   .desatero-wrap { padding: 28px 18px 40px; }
   .desatero-list { grid-template-columns: 1fr 1fr; }
