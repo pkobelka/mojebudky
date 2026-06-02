@@ -583,19 +583,6 @@ function inicializujSplash() {
   }, 4000);
 }
 
-function inicializujSplash() {
-  const splash = document.getElementById('splashScreen');
-  if (!splash) return;
-  splash.addEventListener('click', () => {
-    splash.classList.add('fade-out');
-    setTimeout(() => splash.remove(), 800);
-  });
-  setTimeout(() => {
-    splash.classList.add('fade-out');
-    setTimeout(() => splash.remove(), 800);
-  }, 4000);
-}
-
 document.addEventListener('DOMContentLoaded', () => {
   inicializujSplash();
   aktualizujListu();
@@ -640,4 +627,21 @@ document.addEventListener('DOMContentLoaded', () => {
   document.querySelectorAll('a[href="#partneri"]').forEach(a => {
     a.addEventListener('click', e => { e.preventDefault(); _zobrazPartneriModal(); });
   });
+
+  // Desatero správce → modal
+  const modalDesatero = document.getElementById('modalDesatero');
+  function otevritDesatero(e) {
+    e.preventDefault();
+    if (modalDesatero) {
+      modalDesatero.hidden = false;
+      modalDesatero.focus();
+    }
+  }
+  function zavritDesatero() {
+    if (modalDesatero) modalDesatero.hidden = true;
+  }
+  document.getElementById('navDesatero')?.addEventListener('click', otevritDesatero);
+  document.getElementById('desateroZavrit')?.addEventListener('click', zavritDesatero);
+  modalDesatero?.addEventListener('click', e => { if (e.target === modalDesatero) zavritDesatero(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && modalDesatero && !modalDesatero.hidden) zavritDesatero(); });
 });
