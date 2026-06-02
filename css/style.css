@@ -165,6 +165,23 @@ html, body {
 .stat-aktualizace span { color: var(--text-light); font-weight: 700; font-size: 0.95rem; }
 
 /* ── PARTNERÉ ── */
+/* ── DESATERO ── */
+.desatero-section { background: linear-gradient(180deg, #0f2a06 0%, #1a3a0a 100%); border-top: 2px solid var(--orange); padding: 40px 52px 48px; }
+.desatero-wrap { max-width: 960px; margin: 0 auto; }
+.desatero-header { display: flex; align-items: center; gap: 24px; margin-bottom: 32px; }
+.desatero-logo { width: 64px; height: auto; filter: drop-shadow(0 2px 8px rgba(0,0,0,0.4)); flex-shrink: 0; }
+.desatero-nadpis { color: var(--text-light); font-size: 1.7rem; font-weight: 800; margin-bottom: 4px; }
+.desatero-podnadpis { color: var(--text-muted); font-size: 1rem; }
+.desatero-list { list-style: none; counter-reset: desatero; display: grid; grid-template-columns: 1fr 1fr; gap: 16px; padding: 0; }
+.desatero-list li { counter-increment: desatero; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 16px 18px 16px 54px; color: var(--text-muted); font-size: 0.92rem; line-height: 1.6; position: relative; }
+.desatero-list li::before { content: counter(desatero); position: absolute; left: 16px; top: 14px; width: 26px; height: 26px; background: var(--orange); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.85rem; }
+.desatero-list li strong { color: var(--text-light); display: block; margin-bottom: 4px; font-size: 0.97rem; }
+@media (max-width: 700px) {
+  .desatero-section { padding: 28px 16px 36px; }
+  .desatero-list { grid-template-columns: 1fr; }
+  .desatero-nadpis { font-size: 1.3rem; }
+}
+
 .partners-section { background: #1a3a0a; border-top: 2px solid var(--orange); padding: 18px 52px 28px; text-align: center; display: flex; flex-direction: column; justify-content: center; }
 .partners-section h3 { color: var(--text-light); font-size: 1.6rem; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 14px; }
 .podekovani-wrap { margin-top: 8px; border-top: 1px solid rgba(255,255,255,0.12); padding-top: 8px; }
