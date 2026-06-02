@@ -608,9 +608,10 @@ document.addEventListener('DOMContentLoaded', () => {
   inicializujPushNotifikace();
 
   // Podpora projektu – modal z nav tlačítka
-  const navPodpora = document.getElementById('navPodpora');
+  const navPodpora = document.getElementById('navPodporaLink') || document.getElementById('navPodpora');
   if (navPodpora) {
-    navPodpora.addEventListener('click', () => {
+    navPodpora.addEventListener('click', (e) => {
+      e.preventDefault();
       if (document.getElementById('modalPodpora')) return;
       const modal = document.createElement('div');
       modal.id = 'modalPodpora';
