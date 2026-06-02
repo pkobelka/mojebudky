@@ -4,7 +4,7 @@ let budkyData = [];
 window._markersByCislo = markersByCislo;
 window._getMapInstance = () => mapInstance;
 
-const FOTO_ROKY = [2026, 2025, 2024];
+const FOTO_ROKY = ['2026', '2025', '2024'];
 
 window._tryBudkaFoto = function(img, cislo, roky) {
   if (!roky || !roky.length) {
@@ -12,9 +12,11 @@ window._tryBudkaFoto = function(img, cislo, roky) {
     if (blok) blok.style.display = 'none';
     return;
   }
-  const rok = roky[0];
+  const next = roky[0];
   img.onerror = function() { window._tryBudkaFoto(this, cislo, roky.slice(1)); };
-  img.src = 'img/budky/' + rok + '/' + cislo + '.jpg';
+  // 'flat' = bez roku, přímo img/budky/{cislo}.jpg
+  img.src = next === 'flat' ? 'img/budky/' + cislo + '.jpg'
+                            : 'img/budky/' + next + '/' + cislo + '.jpg';
 };
 
 const BIRD_SVG = {
@@ -170,7 +172,7 @@ function formatPopup(b) {
 
   const cisloStr = String(b.cislo).padStart(3, '0');
   const fotoSrc = b.foto || `img/budky/${FOTO_ROKY[0]}/${b.cislo}.jpg`;
-  const fotoFallback = `window._tryBudkaFoto(this,${b.cislo},[${FOTO_ROKY.slice(1).join(',')}])`;
+  const fotoFallback = `window._tryBudkaFoto(this,${b.cislo},[${FOTO_ROKY.slice(1).map(r=>`'${r}'`).join(',')},'flat'])`;
   const fotoBlock = `<div class="popup-foto popup-foto--auto" data-src="${fotoSrc}">
     <img src="${fotoSrc}" alt="Foto budky č. ${b.cislo}"
          style="cursor:zoom-in"
