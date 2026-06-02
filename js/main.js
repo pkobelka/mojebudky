@@ -351,7 +351,7 @@ function nactiDruhyPtaku(druhy) {
   if (!el || !druhy || !druhy.length) return;
 
   const elStatDruhu = document.getElementById('stat-druhu');
-  if (elStatDruhu) elStatDruhu.textContent = druhy.length;
+  if (elStatDruhu) elStatDruhu.textContent = druhy.filter(d => d.pocet > 0).length;
 
   const elIkony = document.getElementById('stat-druhu-ikony');
   if (elIkony) {
