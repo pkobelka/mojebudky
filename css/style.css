@@ -555,7 +555,27 @@ html, body {
 .profil-actions { padding: 22px 36px 30px; display: flex; align-items: center; gap: 16px; border-top: 1px solid var(--panel-border); }
 .profil-btn-ulozit { background: var(--orange); color: #fff; border: none; border-radius: 8px; padding: 14px 36px; font-size: 1.2rem; font-weight: 700; cursor: pointer; transition: background 0.2s; }
 .profil-btn-ulozit:hover { background: var(--orange-light); }
+.profil-btn-zpet { background: rgba(255,255,255,0.08); color: var(--text-muted); border: 1px solid var(--panel-border); border-radius: 8px; padding: 12px 22px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: background 0.2s; font-family: inherit; }
+.profil-btn-zpet:hover { background: rgba(255,255,255,0.14); color: var(--text-light); }
 .profil-ulozeno { color: #6dcc6d; font-size: 1.1rem; font-weight: 600; }
+
+/* ── ADMIN SEZNAM SPRÁVCŮ ── */
+.admin-seznam-box { max-width: 960px; width: 98%; padding: 0; overflow: hidden; text-align: left; max-height: 92vh; display: flex; flex-direction: column; }
+.admin-sz-hledat-wrap { padding: 10px 16px; border-bottom: 1px solid var(--panel-border); flex-shrink: 0; }
+.admin-sz-hledat { width: 100%; background: rgba(255,255,255,0.07); border: 1px solid var(--panel-border); border-radius: 8px; color: var(--text-light); font-size: 1rem; padding: 10px 14px; font-family: inherit; outline: none; }
+.admin-sz-hledat:focus { border-color: var(--accent-gold); }
+.admin-sz-obsah { overflow-y: auto; flex: 1; }
+.admin-sz-empty { padding: 24px; color: var(--text-muted); text-align: center; }
+.admin-seznam-tbl { width: 100%; border-collapse: collapse; font-size: 0.92rem; }
+.admin-seznam-tbl thead th { background: var(--panel-header); color: var(--text-muted); font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; padding: 9px 14px; text-align: left; border-bottom: 2px solid var(--panel-border); position: sticky; top: 0; }
+.admin-seznam-tbl tbody tr { border-bottom: 1px solid rgba(255,255,255,0.06); transition: background 0.12s; }
+.admin-seznam-tbl tbody tr:hover { background: rgba(255,255,255,0.05); }
+.admin-seznam-tbl td { padding: 9px 14px; color: var(--text-light); vertical-align: middle; }
+.admin-sz-id { color: var(--text-muted); font-family: monospace; font-size: 0.85rem; white-space: nowrap; }
+.admin-sz-email { color: var(--text-muted); font-size: 0.88rem; }
+.admin-sz-pocet { text-align: center; color: var(--accent-gold); font-weight: 700; }
+.admin-sz-edit-btn { background: var(--orange); color: #fff; border: none; border-radius: 6px; padding: 6px 12px; font-size: 0.85rem; cursor: pointer; transition: background 0.15s; white-space: nowrap; }
+.admin-sz-edit-btn:hover { background: var(--orange-light); }
 
 /* ── ADMIN DROPDOWN ── */
 #authNavArea { position: relative; }

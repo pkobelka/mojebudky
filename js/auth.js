@@ -269,6 +269,7 @@ async function _zobrazAdminPanel(loginId) {
          <button class="admin-dropdown-item" data-akce="online">🟢 Kdo je online</button>
          <button class="admin-dropdown-item" data-akce="aktivita">📊 Aktivita správců</button>
          <button class="admin-dropdown-item" data-akce="historie">📜 Historie přihlášení</button>
+         <button class="admin-dropdown-item" data-akce="spravci">👥 Správa správců</button>
          <button class="admin-dropdown-item admin-item-zadosti" data-akce="zadosti">📬 Žádosti správců <span class="admin-badge" id="adminBadge" hidden>0</span></button>`
       : `<button class="admin-dropdown-item pripravujeme" data-akce="clanek">📝 Vložit článek</button>`}
     <div class="admin-dropdown-oddelovac"></div>
@@ -348,6 +349,12 @@ async function _zobrazAdminPanel(loginId) {
 
     if (akce === 'online') {
       _zobrazKdoJeOnline();
+      dropdown.classList.remove('open');
+      return;
+    }
+
+    if (akce === 'spravci') {
+      _zobrazSeznamSpravcu();
       dropdown.classList.remove('open');
       return;
     }
@@ -729,8 +736,103 @@ function _zobrazHistoriePrihlaseni() {
   });
 }
 
-function _zobrazProfilSpravce(loginId, info, budkaText) {
-  const ulozeny = _nacistProfilLocal(loginId);
+async function _zobrazSeznamSpravcu() {
+  const existujici = document.getElementById('modalSeznamSpravcu');
+  if (existujici) existujici.remove();
+
+  let info = _spravciInfoCache;
+  if (!info) {
+    try {
+      const res = await fetch('data/spravci_info.json?v=20260601b');
+      info = await res.json();
+      _spravciInfoCache = info;
+    } catch { info = {}; }
+  }
+
+  const spravci = Object.entries(info)
+    .filter(([, d]) => d.spravce !== 'admin')
+    .sort((a, b) => {
+      const na = `${a[1].prijmeni || ''} ${a[1].jmeno || ''}`.trim().toLowerCase();
+      const nb = `${b[1].prijmeni || ''} ${b[1].jmeno || ''}`.trim().toLowerCase();
+      return na.localeCompare(nb, 'cs');
+    });
+
+  function renderRadky(seznam) {
+    if (!seznam.length) return `<div class="admin-sz-empty">Nic nenalezeno</div>`;
+    return `<table class="admin-seznam-tbl"><thead><tr>
+      <th>ID</th><th>Jméno</th><th>Telefon</th><th>E-mail</th><th>Budek</th><th></th>
+    </tr></thead><tbody>${seznam.map(([id, d]) => {
+      const celeJmeno = [d.titul_pred, d.jmeno, d.prijmeni, d.titul_za].filter(Boolean).join(' ')
+        || `<em style="color:var(--text-muted)">${d.osloveni || '—'}</em>`;
+      const budekPocet = (d.budky || []).length || (d.budka_cislo ? 1 : 0);
+      return `<tr>
+        <td class="admin-sz-id">${id}</td>
+        <td>${celeJmeno}</td>
+        <td>${d.telefon || '—'}</td>
+        <td class="admin-sz-email">${d.email || '<em style="color:var(--text-muted)">—</em>'}</td>
+        <td class="admin-sz-pocet">${budekPocet}</td>
+        <td><button class="admin-sz-edit-btn" data-id="${id}">✏️</button></td>
+      </tr>`;
+    }).join('')}</tbody></table>`;
+  }
+
+  const modal = document.createElement('div');
+  modal.id = 'modalSeznamSpravcu';
+  modal.className = 'modal-overlay';
+  modal.innerHTML = `
+    <div class="modal-box admin-seznam-box">
+      <button class="modal-zavrit" id="seznamZavrit">×</button>
+      <div class="profil-header" style="padding:16px 24px">
+        <div class="profil-header-text">
+          <div class="profil-nadpis">👥 Správa správců</div>
+          <div class="profil-budka">Celkem: ${spravci.length} správců v systému</div>
+        </div>
+      </div>
+      <div class="admin-sz-hledat-wrap">
+        <input type="search" id="seznamHledat" class="admin-sz-hledat"
+          placeholder="🔍 Hledat jméno, ID, telefon, e-mail…" autocomplete="off">
+      </div>
+      <div id="seznamObsah" class="admin-sz-obsah">${renderRadky(spravci)}</div>
+    </div>
+  `;
+  document.body.appendChild(modal);
+
+  document.getElementById('seznamZavrit').addEventListener('click', () => modal.remove());
+  modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
+
+  function bindEditBtns() {
+    modal.querySelectorAll('.admin-sz-edit-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.dataset.id;
+        const d = info[id];
+        if (!d) return;
+        modal.remove();
+        const budkyText = (d.budky && d.budky.length)
+          ? d.budky.map(b => `Budka č. ${b.cislo}${b.nazev ? ' – ' + b.nazev : ''}`).join(', ')
+          : (d.budka_cislo ? `Budka č. ${d.budka_cislo}` : '—');
+        _zobrazProfilSpravce(id, d, budkyText, true);
+      });
+    });
+  }
+  bindEditBtns();
+
+  document.getElementById('seznamHledat').addEventListener('input', e => {
+    const q = e.target.value.toLowerCase().trim();
+    const filtered = !q ? spravci : spravci.filter(([id, d]) =>
+      id.includes(q)
+      || (d.jmeno || '').toLowerCase().includes(q)
+      || (d.prijmeni || '').toLowerCase().includes(q)
+      || (d.osloveni || '').toLowerCase().includes(q)
+      || (d.telefon || '').replace(/\s/g, '').includes(q.replace(/\s/g, ''))
+      || (d.email || '').toLowerCase().includes(q)
+    );
+    document.getElementById('seznamObsah').innerHTML = renderRadky(filtered);
+    bindEditBtns();
+  });
+}
+
+function _zobrazProfilSpravce(loginId, info, budkaText, adminMode = false) {
+  const ulozeny = adminMode ? {} : _nacistProfilLocal(loginId);
   const d = Object.assign({}, info, ulozeny);
   // Jméno a příjmení vždy z JSON — autoritativní data z CSV, háčky zaručeny
   if (info && info.jmeno)    d.jmeno    = info.jmeno;
@@ -755,7 +857,7 @@ function _zobrazProfilSpravce(loginId, info, budkaText) {
           </label>
         </div>
         <div class="profil-header-text">
-          <div class="profil-nadpis">🪪 Karta správce</div>
+          <div class="profil-nadpis">${adminMode ? '✏️ Admin editace' : '🪪 Karta správce'}</div>
           ${(() => {
             const budky = info && info.budky && info.budky.length > 1 ? info.budky : null;
             if (budky) {
@@ -815,7 +917,8 @@ function _zobrazProfilSpravce(loginId, info, budkaText) {
       </div>
 
       <div class="profil-actions">
-        <button class="profil-btn-ulozit" id="profilUlozit">💾 Uložit změny</button>
+        ${adminMode ? `<button class="profil-btn-zpet" id="profilZpetSeznam">← Zpět na seznam</button>` : ''}
+        <button class="profil-btn-ulozit" id="profilUlozit">${adminMode ? '💾 Uložit (admin)' : '💾 Uložit změny'}</button>
         <span class="profil-ulozeno" id="profilUlozeno" hidden>✓ Uloženo!</span>
       </div>
     </div>
@@ -839,6 +942,12 @@ function _zobrazProfilSpravce(loginId, info, budkaText) {
 
   document.getElementById('profilZavrit').addEventListener('click', () => modal.remove());
   modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
+  if (adminMode) {
+    document.getElementById('profilZpetSeznam').addEventListener('click', () => {
+      modal.remove();
+      _zobrazSeznamSpravcu();
+    });
+  }
 
   document.getElementById('profilFotoInput').addEventListener('change', e => {
     const file = e.target.files[0];
@@ -862,8 +971,10 @@ function _zobrazProfilSpravce(loginId, info, budkaText) {
       foto:           foto.startsWith('data:') ? foto : null,
     };
     const fbOK = await _ulozitProfilFirebase(loginId, data);
-    _ulozitProfilLocal(loginId, data);
-    localStorage.setItem('mb_firstlogin_' + loginId, '1');
+    if (!adminMode) {
+      _ulozitProfilLocal(loginId, data);
+      localStorage.setItem('mb_firstlogin_' + loginId, '1');
+    }
     const msg = document.getElementById('profilUlozeno');
     msg.textContent = fbOK ? '✓ Uloženo do cloudu!' : '✓ Uloženo lokálně';
     msg.hidden = false;
