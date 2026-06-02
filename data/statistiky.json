@@ -48,10 +48,11 @@
       "vedecky": "Parus major",
       "pocet": 22,
       "otvor": "32 mm",
-      "popis": "Největší česká sýkora, snadno poznatelná žlutým břichem s čcrným pruhem. Nejlastější obyvatel budek v projektu – osedí téměř každou vhodnou budku.",
+      "popis": "Největší česká sýkora, snadno poznatelná žlutým břichem s černým pruhem. Nejčastější obyvatel budek v projektu – obsadí téměř každou vhodnou budku.",
       "wiki": "https://cs.wikipedia.org/wiki/S%C3%BDkora_ko%C5%88adra",
-      "foto": "https://commons.wikimedia.org/wiki/Special:FilePath/Parus_major_Luc_Viatour.jpg?width=600",
-      "foto_autor": "Luc Viatour / Wikimedia CC BY-SA"
+      "zpev": "https://xeno-canto.org/species/Parus-major",
+      "foto": "img/ptaci/konadra.jpg",
+      "foto_autor": "iNaturalist / CC BY-NC"
     },
     {
       "id": "modrinka",
@@ -59,10 +60,11 @@
       "vedecky": "Cyanistes caeruleus",
       "pocet": 11,
       "otvor": "28 mm",
-      "popis": "Pestrobarevná sýkorka s modrou čepčkou a žlutým bříškem. Preferuje budky s menším otvorem 28 mm. V projektu hojně zastoupena.",
+      "popis": "Pestrobarevná sýkorka s modrou čepičkou a žlutým bříškem. Preferuje budky s menším otvorem 28 mm. V projektu hojně zastoupena.",
       "wiki": "https://cs.wikipedia.org/wiki/S%C3%BDkora_mod%C5%99inka",
-      "foto": "https://commons.wikimedia.org/wiki/Special:FilePath/Cyanistes_caeruleus_Kobylizky.jpg?width=600",
-      "foto_autor": "Wikimedia Commons CC BY-SA"
+      "zpev": "https://xeno-canto.org/species/Cyanistes-caeruleus",
+      "foto": "img/ptaci/modrinka.jpg",
+      "foto_autor": "iNaturalist / CC BY-NC"
     },
     {
       "id": "vrabec",
@@ -70,10 +72,11 @@
       "vedecky": "Passer domesticus",
       "pocet": 3,
       "otvor": "32 mm",
-      "popis": "Věrný společník člověka, v posledních dekadách bohužel ubývá. Obsádí budky s větším otvorem, rád se usídlí poblíž lidských obydíl.",
+      "popis": "Věrný společník člověka, v posledních dekadách bohužel ubývá. Obsadí budky s větším otvorem, rád se usídlí poblíž lidských obydíl.",
       "wiki": "https://cs.wikipedia.org/wiki/Vrabec_dom%C3%A1c%C3%AD",
-      "foto": "https://commons.wikimedia.org/wiki/Special:FilePath/Passer_domesticus_male_(15).jpg?width=600",
-      "foto_autor": "Charles J. Sharp / Wikimedia CC BY-SA"
+      "zpev": "https://xeno-canto.org/species/Passer-domesticus",
+      "foto": "img/ptaci/vrabec.jpg",
+      "foto_autor": "iNaturalist / CC BY-NC"
     },
     {
       "id": "parukarka",
@@ -81,10 +84,47 @@
       "vedecky": "Lophophanes cristatus",
       "pocet": 1,
       "otvor": "28–32 mm",
-      "popis": "Vzácnější sýkora s typickým chocholkem. Hndí hlavně v jehličnatých lesích. Výskyt v budce je pro projekt vzácnou odměnou!",
+      "popis": "Vzácnější sýkora s typickým chocholkem. Hnízdí hlavně v jehličnatých lesích. Výskyt v budce je pro projekt vzácnou odměnou!",
       "wiki": "https://cs.wikipedia.org/wiki/S%C3%BDkora_paruk%C3%A1%C5%99ka",
-      "foto": "https://commons.wikimedia.org/wiki/Special:FilePath/Lophophanes_cristatus_(Paridae).jpg?width=600",
-      "foto_autor": "Wikimedia Commons CC BY-SA"
+      "zpev": "https://xeno-canto.org/species/Lophophanes-cristatus",
+      "foto": "img/ptaci/parukarka.jpg",
+      "foto_autor": "iNaturalist / CC BY-SA"
+    },
+    {
+      "id": "babka",
+      "nazev": "Sýkora babka",
+      "vedecky": "Poecile palustris",
+      "pocet": 0,
+      "otvor": "28–32 mm",
+      "popis": "Nenápadná sýkorka hnědohnědé barvy s černou čepičkou. Žije převážně v listnatých lesích a sadech. V budkách hnízdí méně často než příbuzné druhy.",
+      "wiki": "https://cs.wikipedia.org/wiki/S%C3%BDkora_babka",
+      "zpev": "https://xeno-canto.org/species/Poecile-palustris",
+      "foto": "img/ptaci/babka.jpg",
+      "foto_autor": "iNaturalist / CC BY-NC-ND"
+    },
+    {
+      "id": "uhelnicek",
+      "nazev": "Sýkora úhelníček",
+      "vedecky": "Periparus ater",
+      "pocet": 0,
+      "otvor": "28 mm",
+      "popis": "Nejmenší česká sýkora s typickou bílou skvrnou na týlu. Preferuje jehličnaté lesy. Ochotně obsadí budku s malým otvorem 28 mm.",
+      "wiki": "https://cs.wikipedia.org/wiki/S%C3%BDkora_%C3%BAheln%C3%AD%C4%8Dek",
+      "zpev": "https://xeno-canto.org/species/Periparus-ater",
+      "foto": "img/ptaci/uhelnicek.jpg",
+      "foto_autor": "iNaturalist / CC BY"
+    },
+    {
+      "id": "slavik",
+      "nazev": "Slavík obecný",
+      "vedecky": "Luscinia megarhynchos",
+      "pocet": 0,
+      "otvor": "32–35 mm",
+      "popis": "Pěvec proslulý svým nočním zpěvem. Nenápadné hnědé zbarvení ukrývá hudebního virtuosa – jeho zpěv patří k nejkrásnějším v přírodě.",
+      "wiki": "https://cs.wikipedia.org/wiki/Slav%C3%ADk_obecn%C3%BD",
+      "zpev": "https://xeno-canto.org/species/Luscinia-megarhynchos",
+      "foto": "img/ptaci/slavik.jpg",
+      "foto_autor": "iNaturalist / CC BY-NC"
     }
   ],
   "aplikace": [
