@@ -52,7 +52,7 @@
       "wiki": "https://cs.wikipedia.org/wiki/S%C3%BDkora_ko%C5%88adra",
       "zpev": "https://xeno-canto.org/species/Parus-major",
       "foto": "img/ptaci/konadra.jpg",
-      "foto_autor": "Luc Viatour / Wikimedia CC BY-SA"
+      "foto_autor": "iNaturalist / CC BY-NC"
     },
     {
       "id": "modrinka",
@@ -64,7 +64,7 @@
       "wiki": "https://cs.wikipedia.org/wiki/S%C3%BDkora_mod%C5%99inka",
       "zpev": "https://xeno-canto.org/species/Cyanistes-caeruleus",
       "foto": "img/ptaci/modrinka.jpg",
-      "foto_autor": "Wikimedia Commons CC BY-SA"
+      "foto_autor": "iNaturalist / CC BY-NC"
     },
     {
       "id": "vrabec",
@@ -76,7 +76,7 @@
       "wiki": "https://cs.wikipedia.org/wiki/Vrabec_dom%C3%A1c%C3%AD",
       "zpev": "https://xeno-canto.org/species/Passer-domesticus",
       "foto": "img/ptaci/vrabec.jpg",
-      "foto_autor": "Charles J. Sharp / Wikimedia CC BY-SA"
+      "foto_autor": "iNaturalist / CC BY-NC"
     },
     {
       "id": "parukarka",
@@ -88,7 +88,7 @@
       "wiki": "https://cs.wikipedia.org/wiki/S%C3%BDkora_paruk%C3%A1%C5%99ka",
       "zpev": "https://xeno-canto.org/species/Lophophanes-cristatus",
       "foto": "img/ptaci/parukarka.jpg",
-      "foto_autor": "Wikimedia Commons CC BY-SA"
+      "foto_autor": "iNaturalist / CC BY-SA"
     },
     {
       "id": "babka",
@@ -100,7 +100,7 @@
       "wiki": "https://cs.wikipedia.org/wiki/S%C3%BDkora_babka",
       "zpev": "https://xeno-canto.org/species/Poecile-palustris",
       "foto": "img/ptaci/babka.jpg",
-      "foto_autor": "Wikimedia Commons CC BY-SA"
+      "foto_autor": "iNaturalist / CC BY-NC-ND"
     },
     {
       "id": "uhelnicek",
@@ -112,7 +112,7 @@
       "wiki": "https://cs.wikipedia.org/wiki/S%C3%BDkora_%C3%BAheln%C3%AD%C4%8Dek",
       "zpev": "https://xeno-canto.org/species/Periparus-ater",
       "foto": "img/ptaci/uhelnicek.jpg",
-      "foto_autor": "Wikimedia Commons CC BY-SA"
+      "foto_autor": "iNaturalist / CC BY"
     },
     {
       "id": "slavik",
@@ -124,7 +124,7 @@
       "wiki": "https://cs.wikipedia.org/wiki/Slav%C3%ADk_obecn%C3%BD",
       "zpev": "https://xeno-canto.org/species/Luscinia-megarhynchos",
       "foto": "img/ptaci/slavik.jpg",
-      "foto_autor": "Wikimedia Commons CC BY-SA"
+      "foto_autor": "iNaturalist / CC BY-NC"
     }
   ],
   "aplikace": [

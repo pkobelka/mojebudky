@@ -162,19 +162,19 @@ def zpracuj(csv_path, json_path):
 def generate_spravci(csv_path, out_path='data/spravci.json'):
     """
     Generuje spravci.json se SHA-256 hashi hesel.
-    Čte sloupec 0 (ID) a sloupec 1 (HESLO) z CSV.
+    Sloupec 10 = ID přihlášení, sloupec 12 = heslo (plaintext v CSV).
     Do repozitáře jdou jen hashe, nikdy plaintext hesla.
     """
     spravci = {}
     with open(csv_path, newline='', encoding='utf-8-sig') as f:
         reader = csv.reader(f, delimiter=';')
         for row in reader:
-            if len(row) < 2:
+            if len(row) < 13:
                 continue
-            login_id = row[0].strip()
-            heslo    = row[1].strip()
-            if not re.match(r'^\d{6}$', login_id):
-                continue  # přeskočit hlavičku nebo záznamy bez 6místného ID
+            login_id = row[10].strip()   # sloupec ID
+            heslo    = row[12].strip()   # sloupec Heslo
+            if not re.match(r'^\d{3,6}$', login_id):
+                continue  # přeskočit prázdné nebo nečíselné záznamy
             if not heslo:
                 continue
             spravci[login_id] = hashlib.sha256(heslo.encode('utf-8')).hexdigest()
