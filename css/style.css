@@ -166,20 +166,33 @@ html, body {
 
 /* ── PARTNERÉ ── */
 /* ── DESATERO ── */
-.desatero-section { background: linear-gradient(180deg, #0f2a06 0%, #1a3a0a 100%); border-top: 2px solid var(--orange); padding: 40px 52px 48px; }
-.desatero-wrap { max-width: 960px; margin: 0 auto; }
-.desatero-header { display: flex; align-items: center; gap: 24px; margin-bottom: 32px; }
-.desatero-logo { width: 64px; height: auto; filter: drop-shadow(0 2px 8px rgba(0,0,0,0.4)); flex-shrink: 0; }
-.desatero-nadpis { color: var(--text-light); font-size: 1.7rem; font-weight: 800; margin-bottom: 4px; }
-.desatero-podnadpis { color: var(--text-muted); font-size: 1rem; }
-.desatero-list { list-style: none; counter-reset: desatero; display: grid; grid-template-columns: 1fr 1fr; gap: 16px; padding: 0; }
-.desatero-list li { counter-increment: desatero; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 16px 18px 16px 54px; color: var(--text-muted); font-size: 0.92rem; line-height: 1.6; position: relative; }
-.desatero-list li::before { content: counter(desatero); position: absolute; left: 16px; top: 14px; width: 26px; height: 26px; background: var(--orange); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.85rem; }
-.desatero-list li strong { color: var(--text-light); display: block; margin-bottom: 4px; font-size: 0.97rem; }
-@media (max-width: 700px) {
-  .desatero-section { padding: 28px 16px 36px; }
+.desatero-section { background: linear-gradient(180deg, #0a1e04 0%, #0f2a06 40%, #0a1e04 100%); padding: 56px 20px 64px; }
+.desatero-outer { max-width: 1120px; margin: 0 auto; border: 2px solid #c8960a; padding: 7px; background: rgba(200,150,10,0.07); box-shadow: 0 0 40px rgba(0,0,0,0.5), 0 0 80px rgba(200,150,10,0.06); }
+.desatero-wrap { border: 2px solid #c8960a; background: linear-gradient(160deg, #0c2005 0%, #122b08 50%, #0c2005 100%); padding: 48px 60px 56px; position: relative; text-align: center; }
+.d-corner { position: absolute; color: #c8960a; font-size: 1.6rem; line-height: 1; user-select: none; opacity: 0.85; }
+.d-tl { top: 8px; left: 12px; }
+.d-tr { top: 8px; right: 12px; }
+.d-bl { bottom: 8px; left: 12px; }
+.d-br { bottom: 8px; right: 12px; }
+.desatero-header { display: flex; flex-direction: column; align-items: center; gap: 10px; margin-bottom: 20px; }
+.desatero-logo { width: 88px; height: auto; filter: drop-shadow(0 2px 16px rgba(200,150,10,0.35)); }
+.desatero-logo-nazev { font-family: 'UnifrakturMaguntia', serif; font-size: 2rem; color: #c8960a; letter-spacing: 0.05em; line-height: 1; }
+.desatero-ornament { display: flex; align-items: center; gap: 16px; justify-content: center; margin: 14px 0; color: #c8960a; font-size: 0.95rem; }
+.desatero-ornament span:first-child, .desatero-ornament span:last-child { flex: 1; max-width: 200px; height: 1px; background: linear-gradient(90deg, transparent, #c8960a, transparent); display: block; }
+.desatero-ornament span:nth-child(2) { font-size: 1.1rem; flex-shrink: 0; }
+.desatero-ornament--bird span:nth-child(2) { font-size: 1.5rem; }
+.desatero-nadpis { font-family: 'UnifrakturMaguntia', serif; color: var(--text-light); font-size: 2.5rem; font-weight: 400; margin-bottom: 8px; line-height: 1.2; text-shadow: 0 2px 12px rgba(200,150,10,0.2); }
+.desatero-podnadpis { color: var(--text-muted); font-size: 1rem; font-style: italic; margin-bottom: 4px; }
+.desatero-list { list-style: none; counter-reset: desatero; display: grid; grid-template-columns: 1fr 1fr; gap: 14px; padding: 0; margin-top: 28px; text-align: left; }
+.desatero-list li { counter-increment: desatero; background: rgba(255,255,255,0.03); border: 1px solid rgba(200,150,10,0.22); border-radius: 8px; padding: 15px 18px 15px 54px; color: var(--text-muted); font-size: 0.91rem; line-height: 1.6; position: relative; transition: border-color 0.2s, background 0.2s; }
+.desatero-list li:hover { border-color: rgba(200,150,10,0.5); background: rgba(255,255,255,0.05); }
+.desatero-list li::before { content: counter(desatero); position: absolute; left: 14px; top: 13px; width: 28px; height: 28px; background: #c8960a; color: #0c1f05; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.84rem; }
+.desatero-list li strong { color: var(--text-light); display: block; margin-bottom: 3px; font-size: 0.96rem; }
+@media (max-width: 760px) {
+  .desatero-wrap { padding: 30px 18px 38px; }
   .desatero-list { grid-template-columns: 1fr; }
-  .desatero-nadpis { font-size: 1.3rem; }
+  .desatero-nadpis { font-size: 1.75rem; }
+  .desatero-outer { padding: 5px; }
 }
 
 .partners-section { background: #1a3a0a; border-top: 2px solid var(--orange); padding: 18px 52px 28px; text-align: center; display: flex; flex-direction: column; justify-content: center; }
