@@ -2470,12 +2470,13 @@
     "email": ""
   },
   "602356": {
-    "jmeno": "Petr",
+    "jmeno": "Petr-admin",
     "prijmeni": "KOBELKA",
     "spravce": "admin",
     "budka_cislo": 0,
     "budka_nazev": "Administrátor",
     "telefon": "",
-    "email": "p.kobelka@gmail.com"
+    "email": "p.kobelka@gmail.com",
+    "osloveni": "Petr-admin"
   }
 }

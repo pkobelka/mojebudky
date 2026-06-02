@@ -68,7 +68,7 @@ async function _nactiAuthSpravce() {
 async function _nactiSpravciInfo() {
   if (_spravciInfoCache) return _spravciInfoCache;
   try {
-    const res = await fetch('data/spravci_info.json?v=20260601b', { cache: 'reload' });
+    const res = await fetch('data/spravci_info.json?v=20260602a', { cache: 'reload' });
     if (res.ok) _spravciInfoCache = await res.json();
   } catch {}
   return _spravciInfoCache;
@@ -743,7 +743,7 @@ async function _zobrazSeznamSpravcu() {
   let info = _spravciInfoCache;
   if (!info) {
     try {
-      const res = await fetch('data/spravci_info.json?v=20260601b');
+      const res = await fetch('data/spravci_info.json?v=20260602a');
       info = await res.json();
       _spravciInfoCache = info;
     } catch { info = {}; }
@@ -835,7 +835,7 @@ window._editSpravceByBudka = async function(cisloBudky) {
   let info = _spravciInfoCache;
   if (!info) {
     try {
-      const res = await fetch('data/spravci_info.json?v=20260601b');
+      const res = await fetch('data/spravci_info.json?v=20260602a');
       info = await res.json();
       _spravciInfoCache = info;
     } catch { return; }
