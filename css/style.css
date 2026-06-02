@@ -299,6 +299,7 @@ html, body {
 /* ── HAMBURGER ── */
 .nav-hamburger { display: none; flex-direction: column; justify-content: center; gap: 5px; background: none; border: none; cursor: pointer; padding: 6px; margin-left: 6px; }
 .nav-napsat-mobile { display: none; }
+.nav-podpora-mobile { display: none; }
 .nav-hamburger span { display: block; width: 22px; height: 2px; background: var(--text-light); border-radius: 2px; transition: all 0.25s; }
 .nav-hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
 .nav-hamburger.open span:nth-child(2) { opacity: 0; }
@@ -399,26 +400,55 @@ html, body {
   .partners-section h3 { font-size: 1.15rem; }
   .podekovani-item { font-size: 1.05rem; }
   .partner-item { font-size: 1rem; padding: 7px 14px; }
+  /* Tablet: zmenší navbar a fonty */
+  .navbar { height: 80px; padding: 0 16px; }
+  .nav-logo-img { width: 48px; height: 64px; }
+  .logo-text { font-size: 1.8rem; }
+  .logo-autor { font-size: 0.75rem; }
+  .nav-podpora-btn { font-size: 1.4rem; padding: 8px 14px; }
+  .btn-login { font-size: 1.1rem; padding: 10px 18px; }
 }
 
 @media (max-width: 600px) {
-  .navbar { padding: 0 12px; height: 58px; }
-  .nav-logo-img { width: 32px; height: 44px; }
-  .logo-text { font-size: 1.15rem; }
-  .logo-autor { font-size: 0.6rem; }
-  .btn-login { font-size: 0.88rem; padding: 8px 12px; }
+  /* Navbar: skryj velké tlačítko Podpořit, uvolni místo pro hamburger + login */
+  .nav-podpora-btn { display: none; }
+  .navbar { padding: 0 10px; height: 58px; gap: 8px; }
+  .nav-logo { padding: 3px 8px 3px 4px; gap: 8px; }
+  .nav-logo-img { width: 28px; height: 38px; }
+  .logo-text { font-size: 1.05rem; }
+  .logo-autor { font-size: 0.55rem; margin-top: 4px; }
+  .nav-actions { gap: 6px; }
+  .btn-login { font-size: 0.82rem; padding: 7px 10px; white-space: nowrap; }
   .btn-napsat { display: none; }
   .nav-hamburger { display: flex; }
   .nav-napsat-mobile { display: block; }
+  .nav-podpora-mobile { display: block; }
   .nav-links { display: none; position: fixed; top: 58px; left: 0; right: 0; background: var(--nav-bg); flex-direction: column; padding: 8px 0 12px; box-shadow: 0 6px 20px rgba(0,0,0,0.5); z-index: 999; gap: 0; }
   .nav-links.open { display: flex; }
   .nav-links li { width: 100%; }
   .nav-links a { display: block; padding: 14px 20px; font-size: 1.1rem; border-bottom: 1px solid rgba(255,255,255,0.07); }
-  .info-bar { padding: 5px 12px; font-size: 0.85rem; flex-wrap: wrap; }
+  /* Info bar: skryj hodiny a bar-right, jen datum + svátek */
+  .info-bar { padding: 5px 10px; font-size: 0.82rem; flex-wrap: wrap; overflow: hidden; }
   .info-bar .bar-right { display: none; }
+  .info-bar-cas { display: none; }
+  /* Mapa a panely */
   .map-wrapper { height: 250px; min-height: 200px; }
   #map { height: 250px; min-height: 200px; }
   .panel { max-height: 220px; }
+  /* Popup na mobilu – žádná min-width */
+  .budka-popup { min-width: unset; width: calc(100vw - 40px); max-width: 360px; font-size: 1rem; }
+  .popup-header { padding: 12px 16px 10px; }
+  .popup-cislo { font-size: 1.2rem; }
+  .popup-nazev-hlavni { font-size: 1.25rem; }
+  .popup-ptak { padding: 10px 16px 4px; font-size: 1.1rem; }
+  .popup-detail { padding: 6px 16px 12px; }
+  .popup-sekce { padding: 10px 16px 14px; }
+  .popup-edit-btn { padding: 12px 16px; font-size: 1.1rem; }
+  /* Splash – plná šířka na mobilu */
+  .splash-box { padding: 40px 28px 36px; }
+  .splash-nadpis { font-size: 2rem; }
+  /* Přihlašovací toast */
+  .admin-toast { font-size: 1.4rem; padding: 32px 24px; border-radius: 20px; }
   .panel-title { font-size: 1rem; padding: 10px 14px; }
   .pribeh-druh { font-size: 1rem; }
   .pribeh-popis { font-size: 0.95rem; }

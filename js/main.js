@@ -79,10 +79,8 @@ function aktualizujListu() {
     ? `&nbsp;| 🎂 <span class="bar-narozeniny">Narozeniny slaví: <strong>${_narozeniniceDnes.map(n => n.jmeno).join(', ')}</strong> – gratulujeme!</span>`
     : '';
 
-  const cas = `&nbsp;| ⏰ <span id="liveCas">${formatCas(d)}</span>`;
-
-  bar.innerHTML = `<span class="bar-left">${cal}${sva}${narozBar}${cas}</span>
-    <span class="bar-right">🌿 Pomáháme ptactvu nejen po celé ČR</span>`;
+  bar.innerHTML = `<span class="bar-left">${cal}${sva}${narozBar}</span>
+    <span class="bar-right">⏰ <span id="liveCas">${formatCas(d)}</span> &nbsp;|&nbsp; 🌿 Pomáháme ptactvu nejen po celé ČR</span>`;
 }
 
 function tickCas() {
