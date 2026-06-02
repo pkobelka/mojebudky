@@ -405,10 +405,12 @@ function zobrazModalDruhu(druh, iconSvg) {
   }
 
   const bigIcon = iconSvg.replace(/width="38" height="38"/, 'width="110" height="110"');
+  const placeholderFoto = `img/ptaci/${druh.id}_placeholder.svg`;
   const fotoHTML = druh.foto
-    ? `<div class="druh-modal-foto">
+    ? `<div class="druh-modal-foto druh-modal-foto--klikatelna" title="Klikněte pro zvětšení">
         <img src="${druh.foto}" alt="${druh.nazev}" class="druh-modal-foto-img"
-             onerror="this.closest('.druh-modal-foto').style.display='none'">
+             onerror="this.src='${placeholderFoto}';this.closest('.druh-modal-foto').classList.remove('druh-modal-foto--klikatelna');this.closest('.druh-modal-foto').title=''">
+        <div class="druh-foto-zoom-hint">🔍 Zvětšit</div>
         ${druh.foto_autor ? `<div class="druh-modal-foto-autor">© ${druh.foto_autor}</div>` : ''}
        </div>`
     : '';
@@ -446,6 +448,19 @@ function zobrazModalDruhu(druh, iconSvg) {
   overlay.querySelector('.druh-modal-zavrit').addEventListener('click', () => {
     overlay.hidden = true;
   });
+
+  const fotoEl = overlay.querySelector('.druh-modal-foto--klikatelna');
+  if (fotoEl) {
+    fotoEl.addEventListener('click', () => {
+      const img = fotoEl.querySelector('img');
+      if (!img || img.src.includes('_placeholder')) return;
+      const zoomDiv = document.createElement('div');
+      zoomDiv.className = 'foto-zoom-overlay';
+      zoomDiv.innerHTML = `<img src="${img.src}" alt="${img.alt}"><span class="foto-zoom-zavrit">×</span>`;
+      document.body.appendChild(zoomDiv);
+      zoomDiv.addEventListener('click', () => zoomDiv.remove());
+    });
+  }
 
   overlay.hidden = false;
 }

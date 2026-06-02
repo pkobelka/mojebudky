@@ -51,7 +51,7 @@
       "popis": "Největší česká sýkora, snadno poznatelná žlutým břichem s černým pruhem. Nejčastější obyvatel budek v projektu – obsadí téměř každou vhodnou budku.",
       "wiki": "https://cs.wikipedia.org/wiki/S%C3%BDkora_ko%C5%88adra",
       "zpev": "https://xeno-canto.org/species/Parus-major",
-      "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d2/Parus_major_Luc_Viatour.jpg/600px-Parus_major_Luc_Viatour.jpg",
+      "foto": "img/ptaci/konadra.jpg",
       "foto_autor": "Luc Viatour / Wikimedia CC BY-SA"
     },
     {
@@ -63,7 +63,7 @@
       "popis": "Pestrobarevná sýkorka s modrou čepičkou a žlutým bříškem. Preferuje budky s menším otvorem 28 mm. V projektu hojně zastoupena.",
       "wiki": "https://cs.wikipedia.org/wiki/S%C3%BDkora_mod%C5%99inka",
       "zpev": "https://xeno-canto.org/species/Cyanistes-caeruleus",
-      "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/Cyanistes_caeruleus_Kobylizky.jpg/600px-Cyanistes_caeruleus_Kobylizky.jpg",
+      "foto": "img/ptaci/modrinka.jpg",
       "foto_autor": "Wikimedia Commons CC BY-SA"
     },
     {
@@ -75,7 +75,7 @@
       "popis": "Věrný společník člověka, v posledních dekadách bohužel ubývá. Obsadí budky s větším otvorem, rád se usídlí poblíž lidských obydíl.",
       "wiki": "https://cs.wikipedia.org/wiki/Vrabec_dom%C3%A1c%C3%AD",
       "zpev": "https://xeno-canto.org/species/Passer-domesticus",
-      "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Passer_domesticus_male_(15).jpg/600px-Passer_domesticus_male_(15).jpg",
+      "foto": "img/ptaci/vrabec.jpg",
       "foto_autor": "Charles J. Sharp / Wikimedia CC BY-SA"
     },
     {
@@ -87,7 +87,7 @@
       "popis": "Vzácnější sýkora s typickým chocholkem. Hnízdí hlavně v jehličnatých lesích. Výskyt v budce je pro projekt vzácnou odměnou!",
       "wiki": "https://cs.wikipedia.org/wiki/S%C3%BDkora_paruk%C3%A1%C5%99ka",
       "zpev": "https://xeno-canto.org/species/Lophophanes-cristatus",
-      "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/ce/Lophophanes_cristatus_(Paridae).jpg/600px-Lophophanes_cristatus_(Paridae).jpg",
+      "foto": "img/ptaci/parukarka.jpg",
       "foto_autor": "Wikimedia Commons CC BY-SA"
     },
     {
@@ -99,7 +99,7 @@
       "popis": "Nenápadná sýkorka hnědohnědé barvy s černou čepičkou. Žije převážně v listnatých lesích a sadech. V budkách hnízdí méně často než příbuzné druhy.",
       "wiki": "https://cs.wikipedia.org/wiki/S%C3%BDkora_babka",
       "zpev": "https://xeno-canto.org/species/Poecile-palustris",
-      "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/77/Marsh_tit_(Poecile_palustris).jpg/600px-Marsh_tit_(Poecile_palustris).jpg",
+      "foto": "img/ptaci/babka.jpg",
       "foto_autor": "Wikimedia Commons CC BY-SA"
     },
     {
@@ -111,7 +111,7 @@
       "popis": "Nejmenší česká sýkora s typickou bílou skvrnou na týlu. Preferuje jehličnaté lesy. Ochotně obsadí budku s malým otvorem 28 mm.",
       "wiki": "https://cs.wikipedia.org/wiki/S%C3%BDkora_%C3%BAheln%C3%AD%C4%8Dek",
       "zpev": "https://xeno-canto.org/species/Periparus-ater",
-      "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/84/Coal_tit_(Periparus_ater)_2.jpg/600px-Coal_tit_(Periparus_ater)_2.jpg",
+      "foto": "img/ptaci/uhelnicek.jpg",
       "foto_autor": "Wikimedia Commons CC BY-SA"
     },
     {
@@ -123,7 +123,7 @@
       "popis": "Pěvec proslulý svým nočním zpěvem. Nenápadné hnědé zbarvení ukrývá hudebního virtuosa – jeho zpěv patří k nejkrásnějším v přírodě.",
       "wiki": "https://cs.wikipedia.org/wiki/Slav%C3%ADk_obecn%C3%BD",
       "zpev": "https://xeno-canto.org/species/Luscinia-megarhynchos",
-      "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/42/Luscinia_megarhynchos_-_Common_Nightingale.jpg/600px-Luscinia_megarhynchos_-_Common_Nightingale.jpg",
+      "foto": "img/ptaci/slavik.jpg",
       "foto_autor": "Wikimedia Commons CC BY-SA"
     }
   ],

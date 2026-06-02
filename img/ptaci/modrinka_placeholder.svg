@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="480" height="360" viewBox="0 0 480 360">
+  <rect width="480" height="360" fill="#1a5a8a" opacity="0.15" rx="8"/>
+  <rect width="480" height="360" fill="none" stroke="#1a5a8a" stroke-width="2" rx="8"/>
+  <text x="240" y="160" font-family="serif" font-size="80" text-anchor="middle" fill="#1a5a8a" opacity="0.4">🐦</text>
+  <text x="240" y="220" font-family="sans-serif" font-size="22" text-anchor="middle" fill="#1a5a8a" font-weight="bold">Sýkora modřinka</text>
+  <text x="240" y="255" font-family="sans-serif" font-size="15" text-anchor="middle" fill="#1a5a8a" opacity="0.7">Foto bude doplněno</text>
+</svg>
