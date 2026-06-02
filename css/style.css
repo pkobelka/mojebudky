@@ -165,13 +165,13 @@ html, body {
 .stat-aktualizace span { color: var(--text-light); font-weight: 700; font-size: 0.95rem; }
 
 /* ── DESATERO TILE (v pravém panelu) ── */
-.desatero-tile { cursor: pointer; margin: 8px 10px 0; display: flex; align-items: center; gap: 12px; border: 1px solid rgba(200,150,10,0.45); border-left: 4px solid #c8960a; border-radius: 8px; padding: 10px 14px; background: rgba(200,150,10,0.07); transition: background 0.2s, border-color 0.2s; user-select: none; }
-.desatero-tile:hover, .desatero-tile:focus { background: rgba(200,150,10,0.15); outline: none; box-shadow: 0 0 0 2px rgba(200,150,10,0.4); }
+.desatero-tile { cursor: pointer; margin: 8px 10px 0; display: flex; align-items: center; gap: 12px; border: 2px solid rgba(200,150,10,0.7); border-left: 5px solid #c8960a; border-radius: 8px; padding: 12px 14px; background: rgba(200,150,10,0.13); transition: background 0.2s, border-color 0.2s; user-select: none; }
+.desatero-tile:hover, .desatero-tile:focus { background: rgba(200,150,10,0.22); outline: none; box-shadow: 0 0 0 2px rgba(200,150,10,0.5); }
 .desatero-tile-ikona { font-size: 1.6rem; flex-shrink: 0; }
 .desatero-tile-text { flex: 1; min-width: 0; }
-.desatero-tile-nazev { font-family: 'UnifrakturMaguntia', serif; font-size: 1.25rem; color: #c8960a; line-height: 1.1; }
+.desatero-tile-nazev { font-family: 'UnifrakturMaguntia', serif; font-size: 1.25rem; color: #e0aa20; line-height: 1.1; }
 .desatero-tile-sub { color: var(--text-muted); font-size: 0.76rem; margin-top: 2px; }
-.desatero-tile-arrow { color: #c8960a; font-size: 1.8rem; line-height: 1; opacity: 0.7; flex-shrink: 0; }
+.desatero-tile-arrow { color: #c8960a; font-size: 1.8rem; line-height: 1; opacity: 0.8; flex-shrink: 0; }
 
 /* ── PARTNERÉ ── */
 /* ── DESATERO MODAL (overlay) ── */
@@ -187,18 +187,18 @@ html, body {
 .d-br { bottom: 8px; right: 12px; }
 .desatero-header { display: flex; flex-direction: column; align-items: center; gap: 8px; margin-bottom: 14px; }
 .desatero-logo { width: 80px; height: auto; filter: drop-shadow(0 2px 16px rgba(200,150,10,0.35)); }
-.desatero-logo-nazev { font-family: 'UnifrakturMaguntia', serif; font-size: 1.9rem; color: #c8960a; letter-spacing: 0.05em; line-height: 1; }
+.desatero-logo-nazev { font-size: 1.4rem; color: #c8960a; font-weight: 700; letter-spacing: 0.08em; line-height: 1; text-transform: uppercase; }
 .desatero-ornament { display: flex; align-items: center; gap: 20px; justify-content: center; margin: 10px 0; color: #c8960a; }
 .desatero-ornament span:first-child, .desatero-ornament span:last-child { flex: 1; max-width: 300px; height: 1px; background: linear-gradient(90deg, transparent, #c8960a, transparent); display: block; }
 .desatero-ornament span:nth-child(2) { font-size: 1.2rem; flex-shrink: 0; }
 .desatero-ornament--bird span:nth-child(2) { font-size: 1.5rem; }
-.desatero-nadpis { font-family: 'UnifrakturMaguntia', serif; color: var(--text-light); font-size: 2.6rem; font-weight: 400; margin-bottom: 6px; line-height: 1.2; text-shadow: 0 2px 12px rgba(200,150,10,0.2); }
-.desatero-podnadpis { color: var(--text-muted); font-size: 1.05rem; font-style: italic; margin-bottom: 2px; }
-.desatero-list { list-style: none; counter-reset: desatero; display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; padding: 0; margin-top: 24px; text-align: left; }
-.desatero-list li { counter-increment: desatero; background: rgba(255,255,255,0.03); border: 1px solid rgba(200,150,10,0.22); border-radius: 10px; padding: 16px 20px 16px 60px; color: var(--text-muted); font-size: 1.01rem; line-height: 1.6; position: relative; transition: border-color 0.2s, background 0.2s; }
+.desatero-nadpis { font-family: 'UnifrakturMaguntia', serif; color: var(--text-light); font-size: 2.8rem; font-weight: 400; margin-bottom: 6px; line-height: 1.2; text-shadow: 0 2px 12px rgba(200,150,10,0.2); }
+.desatero-podnadpis { color: var(--text-muted); font-size: 1.1rem; font-style: italic; margin-bottom: 2px; }
+.desatero-list { list-style: none; counter-reset: desatero; display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; padding: 0; margin-top: 28px; text-align: left; }
+.desatero-list li { counter-increment: desatero; background: rgba(255,255,255,0.03); border: 1px solid rgba(200,150,10,0.22); border-radius: 10px; padding: 20px 22px 20px 64px; color: var(--text-muted); font-size: 1.07rem; line-height: 1.65; position: relative; transition: border-color 0.2s, background 0.2s; }
 .desatero-list li:hover { border-color: rgba(200,150,10,0.5); background: rgba(255,255,255,0.05); }
-.desatero-list li::before { content: counter(desatero); position: absolute; left: 15px; top: 14px; width: 30px; height: 30px; background: #c8960a; color: #0c1f05; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.92rem; }
-.desatero-list li strong { color: var(--text-light); display: block; margin-bottom: 4px; font-size: 1.05rem; }
+.desatero-list li::before { content: counter(desatero); position: absolute; left: 16px; top: 18px; width: 32px; height: 32px; background: #c8960a; color: #0c1f05; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.95rem; }
+.desatero-list li strong { color: var(--text-light); display: block; margin-bottom: 5px; font-size: 1.12rem; }
 @media (max-width: 900px) {
   .desatero-wrap { padding: 28px 18px 40px; }
   .desatero-list { grid-template-columns: 1fr 1fr; }
@@ -211,27 +211,27 @@ html, body {
 
 /* ── SLIB MODAL ── */
 .slib-overlay { align-items: flex-start; overflow-y: auto; padding: 32px 12px; }
-.slib-outer { max-width: 700px; width: 100%; margin: 0 auto; border: 2px solid #c8960a; padding: 7px; background: rgba(200,150,10,0.07); box-shadow: 0 0 60px rgba(0,0,0,0.6), 0 0 100px rgba(200,150,10,0.05); flex-shrink: 0; }
-.slib-box { border: 2px solid #c8960a; background: linear-gradient(160deg, #0c2005 0%, #122b08 50%, #0c2005 100%); padding: 40px 52px 44px; position: relative; text-align: center; }
+.slib-outer { max-width: 860px; width: 100%; margin: 0 auto; border: 2px solid #c8960a; padding: 7px; background: rgba(200,150,10,0.07); box-shadow: 0 0 60px rgba(0,0,0,0.6), 0 0 100px rgba(200,150,10,0.05); flex-shrink: 0; }
+.slib-box { border: 2px solid #c8960a; background: linear-gradient(160deg, #0c2005 0%, #122b08 50%, #0c2005 100%); padding: 44px 60px 52px; position: relative; text-align: center; }
 .slib-corner { position: absolute; color: #c8960a; font-size: 1.4rem; line-height: 1; user-select: none; opacity: 0.85; }
 .slib-tl { top: 8px; left: 12px; } .slib-tr { top: 8px; right: 12px; } .slib-bl { bottom: 8px; left: 12px; } .slib-br { bottom: 8px; right: 12px; }
 .slib-header { display: flex; flex-direction: column; align-items: center; gap: 8px; margin-bottom: 16px; }
 .slib-logo { width: 80px; height: auto; filter: drop-shadow(0 2px 16px rgba(200,150,10,0.35)); }
-.slib-logo-nazev { font-family: 'UnifrakturMaguntia', serif; font-size: 1.8rem; color: #c8960a; letter-spacing: 0.05em; line-height: 1; }
+.slib-logo-nazev { font-size: 1.3rem; color: #c8960a; font-weight: 700; letter-spacing: 0.08em; line-height: 1; text-transform: uppercase; }
 .slib-ornament { display: flex; align-items: center; gap: 16px; justify-content: center; margin: 12px 0; color: #c8960a; }
 .slib-ornament span:first-child, .slib-ornament span:last-child { flex: 1; max-width: 160px; height: 1px; background: linear-gradient(90deg, transparent, #c8960a, transparent); display: block; }
 .slib-ornament span:nth-child(2) { font-size: 1.1rem; flex-shrink: 0; }
 .slib-ornament--bird span:nth-child(2) { font-size: 1.4rem; }
-.slib-nadpis { font-family: 'UnifrakturMaguntia', serif; color: var(--text-light); font-size: 2rem; font-weight: 400; margin-bottom: 4px; line-height: 1.2; }
-.slib-subtitle { font-family: 'UnifrakturMaguntia', serif; color: #c8960a; font-size: 1.3rem; margin-bottom: 4px; font-weight: 400; }
-.slib-text { text-align: left; margin: 14px 0 10px; }
-.slib-uvod { color: var(--text-light); font-size: 1rem; margin-bottom: 14px; line-height: 1.65; text-align: center; }
+.slib-nadpis { font-family: 'UnifrakturMaguntia', serif; color: var(--text-light); font-size: 2.3rem; font-weight: 400; margin-bottom: 4px; line-height: 1.2; }
+.slib-subtitle { font-family: 'UnifrakturMaguntia', serif; color: #c8960a; font-size: 1.4rem; margin-bottom: 4px; font-weight: 400; }
+.slib-text { text-align: left; margin: 16px 0 12px; }
+.slib-uvod { color: var(--text-light); font-size: 1.07rem; margin-bottom: 16px; line-height: 1.7; text-align: center; }
 .slib-list { list-style: none; padding: 0; margin: 0 0 16px; }
-.slib-list li { color: var(--text-muted); font-size: 0.95rem; line-height: 1.65; padding: 8px 0 8px 30px; border-bottom: 1px solid rgba(200,150,10,0.1); position: relative; }
+.slib-list li { color: var(--text-muted); font-size: 1.05rem; line-height: 1.7; padding: 10px 0 10px 32px; border-bottom: 1px solid rgba(200,150,10,0.12); position: relative; }
 .slib-list li:last-child { border-bottom: none; }
-.slib-list li::before { content: '✦'; position: absolute; left: 4px; top: 10px; color: #c8960a; font-size: 0.65rem; }
+.slib-list li::before { content: '✦'; position: absolute; left: 4px; top: 12px; color: #c8960a; font-size: 0.7rem; }
 .slib-list li strong { color: var(--text-light); }
-.slib-zaver { color: var(--text-muted); font-size: 0.93rem; font-style: italic; text-align: center; margin: 6px 0 0; line-height: 1.6; }
+.slib-zaver { color: var(--text-muted); font-size: 1rem; font-style: italic; text-align: center; margin: 8px 0 0; line-height: 1.65; }
 .slib-podpis-radek { display: flex; justify-content: center; gap: 10px; align-items: baseline; margin: 18px 0 22px; }
 .slib-datum-label { color: var(--text-muted); font-size: 0.87rem; }
 .slib-datum { color: #c8960a; font-size: 0.96rem; font-weight: 600; }
