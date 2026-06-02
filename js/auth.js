@@ -831,6 +831,36 @@ async function _zobrazSeznamSpravcu() {
   });
 }
 
+window._editSpravceByBudka = async function(cisloBudky) {
+  let info = _spravciInfoCache;
+  if (!info) {
+    try {
+      const res = await fetch('data/spravci_info.json?v=20260601b');
+      info = await res.json();
+      _spravciInfoCache = info;
+    } catch { return; }
+  }
+  const entry = Object.entries(info).find(([, d]) => {
+    if (d.budky && d.budky.some(b => Number(b.cislo) === Number(cisloBudky))) return true;
+    if (d.budka_cislo && Number(d.budka_cislo) === Number(cisloBudky)) return true;
+    return false;
+  });
+  if (!entry) {
+    const t = document.createElement('div');
+    t.className = 'admin-toast admin-toast--show';
+    t.textContent = `⚠️ Budka č. ${cisloBudky} nemá přiřazeného správce`;
+    t.style.cssText = 'font-size:1.3rem;padding:28px 40px';
+    document.body.appendChild(t);
+    setTimeout(() => t.remove(), 3000);
+    return;
+  }
+  const [loginId, d] = entry;
+  const budkyText = (d.budky && d.budky.length)
+    ? d.budky.map(b => `Budka č. ${b.cislo}${b.nazev ? ' – ' + b.nazev : ''}`).join(', ')
+    : (d.budka_cislo ? `Budka č. ${d.budka_cislo}` : '—');
+  _zobrazProfilSpravce(loginId, d, budkyText, true);
+};
+
 function _zobrazProfilSpravce(loginId, info, budkaText, adminMode = false) {
   const ulozeny = adminMode ? {} : _nacistProfilLocal(loginId);
   const d = Object.assign({}, info, ulozeny);

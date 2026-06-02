@@ -281,9 +281,10 @@ async function inicializujMapu() {
         sticky: false
       });
 
+      const isMobile = window.innerWidth < 600;
       marker.bindPopup(formatPopup(bData), {
-        minWidth: 420,
-        maxWidth: 520,
+        minWidth: isMobile ? Math.min(window.innerWidth - 40, 360) : 420,
+        maxWidth: isMobile ? window.innerWidth - 20 : 520,
         className: 'budka-popup-wrap'
       });
 
@@ -337,5 +338,16 @@ async function inicializujMapu() {
 
     const content = el.querySelector('.leaflet-popup-content');
     if (content) content.appendChild(btn);
+
+    if (spravce.jeAdmin && typeof window._editSpravceByBudka === 'function') {
+      const btnSpr = document.createElement('button');
+      btnSpr.className = 'popup-edit-btn popup-edit-spravce-btn';
+      btnSpr.textContent = '👤 Editovat správce';
+      btnSpr.addEventListener('click', () => {
+        popup.close();
+        window._editSpravceByBudka(cislo);
+      });
+      if (content) content.appendChild(btnSpr);
+    }
   });
 }

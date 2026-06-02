@@ -264,6 +264,8 @@ html, body {
 .popup-historie tr:last-child td { border-bottom: none; }
 .popup-edit-btn { display: block; width: 100%; background: #c96420; color: #fff; border: none; padding: 14px 22px; font-size: 1.2rem; font-weight: 700; cursor: pointer; text-align: center; transition: background 0.15s; font-family: inherit; }
 .popup-edit-btn:hover { background: #a0501a; }
+.popup-edit-spravce-btn { background: #2d6010; }
+.popup-edit-spravce-btn:hover { background: #3a7a18; }
 
 /* ── TOOLTIP ── */
 .budka-tooltip { background: #fffef8; border-radius: 10px; overflow: hidden; font-family: 'Segoe UI', system-ui, sans-serif; font-size: 1.05rem; min-width: 200px; }
