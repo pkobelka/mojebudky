@@ -4,6 +4,19 @@ let budkyData = [];
 window._markersByCislo = markersByCislo;
 window._getMapInstance = () => mapInstance;
 
+const FOTO_ROKY = [2026, 2025, 2024];
+
+window._tryBudkaFoto = function(img, cislo, roky) {
+  if (!roky || !roky.length) {
+    const blok = img.closest('.popup-foto--auto');
+    if (blok) blok.style.display = 'none';
+    return;
+  }
+  const rok = roky[0];
+  img.onerror = function() { window._tryBudkaFoto(this, cislo, roky.slice(1)); };
+  img.src = 'img/budky/' + rok + '/' + cislo + '.jpg';
+};
+
 const BIRD_SVG = {
   'Sýkora koňadra': `<svg viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg" width="32" height="32">
     <ellipse cx="18" cy="30" rx="11" ry="15" fill="#f5c800" transform="rotate(-8,18,30)"/>
@@ -156,11 +169,12 @@ function formatPopup(b) {
       : '';
 
   const cisloStr = String(b.cislo).padStart(3, '0');
-  const fotoSrc = b.foto || `img/budky/${b.cislo}.jpg`;
+  const fotoSrc = b.foto || `img/budky/${FOTO_ROKY[0]}/${b.cislo}.jpg`;
+  const fotoFallback = `window._tryBudkaFoto(this,${b.cislo},[${FOTO_ROKY.slice(1).join(',')}])`;
   const fotoBlock = `<div class="popup-foto popup-foto--auto" data-src="${fotoSrc}">
     <img src="${fotoSrc}" alt="Foto budky č. ${b.cislo}"
          style="cursor:zoom-in"
-         onerror="this.closest('.popup-foto--auto').style.display='none'"
+         onerror="${fotoFallback}"
          onclick="(function(s){var o=document.createElement('div');o.className='foto-zoom-overlay';o.innerHTML='<img src=\\''+s+'\\'><span class=\\'foto-zoom-zavrit\\'>×</span>';document.body.appendChild(o);o.addEventListener('click',function(){o.remove()})})(this.src)">
   </div>`;
 
