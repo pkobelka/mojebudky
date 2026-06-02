@@ -644,4 +644,7 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('desateroZavrit')?.addEventListener('click', zavritDesatero);
   modalDesatero?.addEventListener('click', e => { if (e.target === modalDesatero) zavritDesatero(); });
   document.addEventListener('keydown', e => { if (e.key === 'Escape' && modalDesatero && !modalDesatero.hidden) zavritDesatero(); });
+  const tileDesatero = document.getElementById('desateroTile');
+  tileDesatero?.addEventListener('click', otevritDesatero);
+  tileDesatero?.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); otevritDesatero(e); } });
 });
