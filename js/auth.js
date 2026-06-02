@@ -68,7 +68,7 @@ async function _nactiAuthSpravce() {
 async function _nactiSpravciInfo() {
   if (_spravciInfoCache) return _spravciInfoCache;
   try {
-    const res = await fetch('data/spravci_info.json?v=20260602a', { cache: 'reload' });
+    const res = await fetch('data/spravci_info.json?v=20260602b', { cache: 'reload' });
     if (res.ok) _spravciInfoCache = await res.json();
   } catch {}
   return _spravciInfoCache;
@@ -743,7 +743,7 @@ async function _zobrazSeznamSpravcu() {
   let info = _spravciInfoCache;
   if (!info) {
     try {
-      const res = await fetch('data/spravci_info.json?v=20260602a');
+      const res = await fetch('data/spravci_info.json?v=20260602b');
       info = await res.json();
       _spravciInfoCache = info;
     } catch { info = {}; }
@@ -835,7 +835,7 @@ window._editSpravceByBudka = async function(cisloBudky) {
   let info = _spravciInfoCache;
   if (!info) {
     try {
-      const res = await fetch('data/spravci_info.json?v=20260602a');
+      const res = await fetch('data/spravci_info.json?v=20260602b');
       info = await res.json();
       _spravciInfoCache = info;
     } catch { return; }
@@ -929,7 +929,7 @@ function _zobrazProfilSpravce(loginId, info, budkaText, adminMode = false) {
           </div>
           <div class="profil-field profil-field--wide">
             <label>Datum narození</label>
-            <input type="date" id="pDatum" value="${d.datum_narozeni || ''}">
+            <input type="date" id="pDatum" value="${_czToIso(d.datum_narozeni)}">
             <span class="profil-hint profil-hint--under">🎂 Celá komunita správců Vám popřeje k narozeninám!</span>
           </div>
         </div>
@@ -965,7 +965,7 @@ function _zobrazProfilSpravce(loginId, info, budkaText, adminMode = false) {
     if (ef('pPrijmeni'))  ef('pPrijmeni').value  = merged.prijmeni || '';
     if (ef('pTitulZa'))   ef('pTitulZa').value   = merged.titul_za || '';
     if (ef('pOsloveni'))  ef('pOsloveni').value  = merged.osloveni || '';
-    if (ef('pDatum'))     ef('pDatum').value      = merged.datum_narozeni || '';
+    if (ef('pDatum'))     ef('pDatum').value      = _czToIso(merged.datum_narozeni);
     if (ef('pTelefon'))   ef('pTelefon').value   = merged.telefon || '';
     if (ef('pEmail'))     ef('pEmail').value      = merged.email || '';
   });
