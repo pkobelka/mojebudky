@@ -165,7 +165,7 @@ html, body {
 .stat-aktualizace span { color: var(--text-light); font-weight: 700; font-size: 0.95rem; }
 
 /* ── DESATERO TILE (v pravém panelu) ── */
-.desatero-tile { cursor: pointer; margin: 8px 10px 0; display: flex; align-items: center; gap: 12px; border: 2px solid rgba(200,150,10,0.7); border-left: 5px solid #c8960a; border-radius: 8px; padding: 12px 14px; background: rgba(200,150,10,0.13); transition: background 0.2s, border-color 0.2s; user-select: none; }
+.desatero-tile { cursor: pointer; margin: 8px 10px 0; display: flex; align-items: center; gap: 12px; border: 2px solid #c8960a; border-left: 5px solid #c8960a; border-radius: 8px; padding: 12px 14px; background: rgba(200,150,10,0.18); transition: background 0.2s; user-select: none; box-shadow: 0 0 10px rgba(200,150,10,0.15); }
 .desatero-tile:hover, .desatero-tile:focus { background: rgba(200,150,10,0.22); outline: none; box-shadow: 0 0 0 2px rgba(200,150,10,0.5); }
 .desatero-tile-ikona { font-size: 1.6rem; flex-shrink: 0; }
 .desatero-tile-text { flex: 1; min-width: 0; }
