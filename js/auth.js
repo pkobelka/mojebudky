@@ -1349,6 +1349,7 @@ async function _zobrazEditBudky(loginId, spravceInfo, budkaText, budkaCislo, bud
 
     let ok = false;
     if (!db) { console.error('editBudky: Firebase DB není dostupné'); }
+    if (!budkaCislo) { console.error('editBudky: budkaCislo je prázdné!', budkaCislo); }
     if (db) {
       try {
         const data = {
@@ -1358,7 +1359,7 @@ async function _zobrazEditBudky(loginId, spravceInfo, budkaText, budkaCislo, bud
           spravce_id: loginId, jmeno
         };
         if (_fotoBase64) data.foto = _fotoBase64;
-        console.log('editBudky: ukládám budku', budkaCislo, 'kdo_hnizdi:', kdoHnizdi);
+        console.log('editBudky: ukládám budku', budkaCislo, 'nazev:', nazev, 'kdo_hnizdi:', kdoHnizdi);
         await db.ref(`budky_edit/${budkaCislo}`).set(data);
         ok = true;
       } catch(err) { console.error('editBudky: chyba uložení:', err); }
