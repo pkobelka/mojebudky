@@ -827,5 +827,8 @@ html, body {
 .eb-foto-wrap { display: flex; flex-direction: column; gap: 8px; align-items: flex-start; }
 .eb-foto-nahled { max-width: 100%; max-height: 160px; border-radius: 8px; object-fit: cover; }
 .eb-foto-placeholder { width: 80px; height: 60px; background: rgba(255,255,255,0.06); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; color: var(--text-muted); }
-.eb-foto-btn { display: inline-block; background: var(--orange); color: #fff; border-radius: 8px; padding: 8px 16px; font-size: 0.95rem; font-weight: 600; cursor: pointer; transition: background 0.15s; user-select: none; }
+.eb-foto-btns { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.eb-foto-btn { display: inline-block; background: var(--orange); color: #fff; border-radius: 8px; padding: 8px 16px; font-size: 0.95rem; font-weight: 600; cursor: pointer; transition: background 0.15s; user-select: none; border: none; }
 .eb-foto-btn:hover { background: var(--orange-light); }
+.eb-foto-smazat { background: #7a2a2a; }
+.eb-foto-smazat:hover { background: #a33; }

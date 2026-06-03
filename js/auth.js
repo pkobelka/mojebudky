@@ -1206,7 +1206,10 @@ async function _zobrazEditBudky(loginId, spravceInfo, budkaText, budkaCislo, bud
             <label>Foto budky</label>
             <div class="eb-foto-wrap">
               ${ulozeno.foto ? `<img src="${ulozeno.foto}" class="eb-foto-nahled" id="ebFotoNahled" alt="Foto budky">` : `<div class="eb-foto-placeholder" id="ebFotoNahled">📷</div>`}
-              <label class="eb-foto-btn" for="ebFotoInput">📷 ${ulozeno.foto ? 'Změnit foto' : 'Přidat foto'}</label>
+              <div class="eb-foto-btns">
+                <label class="eb-foto-btn" for="ebFotoInput">📷 ${ulozeno.foto ? 'Změnit foto' : 'Přidat foto'}</label>
+                ${ulozeno.foto ? `<button type="button" class="eb-foto-btn eb-foto-smazat" id="ebFotoSmazat">🗑 Smazat foto</button>` : ''}
+              </div>
               <input type="file" id="ebFotoInput" accept="image/*" style="display:none">
             </div>
           </div>
@@ -1231,6 +1234,18 @@ async function _zobrazEditBudky(loginId, spravceInfo, budkaText, budkaCislo, bud
 
   // Foto upload + resize
   let _fotoBase64 = ulozeno.foto || null;
+
+  const ebSmazat = document.getElementById('ebFotoSmazat');
+  if (ebSmazat) {
+    ebSmazat.addEventListener('click', () => {
+      _fotoBase64 = null;
+      const nahled = document.getElementById('ebFotoNahled');
+      nahled.outerHTML = `<div class="eb-foto-placeholder" id="ebFotoNahled">📷</div>`;
+      document.querySelector('label[for="ebFotoInput"]').textContent = '📷 Přidat foto';
+      ebSmazat.remove();
+    });
+  }
+
   document.getElementById('ebFotoInput').addEventListener('change', e => {
     const file = e.target.files[0];
     if (!file) return;
@@ -1360,6 +1375,7 @@ async function _zobrazEditBudky(loginId, spravceInfo, budkaText, budkaCislo, bud
           spravce_id: loginId, jmeno
         };
         if (_fotoBase64) data.foto = _fotoBase64;
+        else data.foto = null;
         console.log('editBudky: ukládám budku', budkaCislo, 'nazev:', nazev, 'kdo_hnizdi:', kdoHnizdi);
         await db.ref(`budky_edit/${budkaCislo}`).set(data);
         ok = true;
