@@ -1526,22 +1526,22 @@ function _zobrazZapomenuteHeslo() {
   modal.id = 'modalReset';
   modal.className = 'modal-overlay';
   modal.innerHTML = `
-    <div class="modal-box" style="max-width:420px;padding:32px 28px;text-align:center">
+    <div class="modal-box" style="max-width:440px;padding:28px 24px;text-align:center">
       <button class="modal-zavrit" id="resetZavrit">×</button>
-      <div style="font-size:2.2rem;margin-bottom:10px">🔑</div>
-      <h3 style="color:var(--accent-gold);margin:0 0 10px;font-size:1.5rem">Zapomenuté heslo</h3>
-      <p style="color:var(--text-light);font-size:1.05rem;margin:0 0 20px;line-height:1.5">
+      <div style="font-size:2.5rem;margin-bottom:10px">🔑</div>
+      <h3 style="color:var(--accent-gold);margin:0 0 12px;font-size:1.8rem">Zapomenuté heslo</h3>
+      <p style="color:var(--text-light);font-size:1.2rem;margin:0 0 20px;line-height:1.5">
         Zadej své ID — pošleme ti odkaz na nové heslo e-mailem.
       </p>
       <input type="text" id="resetId" placeholder="Tvoje ID (např. 4112)"
-        style="width:100%;padding:12px 14px;border-radius:8px;border:1px solid var(--accent-gold);
-               background:var(--panel-bg);color:var(--text-light);font-size:1.2rem;
+        style="width:100%;padding:14px 16px;border-radius:8px;border:1px solid var(--accent-gold);
+               background:var(--panel-bg);color:var(--text-light);font-size:1.35rem;
                box-sizing:border-box;margin-bottom:16px">
-      <button id="resetOdeslat" style="width:100%;padding:14px;background:var(--orange);
-        color:#fff;border:none;border-radius:8px;font-size:1.15rem;font-weight:700;cursor:pointer">
+      <button id="resetOdeslat" style="width:100%;padding:16px;background:var(--orange);
+        color:#fff;border:none;border-radius:8px;font-size:1.3rem;font-weight:700;cursor:pointer">
         Odeslat odkaz
       </button>
-      <div id="resetMsg" style="margin-top:16px;font-size:1rem;min-height:20px;line-height:1.4;word-break:break-word"></div>
+      <div id="resetMsg" style="margin-top:18px;font-size:1.1rem;min-height:20px;line-height:1.4;word-break:break-word"></div>
     </div>`;
   document.body.appendChild(modal);
 
