@@ -25,6 +25,10 @@ function _aktualizujMarkerZFirebase(cisloNum, kdoHnizdi) {
     autoPanPaddingBottomRight: L.point(20, 20)
   });
   if (window._budkyDataMap) window._budkyDataMap[cisloNum] = bUp;
+  // Přepočítat počet osídlených v UI
+  const pocetOsidl = Object.values(window._budkyDataMap || {}).filter(b => b.stav === 'osidlena').length;
+  const elOsidl = document.getElementById('stat-osidlenych');
+  if (elOsidl) elOsidl.textContent = pocetOsidl;
 }
 window._aktualizujMarkerZFirebase = _aktualizujMarkerZFirebase;
 
@@ -446,6 +450,10 @@ async function inicializujMapu() {
           Object.entries(edits).forEach(([cislo, edit]) => {
             if (edit.kdo_hnizdi) _aktualizujMarkerZFirebase(Number(cislo), edit.kdo_hnizdi);
           });
+          // Přepočítat počet osídlených po načtení všech Firebase editů
+          const pocet = Object.values(window._budkyDataMap || {}).filter(b => b.stav === 'osidlena').length;
+          const elS = document.getElementById('stat-osidlenych');
+          if (elS) elS.textContent = pocet;
         }).catch(() => {});
       } catch(e) {}
     }
@@ -545,7 +553,7 @@ async function inicializujMapu() {
       if (!el) return;
       const img = el.querySelector('.popup-foto--auto img');
       if (img && !img.complete) {
-        img.addEventListener('load', () => { popup.update(); _pridejEditTlacitka(popup); }, { once: true });
+        img.addEventListener('load', () => { _pridejEditTlacitka(popup); }, { once: true });
       }
       // Pokud je vrchol popupu nad okrajem mapy, posuneme mapu dolů
       const mapRect = mapInstance.getContainer().getBoundingClientRect();
