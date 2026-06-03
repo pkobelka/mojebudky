@@ -432,8 +432,8 @@ html, body {
 
 /* ── PŘIDAT NA PLOCHU ── */
 .pridat-na-plochu { border-top: 1px solid var(--panel-border); padding: 8px 10px; background: rgba(0,0,0,0.1); flex-shrink: 0; display: none; }
-.oblibene-pc { margin: 8px 10px 6px; border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; padding: 6px 10px; font-size: 0.72rem; color: var(--text-muted); display: block; }
-.oblibene-pc strong { color: var(--accent-gold); display: block; margin-bottom: 3px; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.5px; }
+.oblibene-pc { margin: 8px 10px 6px; border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; padding: 8px 12px; font-size: 0.88rem; color: var(--text-muted); display: block; }
+.oblibene-pc strong { color: var(--accent-gold); display: block; margin-bottom: 4px; font-size: 0.92rem; text-transform: uppercase; letter-spacing: 0.5px; }
 .oblibene-pc span { display: block; margin-bottom: 3px; }
 .pridat-title { color: var(--text-muted); font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
 .pridat-body { display: flex; gap: 10px; align-items: flex-start; }
