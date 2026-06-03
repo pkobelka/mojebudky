@@ -305,6 +305,10 @@
     "stav": "osidlena",
     "historie": [
       {
+        "rok": 2022,
+        "obsazeno": "Vosy"
+      },
+      {
         "rok": 2025,
         "obsazeno": null
       }
