@@ -267,7 +267,10 @@ async function inicializujMapu() {
     zoomControl: true,
     minZoom: 5,
     maxBounds: [[42.0, -2.0], [57.0, 26.0]],
-    maxBoundsViscosity: 1.0
+    maxBoundsViscosity: 1.0,
+    wheelPxPerZoomLevel: 120,
+    zoomSnap: 0.5,
+    zoomDelta: 0.5
   });
   // Zabrán zoom pod minZoom i kolečkem myši
   mapInstance.setMinZoom(5);
