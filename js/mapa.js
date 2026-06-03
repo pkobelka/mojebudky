@@ -230,7 +230,7 @@ function focusBudka(cislo) {
   const marker = markersByCislo[cislo];
   if (!marker || !mapInstance) return;
   mapInstance.setView(marker.getLatLng(), 16);
-  marker.openPopup();
+  setTimeout(() => marker.openPopup(), 150);
 }
 
 async function hledejBudku(dotaz) {
@@ -306,7 +306,9 @@ async function inicializujMapu() {
       marker.bindPopup(formatPopup(bData), {
         minWidth: isMobile ? Math.min(window.innerWidth - 40, 360) : 420,
         maxWidth: isMobile ? window.innerWidth - 20 : 520,
-        className: 'budka-popup-wrap'
+        className: 'budka-popup-wrap',
+        autoPanPaddingTopLeft: L.point(20, 100),
+        autoPanPaddingBottomRight: L.point(20, 20)
       });
 
       markersByCislo[b.cislo] = marker;
