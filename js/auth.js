@@ -1206,7 +1206,7 @@ async function _zobrazEditBudky(loginId, spravceInfo, budkaText, budkaCislo, bud
             <div class="eb-foto-wrap">
               ${ulozeno.foto ? `<img src="${ulozeno.foto}" class="eb-foto-nahled" id="ebFotoNahled" alt="Foto budky">` : `<div class="eb-foto-placeholder" id="ebFotoNahled">📷</div>`}
               <label class="eb-foto-btn" for="ebFotoInput">📷 ${ulozeno.foto ? 'Změnit foto' : 'Přidat foto'}</label>
-              <input type="file" id="ebFotoInput" accept="image/*" capture="environment" style="display:none">
+              <input type="file" id="ebFotoInput" accept="image/*" style="display:none">
             </div>
           </div>
           <div class="profil-field profil-field--wide">
@@ -1348,6 +1348,7 @@ async function _zobrazEditBudky(loginId, spravceInfo, budkaText, budkaCislo, bud
     }
 
     let ok = false;
+    if (!db) { console.error('editBudky: Firebase DB není dostupné'); }
     if (db) {
       try {
         const data = {
@@ -1357,9 +1358,10 @@ async function _zobrazEditBudky(loginId, spravceInfo, budkaText, budkaCislo, bud
           spravce_id: loginId, jmeno
         };
         if (_fotoBase64) data.foto = _fotoBase64;
+        console.log('editBudky: ukládám budku', budkaCislo, 'kdo_hnizdi:', kdoHnizdi);
         await db.ref(`budky_edit/${budkaCislo}`).set(data);
         ok = true;
-      } catch {}
+      } catch(err) { console.error('editBudky: chyba uložení:', err); }
     }
 
     if (ok) {
