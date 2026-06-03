@@ -434,19 +434,27 @@ async function inicializujMapu() {
     // Zjisti číslo budky pro tento popup
     const cisloPopup = Object.keys(markersByCislo).map(Number).find(k => markersByCislo[k].getPopup() === popup);
 
-    // Zkus načíst fotku nahranou správcem z Firebase (budky_edit/{cislo}.foto)
+    // Načti Firebase edity (foto, nazev) pro tento popup
     if (cisloPopup && typeof firebase !== 'undefined') {
       try {
-        firebase.database().ref(`budky_edit/${cisloPopup}/foto`).once('value').then(snap => {
-          const fotoBase64 = snap.val();
-          if (!fotoBase64) return;
+        firebase.database().ref(`budky_edit/${cisloPopup}`).once('value').then(snap => {
+          const edit = snap.val() || {};
           const el = popup.getElement();
           if (!el) return;
-          const img = el.querySelector('.popup-foto--auto img');
-          if (img) {
-            img.src = fotoBase64;
-            popup.update();
-            _pridejEditTlacitka(popup);
+          // Aktualizuj název v nadpisu
+          if (edit.nazev) {
+            const cisloEl = el.querySelector('.popup-cislo');
+            if (cisloEl) cisloEl.innerHTML =
+              `<span class="popup-nazev-hlavni">${edit.nazev}</span><span class="popup-cislo-sub"> · č. ${cisloPopup}</span>`;
+          }
+          // Aktualizuj fotku
+          if (edit.foto) {
+            const img = el.querySelector('.popup-foto--auto img');
+            if (img) {
+              img.src = edit.foto;
+              popup.update();
+              _pridejEditTlacitka(popup);
+            }
           }
         }).catch(() => {});
       } catch(err) {}
