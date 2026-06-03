@@ -153,8 +153,8 @@ html, body {
 .stat-item { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 10px 6px; text-align: center; background: rgba(255,255,255,0.06); border-radius: 8px; border: 1px solid rgba(255,255,255,0.15); border-top: 4px solid var(--orange); }
 .stat-icon { font-size: 1.5rem; flex-shrink: 0; width: auto; text-align: center; }
 .stat-icon-druhy { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; width: 50px; height: 50px; align-items: center; justify-items: center; font-size: 1rem; }
-.stat-value { font-size: 2.0rem; font-weight: 800; color: var(--text-light); line-height: 1; }
-.stat-label { font-size: 0.78rem; color: var(--text-muted); margin-top: 2px; text-align: center; }
+.stat-value { font-size: 2.4rem; font-weight: 800; color: var(--text-light); line-height: 1; }
+.stat-label { font-size: 0.92rem; color: var(--text-muted); margin-top: 4px; text-align: center; }
 .stat-item:nth-child(1) { border-top-color: #c8a800; background: rgba(230,200,0,0.18); }
 .stat-item:nth-child(1) .stat-value { color: #f0d800; }
 .stat-item:nth-child(1) .stat-label { color: #d4bc30; }
