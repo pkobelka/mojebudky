@@ -1478,6 +1478,7 @@ const _EMAILJS_TEMPLATE_ID = '';   // např. 'template_xyz789'
 const _EMAILJS_PUBLIC_KEY  = '';   // Public Key z Account → API Keys
 
 async function _najdiEmailProId(loginId) {
+  // 1. Firebase profil (uložen správcem)
   const db = _getFirebaseDB();
   if (db) {
     try {
@@ -1486,8 +1487,13 @@ async function _najdiEmailProId(loginId) {
       if (profil && profil.email) return profil.email;
     } catch {}
   }
+  // 2. Lokální cache profilu
   const local = _nacistProfilLocal(loginId);
-  return (local && local.email) ? local.email : null;
+  if (local && local.email) return local.email;
+  // 3. Fallback: spravci_info.json (základní data správců)
+  const info = await _nactiSpravciInfo().catch(() => null);
+  if (info && info[loginId] && info[loginId].email) return info[loginId].email;
+  return null;
 }
 
 async function _odeslatResetMail(loginId, email, jmeno, token) {
