@@ -1374,6 +1374,9 @@ async function _zobrazEditBudky(loginId, spravceInfo, budkaText, budkaCislo, bud
 
   document.getElementById('editBudkyUlozit').addEventListener('click', async () => {
     const ok = await _ulozitBudku();
+    if (ok && aktualniDruh && aktualniDruh !== '__jiny' && typeof window._aktualizujMarkerZFirebase === 'function') {
+      window._aktualizujMarkerZFirebase(budkaCislo, aktualniDruh);
+    }
     const msg = document.getElementById('editBudkyUlozeno');
     msg.textContent = ok ? '✓ Uloženo!' : '⚠ Nepodařilo se uložit';
     msg.hidden = false;
@@ -1388,6 +1391,9 @@ async function _zobrazEditBudky(loginId, spravceInfo, budkaText, budkaCislo, bud
     if (!ok) {
       msg.textContent = '⚠ Nepodařilo se uložit';
       return;
+    }
+    if (aktualniDruh && aktualniDruh !== '__jiny' && typeof window._aktualizujMarkerZFirebase === 'function') {
+      window._aktualizujMarkerZFirebase(budkaCislo, aktualniDruh);
     }
     modal.remove();
     const marker = window._markersByCislo && window._markersByCislo[budkaCislo];

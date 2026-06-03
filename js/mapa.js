@@ -4,6 +4,30 @@ let budkyData = [];
 window._markersByCislo = markersByCislo;
 window._getMapInstance = () => mapInstance;
 
+function _aktualizujMarkerZFirebase(cisloNum, kdoHnizdi) {
+  const marker = markersByCislo[cisloNum];
+  if (!marker) return;
+  const bData = (window._budkyDataMap || {})[cisloNum];
+  if (!bData || bData.stav === 'osidlena') return;
+  const bUp = { ...bData, stav: 'osidlena', ptak: kdoHnizdi };
+  marker.setIcon(vytvorIkonu(bUp));
+  marker.unbindTooltip();
+  marker.bindTooltip(formatTooltip(bUp), {
+    direction: 'top', offset: [0, -46], className: 'budka-tooltip-wrap', sticky: false
+  });
+  const isMobile = window.innerWidth < 600;
+  marker.unbindPopup();
+  marker.bindPopup(formatPopup(bUp), {
+    minWidth: isMobile ? Math.min(window.innerWidth - 40, 360) : 420,
+    maxWidth: isMobile ? window.innerWidth - 20 : 520,
+    className: 'budka-popup-wrap',
+    autoPanPaddingTopLeft: L.point(20, 100),
+    autoPanPaddingBottomRight: L.point(20, 20)
+  });
+  if (window._budkyDataMap) window._budkyDataMap[cisloNum] = bUp;
+}
+window._aktualizujMarkerZFirebase = _aktualizujMarkerZFirebase;
+
 const FOTO_ROKY = ['2026', '2025', '2024'];
 
 window._tryBudkaFoto = function(img, cislo, roky) {
@@ -316,9 +340,23 @@ async function inicializujMapu() {
 
       markersByCislo[b.cislo] = marker;
       marker.addTo(mapInstance);
+      if (!window._budkyDataMap) window._budkyDataMap = {};
+      window._budkyDataMap[b.cislo] = bData;
     });
 
     document.getElementById('stat-celkem').textContent = budky.length;
+
+    // Po načtení markerů překryj ikonami z Firebase budky_edit
+    if (typeof firebase !== 'undefined') {
+      try {
+        firebase.database().ref('budky_edit').once('value').then(snap => {
+          const edits = snap.val() || {};
+          Object.entries(edits).forEach(([cislo, edit]) => {
+            if (edit.kdo_hnizdi) _aktualizujMarkerZFirebase(Number(cislo), edit.kdo_hnizdi);
+          });
+        }).catch(() => {});
+      } catch(e) {}
+    }
   } catch(e) {
     console.error('Chyba načítání dat budek:', e);
   }
