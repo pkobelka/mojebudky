@@ -518,8 +518,11 @@ html, body {
 }
 
 @media (max-width: 600px) {
+  /* Zabránit horizontálnímu přetékání */
+  body, #app { overflow-x: hidden; max-width: 100vw; }
+  .main-content { width: 100%; max-width: 100vw; }
   /* Panel: clamp(380px) přetéká na 375px viewportu – vynutit 100% */
-  .panel { width: 100% !important; min-width: 0; box-sizing: border-box; }
+  .panel { width: 100% !important; max-width: 100vw; min-width: 0; box-sizing: border-box; }
   /* Stats: 1 sloupec na malém mobilu */
   .stats-grid { grid-template-columns: 1fr; gap: 6px; padding: 8px; }
   .stat-item { flex-direction: row; justify-content: space-between; padding: 10px 14px; gap: 10px; }
