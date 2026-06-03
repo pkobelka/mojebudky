@@ -385,45 +385,7 @@ async function inicializujMapu() {
     searchInput.addEventListener('keydown', e => { if (e.key === 'Enter') hledejBudku(searchInput.value); });
   }
 
-  mapInstance.on('popupopen', e => {
-    const popup = e.popup;
-
-    // Zjisti číslo budky pro tento popup
-    const cisloPopup = Object.keys(markersByCislo).map(Number).find(k => markersByCislo[k].getPopup() === popup);
-
-    // Zkus načíst fotku nahranou správcem z Firebase (budky_edit/{cislo}.foto)
-    if (cisloPopup && typeof firebase !== 'undefined') {
-      try {
-        firebase.database().ref(`budky_edit/${cisloPopup}/foto`).once('value').then(snap => {
-          const fotoBase64 = snap.val();
-          if (!fotoBase64) return;
-          const el = popup.getElement();
-          if (!el) return;
-          const img = el.querySelector('.popup-foto--auto img');
-          if (img) {
-            img.src = fotoBase64;
-            popup.update();
-          }
-        }).catch(() => {});
-      } catch(err) {}
-    }
-
-    // Fotka se načítá asynchronně – po načtení znovu vycentrujeme popup
-    setTimeout(() => {
-      const el = popup.getElement();
-      if (!el) return;
-      const img = el.querySelector('.popup-foto--auto img');
-      if (img && !img.complete) {
-        img.addEventListener('load', () => popup.update(), { once: true });
-      }
-      // Pokud je vrchol popupu nad okrajem mapy, posuneme mapu dolů
-      const mapRect = mapInstance.getContainer().getBoundingClientRect();
-      const popupRect = el.getBoundingClientRect();
-      if (popupRect.top < mapRect.top + 20) {
-        mapInstance.panBy([0, popupRect.top - mapRect.top - 20], { animate: true });
-      }
-    }, 60);
-
+  function _pridejEditTlacitka(popup) {
     const spravce = window._aktualniSpravce;
     if (!spravce || !window._editBudku) return;
     const el = popup.getElement();
@@ -464,5 +426,48 @@ async function inicializujMapu() {
       });
       if (content) content.appendChild(btnSpr);
     }
+  }
+
+  mapInstance.on('popupopen', e => {
+    const popup = e.popup;
+
+    // Zjisti číslo budky pro tento popup
+    const cisloPopup = Object.keys(markersByCislo).map(Number).find(k => markersByCislo[k].getPopup() === popup);
+
+    // Zkus načíst fotku nahranou správcem z Firebase (budky_edit/{cislo}.foto)
+    if (cisloPopup && typeof firebase !== 'undefined') {
+      try {
+        firebase.database().ref(`budky_edit/${cisloPopup}/foto`).once('value').then(snap => {
+          const fotoBase64 = snap.val();
+          if (!fotoBase64) return;
+          const el = popup.getElement();
+          if (!el) return;
+          const img = el.querySelector('.popup-foto--auto img');
+          if (img) {
+            img.src = fotoBase64;
+            popup.update();
+            _pridejEditTlacitka(popup);
+          }
+        }).catch(() => {});
+      } catch(err) {}
+    }
+
+    // Fotka se načítá asynchronně – po načtení znovu vycentrujeme popup
+    setTimeout(() => {
+      const el = popup.getElement();
+      if (!el) return;
+      const img = el.querySelector('.popup-foto--auto img');
+      if (img && !img.complete) {
+        img.addEventListener('load', () => { popup.update(); _pridejEditTlacitka(popup); }, { once: true });
+      }
+      // Pokud je vrchol popupu nad okrajem mapy, posuneme mapu dolů
+      const mapRect = mapInstance.getContainer().getBoundingClientRect();
+      const popupRect = el.getBoundingClientRect();
+      if (popupRect.top < mapRect.top + 20) {
+        mapInstance.panBy([0, popupRect.top - mapRect.top - 20], { animate: true });
+      }
+    }, 60);
+
+    _pridejEditTlacitka(popup);
   });
 }
