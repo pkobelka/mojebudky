@@ -30,6 +30,19 @@ window._aktualizujMarkerZFirebase = _aktualizujMarkerZFirebase;
 
 const FOTO_ROKY = ['2026', '2025', '2024'];
 
+// Zoom fotky v popupu — delegovaný listener, funguje i pod adminskou session
+document.addEventListener('click', function(e) {
+  const img = e.target.closest('.popup-foto-zoomable');
+  if (!img) return;
+  const src = img.src;
+  if (!src || src.endsWith('/')) return;
+  const o = document.createElement('div');
+  o.className = 'foto-zoom-overlay';
+  o.innerHTML = `<img src="${src}"><span class="foto-zoom-zavrit">×</span>`;
+  document.body.appendChild(o);
+  o.addEventListener('click', () => o.remove());
+});
+
 window._tryBudkaFoto = function(img, cislo, roky) {
   if (!roky || !roky.length) {
     const blok = img.closest('.popup-foto--auto');
@@ -200,8 +213,8 @@ function formatPopup(b) {
   const fotoBlock = `<div class="popup-foto popup-foto--auto" data-src="${fotoSrc}">
     <img src="${fotoSrc}" alt="Foto budky č. ${b.cislo}"
          style="cursor:zoom-in"
-         onerror="${fotoFallback}"
-         onclick="(function(s){var o=document.createElement('div');o.className='foto-zoom-overlay';o.innerHTML='<img src=\\''+s+'\\'><span class=\\'foto-zoom-zavrit\\'>×</span>';document.body.appendChild(o);o.addEventListener('click',function(){o.remove()})})(this.src)">
+         class="popup-foto-zoomable"
+         onerror="${fotoFallback}">
   </div>`;
 
   const spravceBlock = b.spravce
