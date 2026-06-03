@@ -1526,22 +1526,22 @@ function _zobrazZapomenuteHeslo() {
   modal.id = 'modalReset';
   modal.className = 'modal-overlay';
   modal.innerHTML = `
-    <div class="modal-box" style="max-width:420px;padding:40px 36px;text-align:center">
+    <div class="modal-box" style="max-width:420px;padding:32px 28px;text-align:center">
       <button class="modal-zavrit" id="resetZavrit">×</button>
-      <div style="font-size:2rem;margin-bottom:8px">🔑</div>
-      <h3 style="color:var(--accent-gold);margin:0 0 8px">Zapomenuté heslo</h3>
-      <p style="color:var(--text-muted);font-size:0.95rem;margin:0 0 24px">
+      <div style="font-size:2.2rem;margin-bottom:10px">🔑</div>
+      <h3 style="color:var(--accent-gold);margin:0 0 10px;font-size:1.5rem">Zapomenuté heslo</h3>
+      <p style="color:var(--text-light);font-size:1.05rem;margin:0 0 20px;line-height:1.5">
         Zadej své ID — pošleme ti odkaz na nové heslo e-mailem.
       </p>
       <input type="text" id="resetId" placeholder="Tvoje ID (např. 4112)"
-        style="width:100%;padding:10px 14px;border-radius:8px;border:1px solid var(--accent-gold);
-               background:var(--panel-bg);color:var(--text-light);font-size:1rem;
+        style="width:100%;padding:12px 14px;border-radius:8px;border:1px solid var(--accent-gold);
+               background:var(--panel-bg);color:var(--text-light);font-size:1.2rem;
                box-sizing:border-box;margin-bottom:16px">
-      <button id="resetOdeslat" style="width:100%;padding:12px;background:var(--orange);
-        color:#fff;border:none;border-radius:8px;font-size:1rem;font-weight:700;cursor:pointer">
+      <button id="resetOdeslat" style="width:100%;padding:14px;background:var(--orange);
+        color:#fff;border:none;border-radius:8px;font-size:1.15rem;font-weight:700;cursor:pointer">
         Odeslat odkaz
       </button>
-      <div id="resetMsg" style="margin-top:14px;font-size:0.9rem;min-height:20px"></div>
+      <div id="resetMsg" style="margin-top:16px;font-size:1rem;min-height:20px;line-height:1.4;word-break:break-word"></div>
     </div>`;
   document.body.appendChild(modal);
 
@@ -1579,15 +1579,15 @@ function _zobrazZapomenuteHeslo() {
         btn.disabled = false; btn.textContent = 'Odeslat odkaz'; return;
       }
 
-      // Vygeneruj token a ulož do Firebase
+      // Vygeneruj token a ulož do Firebase (neblokující — email se odešle i bez tokenu)
       const token = Array.from(crypto.getRandomValues(new Uint8Array(24))).map(b=>b.toString(16).padStart(2,'0')).join('');
       const db = _getFirebaseDB();
       if (db) {
-        await db.ref(`reset_tokens/${token}`).set({
+        db.ref(`reset_tokens/${token}`).set({
           loginId: kanonId,
           ts: Date.now(),
           expiry: Date.now() + 3600000
-        });
+        }).catch(e => console.warn('Reset token write failed:', e));
       }
 
       const info = await _nactiSpravciInfo();
