@@ -362,8 +362,11 @@ function nactiDruhyPtaku(druhy) {
     }).join('');
   }
 
+  const aktivnich = druhy.filter(d => d.pocet > 0).length;
+  const druhSlovo = aktivnich === 1 ? 'druh' : aktivnich <= 4 ? 'druhy' : 'druhů';
   el.innerHTML = `
     <div class="druhy-title">🐦 Druhy ptáků v budkách</div>
+    <div class="druhy-intro">Aktuálně evidujeme v budkách tyto <strong>${aktivnich} ${druhSlovo}</strong>:</div>
     <div class="druhy-list" id="druhyList">
       ${druhy.map(d => {
         const key = BIRD_KEY_MAP[d.nazev] || 'konadra';
