@@ -1116,6 +1116,7 @@ const _EB_DRUHY = [
   { id: 'parukarka', nazev: 'Sýk. parukářka' },
   { id: 'vrabec',    nazev: 'Vrabec domácí' },
   { id: 'slavik',    nazev: 'Slavík obecný' },
+  { id: 'vosy',      nazev: 'Vosy' },
   { id: 'neznam',    nazev: 'Osídlena – nevím kdo' },
 ];
 
