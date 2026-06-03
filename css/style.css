@@ -599,6 +599,7 @@ html, body {
   .footer-sep { display: none; }
   .map-hint { font-size: 1rem; padding: 10px 16px; }
   .btn-zpet-mapa { font-size: 1rem; padding: 10px 18px; top: auto; bottom: 56px; }
+  .btn-zpet-mapa--tr { display: none !important; }
 
   /* Admin dropdown — full-width na mobilu */
   .admin-dropdown { position: fixed; top: 58px; left: 8px; right: 8px; width: auto; min-width: unset; border-radius: 12px; max-height: 80vh; overflow-y: auto; }
@@ -610,8 +611,10 @@ html, body {
   /* Admin banner — kompakt */
   .admin-banner { flex-wrap: wrap; gap: 6px; padding: 8px 12px; font-size: 0.82rem; }
 
-  /* Karta správce — mobilní layout, scrollovatelná */
-  .profil-box { width: 98%; max-height: 88svh; overflow-y: auto; }
+  /* Modaly na mobilu — overlay scrollovatelný, ne centrovaný */
+  .modal-overlay { align-items: flex-start; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 8px 4px; }
+  /* Karta správce — bez omezení výšky, scrolluje overlay */
+  .profil-box { width: 100% !important; max-height: none; overflow-y: visible; }
   .profil-header { padding: 18px 16px; gap: 14px; }
   .profil-foto { width: 72px; height: 72px; }
   .profil-nadpis { font-size: 1.2rem; }
