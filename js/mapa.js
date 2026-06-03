@@ -312,9 +312,11 @@ async function inicializujMapu() {
   // Zabrán zoom pod minZoom i kolečkem myši
   mapInstance.setMinZoom(5);
 
-  L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}@2x.png', {
     attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> © <a href="https://carto.com/">CARTO</a>',
-    maxZoom: 20
+    maxZoom: 20,
+    tileSize: 512,
+    zoomOffset: -1
   }).addTo(mapInstance);
 
   pridejLegend(mapInstance);
