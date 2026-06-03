@@ -441,20 +441,17 @@ async function inicializujMapu() {
           const edit = snap.val() || {};
           const el = popup.getElement();
           if (!el) return;
-          // Aktualizuj název v nadpisu
-          if (edit.nazev) {
-            const cisloEl = el.querySelector('.popup-cislo');
-            if (cisloEl) cisloEl.innerHTML =
-              `<span class="popup-nazev-hlavni">${edit.nazev}</span><span class="popup-cislo-sub"> · č. ${cisloPopup}</span>`;
-          }
-          // Aktualizuj fotku
+          // Nejdřív fotka + popup.update() (ten resetuje obsah)
           if (edit.foto) {
             const img = el.querySelector('.popup-foto--auto img');
-            if (img) {
-              img.src = edit.foto;
-              popup.update();
-              _pridejEditTlacitka(popup);
-            }
+            if (img) { img.src = edit.foto; popup.update(); _pridejEditTlacitka(popup); }
+          }
+          // Název AŽ po popup.update() – jinak ho update přepíše
+          if (edit.nazev) {
+            const el2 = popup.getElement();
+            const cisloEl = el2 && el2.querySelector('.popup-cislo');
+            if (cisloEl) cisloEl.innerHTML =
+              `<span class="popup-nazev-hlavni">${edit.nazev}</span><span class="popup-cislo-sub"> · č. ${cisloPopup}</span>`;
           }
         }).catch(() => {});
       } catch(err) {}
