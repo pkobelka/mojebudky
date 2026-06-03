@@ -565,6 +565,9 @@ html, body {
   #map { height: 100% !important; min-height: unset; }
   /* Side panels pod mapou – omezená výška, scrollovatelné */
   .panel { max-height: 220px; }
+  /* Aktuality panel a nav link skryté na mobilu */
+  .panel-left { display: none; }
+  #navLiAktuality { display: none; }
   /* Popup na mobilu – žádná min-width */
   .budka-popup { min-width: unset; width: calc(100vw - 40px); max-width: 360px; font-size: 1rem; }
   .popup-header { padding: 12px 16px 10px; }
