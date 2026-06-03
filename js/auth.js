@@ -1502,8 +1502,11 @@ async function _odeslatResetMail(loginId, email, jmeno, token) {
   try {
     await emailjs.send(_EMAILJS_SERVICE_ID, _EMAILJS_TEMPLATE_ID, {
       to_email:   email,
+      email:      email,
       to_name:    jmeno || loginId,
+      name:       jmeno || loginId,
       reset_link: resetLink,
+      link:       resetLink,
       platnost:   '1 hodinu',
     }, _EMAILJS_PUBLIC_KEY);
     return true;
