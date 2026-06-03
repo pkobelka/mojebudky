@@ -419,16 +419,16 @@ html, body {
 
 /* ── DRUHY PTÁKŮ ── */
 .druhy-panel { }
-.druhy-title { color: var(--accent-gold); font-size: 0.88rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
-.druhy-intro { color: var(--text-muted); font-size: 0.92rem; margin-bottom: 6px; line-height: 1.45; }
+.druhy-title { color: var(--accent-gold); font-size: 1.0rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+.druhy-intro { color: var(--text-muted); font-size: 1.05rem; margin-bottom: 6px; line-height: 1.45; }
 .druhy-intro strong { color: var(--text-light); }
 .druhy-list { display: flex; flex-direction: column; gap: 6px; }
-.druh-item { display: flex; align-items: center; gap: 12px; padding: 7px 10px; background: rgba(255,255,255,0.05); border-radius: 6px; cursor: pointer; transition: background 0.15s; }
+.druh-item { display: flex; align-items: center; gap: 12px; padding: 8px 10px; background: rgba(255,255,255,0.05); border-radius: 6px; cursor: pointer; transition: background 0.15s; }
 .druh-item:hover { background: rgba(255,255,255,0.12); }
 .druh-svg { flex-shrink: 0; line-height: 0; }
-.druh-nazev { flex: 1; color: var(--text-light); font-size: 1.22rem; font-weight: 600; }
-.druh-pocet { color: var(--accent-gold); font-size: 1.25rem; font-weight: 700; }
-.druh-pocet-label { color: var(--text-muted); font-size: 0.92rem; margin-left: 3px; }
+.druh-nazev { flex: 1; color: var(--text-light); font-size: 1.32rem; font-weight: 600; }
+.druh-pocet { color: var(--accent-gold); font-size: 1.35rem; font-weight: 700; }
+.druh-pocet-label { color: var(--text-muted); font-size: 1.0rem; margin-left: 3px; }
 
 /* ── PŘIDAT NA PLOCHU ── */
 .pridat-na-plochu { border-top: 1px solid var(--panel-border); padding: 8px 10px; background: rgba(0,0,0,0.1); flex-shrink: 0; display: none; }
