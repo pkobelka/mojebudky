@@ -8,7 +8,7 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=20260602m">
+  <link rel="stylesheet" href="css/style.css?v=20260603a">
   <link rel="icon" type="image/png" href="img/Favikon.png">
   <link rel="apple-touch-icon" href="img/Favikon.png">
   <link rel="manifest" href="manifest.json">
@@ -104,18 +104,18 @@
       <h2 class="panel-title">Statistiky</h2>
       <div class="panel-scroll">
 
-        <!-- 2×2 čísla + Desatero dlaždice -->
-        <div class="stats-grid" id="statsGrid">
-
-          <!-- Desatero tile jako první dlaždice -->
-          <div class="desatero-tile" id="desateroTile" role="button" tabindex="0" aria-haspopup="dialog" aria-label="Zobrazit Desatero odpovědného správce budky">
-            <span class="desatero-tile-ikona">📜</span>
-            <div class="desatero-tile-text">
-              <div class="desatero-tile-nazev">Desatero správce</div>
-              <div class="desatero-tile-sub">pravidla & hodnoty komunity</div>
-            </div>
-            <span class="desatero-tile-arrow">›</span>
+        <!-- Desatero banner (full-width nad statistikami) -->
+        <div class="desatero-tile" id="desateroTile" role="button" tabindex="0" aria-haspopup="dialog" aria-label="Zobrazit Desatero odpovědného správce budky">
+          <span class="desatero-tile-ikona">📜</span>
+          <div class="desatero-tile-text">
+            <div class="desatero-tile-nazev">Desatero správce</div>
+            <div class="desatero-tile-sub">pravidla & hodnoty komunity</div>
           </div>
+          <span class="desatero-tile-arrow">›</span>
+        </div>
+
+        <!-- 3 statistiky vedle sebe -->
+        <div class="stats-grid" id="statsGrid">
 
           <div class="stat-item">
             <div class="stat-icon"><img src="img/logo.svg" alt="Budka" class="stat-svg-icon"></div>
