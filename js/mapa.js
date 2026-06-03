@@ -332,6 +332,26 @@ async function inicializujMapu() {
   mapInstance.on('popupopen', e => {
     const popup = e.popup;
 
+    // Zjisti číslo budky pro tento popup
+    const cisloPopup = Object.keys(markersByCislo).map(Number).find(k => markersByCislo[k].getPopup() === popup);
+
+    // Zkus načíst fotku nahranou správcem z Firebase (budky_edit/{cislo}.foto)
+    if (cisloPopup && typeof firebase !== 'undefined') {
+      try {
+        firebase.database().ref(`budky_edit/${cisloPopup}/foto`).once('value').then(snap => {
+          const fotoBase64 = snap.val();
+          if (!fotoBase64) return;
+          const el = popup.getElement();
+          if (!el) return;
+          const img = el.querySelector('.popup-foto--auto img');
+          if (img) {
+            img.src = fotoBase64;
+            popup.update();
+          }
+        }).catch(() => {});
+      } catch(err) {}
+    }
+
     // Fotka se načítá asynchronně – po načtení znovu vycentrujeme popup
     setTimeout(() => {
       const el = popup.getElement();
