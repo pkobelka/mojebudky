@@ -342,8 +342,13 @@ html, body {
 .popup-nazev-hlavni { font-weight: 800; font-size: 1.65rem; color: #3a1a06; }
 .popup-cislo-sub { font-weight: 400; font-size: 1.2rem; color: #a07050; }
 .popup-badge { font-size: 1.2rem; font-weight: 600; }
-.popup-foto { padding: 0; }
+.popup-foto { padding: 0; position: relative; }
 .popup-foto img { width: 100%; display: block; max-height: 240px; object-fit: cover; }
+.foto-nav { position: absolute; bottom: 0; left: 0; right: 0; display: flex; align-items: center; justify-content: center; gap: 10px; padding: 6px 0; background: linear-gradient(transparent, rgba(0,0,0,0.55)); }
+.foto-nav-btn { background: rgba(255,255,255,0.85); border: none; border-radius: 50%; width: 28px; height: 28px; font-size: 1.3rem; line-height: 1; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.15s; padding: 0; }
+.foto-nav-btn:hover:not(:disabled) { background: #fff; }
+.foto-nav-btn:disabled { opacity: 0.3; cursor: default; }
+.foto-counter { color: #fff; font-size: 0.85rem; font-weight: 600; text-shadow: 0 1px 3px rgba(0,0,0,0.7); min-width: 36px; text-align: center; }
 .popup-ptak { display: flex; align-items: center; gap: 10px; padding: 12px 22px 6px; color: #2d5516; font-weight: 600; font-size: 1.3rem; }
 .popup-bird-icon { flex-shrink: 0; line-height: 0; }
 .popup-detail { padding: 8px 22px 14px; display: flex; flex-direction: column; gap: 7px; }

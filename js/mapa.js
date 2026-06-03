@@ -43,6 +43,30 @@ document.addEventListener('click', function(e) {
   o.addEventListener('click', () => o.remove());
 });
 
+window._fotoNav = function(btn, dir) {
+  const blok = btn.closest('.popup-foto--auto');
+  if (!blok) return;
+  const cislo = blok.dataset.cislo;
+  const total = parseInt(blok.dataset.total);
+  let idx = parseInt(blok.dataset.idx) + dir;
+  if (idx < 0 || idx >= total) return;
+  blok.dataset.idx = idx;
+  const src = idx === 0
+    ? `img/budky/${FOTO_ROKY[0]}/${cislo}.jpg`
+    : `img/budky/${cislo}_${idx}.jpg`;
+  const img = blok.querySelector('img');
+  if (img) {
+    img.src = src;
+    img.onerror = idx === 0
+      ? function() { window._tryBudkaFoto(this, cislo, [...FOTO_ROKY.slice(1), 'flat']); }
+      : null;
+  }
+  const counter = blok.querySelector('.foto-counter');
+  if (counter) counter.textContent = `${idx + 1} / ${total}`;
+  blok.querySelector('.foto-prev').disabled = idx === 0;
+  blok.querySelector('.foto-next').disabled = idx === total - 1;
+};
+
 window._tryBudkaFoto = function(img, cislo, roky) {
   if (!roky || !roky.length) {
     const blok = img.closest('.popup-foto--auto');
@@ -210,11 +234,21 @@ function formatPopup(b) {
   const cisloStr = String(b.cislo).padStart(3, '0');
   const fotoSrc = b.foto || `img/budky/${FOTO_ROKY[0]}/${b.cislo}.jpg`;
   const fotoFallback = `window._tryBudkaFoto(this,${b.cislo},[${FOTO_ROKY.slice(1).map(r=>`'${r}'`).join(',')},'flat'])`;
-  const fotoBlock = `<div class="popup-foto popup-foto--auto" data-src="${fotoSrc}">
+  const extraCount = b.foto_extra || 0;
+  const totalFotos = 1 + extraCount;
+  const galNav = totalFotos > 1
+    ? `<div class="foto-nav">
+        <button class="foto-nav-btn foto-prev" onclick="window._fotoNav(this,-1)" disabled>&#8249;</button>
+        <span class="foto-counter">1 / ${totalFotos}</span>
+        <button class="foto-nav-btn foto-next" onclick="window._fotoNav(this,1)">&#8250;</button>
+       </div>`
+    : '';
+  const fotoBlock = `<div class="popup-foto popup-foto--auto" data-cislo="${b.cislo}" data-idx="0" data-total="${totalFotos}" data-src="${fotoSrc}">
     <img src="${fotoSrc}" alt="Foto budky č. ${b.cislo}"
          style="cursor:zoom-in"
          class="popup-foto-zoomable"
          onerror="${fotoFallback}">
+    ${galNav}
   </div>`;
 
   const spravceBlock = b.spravce
