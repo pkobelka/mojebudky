@@ -34,13 +34,45 @@ const FOTO_ROKY = ['2026', '2025', '2024'];
 document.addEventListener('click', function(e) {
   const img = e.target.closest('.popup-foto-zoomable');
   if (!img) return;
-  const src = img.src;
-  if (!src || src.endsWith('/')) return;
+  const blok = img.closest('.popup-foto--auto');
+  const total = blok ? parseInt(blok.dataset.total || '1') : 1;
+  let idx = blok ? parseInt(blok.dataset.idx || '0') : 0;
+  const cislo = blok ? blok.dataset.cislo : null;
+
+  function _getSrc(i) {
+    if (i === 0) return blok.dataset.src || img.src;
+    return `img/budky/${cislo}_${i}.jpg`;
+  }
+
   const o = document.createElement('div');
   o.className = 'foto-zoom-overlay';
-  o.innerHTML = `<img src="${src}"><span class="foto-zoom-zavrit">×</span>`;
+
+  function _render(i) {
+    const prevDis = i === 0 ? 'disabled' : '';
+    const nextDis = i === total - 1 ? 'disabled' : '';
+    const nav = total > 1
+      ? `<div class="foto-zoom-nav">
+           <button class="foto-zoom-btn" onclick="this.closest('.foto-zoom-overlay')._nav(-1)" ${prevDis}>&#8249;</button>
+           <span class="foto-zoom-cnt">${i + 1} / ${total}</span>
+           <button class="foto-zoom-btn" onclick="this.closest('.foto-zoom-overlay')._nav(1)" ${nextDis}>&#8250;</button>
+         </div>`
+      : '';
+    o.innerHTML = `<img src="${_getSrc(i)}"><span class="foto-zoom-zavrit">×</span>${nav}`;
+  }
+
+  o._nav = function(dir) {
+    idx = Math.max(0, Math.min(total - 1, idx + dir));
+    _render(idx);
+  };
+
+  _render(idx);
   document.body.appendChild(o);
-  o.addEventListener('click', () => o.remove());
+  o.addEventListener('click', function(ev) {
+    if (ev.target.closest('.foto-zoom-nav') || ev.target.closest('.foto-zoom-zavrit')) return;
+    if (ev.target.tagName === 'IMG') return;
+    o.remove();
+  });
+  o.querySelector('.foto-zoom-zavrit').addEventListener('click', () => o.remove());
 });
 
 window._fotoNav = function(btn, dir) {
