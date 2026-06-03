@@ -1473,9 +1473,9 @@ function _vokativ(jmeno) {
 
 // ── OBNOVA HESLA přes EmailJS ──────────────────────────────────────
 // Nastav v EmailJS: https://www.emailjs.com  (zdarma 200 mailů/měsíc)
-const _EMAILJS_SERVICE_ID  = '';   // např. 'service_abc123'
-const _EMAILJS_TEMPLATE_ID = '';   // např. 'template_xyz789'
-const _EMAILJS_PUBLIC_KEY  = '';   // Public Key z Account → API Keys
+const _EMAILJS_SERVICE_ID  = 'service_b0vwzo';
+const _EMAILJS_TEMPLATE_ID = 'template_hv5y9vb';
+const _EMAILJS_PUBLIC_KEY  = 'Q-gHk3QhGXdwY2PTk';
 
 async function _najdiEmailProId(loginId) {
   // 1. Firebase profil (uložen správcem)
