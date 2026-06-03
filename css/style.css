@@ -560,9 +560,10 @@ html, body {
   .info-bar { padding: 5px 10px; font-size: 0.82rem; flex-wrap: wrap; overflow: hidden; }
   .info-bar .bar-right { display: none; }
   .info-bar-cas { display: none; }
-  /* Mapa a panely */
-  .map-wrapper { height: 250px; min-height: 200px; }
-  #map { height: 250px; min-height: 200px; }
+  /* Mapa: první a plná výška viewportu */
+  .map-wrapper { order: -1; height: calc(100svh - 90px); min-height: 280px; flex-shrink: 0; background: #a8d4f0; }
+  #map { height: 100% !important; min-height: unset; }
+  /* Side panels pod mapou – omezená výška, scrollovatelné */
   .panel { max-height: 220px; }
   /* Popup na mobilu – žádná min-width */
   .budka-popup { min-width: unset; width: calc(100vw - 40px); max-width: 360px; font-size: 1rem; }
@@ -607,8 +608,8 @@ html, body {
   /* Admin banner — kompakt */
   .admin-banner { flex-wrap: wrap; gap: 6px; padding: 8px 12px; font-size: 0.82rem; }
 
-  /* Karta správce — mobilní layout */
-  .profil-box { width: 98%; }
+  /* Karta správce — mobilní layout, scrollovatelná */
+  .profil-box { width: 98%; max-height: 88svh; overflow-y: auto; }
   .profil-header { padding: 18px 16px; gap: 14px; }
   .profil-foto { width: 72px; height: 72px; }
   .profil-nadpis { font-size: 1.2rem; }

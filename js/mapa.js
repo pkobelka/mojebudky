@@ -455,6 +455,11 @@ async function inicializujMapu() {
 
   setTimeout(() => mapInstance.invalidateSize(), 200);
 
+  window.addEventListener('resize', () => {
+    clearTimeout(window._mapaResizeTimer);
+    window._mapaResizeTimer = setTimeout(() => mapInstance && mapInstance.invalidateSize(), 250);
+  });
+
   const searchInput = document.querySelector('.search-box input');
   const searchBtn = document.querySelector('.search-box button');
   if (searchInput && searchBtn) {
