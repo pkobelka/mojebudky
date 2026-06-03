@@ -262,11 +262,11 @@ async function hledejBudku(dotaz) {
 
 async function inicializujMapu() {
   mapInstance = L.map('map', {
-    center: [49.75, 15.7],
-    zoom: 8,
+    center: [50.5, 13.5],
+    zoom: 6,
     zoomControl: true,
     minZoom: 5,
-    maxBounds: [[45.0, 3.0], [55.5, 23.0]],
+    maxBounds: [[42.0, -2.0], [57.0, 26.0]],
     maxBoundsViscosity: 1.0
   });
   // Zabrán zoom pod minZoom i kolečkem myši
