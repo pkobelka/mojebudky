@@ -330,10 +330,26 @@ async function inicializujMapu() {
   }
 
   mapInstance.on('popupopen', e => {
+    const popup = e.popup;
+
+    // Fotka se načítá asynchronně – po načtení znovu vycentrujeme popup
+    setTimeout(() => {
+      const el = popup.getElement();
+      if (!el) return;
+      const img = el.querySelector('.popup-foto--auto img');
+      if (img && !img.complete) {
+        img.addEventListener('load', () => popup.update(), { once: true });
+      }
+      // Pokud je vrchol popupu nad okrajem mapy, posuneme mapu dolů
+      const mapRect = mapInstance.getContainer().getBoundingClientRect();
+      const popupRect = el.getBoundingClientRect();
+      if (popupRect.top < mapRect.top + 20) {
+        mapInstance.panBy([0, popupRect.top - mapRect.top - 20], { animate: true });
+      }
+    }, 60);
+
     const spravce = window._aktualniSpravce;
     if (!spravce || !window._editBudku) return;
-
-    const popup = e.popup;
     const el = popup.getElement();
     if (!el || el.querySelector('.popup-edit-btn')) return;
 
