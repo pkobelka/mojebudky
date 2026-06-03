@@ -1497,10 +1497,11 @@ async function _najdiEmailProId(loginId) {
 }
 
 async function _odeslatResetMail(loginId, email, jmeno, token) {
-  if (!_EMAILJS_SERVICE_ID || !_EMAILJS_PUBLIC_KEY) return false;
+  if (!_EMAILJS_SERVICE_ID || !_EMAILJS_PUBLIC_KEY) return { ok: false, err: 'EmailJS není nastaveno' };
+  if (typeof emailjs === 'undefined') return { ok: false, err: 'EmailJS SDK se nenačetlo' };
   const resetLink = `${location.origin}${location.pathname}?reset=${token}`;
   try {
-    await emailjs.send(_EMAILJS_SERVICE_ID, _EMAILJS_TEMPLATE_ID, {
+    const resp = await emailjs.send(_EMAILJS_SERVICE_ID, _EMAILJS_TEMPLATE_ID, {
       to_email:   email,
       email:      email,
       to_name:    jmeno || loginId,
@@ -1509,8 +1510,12 @@ async function _odeslatResetMail(loginId, email, jmeno, token) {
       link:       resetLink,
       platnost:   '1 hodinu',
     }, _EMAILJS_PUBLIC_KEY);
-    return true;
-  } catch { return false; }
+    console.log('EmailJS response:', resp);
+    return { ok: true };
+  } catch(err) {
+    console.error('EmailJS chyba:', err);
+    return { ok: false, err: (err && (err.text || err.message)) || String(err) };
+  }
 }
 
 function _zobrazZapomenuteHeslo() {
@@ -1554,52 +1559,54 @@ function _zobrazZapomenuteHeslo() {
     btn.textContent = '⏳ Odesílám…';
     msg.textContent = '';
 
-    if (!_EMAILJS_SERVICE_ID) {
+    try {
+      // Najdi kanonické ID
+      const spravci = await _nactiAuthSpravce().catch(() => null);
+      let kanonId = spravci ? (spravci[idRaw] ? idRaw : null) : null;
+      if (!kanonId && spravci) {
+        try { const n = parseInt(idRaw,10); kanonId = Object.keys(spravci).find(k => parseInt(k,10) === n) || null; } catch {}
+      }
+      if (!kanonId) {
+        msg.style.color = '#e07070'; msg.textContent = 'ID nenalezeno.';
+        btn.disabled = false; btn.textContent = 'Odeslat odkaz'; return;
+      }
+
+      const email = await _najdiEmailProId(kanonId);
+      console.log('Reset: kanonId=', kanonId, 'email=', email);
+      if (!email) {
+        msg.style.color = '#e07070';
+        msg.innerHTML = 'Nemáš vyplněný e-mail v profilu.<br>Přihlas se a doplň ho v <strong>Kartě správce</strong>.';
+        btn.disabled = false; btn.textContent = 'Odeslat odkaz'; return;
+      }
+
+      // Vygeneruj token a ulož do Firebase
+      const token = Array.from(crypto.getRandomValues(new Uint8Array(24))).map(b=>b.toString(16).padStart(2,'0')).join('');
+      const db = _getFirebaseDB();
+      if (db) {
+        await db.ref(`reset_tokens/${token}`).set({
+          loginId: kanonId,
+          ts: Date.now(),
+          expiry: Date.now() + 3600000
+        });
+      }
+
+      const info = await _nactiSpravciInfo();
+      const jmeno = (info && info[kanonId]) ? (info[kanonId].jmeno || kanonId) : kanonId;
+      const result = await _odeslatResetMail(kanonId, email, jmeno, token);
+
+      if (result.ok) {
+        msg.style.color = '#8fc870';
+        msg.innerHTML = `✓ Odkaz odeslán na <strong>${email.replace(/(.{3}).+(@.+)/, '$1…$2')}</strong>.<br>Platí 1 hodinu.`;
+        btn.textContent = 'Odesláno ✓';
+      } else {
+        msg.style.color = '#e07070';
+        msg.textContent = 'Chyba odesílání: ' + (result.err || 'neznámá chyba');
+        btn.disabled = false; btn.textContent = 'Odeslat odkaz';
+      }
+    } catch(ex) {
+      console.error('Reset flow chyba:', ex);
       msg.style.color = '#e07070';
-      msg.textContent = 'EmailJS není nastaveno — kontaktuj Petra.';
-      btn.disabled = false; btn.textContent = 'Odeslat odkaz';
-      return;
-    }
-
-    // Najdi kanonické ID
-    const spravci = await _nactiAuthSpravce().catch(() => null);
-    let kanonId = spravci ? (spravci[idRaw] ? idRaw : null) : null;
-    if (!kanonId && spravci) {
-      try { const n = parseInt(idRaw,10); kanonId = Object.keys(spravci).find(k => parseInt(k,10) === n) || null; } catch {}
-    }
-    if (!kanonId) {
-      msg.style.color = '#e07070'; msg.textContent = 'ID nenalezeno.';
-      btn.disabled = false; btn.textContent = 'Odeslat odkaz'; return;
-    }
-
-    const email = await _najdiEmailProId(kanonId);
-    if (!email) {
-      msg.style.color = '#e07070';
-      msg.innerHTML = 'Nemáš vyplněný e-mail v profilu.<br>Přihlas se a doplň ho v <strong>Kartě správce</strong>.';
-      btn.disabled = false; btn.textContent = 'Odeslat odkaz'; return;
-    }
-
-    // Vygeneruj token a ulož do Firebase
-    const token = Array.from(crypto.getRandomValues(new Uint8Array(24))).map(b=>b.toString(16).padStart(2,'0')).join('');
-    const db = _getFirebaseDB();
-    if (db) {
-      await db.ref(`reset_tokens/${token}`).set({
-        loginId: kanonId,
-        ts: Date.now(),
-        expiry: Date.now() + 3600000  // 1 hodina
-      });
-    }
-
-    const info = await _nactiSpravciInfo();
-    const jmeno = (info && info[kanonId]) ? (info[kanonId].jmeno || kanonId) : kanonId;
-    const ok = await _odeslatResetMail(kanonId, email, jmeno, token);
-
-    if (ok) {
-      msg.style.color = '#8fc870';
-      msg.innerHTML = `✓ Odkaz odeslán na <strong>${email.replace(/(.{3}).+(@.+)/, '$1…$2')}</strong>.<br>Platí 1 hodinu.`;
-      btn.textContent = 'Odesláno ✓';
-    } else {
-      msg.style.color = '#e07070'; msg.textContent = 'Chyba odesílání — zkus to znovu.';
+      msg.textContent = 'Chyba: ' + (ex && ex.message ? ex.message : String(ex));
       btn.disabled = false; btn.textContent = 'Odeslat odkaz';
     }
   });
