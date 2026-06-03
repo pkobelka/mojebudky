@@ -39,8 +39,9 @@ document.addEventListener('click', function(e) {
   let idx = blok ? parseInt(blok.dataset.idx || '0') : 0;
   const cislo = blok ? blok.dataset.cislo : null;
 
+  // idx=0: aktuální src z img (může být Firebase base64), vyšší: statické soubory
   function _getSrc(i) {
-    if (i === 0) return blok.dataset.src || img.src;
+    if (i === 0) return img.src;
     return `img/budky/${cislo}_${i}.jpg`;
   }
 
@@ -48,31 +49,41 @@ document.addEventListener('click', function(e) {
   o.className = 'foto-zoom-overlay';
 
   function _render(i) {
-    const prevDis = i === 0 ? 'disabled' : '';
-    const nextDis = i === total - 1 ? 'disabled' : '';
-    const nav = total > 1
-      ? `<div class="foto-zoom-nav">
-           <button class="foto-zoom-btn" onclick="this.closest('.foto-zoom-overlay')._nav(-1)" ${prevDis}>&#8249;</button>
-           <span class="foto-zoom-cnt">${i + 1} / ${total}</span>
-           <button class="foto-zoom-btn" onclick="this.closest('.foto-zoom-overlay')._nav(1)" ${nextDis}>&#8250;</button>
-         </div>`
-      : '';
-    o.innerHTML = `<img src="${_getSrc(i)}"><span class="foto-zoom-zavrit">×</span>${nav}`;
+    o.innerHTML = `<img src="${_getSrc(i)}" class="foto-zoom-img"><span class="foto-zoom-zavrit">×</span>`;
+    if (total > 1) {
+      const nav = document.createElement('div');
+      nav.className = 'foto-zoom-nav';
+      nav.innerHTML = `
+        <button class="foto-zoom-btn foto-zoom-prev">&#8249;</button>
+        <span class="foto-zoom-cnt">${i + 1} / ${total}</span>
+        <button class="foto-zoom-btn foto-zoom-next">&#8250;</button>`;
+      nav.querySelector('.foto-zoom-prev').disabled = (i === 0);
+      nav.querySelector('.foto-zoom-next').disabled = (i === total - 1);
+      nav.querySelector('.foto-zoom-prev').addEventListener('click', function(ev) {
+        ev.stopPropagation(); idx = Math.max(0, idx - 1); _render(idx);
+      });
+      nav.querySelector('.foto-zoom-next').addEventListener('click', function(ev) {
+        ev.stopPropagation(); idx = Math.min(total - 1, idx + 1); _render(idx);
+      });
+      o.appendChild(nav);
+    }
+    o.querySelector('.foto-zoom-zavrit').addEventListener('click', () => o.remove());
   }
-
-  o._nav = function(dir) {
-    idx = Math.max(0, Math.min(total - 1, idx + dir));
-    _render(idx);
-  };
 
   _render(idx);
   document.body.appendChild(o);
   o.addEventListener('click', function(ev) {
-    if (ev.target.closest('.foto-zoom-nav') || ev.target.closest('.foto-zoom-zavrit')) return;
-    if (ev.target.tagName === 'IMG') return;
+    if (ev.target.closest('.foto-zoom-nav,.foto-zoom-zavrit,.foto-zoom-img')) return;
     o.remove();
   });
-  o.querySelector('.foto-zoom-zavrit').addEventListener('click', () => o.remove());
+});
+
+// Galerie v popupu — delegovaný listener místo inline onclick
+document.addEventListener('click', function(e) {
+  const btn = e.target.closest('.foto-nav-btn');
+  if (!btn) return;
+  e.stopPropagation();
+  window._fotoNav(btn, btn.classList.contains('foto-next') ? 1 : -1);
 });
 
 window._fotoNav = function(btn, dir) {
@@ -270,9 +281,9 @@ function formatPopup(b) {
   const totalFotos = 1 + extraCount;
   const galNav = totalFotos > 1
     ? `<div class="foto-nav">
-        <button class="foto-nav-btn foto-prev" onclick="window._fotoNav(this,-1)" disabled>&#8249;</button>
+        <button class="foto-nav-btn foto-prev" disabled>&#8249;</button>
         <span class="foto-counter">1 / ${totalFotos}</span>
-        <button class="foto-nav-btn foto-next" onclick="window._fotoNav(this,1)">&#8250;</button>
+        <button class="foto-nav-btn foto-next">&#8250;</button>
        </div>`
     : '';
   const fotoBlock = `<div class="popup-foto popup-foto--auto" data-cislo="${b.cislo}" data-idx="0" data-total="${totalFotos}" data-src="${fotoSrc}">
