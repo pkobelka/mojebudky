@@ -627,8 +627,13 @@ html, body {
   .profil-field--wide { flex: 1; min-width: unset; }
   .profil-actions { padding: 14px 16px 20px; }
 
-  /* Modaly obecně — plná šířka */
-  .modal-box { width: 98% !important; max-width: unset !important; }
+  /* Modaly obecně — plná šířka, větší padding */
+  .modal-box { width: 98% !important; max-width: unset !important; padding: 2rem 1.4rem 1.8rem !important; }
+  .modal-nadpis { font-size: 1.6rem; }
+  .modal-hint { font-size: 1rem; }
+  .modal-form input { font-size: 1.2rem; padding: 0.9rem 1rem; }
+  .modal-form button { font-size: 1.2rem; padding: 0.95rem 1rem; }
+  .link-zapomnel { font-size: 1.05rem; }
   .uvitani-box { max-width: 98% !important; }
   .uvitani-zprava { margin: 16px 16px 0; font-size: 1rem; }
   .uvitani-logo-wrap { padding: 20px 16px 16px; }
@@ -747,7 +752,7 @@ html, body {
 .btn-oko:hover { color: var(--text-light); }
 .zobrazit-heslo-label { display: flex; align-items: center; gap: 8px; color: var(--text-muted); font-size: 0.82rem; cursor: pointer; user-select: none; margin-top: -4px; }
 .zobrazit-heslo-label input[type=checkbox] { accent-color: var(--orange); cursor: pointer; }
-.link-zapomnel { display: inline-block; margin-top: 10px; color: var(--text-muted); font-size: 0.8rem; text-decoration: underline; text-decoration-style: dotted; transition: color 0.15s; }
+.link-zapomnel { display: inline-block; margin-top: 10px; color: var(--text-muted); font-size: 1rem; text-decoration: underline; text-decoration-style: dotted; transition: color 0.15s; }
 .link-zapomnel:hover { color: var(--text-light); }
 .zapomnel-msg { margin-top: 8px; background: rgba(255,255,255,0.06); border: 1px solid var(--panel-border); border-radius: 6px; padding: 8px 12px; font-size: 0.82rem; color: var(--text-muted); line-height: 1.5; }
 .zapomnel-msg strong { color: var(--accent-gold); }
