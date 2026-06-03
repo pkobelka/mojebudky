@@ -8,24 +8,27 @@ function _aktualizujMarkerZFirebase(cisloNum, kdoHnizdi) {
   const marker = markersByCislo[cisloNum];
   if (!marker) return;
   const bData = (window._budkyDataMap || {})[cisloNum];
-  if (!bData || bData.stav === 'osidlena') return;
-  const bUp = { ...bData, stav: 'osidlena', ptak: kdoHnizdi };
-  marker.setIcon(vytvorIkonu(bUp));
-  marker.unbindTooltip();
-  marker.bindTooltip(formatTooltip(bUp), {
-    direction: 'top', offset: [0, -46], className: 'budka-tooltip-wrap', sticky: false
-  });
-  const isMobile = window.innerWidth < 600;
-  marker.unbindPopup();
-  marker.bindPopup(formatPopup(bUp), {
-    minWidth: isMobile ? Math.min(window.innerWidth - 40, 360) : 420,
-    maxWidth: isMobile ? window.innerWidth - 20 : 520,
-    className: 'budka-popup-wrap',
-    autoPanPaddingTopLeft: L.point(20, 100),
-    autoPanPaddingBottomRight: L.point(20, 20)
-  });
-  if (window._budkyDataMap) window._budkyDataMap[cisloNum] = bUp;
-  // Přepočítat počet osídlených v UI
+  if (!bData) return;
+  // Přepočítat counter i když budka je už osídlená (mohla být aktualizována z Firebase)
+  if (bData.stav !== 'osidlena') {
+    const bUp = { ...bData, stav: 'osidlena', ptak: kdoHnizdi };
+    marker.setIcon(vytvorIkonu(bUp));
+    marker.unbindTooltip();
+    marker.bindTooltip(formatTooltip(bUp), {
+      direction: 'top', offset: [0, -46], className: 'budka-tooltip-wrap', sticky: false
+    });
+    const isMobile = window.innerWidth < 600;
+    marker.unbindPopup();
+    marker.bindPopup(formatPopup(bUp), {
+      minWidth: isMobile ? Math.min(window.innerWidth - 40, 360) : 420,
+      maxWidth: isMobile ? window.innerWidth - 20 : 520,
+      className: 'budka-popup-wrap',
+      autoPanPaddingTopLeft: L.point(20, 100),
+      autoPanPaddingBottomRight: L.point(20, 20)
+    });
+    if (window._budkyDataMap) window._budkyDataMap[cisloNum] = bUp;
+  }
+  // Přepočítat počet osídlených v UI (vždy)
   const pocetOsidl = Object.values(window._budkyDataMap || {}).filter(b => b.stav === 'osidlena').length;
   const elOsidl = document.getElementById('stat-osidlenych');
   if (elOsidl) elOsidl.textContent = pocetOsidl;
