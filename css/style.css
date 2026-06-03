@@ -518,6 +518,12 @@ html, body {
 }
 
 @media (max-width: 600px) {
+  /* Panel: clamp(380px) přetéká na 375px viewportu – vynutit 100% */
+  .panel { width: 100% !important; min-width: 0; box-sizing: border-box; }
+  /* Stats: 1 sloupec na malém mobilu */
+  .stats-grid { grid-template-columns: 1fr; gap: 6px; padding: 8px; }
+  .stat-item { flex-direction: row; justify-content: space-between; padding: 10px 14px; gap: 10px; }
+  .stat-value { font-size: 2rem; }
   /* Navbar: skryj velké tlačítko Podpořit, uvolni místo pro hamburger + login */
   .nav-podpora-btn { display: none; }
   .navbar { padding: 0 10px; height: 58px; gap: 8px; }
