@@ -1,22 +1,22 @@
 :root {
-  --nav-bg: #1a3a0a;
-  --nav-hover: #2d5516;
-  --panel-bg: rgba(40, 18, 4, 0.93);
-  --panel-border: #5c2e0a;
-  --panel-header: #3a1a06;
-  --orange: #c96420;
-  --orange-dark: #a0501a;
-  --orange-light: #e88040;
+  --nav-bg: #0e2706;
+  --nav-hover: #1c4210;
+  --panel-bg: rgba(14, 28, 6, 0.95);
+  --panel-border: rgba(120, 190, 80, 0.18);
+  --panel-header: #0e2706;
+  --orange: #e06820;
+  --orange-dark: #b85418;
+  --orange-light: #f08840;
   --sky-top: #5a9fd4;
   --sky-bottom: #aad4f0;
-  --tree-dark: #1a4008;
-  --tree-mid: #2d6010;
-  --text-light: #f5ead0;
-  --text-muted: #c8a878;
-  --bar-bg: #f0ead8;
-  --bar-text: #3a2008;
-  --footer-bg: #1a3a0a;
-  --accent-gold: #d4a040;
+  --tree-dark: #0e2706;
+  --tree-mid: #1c4210;
+  --text-light: #eef4e8;
+  --text-muted: #9ab880;
+  --bar-bg: #eaf2e2;
+  --bar-text: #173808;
+  --footer-bg: #0e2706;
+  --accent-gold: #d4a030;
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
