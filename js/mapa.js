@@ -99,20 +99,26 @@ document.addEventListener('click', function(e) {
   if (map) map.closePopup();
 });
 
-// Tažení za popup posune mapu – popup zůstane otevřený a jede s ní
+// Tažení za popup: vertikálně scrolluje popup, horizontálně posouvá mapu
 (function() {
   let ps = null;
   document.addEventListener('touchstart', function(e) {
     if (!e.target.closest('.leaflet-popup')) { ps = null; return; }
-    ps = { lx: e.touches[0].clientX, ly: e.touches[0].clientY, panning: false };
+    const t = e.touches[0];
+    ps = { sx: t.clientX, sy: t.clientY, lx: t.clientX, ly: t.clientY, dir: null };
   }, { passive: true });
   document.addEventListener('touchmove', function(e) {
     if (!ps) return;
     const cx = e.touches[0].clientX, cy = e.touches[0].clientY;
-    if (!ps.panning) {
-      if (Math.hypot(cx - ps.lx, cy - ps.ly) < 12) return;
-      ps.panning = true;
+    const dx = cx - ps.sx, dy = cy - ps.sy;
+    // Urči směr při prvním výrazném pohybu
+    if (!ps.dir) {
+      if (Math.hypot(dx, dy) < 12) return;
+      ps.dir = Math.abs(dx) > Math.abs(dy) ? 'h' : 'v';
     }
+    // Vertikální = scrollování popupu – necháme prohlížeč
+    if (ps.dir === 'v') { ps.lx = cx; ps.ly = cy; return; }
+    // Horizontální = posun mapy
     const m = window._getMapInstance && window._getMapInstance();
     if (m) m.panBy([-(cx - ps.lx), -(cy - ps.ly)], { animate: false });
     ps.lx = cx; ps.ly = cy;
