@@ -284,6 +284,10 @@ function nactiPodekovani(podekovani) {
   if (!wrap || !el || !podekovani || !podekovani.length) return;
   el.innerHTML = podekovani.map(p => {
     const jmeno = typeof p === 'string' ? p : p.jmeno;
+    const popis = typeof p === 'object' && p.popis ? p.popis : null;
+    if (popis) {
+      return `<span class="podekovani-item podekovani-item--ma-text" tabindex="0" title="${popis}">${jmeno}<span class="pod-bublina">${popis}</span></span>`;
+    }
     return `<span class="podekovani-item">${jmeno}</span>`;
   }).join('');
   wrap.style.display = 'block';
@@ -662,12 +666,14 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // Poděkování sekce → modal
-  const podekovaniWrap = document.getElementById('podekovaniWrap');
-  if (podekovaniWrap) {
-    podekovaniWrap.style.cursor = 'pointer';
-    podekovaniWrap.title = 'Klikněte pro zobrazení všech podporovatelů';
-    podekovaniWrap.addEventListener('click', () => _zobrazPartneriModal());
-  }
+  // Poděkování: klik na jméno s popisem otevře/zavře bublinu
+  document.getElementById('podekovaniList') && document.getElementById('podekovaniList').addEventListener('click', e => {
+    const item = e.target.closest('.podekovani-item--ma-text');
+    if (!item) return;
+    const jeOtevrena = item.classList.contains('pod-open');
+    document.querySelectorAll('.podekovani-item--ma-text.pod-open').forEach(el => el.classList.remove('pod-open'));
+    if (!jeOtevrena) item.classList.add('pod-open');
+  });
 
   // Desatero správce → modal
   const modalDesatero = document.getElementById('modalDesatero');
