@@ -557,6 +557,16 @@ function inicializujFullscreenMapu() {
     hint.textContent = '⛶ Klikněte 2× kdekoliv do mapy pro zobrazení na celé ploše';
     mapWrapper.appendChild(hint);
 
+    // Při první návštěvě zobraz hint automaticky na 4 sekundy
+    if (!localStorage.getItem('mb_hintSeen')) {
+      hint.style.opacity = '1';
+      setTimeout(() => {
+        hint.style.transition = 'opacity 1s';
+        hint.style.opacity = '';
+        localStorage.setItem('mb_hintSeen', '1');
+      }, 4000);
+    }
+
     mapWrapper.addEventListener('dblclick', e => {
       if (mainContent.classList.contains('mapa-fullscreen')) return;
       if (!e.target.closest('.leaflet-container')) return;
