@@ -661,6 +661,14 @@ document.addEventListener('DOMContentLoaded', () => {
     a.addEventListener('click', e => { e.preventDefault(); _zobrazPartneriModal(); });
   });
 
+  // Poděkování sekce → modal
+  const podekovaniWrap = document.getElementById('podekovaniWrap');
+  if (podekovaniWrap) {
+    podekovaniWrap.style.cursor = 'pointer';
+    podekovaniWrap.title = 'Klikněte pro zobrazení všech podporovatelů';
+    podekovaniWrap.addEventListener('click', () => _zobrazPartneriModal());
+  }
+
   // Desatero správce → modal
   const modalDesatero = document.getElementById('modalDesatero');
   function otevritDesatero(e) {
