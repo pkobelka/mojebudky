@@ -93,6 +93,12 @@ document.addEventListener('click', function(e) {
   window._fotoNav(btn, btn.classList.contains('foto-next') ? 1 : -1);
 });
 
+document.addEventListener('click', function(e) {
+  if (!e.target.closest('.popup-zavrit-btn')) return;
+  const map = window._getMapInstance && window._getMapInstance();
+  if (map) map.closePopup();
+});
+
 window._fotoNav = function(btn, dir) {
   const blok = btn.closest('.popup-foto--auto');
   if (!blok) return;
@@ -330,6 +336,7 @@ function formatPopup(b) {
       ${otvorBlock}
     </div>
     ${historieBlock ? `<div class="popup-sekce">${historieBlock}</div>` : ''}
+    <button class="popup-zavrit-btn">✕ Zavřít</button>
   </div>`;
 }
 

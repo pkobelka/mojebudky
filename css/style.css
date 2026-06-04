@@ -337,6 +337,8 @@ html, body {
 /* ── POPUP ── */
 .leaflet-popup-content-wrapper { border-radius: 12px; box-shadow: 0 6px 30px rgba(0,0,0,0.45); padding: 0; overflow: hidden; }
 .leaflet-popup-content { margin: 0; width: auto !important; }
+.leaflet-popup-close-button { width: 32px !important; height: 32px !important; font-size: 22px !important; line-height: 32px !important; top: 4px !important; right: 4px !important; color: #555 !important; }
+.popup-zavrit-btn { display: none; }
 .budka-popup { font-size: 1.15rem; font-family: 'Segoe UI', system-ui, sans-serif; min-width: 420px; }
 .popup-header { padding: 16px 22px 12px; background: #faf6ee; border-bottom: 1px solid #e8dcc8; }
 .popup-cislo { font-weight: 800; font-size: 1.6rem; color: #3a1a06; margin-bottom: 4px; }
@@ -594,6 +596,9 @@ html, body {
   .budka-popup { min-width: unset; width: calc(100% - 40px); max-width: 360px; font-size: 1rem; }
   .popup-header { padding: 12px 16px 10px; }
   .popup-cislo { font-size: 1.2rem; }
+  /* Větší close button Leaflet + vlastní Zavřít tlačítko */
+  .leaflet-popup-close-button { width: 44px !important; height: 44px !important; font-size: 28px !important; line-height: 44px !important; top: 0 !important; right: 0 !important; }
+  .popup-zavrit-btn { display: block; width: 100%; padding: 12px; background: #e8e0d4; border: none; border-top: 1px solid #d0c0a8; font-size: 1.1rem; font-weight: 700; color: #3a1a06; cursor: pointer; text-align: center; }
   .popup-nazev-hlavni { font-size: 1.25rem; }
   .popup-ptak { padding: 10px 16px 4px; font-size: 1.1rem; }
   .popup-detail { padding: 6px 16px 12px; }
