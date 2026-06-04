@@ -1,3 +1,27 @@
+// ── PUSH NOTIFIKACE ──────────────────────────────────────────────────────────
+// VAPID klíč: Firebase Console → Project Settings → Cloud Messaging
+//             → Web Push certificates → Generate key pair → zkopírovat klíč
+const _PUSH_VAPID_KEY = '';
+
+async function _prihlasitPush(loginId) {
+  if (!_PUSH_VAPID_KEY) return;
+  if (!('Notification' in window) || !('serviceWorker' in navigator)) return;
+  try {
+    const perm = await Notification.requestPermission();
+    if (perm !== 'granted') return;
+    const reg = window._swReg || await navigator.serviceWorker.ready;
+    const msg = typeof firebase !== 'undefined' ? firebase.messaging() : null;
+    if (!msg) return;
+    const token = await msg.getToken({ vapidKey: _PUSH_VAPID_KEY, serviceWorkerRegistration: reg });
+    if (!token) return;
+    const db = _getFirebaseDB();
+    if (db) db.ref(`push_tokens/${loginId}`).set({ token, ts: Date.now(), ua: navigator.userAgent.slice(0,80) });
+    console.log('Push token uložen:', token.slice(0, 20) + '…');
+  } catch (err) {
+    console.warn('Push subscription:', err);
+  }
+}
+
 function _czToIso(s) {
   if (!s) return '';
   const m = s.match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})$/);
@@ -116,6 +140,7 @@ async function _zobrazAdminPanel(loginId) {
   }
 
   if (typeof window._presenceSetAdmin === 'function') window._presenceSetAdmin(true);
+  _prihlasitPush(loginId);
 
   const jeAdmin = !!(spravceInfo && spravceInfo.spravce === 'admin');
   window._aktualniSpravce = { loginId, spravceInfo, budkyList, jeAdmin };

@@ -294,11 +294,12 @@
 <script src="js/svatky.js"></script>
 <script src="js/mapa.js?v=20260604i"></script>
 <script src="js/main.js?v=20260604d"></script>
-<script src="js/auth.js?v=20260603t"></script>
+<script src="js/auth.js?v=20260604m"></script>
 <script src="js/presence.js?v=20260527k"></script>
 <script>
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/firebase-messaging-sw.js')
+    navigator.serviceWorker.register('/mojebudky/firebase-messaging-sw.js')
+      .then(reg => { window._swReg = reg; })
       .catch(() => {});
   }
 </script>
