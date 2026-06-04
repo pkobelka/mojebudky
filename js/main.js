@@ -554,7 +554,10 @@ function inicializujFullscreenMapu() {
   if (mapWrapper) {
     const hint = document.createElement('div');
     hint.className = 'map-hint';
-    hint.textContent = '⛶ Klikněte 2× kdekoliv do mapy pro zobrazení na celé ploše';
+    const isMobile = window.innerWidth < 600;
+    hint.textContent = isMobile
+      ? '⛶ Klepněte 2× na mapu pro zobrazení na celé obrazovce'
+      : '⛶ Klikněte 2× kdekoliv do mapy pro zobrazení na celé ploše';
     mapWrapper.appendChild(hint);
 
     // Při první návštěvě zobraz hint automaticky na 4 sekundy
@@ -571,12 +574,29 @@ function inicializujFullscreenMapu() {
       if (mainContent.classList.contains('mapa-fullscreen')) return;
       if (!e.target.closest('.leaflet-container')) return;
       e.stopPropagation();
-      // disable Leaflet dblclick zoom temporarily to avoid conflict
       const map = window._getMapInstance && window._getMapInstance();
       if (map) map.doubleClickZoom.disable();
       rozbalMapu();
       setTimeout(() => { if (map) map.doubleClickZoom.enable(); }, 600);
     });
+
+    // Mobil: dvojité klepnutí přes touchend (dblclick na touch nefunguje)
+    let _lastTap = 0;
+    mapWrapper.addEventListener('touchend', e => {
+      if (mainContent.classList.contains('mapa-fullscreen')) return;
+      if (!e.target.closest('.leaflet-container')) return;
+      const now = Date.now();
+      if (now - _lastTap < 320) {
+        e.preventDefault();
+        const map = window._getMapInstance && window._getMapInstance();
+        if (map) map.doubleClickZoom.disable();
+        rozbalMapu();
+        setTimeout(() => { if (map) map.doubleClickZoom.enable(); }, 600);
+        _lastTap = 0;
+      } else {
+        _lastTap = now;
+      }
+    }, { passive: false });
   }
 
   btnZpet.addEventListener('click', e => { e.stopPropagation(); sbalMapu(); });
