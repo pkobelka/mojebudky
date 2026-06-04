@@ -20,8 +20,8 @@ function _aktualizujMarkerZFirebase(cisloNum, kdoHnizdi) {
     const isMobile = window.innerWidth < 600;
     marker.unbindPopup();
     marker.bindPopup(formatPopup(bUp), {
-      minWidth: isMobile ? 1 : 420,
-      maxWidth: isMobile ? window.innerWidth : 520,
+      minWidth: isMobile ? Math.min(window.innerWidth - 80, 300) : 420,
+      maxWidth: isMobile ? Math.min(window.innerWidth - 80, 300) : 520,
       className: 'budka-popup-wrap',
       autoPanPaddingTopLeft: L.point(38, 100),
       autoPanPaddingBottomRight: L.point(38, 20)
@@ -98,6 +98,33 @@ document.addEventListener('click', function(e) {
   const map = window._getMapInstance && window._getMapInstance();
   if (map) map.closePopup();
 });
+
+// Tažení za popup: vertikálně scrolluje popup, horizontálně posouvá mapu
+(function() {
+  let ps = null;
+  document.addEventListener('touchstart', function(e) {
+    if (!e.target.closest('.leaflet-popup')) { ps = null; return; }
+    const t = e.touches[0];
+    ps = { sx: t.clientX, sy: t.clientY, lx: t.clientX, ly: t.clientY, dir: null };
+  }, { passive: true });
+  document.addEventListener('touchmove', function(e) {
+    if (!ps) return;
+    const cx = e.touches[0].clientX, cy = e.touches[0].clientY;
+    const dx = cx - ps.sx, dy = cy - ps.sy;
+    // Urči směr při prvním výrazném pohybu
+    if (!ps.dir) {
+      if (Math.hypot(dx, dy) < 12) return;
+      ps.dir = Math.abs(dx) > Math.abs(dy) ? 'h' : 'v';
+    }
+    // Vertikální = scrollování popupu – necháme prohlížeč
+    if (ps.dir === 'v') { ps.lx = cx; ps.ly = cy; return; }
+    // Horizontální = posun mapy
+    const m = window._getMapInstance && window._getMapInstance();
+    if (m) m.panBy([-(cx - ps.lx), -(cy - ps.ly)], { animate: false });
+    ps.lx = cx; ps.ly = cy;
+  }, { passive: true });
+  document.addEventListener('touchend', function() { ps = null; }, { passive: true });
+})();
 
 window._fotoNav = function(btn, dir) {
   const blok = btn.closest('.popup-foto--auto');
@@ -437,8 +464,8 @@ async function inicializujMapu() {
 
       const isMobile = window.innerWidth < 600;
       marker.bindPopup(formatPopup(bData), {
-        minWidth: isMobile ? 1 : 420,
-        maxWidth: isMobile ? window.innerWidth : 520,
+        minWidth: isMobile ? Math.min(window.innerWidth - 40, 340) : 420,
+        maxWidth: isMobile ? Math.min(window.innerWidth - 40, 340) : 520,
         className: 'budka-popup-wrap',
         autoPanPaddingTopLeft: L.point(20, 100),
         autoPanPaddingBottomRight: L.point(20, 20)

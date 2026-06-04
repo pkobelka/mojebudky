@@ -1,4 +1,3 @@
-// Firebase Messaging Service Worker — MojeBudky.cz
 importScripts('https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js');
 importScripts('https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging-compat.js');
 
@@ -14,25 +13,21 @@ firebase.initializeApp({
 
 const messaging = firebase.messaging();
 
-// Notifikace na pozadí (když appka není otevřená)
+// Notifikace na pozadí (když je karta zavřená / na pozadí)
 messaging.onBackgroundMessage(payload => {
-  const n = payload.notification || {};
-  const data = payload.data || {};
-  self.registration.showNotification(n.title || 'MojeBudky', {
-    body: n.body || '',
-    icon: '/img/Favikon.png',
-    badge: '/img/Favikon.png',
-    tag: data.tag || 'mb-notif',
-    data: { url: data.url || '/' }
+  const title = payload.notification?.title || 'MojeBudky.cz';
+  const body  = payload.notification?.body  || '';
+  return self.registration.showNotification(title, {
+    body,
+    icon:    '/mojebudky/img/icon-192.png',
+    badge:   '/mojebudky/img/icon-192.png',
+    vibrate: [200, 100, 200],
+    data:    { url: payload.data?.url || 'https://pkobelka.github.io/mojebudky/' }
   });
 });
 
 self.addEventListener('notificationclick', e => {
   e.notification.close();
-  const url = e.notification.data?.url || '/';
-  e.waitUntil(clients.matchAll({ type: 'window', includeUncontrolled: true }).then(cs => {
-    const found = cs.find(c => c.url.includes(self.location.origin));
-    if (found) { found.focus(); }
-    else { clients.openWindow(url); }
-  }));
+  const url = e.notification.data?.url || 'https://pkobelka.github.io/mojebudky/';
+  e.waitUntil(clients.openWindow(url));
 });
