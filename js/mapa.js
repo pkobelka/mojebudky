@@ -20,11 +20,11 @@ function _aktualizujMarkerZFirebase(cisloNum, kdoHnizdi) {
     const isMobile = window.innerWidth < 600;
     marker.unbindPopup();
     marker.bindPopup(formatPopup(bUp), {
-      minWidth: isMobile ? Math.min(window.innerWidth - 30, 340) : 420,
-      maxWidth: isMobile ? Math.min(window.innerWidth - 20, 360) : 520,
+      minWidth: isMobile ? Math.min(window.innerWidth - 76, 340) : 420,
+      maxWidth: isMobile ? Math.min(window.innerWidth - 76, 340) : 520,
       className: 'budka-popup-wrap',
-      autoPanPaddingTopLeft: L.point(20, 100),
-      autoPanPaddingBottomRight: L.point(20, 20)
+      autoPanPaddingTopLeft: L.point(38, 100),
+      autoPanPaddingBottomRight: L.point(38, 20)
     });
     if (window._budkyDataMap) window._budkyDataMap[cisloNum] = bUp;
   }
@@ -436,12 +436,13 @@ async function inicializujMapu() {
       });
 
       const isMobile = window.innerWidth < 600;
+      const popupW = isMobile ? Math.min(window.innerWidth - 76, 340) : 420;
       marker.bindPopup(formatPopup(bData), {
-        minWidth: isMobile ? Math.min(window.innerWidth - 30, 340) : 420,
-        maxWidth: isMobile ? Math.min(window.innerWidth - 20, 360) : 520,
+        minWidth: isMobile ? popupW : 420,
+        maxWidth: isMobile ? popupW : 520,
         className: 'budka-popup-wrap',
-        autoPanPaddingTopLeft: L.point(20, 100),
-        autoPanPaddingBottomRight: L.point(20, 20)
+        autoPanPaddingTopLeft: L.point(38, 100),
+        autoPanPaddingBottomRight: L.point(38, 20)
       });
 
       markersByCislo[b.cislo] = marker;

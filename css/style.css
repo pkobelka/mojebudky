@@ -596,9 +596,10 @@ html, body {
   /* Aktuality panel a nav link skryté na mobilu */
   .panel-left { display: none; }
   #navLiAktuality { display: none; }
-  /* Popup na mobilu – žádná min-width */
+  /* Popup na mobilu – 1cm okraje (~38px) na každé straně */
   .budka-popup { min-width: unset; width: 100%; font-size: 1rem; }
-  .leaflet-popup-content-wrapper { max-width: calc(100vw - 30px); }
+  .leaflet-popup-content-wrapper { width: calc(100vw - 76px) !important; max-width: 340px; }
+  .leaflet-popup-content { width: 100% !important; }
   .popup-header { padding: 12px 16px 10px; }
   .popup-cislo { font-size: 1.2rem; }
   /* Větší close button Leaflet + vlastní Zavřít tlačítko */
