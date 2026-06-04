@@ -20,8 +20,8 @@ function _aktualizujMarkerZFirebase(cisloNum, kdoHnizdi) {
     const isMobile = window.innerWidth < 600;
     marker.unbindPopup();
     marker.bindPopup(formatPopup(bUp), {
-      minWidth: isMobile ? Math.min(window.innerWidth - 40, 340) : 420,
-      maxWidth: isMobile ? Math.min(window.innerWidth - 40, 340) : 520,
+      minWidth: isMobile ? Math.min(window.innerWidth - 80, 300) : 420,
+      maxWidth: isMobile ? Math.min(window.innerWidth - 80, 300) : 520,
       className: 'budka-popup-wrap',
       autoPanPaddingTopLeft: L.point(38, 100),
       autoPanPaddingBottomRight: L.point(38, 20)
