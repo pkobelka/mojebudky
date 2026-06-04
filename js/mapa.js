@@ -99,6 +99,30 @@ document.addEventListener('click', function(e) {
   if (map) map.closePopup();
 });
 
+// Swipe na popup = zavři popup + posuň mapu
+(function() {
+  let ps = null;
+  document.addEventListener('touchstart', function(e) {
+    if (!e.target.closest('.leaflet-popup')) { ps = null; return; }
+    ps = { x: e.touches[0].clientX, y: e.touches[0].clientY,
+           lx: e.touches[0].clientX, ly: e.touches[0].clientY, panning: false };
+  }, { passive: true });
+  document.addEventListener('touchmove', function(e) {
+    if (!ps) return;
+    const cx = e.touches[0].clientX, cy = e.touches[0].clientY;
+    if (!ps.panning) {
+      if (Math.hypot(cx - ps.x, cy - ps.y) < 12) return;
+      ps.panning = true;
+      const m = window._getMapInstance && window._getMapInstance();
+      if (m) m.closePopup();
+    }
+    const m = window._getMapInstance && window._getMapInstance();
+    if (m) m.panBy([-(cx - ps.lx), -(cy - ps.ly)], { animate: false });
+    ps.lx = cx; ps.ly = cy;
+  }, { passive: true });
+  document.addEventListener('touchend', function() { ps = null; }, { passive: true });
+})();
+
 window._fotoNav = function(btn, dir) {
   const blok = btn.closest('.popup-foto--auto');
   if (!blok) return;
