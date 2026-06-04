@@ -6,8 +6,18 @@
   <meta name="description" content="MojeBudky.cz – sledujeme ptáčí budky po celé ČR. Živá mapa, statistiky a příběhy z přírody.">
   <title>MojeBudky.cz – Pomáháme ptactvu</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
-  <link rel="stylesheet" href="css/style.css?v=20260528m">
-  <link rel="icon" type="image/png" href="img/Favikon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css?v=20260604j">
+  <link rel="icon" type="image/svg+xml" href="img/favicon.svg">
+  <link rel="icon" type="image/png" sizes="512x512" href="img/icon-512.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="img/icon-192.png">
+  <link rel="apple-touch-icon" sizes="192x192" href="img/icon-192.png">
+  <link rel="manifest" href="manifest.json">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="MojeBudky">
+  <meta name="theme-color" content="#2a5a28">
 </head>
 <body>
 
@@ -36,15 +46,17 @@
           <span class="logo-autor">PETR KOBELKA</span>
         </span>
       </a>
-      <button type="button" class="nav-podpora-btn" id="navPodpora">💛 Podpořit projekt</button>
+      <button type="button" class="nav-podpora-btn" id="navPodpora" style="display:none">💛 Podpořit projekt</button>
 
       <ul class="nav-links" id="navLinks" role="navigation" aria-label="Hlavní navigace">
         <li><a href="#mapa" id="nav-mapa">Mapa Budek</a></li>
-        <li><a href="#aktuality">Z deníku správců...</a></li>
+        <li id="navLiAktuality"><a href="#aktuality">Z deníku správců...</a></li>
+        <li><a href="#" id="navDesatero">Desatero správce</a></li>
         <li><a href="#clanky">Zajímavé články</a></li>
         <li><a href="#partneri">Podporovatelé</a></li>
-        <li><a href="https://www.facebook.com/mojebudky" class="nav-fb-link" target="_blank" rel="noopener" aria-label="Facebook MojeBudky"><svg class="nav-fb-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><circle cx="12" cy="12" r="12" fill="#1877f2"/><path d="M16.5 8H14c-.3 0-.5.2-.5.5V10h3l-.4 2.5H13.5V18h-2.5v-5.5H9V10h2V8.5C11 6.6 12.1 5.5 14 5.5c.9 0 2.5.1 2.5.1V8z" fill="#fff"/></svg>MojeBudky</a></li>
+        <li><a href="#" class="nav-podpora-link" id="navPodporaLink">💛 Podpořit projekt</a></li>
         <li class="nav-napsat-mobile"><a href="mailto:info@mojebudky.cz">✉ Napište nám</a></li>
+        <li class="nav-podpora-mobile"><button type="button" onclick="document.getElementById('navPodporaLink').click(); document.getElementById('navHamburger').click();" style="display:block;width:100%;background:rgba(255,215,0,0.12);color:#f0d800;border:none;padding:14px 20px;font-size:1.1rem;font-weight:700;cursor:pointer;text-align:left;border-top:1px solid rgba(255,255,255,0.07);font-family:inherit;">💛 Podpořit projekt</button></li>
       </ul>
 
       <div class="nav-actions">
@@ -86,6 +98,7 @@
     <div class="map-wrapper" role="application" aria-label="Interaktivní mapa budek">
       <div id="map"></div>
       <button id="btn-zpet-mapa" class="btn-zpet-mapa" style="display:none;" aria-label="Zpět na přehled">← Zpět</button>
+      <button id="btn-zpet-mapa-tr" class="btn-zpet-mapa btn-zpet-mapa--tr" style="display:none;" aria-label="Zpět na přehled">← Zpět</button>
     </div>
 
     <!-- Pravý panel: Statistiky -->
@@ -93,8 +106,9 @@
       <h2 class="panel-title">Statistiky</h2>
       <div class="panel-scroll">
 
-        <!-- 2×2 čísla -->
+        <!-- 3 statistiky vedle sebe -->
         <div class="stats-grid" id="statsGrid">
+
           <div class="stat-item">
             <div class="stat-icon"><img src="img/logo.svg" alt="Budka" class="stat-svg-icon"></div>
             <div>
@@ -114,13 +128,6 @@
             <div>
               <div class="stat-value" id="stat-spravcu">…</div>
               <div class="stat-label">Registrovaných správců</div>
-            </div>
-          </div>
-          <div class="stat-item">
-            <div class="stat-icon stat-icon-druhy" id="stat-druhu-ikony">🐦</div>
-            <div>
-              <div class="stat-value" id="stat-druhu">…</div>
-              <div class="stat-label">Druhů ptáků</div>
             </div>
           </div>
         </div>
@@ -175,6 +182,44 @@
 
   </main>
 
+  <!-- Desatero správce (modal) -->
+  <div id="modalDesatero" class="modal-overlay desatero-overlay" hidden role="dialog" aria-modal="true" aria-label="Desatero odpovědného správce budky">
+    <div class="desatero-outer">
+      <div class="desatero-wrap">
+        <button class="desatero-zavrit" id="desateroZavrit" aria-label="Zavřít">×</button>
+        <span class="d-corner d-tl" aria-hidden="true">✦</span>
+        <span class="d-corner d-tr" aria-hidden="true">✦</span>
+        <span class="d-corner d-bl" aria-hidden="true">✦</span>
+        <span class="d-corner d-br" aria-hidden="true">✦</span>
+
+        <header class="desatero-header">
+          <img src="img/logo.svg" alt="MojeBudky logo" class="desatero-logo">
+          <div class="desatero-logo-nazev">MojeBudky.cz</div>
+        </header>
+
+        <div class="desatero-ornament" aria-hidden="true"><span></span><span>✦</span><span></span></div>
+
+        <h2 class="desatero-nadpis">Desatero odpovědného správce budky</h2>
+        <p class="desatero-podnadpis">Naše společné hodnoty a závazky k přírodě</p>
+
+        <div class="desatero-ornament desatero-ornament--bird" aria-hidden="true"><span></span><span>🦅</span><span></span></div>
+
+        <ol class="desatero-list">
+          <li><strong>Bezpečí ptáků je na prvním místě</strong><br>Při umisťování, kontrole i čištění budky vždy dbám na to, aby nebyli ohroženi její obyvatelé ani já sám. Respektuji přírodu a do hnízdění zasahuji jen v nejnutnějších případech.</li>
+          <li><strong>Správné umístění je základ úspěchu</strong><br>Budku instaluji na bezpečné místo – dostatečně vysoko před predátory (kočky, kuny), stabilně a s vletovým otvorem ideálně na jihovýchod až východ, aby do ní nefoukalo a nepršelo.</li>
+          <li><strong>Pravidelný podzimní úklid je povinnost</strong><br>Před zimou budku pečlivě vyčistím a odstraním staré hnízdo. Tím chráním budoucí generace ptáčat před parazity a připravuji jim čistý domov na další jaro. Na jaře provedu kontrolu před hnízděním.</li>
+          <li><strong>V době hnízdění neruším</strong><br>Když ptáci sedí na vejcích nebo krmí malá ptáčata, budku neotvírám a pozoruji ji jen z bezpečné vzdálenosti. Klid na hnízdění je klíčem k úspěšnému vyvedení mladých.</li>
+          <li><strong>Data v aplikaci udržuji aktuální</strong><br>Pravidelně a poctivě zapisuji všechna pozorování, kontroly a stav budky do naší webové aplikace MojeBudky. Každý záznam a nahraná fotka pomáhají celému projektu.</li>
+          <li><strong>Jsem očima a ušima své budky</strong><br>Sleduji technický stav budky. Pokud je poškozená, opravím ji, nebo včas nahlásím potřebu opravy, aby byla pro ptáky stále bezpečným útočištěm.</li>
+          <li><strong>Šířím osvětu a radost z přírody</strong><br>O své zážitky a znalosti se dělím s rodinou, přáteli nebo sousedy. Pomáhám ostatním pochopit, proč je ochrana ptactva důležitá a jak jim správně pomáhat.</li>
+          <li><strong>Respektuji pravidla komunity MojeBudky</strong><br>Jsem hrdým členem naší komunity. Jednám fér, pomáhám ostatním správcům, sdílím své zkušenosti a táhnu za jeden provaz pro dobrou věc.</li>
+          <li><strong>Pomáhám ptákům po celý rok</strong><br>V zimě přikrmuji kvalitní stravou v krmítkách, v létě nabízím ptákům na zahradě bezpečné napajedlo s čistou vodou. Budka je jen začátek péče.</li>
+          <li><strong>Chráním přírodu jako celek</strong><br>Uvědomuji si, že ptáci potřebují k životu zdravé prostředí. Nepoužívám na zahradě zbytečnou chemii a podporuji rozmanitost přírody v okolí své budky.</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
   <!-- Podporovatelé -->
   <section class="partners-section" id="partneri" aria-label="Podporovatelé projektu">
     <h3>Podporovatelé projektu MojeBudky.cz</h3>
@@ -194,6 +239,8 @@
     <a href="mailto:info@mojebudky.cz" class="footer-email">✉ info@mojebudky.cz</a>
     <span class="footer-sep" aria-hidden="true">|</span>
     <a href="https://www.facebook.com/mojebudky" class="footer-fb" target="_blank" rel="noopener" aria-label="Facebook MojeBudky"><svg class="footer-fb-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.41c0-3.025 1.792-4.697 4.533-4.697 1.312 0 2.686.236 2.686.236v2.97h-1.513c-1.491 0-1.956.93-1.956 1.886v2.269h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"/></svg> facebook.com/mojebudky</a>
+    <span class="footer-sep" aria-hidden="true">|</span>
+    <span class="footer-li" title="LinkedIn – připravuje se"><svg class="footer-li-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect width="24" height="24" rx="4" fill="#0077b5"/><path d="M7 9h2v8H7V9zm1-3a1.1 1.1 0 110 2.2A1.1 1.1 0 018 6zm4 3h2v1.1C14.3 9.4 15 9 16 9c2 0 3 1.3 3 3.5V17h-2v-4c0-1-.3-1.8-1.2-1.8S14 12 14 13v4h-2V9z" fill="#fff"/></svg> <em>LinkedIn – připravuje se</em></span>
   </footer>
 
 </div><!-- #app -->
@@ -232,19 +279,28 @@
     <img src="img/logo.svg" alt="MojeBudky logo" class="splash-logo">
     <div class="splash-autor">PETR KOBELKA</div>
     <div class="splash-nadpis">Vítejte na stránkách projektu MojeBudky</div>
-    <div class="splash-podnadpis">Osazujeme a sledujeme naše budky po celé České a Slovenské republice</div>
+    <div class="splash-podnadpis">Osazujeme a sledujeme naše budky<br>po celé České a Slovenské republice</div>
     <div class="splash-ikony">🤝 👏 👍</div>
     <div class="splash-bar"><div class="splash-bar-fill"></div></div>
   </div>
 </div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging-compat.js"></script>
 <script src="js/svatky.js"></script>
-<script src="js/mapa.js?v=20260528g"></script>
-<script src="js/main.js?v=20260528i"></script>
-<script src="js/auth.js?v=20260528m"></script>
+<script src="js/mapa.js?v=20260604e"></script>
+<script src="js/main.js?v=20260604d"></script>
+<script src="js/auth.js?v=20260603t"></script>
 <script src="js/presence.js?v=20260527k"></script>
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/firebase-messaging-sw.js')
+      .catch(() => {});
+  }
+</script>
 </body>
 </html>

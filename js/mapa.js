@@ -4,6 +4,138 @@ let budkyData = [];
 window._markersByCislo = markersByCislo;
 window._getMapInstance = () => mapInstance;
 
+function _aktualizujMarkerZFirebase(cisloNum, kdoHnizdi) {
+  const marker = markersByCislo[cisloNum];
+  if (!marker) return;
+  const bData = (window._budkyDataMap || {})[cisloNum];
+  if (!bData) return;
+  // Přepočítat counter i když budka je už osídlená (mohla být aktualizována z Firebase)
+  if (bData.stav !== 'osidlena') {
+    const bUp = { ...bData, stav: 'osidlena', ptak: kdoHnizdi };
+    marker.setIcon(vytvorIkonu(bUp));
+    marker.unbindTooltip();
+    marker.bindTooltip(formatTooltip(bUp), {
+      direction: 'top', offset: [0, -46], className: 'budka-tooltip-wrap', sticky: false
+    });
+    const isMobile = window.innerWidth < 600;
+    marker.unbindPopup();
+    marker.bindPopup(formatPopup(bUp), {
+      minWidth: isMobile ? Math.min(window.innerWidth - 40, 340) : 420,
+      maxWidth: isMobile ? Math.min(window.innerWidth - 40, 340) : 520,
+      className: 'budka-popup-wrap',
+      autoPanPaddingTopLeft: L.point(38, 100),
+      autoPanPaddingBottomRight: L.point(38, 20)
+    });
+    if (window._budkyDataMap) window._budkyDataMap[cisloNum] = bUp;
+  }
+  // Přepočítat počet osídlených v UI (vždy)
+  const pocetOsidl = Object.values(window._budkyDataMap || {}).filter(b => b.stav === 'osidlena').length;
+  const elOsidl = document.getElementById('stat-osidlenych');
+  if (elOsidl) elOsidl.textContent = pocetOsidl;
+}
+window._aktualizujMarkerZFirebase = _aktualizujMarkerZFirebase;
+
+const FOTO_ROKY = ['2026', '2025', '2024'];
+
+// Zoom fotky v popupu — delegovaný listener, funguje i pod adminskou session
+document.addEventListener('click', function(e) {
+  const img = e.target.closest('.popup-foto-zoomable');
+  if (!img) return;
+  const blok = img.closest('.popup-foto--auto');
+  const total = blok ? parseInt(blok.dataset.total || '1') : 1;
+  let idx = blok ? parseInt(blok.dataset.idx || '0') : 0;
+  const cislo = blok ? blok.dataset.cislo : null;
+
+  // idx=0: aktuální src z img (může být Firebase base64), vyšší: statické soubory
+  function _getSrc(i) {
+    if (i === 0) return img.src;
+    return `img/budky/${cislo}_${i}.jpg`;
+  }
+
+  const o = document.createElement('div');
+  o.className = 'foto-zoom-overlay';
+
+  function _render(i) {
+    o.innerHTML = `<img src="${_getSrc(i)}" class="foto-zoom-img"><span class="foto-zoom-zavrit">×</span>`;
+    if (total > 1) {
+      const nav = document.createElement('div');
+      nav.className = 'foto-zoom-nav';
+      nav.innerHTML = `
+        <button class="foto-zoom-btn foto-zoom-prev">&#8249;</button>
+        <span class="foto-zoom-cnt">${i + 1} / ${total}</span>
+        <button class="foto-zoom-btn foto-zoom-next">&#8250;</button>`;
+      nav.querySelector('.foto-zoom-prev').disabled = (i === 0);
+      nav.querySelector('.foto-zoom-next').disabled = (i === total - 1);
+      nav.querySelector('.foto-zoom-prev').addEventListener('click', function(ev) {
+        ev.stopPropagation(); idx = Math.max(0, idx - 1); _render(idx);
+      });
+      nav.querySelector('.foto-zoom-next').addEventListener('click', function(ev) {
+        ev.stopPropagation(); idx = Math.min(total - 1, idx + 1); _render(idx);
+      });
+      o.appendChild(nav);
+    }
+    o.querySelector('.foto-zoom-zavrit').addEventListener('click', () => o.remove());
+  }
+
+  _render(idx);
+  document.body.appendChild(o);
+  o.addEventListener('click', function(ev) {
+    if (ev.target.closest('.foto-zoom-nav,.foto-zoom-zavrit,.foto-zoom-img')) return;
+    o.remove();
+  });
+});
+
+// Galerie v popupu — delegovaný listener místo inline onclick
+document.addEventListener('click', function(e) {
+  const btn = e.target.closest('.foto-nav-btn');
+  if (!btn) return;
+  e.stopPropagation();
+  window._fotoNav(btn, btn.classList.contains('foto-next') ? 1 : -1);
+});
+
+document.addEventListener('click', function(e) {
+  if (!e.target.closest('.popup-zavrit-btn')) return;
+  const map = window._getMapInstance && window._getMapInstance();
+  if (map) map.closePopup();
+});
+
+window._fotoNav = function(btn, dir) {
+  const blok = btn.closest('.popup-foto--auto');
+  if (!blok) return;
+  const cislo = blok.dataset.cislo;
+  const total = parseInt(blok.dataset.total);
+  let idx = parseInt(blok.dataset.idx) + dir;
+  if (idx < 0 || idx >= total) return;
+  blok.dataset.idx = idx;
+  const src = idx === 0
+    ? `img/budky/${FOTO_ROKY[0]}/${cislo}.jpg`
+    : `img/budky/${cislo}_${idx}.jpg`;
+  const img = blok.querySelector('img');
+  if (img) {
+    img.src = src;
+    img.onerror = idx === 0
+      ? function() { window._tryBudkaFoto(this, cislo, [...FOTO_ROKY.slice(1), 'flat']); }
+      : null;
+  }
+  const counter = blok.querySelector('.foto-counter');
+  if (counter) counter.textContent = `${idx + 1} / ${total}`;
+  blok.querySelector('.foto-prev').disabled = idx === 0;
+  blok.querySelector('.foto-next').disabled = idx === total - 1;
+};
+
+window._tryBudkaFoto = function(img, cislo, roky) {
+  if (!roky || !roky.length) {
+    const blok = img.closest('.popup-foto--auto');
+    if (blok) blok.style.display = 'none';
+    return;
+  }
+  const next = roky[0];
+  img.onerror = function() { window._tryBudkaFoto(this, cislo, roky.slice(1)); };
+  // 'flat' = bez roku, přímo img/budky/{cislo}.jpg
+  img.src = next === 'flat' ? 'img/budky/' + cislo + '.jpg'
+                            : 'img/budky/' + next + '/' + cislo + '.jpg';
+};
+
 const BIRD_SVG = {
   'Sýkora koňadra': `<svg viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg" width="32" height="32">
     <ellipse cx="18" cy="30" rx="11" ry="15" fill="#f5c800" transform="rotate(-8,18,30)"/>
@@ -59,7 +191,18 @@ const BIRD_SVG = {
   </svg>`
 };
 
-function vytvorIkonu(stav) {
+function vytvorIkonu(b) {
+  const stav = b.stav;
+  const nezjisteno = stav === 'osidlena' && (!b.ptak || b.ptak === 'nezjisteno');
+  if (nezjisteno) {
+    return L.divIcon({
+      html: `<div class="budka-marker budka-nezjisteno"><img src="img/obydleno.svg" width="44" height="44" alt=""><span class="budka-otaznik">?</span></div>`,
+      iconSize: [44, 44],
+      iconAnchor: [22, 44],
+      popupAnchor: [0, -46],
+      className: ''
+    });
+  }
   if (stav === 'osidlena') {
     return L.divIcon({
       html: `<div class="budka-marker budka-osidlena"><img src="img/obydleno.svg" width="44" height="44" alt=""></div>`,
@@ -79,10 +222,13 @@ function vytvorIkonu(stav) {
 }
 
 function formatTooltip(b) {
+  const nezjisteno = b.stav === 'osidlena' && (!b.ptak || b.ptak === 'nezjisteno');
   const isOsidlena = b.stav === 'osidlena';
-  const stavColor = isOsidlena ? '#3a9a3a' : '#7B3810';
-  const stavLabel = isOsidlena ? '🟢 Osídlená' : '🟤 Aktivní';
-  const ptakRadek = b.ptak ? `<div class="tt-ptak">🐦 ${b.ptak}</div>` : '';
+  const stavColor = nezjisteno ? '#b8860b' : isOsidlena ? '#3a9a3a' : '#7B3810';
+  const stavLabel = nezjisteno ? '🟡 Obsazená' : isOsidlena ? '🟢 Osídlená' : '🟤 Aktivní';
+  const ptakRadek = (b.ptak && b.ptak !== 'nezjisteno')
+    ? `<div class="tt-ptak">🐦 ${b.ptak}</div>`
+    : nezjisteno ? `<div class="tt-ptak" style="color:#b8860b">❓ Druh zatím nezjištěn</div>` : '';
   if (b.nazev) {
     return `<div class="budka-tooltip">
       <div class="tt-nazev-hlavni" style="border-left:3px solid ${stavColor}">${b.nazev}</div>
@@ -125,22 +271,41 @@ function formatHistorie(historie) {
 }
 
 function formatPopup(b) {
+  const nezjisteno = b.stav === 'osidlena' && (!b.ptak || b.ptak === 'nezjisteno');
   const isOsidlena = b.stav === 'osidlena';
-  const stavColor = isOsidlena ? '#3a9a3a' : '#7B3810';
-  const stavLabel = isOsidlena ? '🟢 Osídlená' : '🟤 Aktivní';
+  const stavColor = nezjisteno ? '#b8860b' : isOsidlena ? '#3a9a3a' : '#7B3810';
+  const stavLabel = nezjisteno ? '🟡 Obsazená' : isOsidlena ? '🟢 Osídlená' : '🟤 Aktivní';
 
   const nadpis = b.nazev
     ? `<span class="popup-nazev-hlavni">${b.nazev}</span><span class="popup-cislo-sub"> · č. ${b.cislo}</span>`
     : `Budka č. ${b.cislo}`;
 
   const birdSvg = b.ptak && BIRD_SVG[b.ptak] ? BIRD_SVG[b.ptak] : null;
-  const ptakBlock = b.ptak
-    ? `<div class="popup-ptak">${birdSvg ? `<span class="popup-bird-icon">${birdSvg}</span>` : '🐦'}<span>${b.ptak}</span></div>`
-    : '';
+  const ptakBlock = nezjisteno
+    ? `<div class="popup-ptak" style="color:#b8860b">❓ <span>Druh zatím nezjištěn</span></div>`
+    : b.ptak
+      ? `<div class="popup-ptak">${birdSvg ? `<span class="popup-bird-icon">${birdSvg}</span>` : '🐦'}<span>${b.ptak}</span></div>`
+      : '';
 
-  const fotoBlock = b.foto
-    ? `<div class="popup-foto"><img src="${b.foto}" alt="Foto budky č. ${b.cislo}"></div>`
+  const cisloStr = String(b.cislo).padStart(3, '0');
+  const fotoSrc = b.foto || `img/budky/${FOTO_ROKY[0]}/${b.cislo}.jpg`;
+  const fotoFallback = `window._tryBudkaFoto(this,${b.cislo},[${FOTO_ROKY.slice(1).map(r=>`'${r}'`).join(',')},'flat'])`;
+  const extraCount = b.foto_extra || 0;
+  const totalFotos = 1 + extraCount;
+  const galNav = totalFotos > 1
+    ? `<div class="foto-nav">
+        <button class="foto-nav-btn foto-prev" disabled>&#8249;</button>
+        <span class="foto-counter">1 / ${totalFotos}</span>
+        <button class="foto-nav-btn foto-next">&#8250;</button>
+       </div>`
     : '';
+  const fotoBlock = `<div class="popup-foto popup-foto--auto" data-cislo="${b.cislo}" data-idx="0" data-total="${totalFotos}" data-src="${fotoSrc}">
+    <img src="${fotoSrc}" alt="Foto budky č. ${b.cislo}"
+         style="cursor:zoom-in"
+         class="popup-foto-zoomable"
+         onerror="${fotoFallback}">
+    ${galNav}
+  </div>`;
 
   const spravceBlock = b.spravce
     ? `<div class="popup-radek">👤 Správce: <strong>${b.spravce}</strong></div>`
@@ -171,6 +336,7 @@ function formatPopup(b) {
       ${otvorBlock}
     </div>
     ${historieBlock ? `<div class="popup-sekce">${historieBlock}</div>` : ''}
+    <button class="popup-zavrit-btn">✕ Zavřít</button>
   </div>`;
 }
 
@@ -192,7 +358,7 @@ function focusBudka(cislo) {
   const marker = markersByCislo[cislo];
   if (!marker || !mapInstance) return;
   mapInstance.setView(marker.getLatLng(), 16);
-  marker.openPopup();
+  setTimeout(() => marker.openPopup(), 150);
 }
 
 async function hledejBudku(dotaz) {
@@ -224,24 +390,31 @@ async function hledejBudku(dotaz) {
 
 async function inicializujMapu() {
   mapInstance = L.map('map', {
-    center: [49.75, 15.7],
-    zoom: 8,
+    center: [50.5, 13.5],
+    zoom: 6,
     zoomControl: true,
-    minZoom: 6,
-    maxBounds: [[46.5, 1.5], [54.5, 24.0]],
-    maxBoundsViscosity: 1.0
+    minZoom: 5,
+    maxBounds: [[42.0, -2.0], [57.0, 26.0]],
+    maxBoundsViscosity: 1.0,
+    wheelPxPerZoomLevel: 120,
+    zoomSnap: 0.5,
+    zoomDelta: 0.5
   });
+  // Zabrán zoom pod minZoom i kolečkem myši
+  mapInstance.setMinZoom(5);
 
-  L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}@2x.png', {
     attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> © <a href="https://carto.com/">CARTO</a>',
-    maxZoom: 20
+    maxZoom: 20,
+    tileSize: 512,
+    zoomOffset: -1
   }).addTo(mapInstance);
 
   pridejLegend(mapInstance);
 
   try {
     const [resBudky, resSpravci] = await Promise.all([
-      fetch('data/budky.json?v=20260527k'),
+      fetch('data/budky.json?v=20260603a'),
       fetch('data/spravci_jmena.json?v=20260527k')
     ]);
     const budky = await resBudky.json();
@@ -253,7 +426,7 @@ async function inicializujMapu() {
     budky.forEach(b => {
       if (!b.lat || !b.lng) return;
       const bData = { ...b, spravce: spravci[b.cislo] || null };
-      const marker = L.marker([b.lat, b.lng], { icon: vytvorIkonu(b.stav) });
+      const marker = L.marker([b.lat, b.lng], { icon: vytvorIkonu(b) });
 
       marker.bindTooltip(formatTooltip(bData), {
         direction: 'top',
@@ -262,22 +435,48 @@ async function inicializujMapu() {
         sticky: false
       });
 
+      const isMobile = window.innerWidth < 600;
       marker.bindPopup(formatPopup(bData), {
-        minWidth: 420,
-        maxWidth: 520,
-        className: 'budka-popup-wrap'
+        minWidth: isMobile ? Math.min(window.innerWidth - 40, 340) : 420,
+        maxWidth: isMobile ? Math.min(window.innerWidth - 40, 340) : 520,
+        className: 'budka-popup-wrap',
+        autoPanPaddingTopLeft: L.point(20, 100),
+        autoPanPaddingBottomRight: L.point(20, 20)
       });
 
       markersByCislo[b.cislo] = marker;
       marker.addTo(mapInstance);
+      if (!window._budkyDataMap) window._budkyDataMap = {};
+      window._budkyDataMap[b.cislo] = bData;
     });
 
     document.getElementById('stat-celkem').textContent = budky.length;
+
+    // Po načtení markerů překryj ikonami z Firebase budky_edit
+    if (typeof firebase !== 'undefined') {
+      try {
+        firebase.database().ref('budky_edit').once('value').then(snap => {
+          const edits = snap.val() || {};
+          Object.entries(edits).forEach(([cislo, edit]) => {
+            if (edit.kdo_hnizdi) _aktualizujMarkerZFirebase(Number(cislo), edit.kdo_hnizdi);
+          });
+          // Přepočítat počet osídlených po načtení všech Firebase editů
+          const pocet = Object.values(window._budkyDataMap || {}).filter(b => b.stav === 'osidlena').length;
+          const elS = document.getElementById('stat-osidlenych');
+          if (elS) elS.textContent = pocet;
+        }).catch(() => {});
+      } catch(e) {}
+    }
   } catch(e) {
     console.error('Chyba načítání dat budek:', e);
   }
 
   setTimeout(() => mapInstance.invalidateSize(), 200);
+
+  window.addEventListener('resize', () => {
+    clearTimeout(window._mapaResizeTimer);
+    window._mapaResizeTimer = setTimeout(() => mapInstance && mapInstance.invalidateSize(), 250);
+  });
 
   const searchInput = document.querySelector('.search-box input');
   const searchBtn = document.querySelector('.search-box button');
@@ -286,11 +485,9 @@ async function inicializujMapu() {
     searchInput.addEventListener('keydown', e => { if (e.key === 'Enter') hledejBudku(searchInput.value); });
   }
 
-  mapInstance.on('popupopen', e => {
+  function _pridejEditTlacitka(popup) {
     const spravce = window._aktualniSpravce;
     if (!spravce || !window._editBudku) return;
-
-    const popup = e.popup;
     const el = popup.getElement();
     if (!el || el.querySelector('.popup-edit-btn')) return;
 
@@ -298,8 +495,14 @@ async function inicializujMapu() {
     if (!cislo) return;
     if (!spravce.jeAdmin && !spravce.budkyList.some(b => b.cislo === cislo)) return;
 
-    const b = spravce.jeAdmin ? { cislo, nazev: '' } : spravce.budkyList.find(b => b.cislo === cislo);
-    const nazev = b ? (b.nazev || '') : '';
+    let nazev = '';
+    if (spravce.jeAdmin) {
+      const bd = (window._budkyData || []).find(x => x.cislo === cislo);
+      nazev = (bd && bd.nazev) ? bd.nazev : '';
+    } else {
+      const b = spravce.budkyList.find(b => b.cislo === cislo);
+      nazev = b ? (b.nazev || '') : '';
+    }
     const text = nazev ? `Budka č. ${cislo} – ${nazev}` : `Budka č. ${cislo}`;
 
     const btn = document.createElement('button');
@@ -312,5 +515,64 @@ async function inicializujMapu() {
 
     const content = el.querySelector('.leaflet-popup-content');
     if (content) content.appendChild(btn);
+
+    if (spravce.jeAdmin && typeof window._editSpravceByBudka === 'function') {
+      const btnSpr = document.createElement('button');
+      btnSpr.className = 'popup-edit-btn popup-edit-spravce-btn';
+      btnSpr.textContent = '👤 Editovat správce';
+      btnSpr.addEventListener('click', () => {
+        popup.close();
+        window._editSpravceByBudka(cislo);
+      });
+      if (content) content.appendChild(btnSpr);
+    }
+  }
+
+  mapInstance.on('popupopen', e => {
+    const popup = e.popup;
+
+    // Zjisti číslo budky pro tento popup
+    const cisloPopup = Object.keys(markersByCislo).map(Number).find(k => markersByCislo[k].getPopup() === popup);
+
+    // Načti Firebase edity (foto, nazev) pro tento popup
+    if (cisloPopup && typeof firebase !== 'undefined') {
+      try {
+        firebase.database().ref(`budky_edit/${cisloPopup}`).once('value').then(snap => {
+          const edit = snap.val() || {};
+          const el = popup.getElement();
+          if (!el) return;
+          // Fotka – nastavíme src přímo, bez popup.update() který by resetoval obsah
+          if (edit.foto) {
+            const img = el.querySelector('.popup-foto--auto img');
+            if (img) img.src = edit.foto;
+          }
+          // Název
+          if (edit.nazev) {
+            const cisloEl = el.querySelector('.popup-cislo');
+            if (cisloEl) cisloEl.innerHTML =
+              `<span class="popup-nazev-hlavni">${edit.nazev}</span><span class="popup-cislo-sub"> · č. ${cisloPopup}</span>`;
+          }
+          _pridejEditTlacitka(popup);
+        }).catch(() => {});
+      } catch(err) {}
+    }
+
+    // Fotka se načítá asynchronně – po načtení znovu vycentrujeme popup
+    setTimeout(() => {
+      const el = popup.getElement();
+      if (!el) return;
+      const img = el.querySelector('.popup-foto--auto img');
+      if (img && !img.complete) {
+        img.addEventListener('load', () => { _pridejEditTlacitka(popup); }, { once: true });
+      }
+      // Pokud je vrchol popupu nad okrajem mapy, posuneme mapu dolů
+      const mapRect = mapInstance.getContainer().getBoundingClientRect();
+      const popupRect = el.getBoundingClientRect();
+      if (popupRect.top < mapRect.top + 20) {
+        mapInstance.panBy([0, popupRect.top - mapRect.top - 20], { animate: true });
+      }
+    }, 60);
+
+    _pridejEditTlacitka(popup);
   });
 }
