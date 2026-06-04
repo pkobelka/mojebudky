@@ -50,24 +50,24 @@ html, body {
 
 #app { position: relative; z-index: 1; display: grid; grid-template-rows: auto auto 1fr auto auto; height: 100vh; overflow: hidden; background: transparent; }
 
-.navbar { background: var(--nav-bg); display: flex; align-items: center; padding: 0 28px; height: 140px; gap: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.4); }
-.nav-logo { display: flex; align-items: center; gap: 14px; text-decoration: none; flex-shrink: 0; border: 2px solid rgba(255,215,0,0.45); border-radius: 14px; padding: 4px 14px 4px 6px; background: rgba(255,215,0,0.06); transition: border-color 0.2s, background 0.2s; }
+.navbar { background: var(--nav-bg); display: flex; align-items: center; padding: 0 28px; height: 90px; gap: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.4); }
+.nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; flex-shrink: 0; border: 2px solid rgba(255,215,0,0.45); border-radius: 14px; padding: 4px 12px 4px 6px; background: rgba(255,215,0,0.06); transition: border-color 0.2s, background 0.2s; }
 .nav-logo:hover { border-color: rgba(255,215,0,0.8); background: rgba(255,215,0,0.12); }
-.nav-logo-img { width: 88px; height: 117px; }
+.nav-logo-img { width: 56px; height: 74px; }
 .stat-svg-icon { width: 30px; height: 30px; object-fit: contain; }
 .logo-textblock { display: flex; flex-direction: column; line-height: 1.1; align-items: center; }
-.logo-text { color: var(--text-light); font-size: 3rem; font-weight: 700; letter-spacing: 0.5px; }
-.logo-autor { color: var(--orange-light); font-size: 1.05rem; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; margin-top: 8px; }
+.logo-text { color: var(--text-light); font-size: 2rem; font-weight: 700; letter-spacing: 0.5px; }
+.logo-autor { color: var(--orange-light); font-size: 0.8rem; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; margin-top: 4px; }
 .nav-links { display: flex; list-style: none; gap: 4px; flex: 1; justify-content: center; align-items: center; }
-.nav-links a { color: var(--text-light); text-decoration: none; padding: 12px 22px; border-radius: 10px; font-size: 1.85rem; font-weight: 700; transition: all 0.2s; white-space: nowrap; border: 1.5px solid rgba(255,215,0,0.32); }
+.nav-links a { color: var(--text-light); text-decoration: none; padding: 8px 16px; border-radius: 10px; font-size: 1.2rem; font-weight: 700; transition: all 0.2s; white-space: nowrap; border: 1.5px solid rgba(255,215,0,0.32); }
 .nav-links a:hover, .nav-links a.active { background: var(--nav-hover); color: var(--text-light); border-color: rgba(255,215,0,0.75); }
 .nav-actions { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
 .search-box { display: flex; background: rgba(255,255,255,0.12); border-radius: 20px; overflow: hidden; }
-.search-box input { background: none; border: none; color: var(--text-light); padding: 13px 20px; font-size: 1.5rem; outline: none; width: 320px; }
+.search-box input { background: none; border: none; color: var(--text-light); padding: 10px 16px; font-size: 1.1rem; outline: none; width: 220px; }
 .search-box input::placeholder { color: var(--text-muted); }
-.search-box button { background: none; border: none; color: var(--text-muted); padding: 10px 14px; cursor: pointer; font-size: 1.3rem; }
+.search-box button { background: none; border: none; color: var(--text-muted); padding: 8px 12px; cursor: pointer; font-size: 1.1rem; }
 .search-box button:hover { color: var(--text-light); }
-.btn-login { background: var(--orange); color: white; text-decoration: none; padding: 16px 34px; border-radius: 8px; font-size: 1.5rem; font-weight: 600; white-space: nowrap; transition: background 0.2s; border: none; cursor: pointer; }
+.btn-login { background: var(--orange); color: white; text-decoration: none; padding: 10px 22px; border-radius: 8px; font-size: 1.1rem; font-weight: 600; white-space: nowrap; transition: background 0.2s; border: none; cursor: pointer; }
 .btn-login:hover { background: var(--orange-dark); }
 
 /* ── SPLASH / UVÍTACÍ OKNO ── */
@@ -116,14 +116,14 @@ html, body {
 .admin-budka-link { color: var(--accent-gold); font-size: 0.85rem; font-style: italic; }
 .btn-login.prihlaseny { background: transparent !important; color: var(--accent-gold) !important; text-decoration: underline; border-color: transparent !important; }
 
-.info-bar { background: var(--bar-bg); color: var(--bar-text); font-size: 1.3rem; padding: 12px 28px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #d0c0a0; min-height: 58px; }
+.info-bar { background: var(--bar-bg); color: var(--bar-text); font-size: 1.1rem; padding: 8px 28px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #d0c0a0; min-height: 42px; }
 .info-bar .bar-right { color: var(--tree-mid); font-style: italic; font-size: 1.1rem; }
 .info-bar .bar-right.bar-svatek { color: var(--orange); font-style: normal; font-weight: 600; }
 .bar-gratulace { color: var(--orange); font-weight: 700; }
 .bar-narozeniny { color: #e05cbf; font-weight: 700; }
 
 .main-content { display: flex; min-height: 260px; }
-.panel { background: var(--panel-bg); border: 1px solid var(--panel-border); width: clamp(380px, 22vw, 520px); flex-shrink: 0; display: flex; flex-direction: column; overflow: hidden; }
+.panel { background: var(--panel-bg); border: 1px solid var(--panel-border); width: clamp(260px, 20vw, 420px); flex-shrink: 0; display: flex; flex-direction: column; overflow: hidden; }
 .panel-title { background: var(--panel-header); color: var(--text-light); font-size: 1.35rem; font-weight: 700; padding: 12px 20px; letter-spacing: 0.3px; border-bottom: 2px solid var(--orange); flex-shrink: 0; }
 .panel-left .panel-title::before { content: '🌿 '; }
 .pribehy-list { overflow-y: auto; flex: 1; padding: 8px 0; }
@@ -496,30 +496,51 @@ html, body {
   .pridat-na-plochu { display: none; }
 }
 
+/* ── NARROW DESKTOP 1200px ── */
+@media (max-width: 1200px) {
+  .panel { width: clamp(240px, 19vw, 360px); }
+  .search-box input { width: 180px; }
+}
+
+/* ── LAPTOP 1024px ── */
+@media (max-width: 1024px) {
+  .panel { width: clamp(200px, 18vw, 280px); }
+  .navbar { height: 72px; padding: 0 16px; }
+  .nav-logo-img { width: 44px; height: 58px; }
+  .logo-text { font-size: 1.6rem; }
+  .logo-autor { font-size: 0.7rem; }
+  .nav-links a { padding: 7px 12px; font-size: 1.05rem; }
+  .btn-login { font-size: 1rem; padding: 9px 16px; }
+  .search-box { display: none; }
+  .admin-dropdown { min-width: unset; width: auto; }
+}
+
+/* ── TABLET 900px ── */
 @media (max-width: 900px) {
   #app { height: auto; min-height: 100vh; overflow: visible; }
   .pridat-na-plochu { display: block; }
   .oblibene-pc { display: none; }
   .main-content { flex-direction: column; }
-  .panel { width: 100%; max-height: 240px; }
-  .map-wrapper { height: 280px; min-height: 220px; }
-  #map { height: 280px; min-height: 220px; }
+  .panel { width: 100%; max-height: 260px; }
+  .map-wrapper { height: calc(55vh); min-height: 300px; }
+  #map { height: 100% !important; min-height: 300px; }
   .search-box { display: none; }
   .nav-links { gap: 0; }
-  .nav-links a { padding: 8px 10px; font-size: 1rem; }
+  .nav-links a { padding: 7px 10px; font-size: 0.95rem; }
   .info-bar { flex-wrap: wrap; gap: 2px; font-size: 0.9rem; }
   .info-bar .bar-right { width: 100%; padding-top: 2px; }
   .partners-section { padding: 14px 20px; }
   .partners-section h3 { font-size: 1.15rem; }
   .podekovani-item { font-size: 1.05rem; }
   .partner-item { font-size: 1rem; padding: 7px 14px; }
-  /* Tablet: zmenší navbar a fonty */
-  .navbar { height: 80px; padding: 0 16px; }
-  .nav-logo-img { width: 48px; height: 64px; }
-  .logo-text { font-size: 1.8rem; }
-  .logo-autor { font-size: 0.75rem; }
-  .nav-podpora-btn { font-size: 1.4rem; padding: 8px 14px; }
-  .btn-login { font-size: 1.1rem; padding: 10px 18px; }
+  .navbar { height: 68px; padding: 0 16px; }
+  .nav-logo-img { width: 42px; height: 56px; }
+  .logo-text { font-size: 1.5rem; }
+  .logo-autor { font-size: 0.68rem; }
+  .nav-podpora-btn { font-size: 1.1rem; padding: 7px 12px; }
+  .btn-login { font-size: 1rem; padding: 9px 16px; }
+  .budka-popup { min-width: 300px; }
+  .admin-dropdown { min-width: unset; position: fixed; top: 68px; left: 8px; right: 8px; width: auto; }
 }
 
 @media (max-width: 600px) {
@@ -655,7 +676,7 @@ html, body {
 
 /* ── LANDSCAPE MOBIL ── */
 @media (max-width: 900px) and (orientation: landscape) {
-  .main-content { flex-direction: row; height: calc(100vh - 100px); min-height: unset; }
+  .main-content { flex-direction: row; height: calc(100vh - 68px); min-height: unset; }
   .panel { width: 200px; max-height: none; flex-shrink: 0; }
   .map-wrapper { height: 100%; min-height: unset; }
   #map { height: 100%; }
