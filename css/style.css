@@ -597,7 +597,8 @@ html, body {
   .panel-left { display: none; }
   #navLiAktuality { display: none; }
   /* Popup na mobilu – žádná min-width */
-  .budka-popup { min-width: unset; width: calc(100% - 40px); max-width: 360px; font-size: 1rem; }
+  .budka-popup { min-width: unset; width: 100%; font-size: 1rem; }
+  .leaflet-popup-content-wrapper { max-width: calc(100vw - 30px); }
   .popup-header { padding: 12px 16px 10px; }
   .popup-cislo { font-size: 1.2rem; }
   /* Větší close button Leaflet + vlastní Zavřít tlačítko */

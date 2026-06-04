@@ -20,8 +20,8 @@ function _aktualizujMarkerZFirebase(cisloNum, kdoHnizdi) {
     const isMobile = window.innerWidth < 600;
     marker.unbindPopup();
     marker.bindPopup(formatPopup(bUp), {
-      minWidth: isMobile ? Math.min(window.innerWidth - 40, 360) : 420,
-      maxWidth: isMobile ? window.innerWidth - 20 : 520,
+      minWidth: isMobile ? Math.min(window.innerWidth - 30, 340) : 420,
+      maxWidth: isMobile ? Math.min(window.innerWidth - 20, 360) : 520,
       className: 'budka-popup-wrap',
       autoPanPaddingTopLeft: L.point(20, 100),
       autoPanPaddingBottomRight: L.point(20, 20)
@@ -437,8 +437,8 @@ async function inicializujMapu() {
 
       const isMobile = window.innerWidth < 600;
       marker.bindPopup(formatPopup(bData), {
-        minWidth: isMobile ? Math.min(window.innerWidth - 40, 360) : 420,
-        maxWidth: isMobile ? window.innerWidth - 20 : 520,
+        minWidth: isMobile ? Math.min(window.innerWidth - 30, 340) : 420,
+        maxWidth: isMobile ? Math.min(window.innerWidth - 20, 360) : 520,
         className: 'budka-popup-wrap',
         autoPanPaddingTopLeft: L.point(20, 100),
         autoPanPaddingBottomRight: L.point(20, 20)
