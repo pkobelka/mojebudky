@@ -149,7 +149,7 @@ html, body {
 .panel-scroll::-webkit-scrollbar-track { background: transparent; }
 .panel-scroll::-webkit-scrollbar-thumb { background: var(--panel-border); border-radius: 2px; }
 
-.stats-grid { padding: 4px 10px 6px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.stats-grid { padding: 4px 10px 6px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
 .stat-item { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 10px 6px; text-align: center; background: rgba(255,255,255,0.06); border-radius: 8px; border: 1px solid rgba(255,255,255,0.15); border-top: 4px solid var(--orange); }
 .stat-icon { font-size: 1.5rem; flex-shrink: 0; width: auto; text-align: center; }
 .stat-icon-druhy { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; width: 50px; height: 50px; align-items: center; justify-items: center; font-size: 1rem; }
@@ -160,6 +160,7 @@ html, body {
 .stat-item:nth-child(1) .stat-label { color: #d4bc30; }
 .stat-item:nth-child(2) { border-top-color: #4488cc; }
 .stat-item:nth-child(3) { border-top-color: #cc8822; }
+.stat-item:nth-child(4) { border-top-color: #4a9a4a; }
 .stat-box { margin: 5px 10px 0; border: 1px solid rgba(255,255,255,0.18); border-radius: 8px; padding: 8px 12px; background: rgba(255,255,255,0.04); }
 .stat-aktualizace { color: var(--text-muted); font-size: 0.9rem; }
 .stat-aktualizace span { color: var(--text-light); font-weight: 700; font-size: 0.95rem; }
@@ -561,10 +562,10 @@ html, body {
   .main-content { width: 100%; max-width: 100%; }
   /* Panel: clamp(380px) přetéká na 375px viewportu – vynutit 100% */
   .panel { width: 100% !important; max-width: 100%; min-width: 0; box-sizing: border-box; }
-  /* Stats: 1 sloupec na malém mobilu */
-  .stats-grid { grid-template-columns: 1fr; gap: 6px; padding: 8px; }
-  .stat-item { flex-direction: row; justify-content: space-between; padding: 10px 14px; gap: 10px; }
-  .stat-value { font-size: 2rem; }
+  /* Stats: 2×2 na malém mobilu */
+  .stats-grid { grid-template-columns: 1fr 1fr; gap: 6px; padding: 8px; }
+  .stat-item { flex-direction: column; padding: 8px 6px; gap: 4px; }
+  .stat-value { font-size: 1.8rem; }
   /* Navbar: skryj velké tlačítko Podpořit, uvolni místo pro hamburger + login */
   .nav-podpora-btn { display: none; }
   .navbar { padding: 0 10px; height: 58px; gap: 8px; }

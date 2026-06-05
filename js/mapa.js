@@ -578,6 +578,14 @@ async function inicializujMapu() {
           const pocet = Object.values(window._budkyDataMap || {}).filter(b => b.stav === 'osidlena').length;
           const elS = document.getElementById('stat-osidlenych');
           if (elS) elS.textContent = pocet;
+
+          // Aktivních budek = má záznam v budky_edit nebo spravce_aktivita
+          const aktivnichCisla = new Set([
+            ...Object.keys(edits),
+            ...Object.keys(aktivita)
+          ]);
+          const elA = document.getElementById('stat-aktivnich');
+          if (elA) elA.textContent = aktivnichCisla.size;
         }).catch(() => {});
       } catch(e) {}
     }
