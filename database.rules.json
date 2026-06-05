@@ -8,6 +8,7 @@
     "admin_requests":    { ".read": true, ".write": true },
     "spravci":           { ".read": true, ".write": true },
     "spravce_aktivita":  { ".read": true, ".write": true },
+    "prihlaseni":        { ".read": true, ".write": true },
     "hesla": {
       "$uid": { ".read": true, ".write": true }
     }

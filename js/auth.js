@@ -202,13 +202,17 @@ async function _zobrazAdminPanel(loginId) {
     <button class="admin-dropdown-item pripravujeme" data-akce="clanek">📝 Vložit článek</button>
     <button class="admin-dropdown-item" data-akce="zmenitHeslo">🔑 Změnit heslo</button>
     <button class="admin-dropdown-item" data-akce="napisAdminovi">✉️ Napsat adminovi</button>
-    ${jeAdmin ? `<div class="admin-dropdown-oddelovac"></div><button class="admin-dropdown-item admin-item-zadosti" data-akce="zadosti">📬 Žádosti správců <span class="admin-badge" id="adminBadge" hidden>0</span></button><button class="admin-dropdown-item" data-akce="prehledSpravcu">👥 Přehled správců</button><button class="admin-dropdown-item" data-akce="resetSlib" style="font-size:0.85rem;color:var(--text-muted)">🧪 Reset slibu (test)</button>` : ''}
+    ${jeAdmin ? `<div class="admin-dropdown-oddelovac"></div><button class="admin-dropdown-item admin-item-zadosti" data-akce="zadosti">📬 Žádosti správců <span class="admin-badge" id="adminBadge" hidden>0</span></button><button class="admin-dropdown-item" data-akce="prehledSpravcu">👥 Přehled správců</button><button class="admin-dropdown-item" data-akce="aktivitaSpravcu">🏆 Aktivita správců</button><button class="admin-dropdown-item" data-akce="resetSlib" style="font-size:0.85rem;color:var(--text-muted)">🧪 Reset slibu (test)</button>` : ''}
     <div class="admin-dropdown-oddelovac"></div>
     <button class="admin-dropdown-item odhlasit" data-akce="odhlasit">🚪 Odhlásit se</button>
   `;
   document.getElementById('authNavArea').appendChild(dropdown);
 
-  if (jeAdmin) _sledujZadosti();
+  if (jeAdmin) {
+    _sledujZadosti();
+    const btnAkt = document.getElementById('btnAktivitaSpravcu');
+    if (btnAkt) { btnAkt.hidden = false; btnAkt.onclick = () => _zobrazAktivitaSpravcu(); }
+  }
 
   if (btn) {
     btn.removeEventListener('click', btn._loginHandler);
@@ -289,6 +293,12 @@ async function _zobrazAdminPanel(loginId) {
 
     if (akce === 'prehledSpravcu') {
       _zobrazPrehledSpravcu();
+      dropdown.classList.remove('open');
+      return;
+    }
+
+    if (akce === 'aktivitaSpravcu') {
+      _zobrazAktivitaSpravcu();
       dropdown.classList.remove('open');
       return;
     }
@@ -505,6 +515,132 @@ async function _zobrazPrehledSpravcu() {
   document.getElementById('prehledKopirEmail').addEventListener('click', () => {
     const emaily = vsichniSpravci.filter(s => s.email).map(s => s.email).join('\n');
     navigator.clipboard.writeText(emaily).then(() => _zobrazToast('📋 E-maily zkopírovány!', 2500));
+  });
+}
+
+async function _zobrazAktivitaSpravcu() {
+  const existujici = document.getElementById('modalAktivita');
+  if (existujici) existujici.remove();
+
+  const modal = document.createElement('div');
+  modal.id = 'modalAktivita';
+  modal.className = 'modal-overlay';
+  modal.innerHTML = `
+    <div class="modal-box prehled-box">
+      <button class="modal-zavrit" id="aktivitaZavrit">×</button>
+      <div class="profil-header"><div class="profil-header-text">
+        <div class="profil-nadpis">🏆 Nejaktivnější správci</div>
+      </div></div>
+      <div class="prehled-filtry" style="padding:0 16px 8px">
+        <button class="prehled-filtr prehled-filtr--aktivni" data-period="7">7 dní</button>
+        <button class="prehled-filtr" data-period="30">30 dní</button>
+        <button class="prehled-filtr" data-period="365">Rok</button>
+        <button class="prehled-filtr" data-period="0">Vše</button>
+      </div>
+      <div class="prehled-seznam" id="aktivitaObsah"><div style="color:var(--text-muted);padding:20px 16px">Načítám…</div></div>
+    </div>`;
+  document.body.appendChild(modal);
+  document.getElementById('aktivitaZavrit').addEventListener('click', () => modal.remove());
+  modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
+
+  const db = _getFirebaseDB();
+  if (!db) {
+    document.getElementById('aktivitaObsah').innerHTML = '<div style="color:var(--text-muted);padding:20px 16px">Firebase není dostupná</div>';
+    return;
+  }
+
+  let aktData = {}, prihlData = {};
+  try {
+    const [aktSnap, prihlSnap] = await Promise.all([
+      db.ref('aktivita').once('value'),
+      db.ref('prihlaseni').once('value')
+    ]);
+    aktData   = aktSnap.val()   || {};
+    prihlData = prihlSnap.val() || {};
+  } catch {
+    document.getElementById('aktivitaObsah').innerHTML = '<div style="color:var(--text-muted);padding:20px 16px">Nepodařilo se načíst data</div>';
+    return;
+  }
+
+  const info = await _nactiSpravciInfo() || {};
+
+  const vsechnyUdalosti = [];
+  Object.values(aktData).forEach(e => {
+    if (e && e.loginId && e.ts) vsechnyUdalosti.push({ loginId: String(e.loginId), ts: e.ts, typ: 'edit', jmeno: e.jmeno || '' });
+  });
+  Object.values(prihlData).forEach(e => {
+    if (e && e.loginId && e.ts) vsechnyUdalosti.push({ loginId: String(e.loginId), ts: e.ts, typ: 'login', jmeno: e.jmeno || '' });
+  });
+
+  let aktPeriod = 7;
+
+  function _fmtDatumAkt(ts) {
+    if (!ts) return '';
+    const dny = (Date.now() - ts) / 86400000;
+    if (dny < 1)   return 'dnes';
+    if (dny < 2)   return 'včera';
+    if (dny < 7)   return `před ${Math.floor(dny)} dny`;
+    const d = new Date(ts);
+    return `${d.getDate()}. ${d.getMonth() + 1}. ${d.getFullYear()}`;
+  }
+
+  function renderLeaderboard() {
+    const container = document.getElementById('aktivitaObsah');
+    if (!container) return;
+    const now    = Date.now();
+    const cutoff = aktPeriod === 0 ? 0 : now - aktPeriod * 86400000;
+
+    const agg = {};
+    vsechnyUdalosti.forEach(u => {
+      if (u.ts < cutoff) return;
+      if (!agg[u.loginId]) agg[u.loginId] = { edity: 0, prihlaseni: 0, posledni: 0, jmeno: u.jmeno };
+      if (u.typ === 'edit') agg[u.loginId].edity++;
+      else                  agg[u.loginId].prihlaseni++;
+      if (u.ts > agg[u.loginId].posledni) agg[u.loginId].posledni = u.ts;
+    });
+
+    Object.entries(agg).forEach(([id, a]) => {
+      const si = info[id];
+      if (si && (si.jmeno || si.prijmeni)) a.jmeno = ((si.jmeno || '') + ' ' + (si.prijmeni || '')).trim();
+    });
+
+    const sorted = Object.entries(agg)
+      .map(([id, a]) => ({ id, ...a, celkem: a.edity + a.prihlaseni }))
+      .filter(a => a.celkem > 0)
+      .sort((a, b) => b.celkem !== a.celkem ? b.celkem - a.celkem : b.posledni - a.posledni);
+
+    if (!sorted.length) {
+      container.innerHTML = '<div style="color:var(--text-muted);padding:20px 16px">Žádná aktivita v tomto období</div>';
+      return;
+    }
+
+    const medals = ['🥇', '🥈', '🥉'];
+    container.innerHTML = sorted.map((a, i) => {
+      const rank    = i < 3 ? `<span class="akt-medal">${medals[i]}</span>` : `<span class="akt-rank">${i + 1}.</span>`;
+      const detaily = [a.edity ? `${a.edity} editací` : '', a.prihlaseni ? `${a.prihlaseni} přihlášení` : ''].filter(Boolean).join(' · ');
+      return `<div class="akt-radek">
+        ${rank}
+        <div class="akt-info">
+          <div class="akt-jmeno">${a.jmeno || '— ID ' + a.id}</div>
+          <div class="akt-detail">${detaily}</div>
+        </div>
+        <div class="akt-prave">
+          <div class="akt-celkem">${a.celkem}</div>
+          <div class="akt-datum">${_fmtDatumAkt(a.posledni)}</div>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  renderLeaderboard();
+
+  modal.querySelectorAll('.prehled-filtr[data-period]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      aktPeriod = parseInt(btn.dataset.period, 10);
+      modal.querySelectorAll('.prehled-filtr[data-period]').forEach(b => b.classList.remove('prehled-filtr--aktivni'));
+      btn.classList.add('prehled-filtr--aktivni');
+      renderLeaderboard();
+    });
   });
 }
 

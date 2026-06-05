@@ -994,3 +994,16 @@ html, body {
 @media (max-width: 600px) {
   .admin-dropdown { position: fixed; top: 58px; left: 8px; right: 8px; width: auto; }
 }
+/* ── AKTIVITA SPRÁVCŮ LEADERBOARD ─────────────────────────────────────── */
+.akt-radek { display: flex; align-items: center; gap: 12px; padding: 10px 16px; border-bottom: 1px solid var(--panel-border); }
+.akt-radek:last-child { border-bottom: none; }
+.akt-medal { font-size: 1.5rem; line-height: 1; flex-shrink: 0; width: 32px; text-align: center; }
+.akt-rank { font-size: 1rem; color: var(--text-muted); flex-shrink: 0; width: 32px; text-align: center; font-weight: 600; }
+.akt-info { flex: 1; min-width: 0; }
+.akt-jmeno { font-weight: 600; font-size: 1rem; color: var(--text-light); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.akt-detail { font-size: 0.82rem; color: var(--text-muted); margin-top: 2px; }
+.akt-prave { text-align: right; flex-shrink: 0; }
+.akt-celkem { font-size: 1.4rem; font-weight: 700; color: var(--orange); line-height: 1; }
+.akt-datum { font-size: 0.8rem; color: var(--text-muted); margin-top: 2px; }
+.btn-aktivita-spravcu { background: none; border: none; cursor: pointer; font-size: 1.2rem; padding: 4px 8px; border-radius: 8px; transition: background 0.15s; vertical-align: middle; }
+.btn-aktivita-spravcu:hover { background: rgba(255,255,255,0.1); }
