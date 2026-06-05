@@ -165,8 +165,31 @@ window._fotoNav = function(btn, dir) {
 
 window._tryBudkaFoto = function(img, cislo, roky) {
   if (!roky || !roky.length) {
-    const blok = img.closest('.popup-foto--auto');
-    if (blok) blok.style.display = 'none';
+    // Všechny statické cesty selhaly — zkus Firebase jako zálohu
+    if (typeof firebase !== 'undefined') {
+      try {
+        firebase.database().ref(`budky_edit/${cislo}/foto`).once('value').then(snap => {
+          const fotoBase64 = snap.val();
+          const blok = img.closest('.popup-foto--auto');
+          if (fotoBase64) {
+            img.onerror = null;
+            img.src = fotoBase64;
+            if (blok) blok.style.display = '';
+          } else {
+            if (blok) blok.style.display = 'none';
+          }
+        }).catch(() => {
+          const blok = img.closest('.popup-foto--auto');
+          if (blok) blok.style.display = 'none';
+        });
+      } catch(e) {
+        const blok = img.closest('.popup-foto--auto');
+        if (blok) blok.style.display = 'none';
+      }
+    } else {
+      const blok = img.closest('.popup-foto--auto');
+      if (blok) blok.style.display = 'none';
+    }
     return;
   }
   const next = roky[0];
@@ -586,8 +609,13 @@ async function inicializujMapu() {
           if (!el) return;
           // Fotka – nastavíme src přímo, bez popup.update() který by resetoval obsah
           if (edit.foto) {
-            const img = el.querySelector('.popup-foto--auto img');
-            if (img) img.src = edit.foto;
+            const fotoBlok = el.querySelector('.popup-foto--auto');
+            const img = fotoBlok && fotoBlok.querySelector('img');
+            if (img) {
+              img.onerror = null;
+              img.src = edit.foto;
+              fotoBlok.style.display = '';
+            }
           }
           // Název
           if (edit.nazev) {
