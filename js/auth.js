@@ -168,6 +168,7 @@ async function _zobrazAdminPanel(loginId) {
   dropdown.innerHTML = `
     <div class="admin-dropdown-hlavicka">👤 ${jmeno} &nbsp;·&nbsp; ${hlavickaText}</div>
     <button class="admin-dropdown-item" data-akce="karta">🪪 Karta správce / Editovat</button>
+    <button class="admin-dropdown-item" data-akce="resetUvitani" title="Karta se při příštím přihlášení ukáže automaticky">🔄 Zobrazit kartu při příštím přihlášení</button>
     ${budkyMenuHTML}
     <button class="admin-dropdown-item pripravujeme" data-akce="clanek">📝 Vložit článek</button>
     ${jeAdmin ? `<div class="admin-dropdown-oddelovac"></div><button class="admin-dropdown-item admin-item-zadosti" data-akce="zadosti">📬 Žádosti správců <span class="admin-badge" id="adminBadge" hidden>0</span></button>` : ''}
@@ -214,6 +215,13 @@ async function _zobrazAdminPanel(loginId) {
     if (akce === 'karta' || akce === 'editSpravce') {
       _zobrazProfilSpravce(loginId, spravceInfo, budkaText);
       dropdown.classList.remove('open');
+      return;
+    }
+
+    if (akce === 'resetUvitani') {
+      localStorage.removeItem('mb_firstlogin_' + loginId);
+      dropdown.classList.remove('open');
+      _zobrazToast('✅ Při příštím přihlášení se karta ukáže automaticky');
       return;
     }
 
@@ -402,6 +410,9 @@ function _zobrazProfilSpravce(loginId, info, budkaText) {
       </div>
 
       <div class="profil-actions">
+        <label class="profil-vzdy-label">
+          <input type="checkbox" id="profilVzdy" ${!localStorage.getItem('mb_firstlogin_' + loginId) ? 'checked' : ''}> Zobrazovat kartu při každém přihlášení
+        </label>
         <button class="profil-btn-ulozit" id="profilUlozit">💾 Uložit změny</button>
         <span class="profil-ulozeno" id="profilUlozeno" hidden>✓ Uloženo!</span>
       </div>
@@ -450,7 +461,12 @@ function _zobrazProfilSpravce(loginId, info, budkaText) {
     };
     const fbOK = await _ulozitProfilFirebase(loginId, data);
     _ulozitProfilLocal(loginId, data);
-    localStorage.setItem('mb_firstlogin_' + loginId, '1');
+    const vzdy = document.getElementById('profilVzdy');
+    if (vzdy && vzdy.checked) {
+      localStorage.removeItem('mb_firstlogin_' + loginId);
+    } else {
+      localStorage.setItem('mb_firstlogin_' + loginId, '1');
+    }
     const msg = document.getElementById('profilUlozeno');
     msg.textContent = fbOK ? '✓ Uloženo do cloudu!' : '✓ Uloženo lokálně';
     msg.hidden = false;
