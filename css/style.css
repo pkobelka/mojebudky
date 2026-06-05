@@ -924,6 +924,10 @@ html, body {
 .slib-podpis { font-size: 0.92rem; color: var(--text-muted); font-style: italic; text-align: right; margin-top: 4px; margin-bottom: 0; }
 .slib-podpis strong { color: var(--accent-gold); }
 .slib-footer { padding: 16px 32px 28px; border-top: 1px solid var(--panel-border); position: sticky; bottom: 0; background: var(--panel-bg); }
+.slib-souhlas-label { display: flex; align-items: flex-start; gap: 10px; color: var(--text-light); font-size: 1rem; cursor: pointer; margin-bottom: 10px; line-height: 1.45; user-select: none; }
+.slib-souhlas-label input[type=checkbox] { width: 22px; height: 22px; accent-color: var(--orange); cursor: pointer; flex-shrink: 0; margin-top: 2px; }
+.slib-souhlas--chyba { color: #ff9090 !important; }
+.slib-souhlas-error { color: #ff9090; font-size: 0.9rem; margin-bottom: 10px; }
 .slib-btn-prijimam { width: 100%; background: var(--orange); color: #fff; border: none; border-radius: 10px; padding: 14px 24px; font-size: 1.15rem; font-weight: 700; cursor: pointer; transition: background 0.2s; font-family: inherit; }
 .slib-btn-prijimam:hover { background: var(--orange-light); }
 @media (max-width: 600px) {
@@ -933,6 +937,8 @@ html, body {
   .slib-body { padding: 14px 16px 8px; }
   .slib-desatero li { padding: 12px 12px 12px 52px; font-size: 0.93rem; }
   .slib-footer { padding: 12px 16px 20px; }
+  .slib-souhlas-label { font-size: 1rem; }
+  .slib-souhlas-label input[type=checkbox] { width: 24px; height: 24px; }
   .slib-footer { padding: 12px 18px 22px; }
 }
 .eb-foto-smazat:hover { background: #a33; }

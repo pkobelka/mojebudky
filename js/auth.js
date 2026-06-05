@@ -379,10 +379,15 @@ function _zobrazSlibSpravce(loginId, spravceInfo, budkaText, osloveni) {
           <li><strong>Pomáhám ptákům po celý rok</strong>V zimě přikrmuji kvalitní stravou v krmítkách, v létě nabízím ptákům na zahradě bezpečné napajedlo s čistou vodou. Budka je jen začátek péče.</li>
           <li><strong>Chráním přírodu jako celek</strong>Uvědomuji si, že ptáci potřebují k životu zdravé prostředí. Nepoužívám na zahradě zbytečnou chemii a podporuji rozmanitost přírody v okolí své budky.</li>
         </ol>
-        <p class="slib-podpis">Za komunitu MojeBudky.cz děkuji!<br><strong>Petr Kobelka</strong></p>
+        <p class="slib-podpis">Za komunitu MojeBudky děkuji!<br><strong>Petr Kobelka</strong></p>
       </div>
       <div class="slib-footer">
-        <button class="slib-btn-prijimam" id="slibPrijimam">✅ Slibuji, že tato pravidla budu dodržovat</button>
+        <label class="slib-souhlas-label">
+          <input type="checkbox" id="slibSouhlas">
+          <span>Přečetl/a jsem si Desatero a slibuji tato pravidla dodržovat</span>
+        </label>
+        <div class="slib-souhlas-error" id="slibSouhlasError" hidden>⚠️ Nejprve zaškrtni políčko</div>
+        <button class="slib-btn-prijimam" id="slibPrijimam">✅ Potvrdit slib</button>
       </div>
     </div>
   `;
@@ -390,9 +395,16 @@ function _zobrazSlibSpravce(loginId, spravceInfo, budkaText, osloveni) {
   setTimeout(() => { const b = modal.querySelector('.slib-box'); if (b) b.scrollTop = 0; }, 80);
 
   document.getElementById('slibPrijimam').addEventListener('click', () => {
+    const souhlas = document.getElementById('slibSouhlas');
+    const errEl   = document.getElementById('slibSouhlasError');
+    if (!souhlas.checked) {
+      errEl.hidden = false;
+      souhlas.closest('.slib-souhlas-label').classList.add('slib-souhlas--chyba');
+      return;
+    }
     localStorage.setItem('mb_slib_' + loginId, '1');
     modal.remove();
-    _zobrazToast(`🙏 Děkujeme za složení slibu, ${osloveni}! Vítej mezi správci MojeBudky.cz! 🌿`);
+    _zobrazToast(`🙏 Děkujeme za složení slibu, ${osloveni}! Vítej mezi správci MojeBudky! 🌿`);
     setTimeout(() => _zobrazProfilSpravce(loginId, spravceInfo, budkaText), 6000);
   });
 }
