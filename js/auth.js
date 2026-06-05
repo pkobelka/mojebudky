@@ -330,17 +330,24 @@ function _zobrazZmenitHeslo(loginId) {
         <div class="profil-budka">ID: ${loginId}</div>
       </div></div>
       <div class="profil-form" style="padding:20px 24px">
+        <div class="zh-pravidla">
+          <div class="zh-pravidla-nadpis">Pravidla pro heslo:</div>
+          <ul class="zh-pravidla-seznam">
+            <li>Délka: <strong>4–8 znaků</strong></li>
+            <li>Nepoužívej snadno zaměnitelné znaky: <strong>0</strong> (nula), <strong>O</strong> (velké O), <strong>1</strong> (jednička), <strong>l</strong> (malé L)</li>
+          </ul>
+        </div>
         <div class="profil-field profil-field--wide" style="margin-bottom:14px">
           <label>Současné heslo</label>
-          <input type="password" id="zhStare" maxlength="20" autocomplete="current-password">
+          <input type="password" id="zhStare" maxlength="8" autocomplete="current-password">
         </div>
         <div class="profil-field profil-field--wide" style="margin-bottom:14px">
           <label>Nové heslo</label>
-          <input type="password" id="zhNove" maxlength="20" autocomplete="new-password">
+          <input type="password" id="zhNove" maxlength="8" autocomplete="new-password">
         </div>
         <div class="profil-field profil-field--wide">
           <label>Nové heslo znovu</label>
-          <input type="password" id="zhNove2" maxlength="20" autocomplete="new-password">
+          <input type="password" id="zhNove2" maxlength="8" autocomplete="new-password">
         </div>
         <div class="zh-error" id="zhError" hidden></div>
       </div>
@@ -364,10 +371,12 @@ function _zobrazZmenitHeslo(loginId) {
     errEl.hidden = true;
     function chyba(t) { errEl.textContent = t; errEl.hidden = false; }
 
-    if (!stare)           return chyba('Zadej současné heslo.');
-    if (nove.length < 4)  return chyba('Nové heslo musí mít alespoň 4 znaky.');
-    if (nove !== nove2)   return chyba('Nová hesla se neshodují.');
-    if (nove === stare)   return chyba('Nové heslo musí být jiné než současné.');
+    const ZAKAZANE = /[0O1l]/;
+    if (!stare)                    return chyba('Zadej současné heslo.');
+    if (nove.length < 4)           return chyba('Nové heslo musí mít alespoň 4 znaky.');
+    if (ZAKAZANE.test(nove))       return chyba('Heslo obsahuje zakázaný znak (0, O, 1 nebo l).');
+    if (nove !== nove2)            return chyba('Nová hesla se neshodují.');
+    if (nove === stare)            return chyba('Nové heslo musí být jiné než současné.');
 
     const ok = await _overitPrihlaseni(loginId, stare);
     if (!ok) return chyba('Současné heslo není správné.');
@@ -394,6 +403,23 @@ async function _zobrazPrehledSpravcu() {
   const existujici = document.getElementById('modalPrehled');
   if (existujici) existujici.remove();
 
+  const info = await _nactiSpravciInfo() || {};
+
+  // Sestavit seznam pouze ze spravci_info.json (bez Firebase — fotky by způsobily zaseknutí)
+  const vsichniSpravci = Object.entries(info).map(([id, s]) => {
+    const budkyList = s.budky ? s.budky : [{ cislo: s.budka_cislo, nazev: s.budka_nazev || '' }];
+    return {
+      id,
+      jmeno:    s.jmeno    || '—',
+      prijmeni: s.prijmeni || '',
+      telefon:  s.telefon  || '',
+      email:    s.email    || '',
+      budkaCisla: budkyList.map(b => String(b.cislo)),
+      budkaNazvy: budkyList.map(b => (b.nazev || '').toLowerCase()),
+      budkyText:  budkyList.map(b => b.cislo + (b.nazev ? ' – ' + b.nazev : '')).join(', '),
+    };
+  }).sort((a, b) => (a.jmeno + a.prijmeni).localeCompare(b.jmeno + b.prijmeni, 'cs'));
+
   const modal = document.createElement('div');
   modal.id = 'modalPrehled';
   modal.className = 'modal-overlay profil-overlay';
@@ -401,67 +427,58 @@ async function _zobrazPrehledSpravcu() {
     <div class="modal-box profil-box">
       <button class="modal-zavrit" id="prehledZavrit">×</button>
       <div class="profil-header"><div class="profil-header-text">
-        <div class="profil-nadpis">👥 Přehled správců</div>
+        <div class="profil-nadpis">👥 Přehled správců <span class="prehled-pocet" id="prehledPocet"></span></div>
       </div></div>
+      <div class="prehled-hledat-wrap">
+        <input type="search" id="prehledHledat" class="prehled-hledat" placeholder="🔍 Hledat jméno, č. budky, název budky…">
+      </div>
       <div class="prehled-filtry">
-        <button class="prehled-filtr prehled-filtr--aktivni" data-filtr="vse">Všichni</button>
+        <button class="prehled-filtr prehled-filtr--aktivni" data-filtr="vse">Všichni (${vsichniSpravci.length})</button>
         <button class="prehled-filtr" data-filtr="telefon">📞 S telefonem</button>
         <button class="prehled-filtr" data-filtr="email">📧 S e-mailem</button>
       </div>
       <div class="prehled-kopirovat">
-        <button class="prehled-kopir-btn" id="prehledKopirTel" title="Zkopírovat všechna telefonní čísla">📋 Kopírovat telefony</button>
-        <button class="prehled-kopir-btn" id="prehledKopirEmail" title="Zkopírovat všechny e-maily">📋 Kopírovat e-maily</button>
+        <button class="prehled-kopir-btn" id="prehledKopirTel">📋 Kopírovat telefony</button>
+        <button class="prehled-kopir-btn" id="prehledKopirEmail">📋 Kopírovat e-maily</button>
       </div>
-      <div class="profil-form" id="prehledObsah"><div style="color:var(--text-muted);padding:16px">Načítám…</div></div>
+      <div class="profil-form" id="prehledObsah"></div>
     </div>`;
   document.body.appendChild(modal);
   document.getElementById('prehledZavrit').addEventListener('click', () => modal.remove());
   modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
 
-  const info = await _nactiSpravciInfo() || {};
-  const db = _getFirebaseDB();
-  let profily = {};
-  if (db) {
-    try {
-      const snap = await db.ref('spravci').once('value');
-      const data = snap.val() || {};
-      Object.entries(data).forEach(([id, v]) => { if (v.profil) profily[id] = v.profil; });
-    } catch {}
-  }
-
-  // Sloučit data
-  const spravci = Object.entries(info).map(([id, s]) => {
-    const p = profily[id] || {};
-    return {
-      id,
-      jmeno:    p.jmeno    || s.jmeno    || '—',
-      prijmeni: p.prijmeni || s.prijmeni || '',
-      telefon:  p.telefon  || s.telefon  || '',
-      email:    p.email    || s.email    || '',
-      budky:    s.budky ? s.budky.map(b => b.cislo).join(', ') : (s.budka_cislo || '?'),
-    };
-  }).sort((a, b) => (a.jmeno + a.prijmeni).localeCompare(b.jmeno + b.prijmeni, 'cs'));
-
   let aktFiltr = 'vse';
+  let hledany  = '';
 
   function renderSeznam() {
-    const filtered = spravci.filter(s => {
-      if (aktFiltr === 'telefon') return !!s.telefon;
-      if (aktFiltr === 'email')   return !!s.email;
-      return true;
+    const q = hledany.trim().toLowerCase();
+    const filtered = vsichniSpravci.filter(s => {
+      if (aktFiltr === 'telefon' && !s.telefon) return false;
+      if (aktFiltr === 'email'   && !s.email)   return false;
+      if (!q) return true;
+      return (s.jmeno + ' ' + s.prijmeni).toLowerCase().includes(q)
+        || s.budkaCisla.some(c => c.startsWith(q))
+        || s.budkaNazvy.some(n => n.includes(q));
     });
+    const pocetEl = document.getElementById('prehledPocet');
+    if (pocetEl) pocetEl.textContent = `· ${filtered.length}`;
     const container = document.getElementById('prehledObsah');
     if (!container) return;
-    if (!filtered.length) { container.innerHTML = '<div style="color:var(--text-muted);padding:16px">Žádní správci pro tento filtr</div>'; return; }
+    if (!filtered.length) { container.innerHTML = '<div style="color:var(--text-muted);padding:16px">Žádný výsledek</div>'; return; }
     container.innerHTML = filtered.map(s => `
       <div class="prehled-radek">
-        <div class="prehled-jmeno">${s.jmeno} ${s.prijmeni} <span class="prehled-id">· ID ${s.id} · 🏠 ${s.budky}</span></div>
+        <div class="prehled-jmeno">${s.jmeno} ${s.prijmeni} <span class="prehled-id">· ID ${s.id} · 🏠 ${s.budkyText}</span></div>
         ${s.telefon ? `<a class="prehled-kontakt" href="tel:${s.telefon}">📞 ${s.telefon}</a>` : '<span class="prehled-prazdny">bez telefonu</span>'}
         ${s.email   ? `<a class="prehled-kontakt" href="mailto:${s.email}">📧 ${s.email}</a>` : '<span class="prehled-prazdny">bez e-mailu</span>'}
       </div>`).join('');
   }
 
   renderSeznam();
+
+  document.getElementById('prehledHledat').addEventListener('input', e => {
+    hledany = e.target.value;
+    renderSeznam();
+  });
 
   modal.querySelectorAll('.prehled-filtr').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -473,11 +490,11 @@ async function _zobrazPrehledSpravcu() {
   });
 
   document.getElementById('prehledKopirTel').addEventListener('click', () => {
-    const cisla = spravci.filter(s => s.telefon).map(s => s.telefon).join('\n');
+    const cisla = vsichniSpravci.filter(s => s.telefon).map(s => s.telefon).join('\n');
     navigator.clipboard.writeText(cisla).then(() => _zobrazToast('📋 Telefony zkopírovány!', 2500));
   });
   document.getElementById('prehledKopirEmail').addEventListener('click', () => {
-    const emaily = spravci.filter(s => s.email).map(s => s.email).join('\n');
+    const emaily = vsichniSpravci.filter(s => s.email).map(s => s.email).join('\n');
     navigator.clipboard.writeText(emaily).then(() => _zobrazToast('📋 E-maily zkopírovány!', 2500));
   });
 }

@@ -832,6 +832,14 @@ html, body {
 .prehled-kontakt:hover { text-decoration: underline; }
 .prehled-prazdny { font-size: 0.85rem; color: var(--text-muted); font-style: italic; }
 .zh-error { color: #ff9090; font-size: 0.9rem; margin-top: 10px; padding: 8px 10px; background: rgba(255,80,80,0.1); border-radius: 6px; }
+.zh-pravidla { background: rgba(255,200,0,0.07); border: 1px solid rgba(255,200,0,0.2); border-radius: 8px; padding: 10px 14px; margin-bottom: 16px; }
+.zh-pravidla-nadpis { color: var(--accent-gold); font-size: 0.85rem; font-weight: 700; margin-bottom: 4px; }
+.zh-pravidla-seznam { margin: 0; padding-left: 18px; color: var(--text-muted); font-size: 0.85rem; line-height: 1.7; }
+.zh-pravidla-seznam strong { color: var(--text-light); }
+.prehled-hledat-wrap { padding: 8px 16px 4px; }
+.prehled-hledat { width: 100%; box-sizing: border-box; background: rgba(255,255,255,0.07); border: 1px solid var(--panel-border); border-radius: 10px; color: var(--text-light); font-size: 1rem; padding: 10px 14px; outline: none; }
+.prehled-hledat:focus { border-color: var(--accent-gold); }
+.prehled-pocet { font-size: 0.85rem; color: var(--text-muted); font-weight: normal; }
 .zadost-cas { color: var(--text-muted); font-size: 0.82rem; }
 .zadost-btn-ok { margin-top: 8px; background: #2d7a2d; border: none; border-radius: 6px; color: #fff; padding: 6px 16px; font-size: 0.9rem; cursor: pointer; }
 .zadost-btn-ok:hover { background: #3aaa3a; }
