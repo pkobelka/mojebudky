@@ -99,31 +99,44 @@ document.addEventListener('click', function(e) {
   if (map) map.closePopup();
 });
 
-// Tažení za popup: vertikálně scrolluje popup, horizontálně posouvá mapu
+// Tažení za popup: vertikálně scrolluje popup, horizontálně+diagonálně posouvá mapu
 (function() {
   let ps = null;
   document.addEventListener('touchstart', function(e) {
     if (!e.target.closest('.leaflet-popup')) { ps = null; return; }
     const t = e.touches[0];
     ps = { sx: t.clientX, sy: t.clientY, lx: t.clientX, ly: t.clientY, dir: null };
+    // Vypnout Leaflet drag aby nebojoval s naším panBy
+    const m = window._getMapInstance && window._getMapInstance();
+    if (m) m.dragging.disable();
   }, { passive: true });
   document.addEventListener('touchmove', function(e) {
     if (!ps) return;
     const cx = e.touches[0].clientX, cy = e.touches[0].clientY;
     const dx = cx - ps.sx, dy = cy - ps.sy;
-    // Urči směr při prvním výrazném pohybu
     if (!ps.dir) {
-      if (Math.hypot(dx, dy) < 12) return;
-      ps.dir = Math.abs(dx) > Math.abs(dy) ? 'h' : 'v';
+      if (Math.hypot(dx, dy) < 10) return;
+      ps.dir = Math.abs(dx) > Math.abs(dy) * 0.5 ? 'h' : 'v';
     }
-    // Vertikální = scrollování popupu – necháme prohlížeč
     if (ps.dir === 'v') { ps.lx = cx; ps.ly = cy; return; }
-    // Horizontální = posun mapy
     const m = window._getMapInstance && window._getMapInstance();
     if (m) m.panBy([-(cx - ps.lx), -(cy - ps.ly)], { animate: false });
     ps.lx = cx; ps.ly = cy;
   }, { passive: true });
-  document.addEventListener('touchend', function() { ps = null; }, { passive: true });
+  document.addEventListener('touchend', function() {
+    if (ps) {
+      const m = window._getMapInstance && window._getMapInstance();
+      if (m) m.dragging.enable();
+    }
+    ps = null;
+  }, { passive: true });
+  document.addEventListener('touchcancel', function() {
+    if (ps) {
+      const m = window._getMapInstance && window._getMapInstance();
+      if (m) m.dragging.enable();
+    }
+    ps = null;
+  }, { passive: true });
 })();
 
 window._fotoNav = function(btn, dir) {
@@ -274,7 +287,7 @@ function formatTooltip(b) {
 function formatGps(lat, lng) {
   const latStr = Math.abs(lat).toFixed(5) + '° ' + (lat >= 0 ? 'N' : 'S');
   const lngStr = Math.abs(lng).toFixed(5) + '° ' + (lng >= 0 ? 'E' : 'W');
-  return `${latStr}, ${lngStr}`;
+  return `<span class="gps-icon">📍</span><span class="gps-vals"><span>${latStr}</span><span>${lngStr}</span></span>`;
 }
 
 function formatHistorie(historie) {
@@ -342,7 +355,7 @@ function formatPopup(b) {
     ? `<div class="popup-radek">📅 Instalace: <strong>${b.instalace}</strong></div>`
     : '';
 
-  const gpsBlock = `<div class="popup-radek">📍 GPS: <strong>${formatGps(b.lat, b.lng)}</strong></div>`;
+  const gpsBlock = `<div class="popup-radek popup-gps">${formatGps(b.lat, b.lng)}</div>`;
   const otvorBlock = b.typ
     ? `<div class="popup-radek">🔵 Otvor: <strong>${b.typ}</strong></div>`
     : '';

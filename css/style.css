@@ -361,6 +361,9 @@ html, body {
 .popup-detail { padding: 8px 22px 14px; display: flex; flex-direction: column; gap: 7px; }
 .popup-radek { color: #555; font-size: 1.15rem; }
 .popup-radek strong { color: #333; font-size: inherit; font-weight: 600; }
+.popup-gps { display: flex; align-items: flex-start; gap: 5px; }
+.gps-icon { flex-shrink: 0; line-height: 1.5; }
+.gps-vals { display: flex; flex-direction: column; gap: 1px; font-weight: 600; color: #333; }
 .popup-sekce { border-top: 1px solid #e8dcc8; padding: 12px 22px 16px; }
 .popup-sekce-title { font-weight: 700; font-size: 1.2rem; color: #3a1a06; margin-bottom: 8px; }
 .popup-historie { width: 100%; border-collapse: collapse; font-size: 1.1rem; }
