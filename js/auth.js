@@ -83,7 +83,7 @@ async function _logAktivita(loginId, jmeno, budkaCislo, budkaNazev, zprava) {
 
 async function _nactiAuthSpravce() {
   if (_authSpravciCache) return _authSpravciCache;
-  const res = await fetch('data/spravci.json?v=20260528k', { cache: 'reload' });
+  const res = await fetch('data/spravci.json?v=20260605n', { cache: 'reload' });
   if (!res.ok) throw new Error('Nelze načíst data správců');
   _authSpravciCache = await res.json();
   return _authSpravciCache;
@@ -92,7 +92,7 @@ async function _nactiAuthSpravce() {
 async function _nactiSpravciInfo() {
   if (_spravciInfoCache) return _spravciInfoCache;
   try {
-    const res = await fetch('data/spravci_info.json?v=20260528k', { cache: 'reload' });
+    const res = await fetch('data/spravci_info.json?v=20260605n', { cache: 'reload' });
     if (res.ok) _spravciInfoCache = await res.json();
   } catch {}
   return _spravciInfoCache;
@@ -428,7 +428,7 @@ function _zobrazProfilSpravce(loginId, info, budkaText) {
           <img id="profilFotoNahled" src="${d.foto || 'img/Favikon.png'}" class="profil-foto" alt="Foto správce">
           <label class="profil-foto-btn" title="Nahrát nebo vyfotit">
             📷
-            <input type="file" id="profilFotoInput" accept="image/*" capture="environment" style="display:none">
+            <input type="file" id="profilFotoInput" accept="image/*" style="display:none">
           </label>
         </div>
         <div class="profil-header-text">
@@ -519,7 +519,19 @@ function _zobrazProfilSpravce(loginId, info, budkaText) {
     const file = e.target.files[0];
     if (!file) return;
     const reader = new FileReader();
-    reader.onload = ev => { document.getElementById('profilFotoNahled').src = ev.target.result; };
+    reader.onload = ev => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const MAX = 600;
+        const ratio = Math.min(MAX / img.width, MAX / img.height, 1);
+        canvas.width = Math.round(img.width * ratio);
+        canvas.height = Math.round(img.height * ratio);
+        canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+        document.getElementById('profilFotoNahled').src = canvas.toDataURL('image/jpeg', 0.82);
+      };
+      img.src = ev.target.result;
+    };
     reader.readAsDataURL(file);
   });
 
