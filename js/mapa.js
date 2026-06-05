@@ -301,11 +301,23 @@ function vytvorIkonu(b) {
   });
 }
 
+function _stavInfo(b) {
+  const nezjisteno = b.stav === 'osidlena' && (!b.ptak || b.ptak === 'nezjisteno');
+  if (b.stav === 'osidlena')
+    return nezjisteno
+      ? { color: '#b8860b', label: '🟡 Obsazená' }
+      : { color: '#3a9a3a', label: '🟢 Osídlená' };
+  if (b.spravce_last_ts) {
+    const days = (Date.now() - b.spravce_last_ts) / 86400000;
+    if (days < 90)  return { color: '#3a9a3a', label: '🟢 Aktivní' };
+    if (days < 365) return { color: '#e06820', label: '🟠 Aktivní' };
+  }
+  return { color: '#7B3810', label: '🟤 Aktivní' };
+}
+
 function formatTooltip(b) {
   const nezjisteno = b.stav === 'osidlena' && (!b.ptak || b.ptak === 'nezjisteno');
-  const isOsidlena = b.stav === 'osidlena';
-  const stavColor = nezjisteno ? '#b8860b' : isOsidlena ? '#3a9a3a' : '#7B3810';
-  const stavLabel = nezjisteno ? '🟡 Obsazená' : isOsidlena ? '🟢 Osídlená' : '🟤 Aktivní';
+  const { color: stavColor, label: stavLabel } = _stavInfo(b);
   const ptakRadek = (b.ptak && b.ptak !== 'nezjisteno')
     ? `<div class="tt-ptak">🐦 ${b.ptak}</div>`
     : nezjisteno ? `<div class="tt-ptak" style="color:#b8860b">❓ Druh zatím nezjištěn</div>` : '';
@@ -361,9 +373,7 @@ function formatHistorie(historie) {
 
 function formatPopup(b) {
   const nezjisteno = b.stav === 'osidlena' && (!b.ptak || b.ptak === 'nezjisteno');
-  const isOsidlena = b.stav === 'osidlena';
-  const stavColor = nezjisteno ? '#b8860b' : isOsidlena ? '#3a9a3a' : '#7B3810';
-  const stavLabel = nezjisteno ? '🟡 Obsazená' : isOsidlena ? '🟢 Osídlená' : '🟤 Aktivní';
+  const { color: stavColor, label: stavLabel } = _stavInfo(b);
 
   const nadpis = b.nazev
     ? `<span class="popup-nazev-hlavni">${b.nazev}</span><span class="popup-cislo-sub"> · č. ${b.cislo}</span>`
