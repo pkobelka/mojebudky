@@ -135,14 +135,14 @@ async function _zobrazAdminPanel(loginId) {
 
   const jePoprve = !localStorage.getItem('mb_firstlogin_' + loginId);
   const jeSlib   = !!localStorage.getItem('mb_slib_' + loginId);
-  if (jePoprve && !jeSlib) {
-    // Úplně poprvé: slib bez uvítacího toastu, ten přijde až po potvrzení
+  if (!jeSlib) {
+    // Slib ještě nepotvrzen (bez ohledu na to zda je poprvé) → slib první, bez toastu
     setTimeout(() => _zobrazSlibSpravce(loginId, spravceInfo, budkaText, osloveni), 1500);
   } else {
-    // Vracející se správce nebo slib už potvrzen: normální uvítací toast
+    // Slib potvrzen → normální uvítací toast
     _zobrazToast(`Ahoj ${osloveni}, vítám Tě v komunitě správců mých budek! 🌿 Petr`);
-    if (jePoprve && jeSlib) {
-      // Slib potvrzen, resetUvitani: ukáž profil po toastu
+    if (jePoprve) {
+      // Profil k vyplnění (první přihlášení nebo resetUvitani)
       setTimeout(() => _zobrazProfilSpravce(loginId, spravceInfo, budkaText), 7000);
     }
   }
