@@ -848,6 +848,7 @@ html, body {
 .stav-spici     { color: #c8960a; }
 .stav-neaktivni { color: #888; }
 .popup-spravce-stav { font-size: 0.85rem; font-weight: normal; margin-left: 4px; }
+.popup-spravce-datum { color: var(--text-muted); font-size: 0.82rem; }
 .zadost-cas { color: var(--text-muted); font-size: 0.82rem; }
 .zadost-btn-ok { margin-top: 8px; background: #2d7a2d; border: none; border-radius: 6px; color: #fff; padding: 6px 16px; font-size: 0.9rem; cursor: pointer; }
 .zadost-btn-ok:hover { background: #3aaa3a; }

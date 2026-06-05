@@ -199,12 +199,23 @@ window._tryBudkaFoto = function(img, cislo, roky) {
                             : 'img/budky/' + next + '/' + cislo + '.jpg';
 };
 
-function _spravceStav(ts) {
-  if (!ts) return { emoji: '😟', text: 'Neaktivní', cls: 'stav-neaktivni' };
+function _formatDatum(ts) {
+  if (!ts) return '';
   const dny = (Date.now() - ts) / 86400000;
-  if (dny < 365)  return { emoji: '😊', text: 'Aktivní',   cls: 'stav-aktivni' };
-  if (dny < 730)  return { emoji: '😴', text: 'Spící',     cls: 'stav-spici' };
-  return              { emoji: '😟', text: 'Neaktivní', cls: 'stav-neaktivni' };
+  if (dny < 1)   return 'dnes';
+  if (dny < 2)   return 'včera';
+  if (dny < 7)   return `před ${Math.floor(dny)} dny`;
+  const d = new Date(ts);
+  return `${d.getDate()}. ${d.getMonth() + 1}. ${d.getFullYear()}`;
+}
+
+function _spravceStav(ts) {
+  if (!ts) return { emoji: '😟', text: 'Neaktivní', cls: 'stav-neaktivni', datum: '' };
+  const dny = (Date.now() - ts) / 86400000;
+  const datum = _formatDatum(ts);
+  if (dny < 365)  return { emoji: '👍', text: 'Aktivní',   cls: 'stav-aktivni',   datum };
+  if (dny < 730)  return { emoji: '😴', text: 'Spící',     cls: 'stav-spici',     datum };
+  return              { emoji: '😟', text: 'Neaktivní', cls: 'stav-neaktivni', datum };
 }
 
 const BIRD_SVG = {
@@ -389,7 +400,7 @@ function formatPopup(b) {
 
   const spravceStavP = b.spravce ? _spravceStav(b.spravce_last_ts) : null;
   const spravceBlock = b.spravce
-    ? `<div class="popup-radek">👤 Správce: <strong>${b.spravce}</strong> <span class="popup-spravce-stav ${spravceStavP.cls}">${spravceStavP.emoji} ${spravceStavP.text}</span></div>`
+    ? `<div class="popup-radek">👤 Správce: <strong>${b.spravce}</strong> <span class="popup-spravce-stav ${spravceStavP.cls}">${spravceStavP.emoji} ${spravceStavP.text}${spravceStavP.datum ? ` · <span class="popup-spravce-datum">${spravceStavP.datum}</span>` : ''}</span></div>`
     : '';
 
   const instBlock = b.instalace
