@@ -911,25 +911,28 @@ html, body {
 .eb-foto-smazat { background: #7a2a2a; }
 
 /* ── SLIB SPRÁVCE ── */
-.slib-box { max-width: 560px; width: 94%; padding: 0; text-align: left; }
-.slib-header { background: linear-gradient(135deg, #0f2a04, #1e4a0a); padding: 28px 32px 20px; border-bottom: 2px solid var(--accent-gold); }
-.slib-header-nadpis { font-size: 1.5rem; font-weight: 800; color: var(--accent-gold); margin-bottom: 6px; }
-.slib-header-sub { font-size: 1rem; color: var(--text-muted); }
-.slib-body { padding: 24px 32px; }
+.slib-box { max-width: 600px; width: 94%; padding: 0; text-align: left; max-height: 90vh; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+.slib-header { background: linear-gradient(135deg, #0f2a04, #1e4a0a); padding: 28px 32px 20px; border-bottom: 2px solid var(--accent-gold); position: sticky; top: 0; z-index: 1; }
+.slib-header-nadpis { font-size: 1.4rem; font-weight: 800; color: var(--accent-gold); margin-bottom: 6px; }
+.slib-header-sub { font-size: 0.9rem; color: var(--text-muted); }
+.slib-body { padding: 20px 32px 8px; }
+.slib-desatero { list-style: none; counter-reset: slib; padding: 0; margin: 0 0 16px; display: flex; flex-direction: column; gap: 14px; }
+.slib-desatero li { counter-increment: slib; position: relative; padding: 14px 16px 14px 58px; background: rgba(255,255,255,0.03); border: 1px solid rgba(200,150,10,0.2); border-radius: 10px; color: var(--text-muted); font-size: 0.97rem; line-height: 1.6; }
+.slib-desatero li::before { content: counter(slib); position: absolute; left: 12px; top: 14px; width: 32px; height: 32px; background: #c8960a; color: #0c1f05; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.9rem; }
+.slib-desatero li strong { color: var(--text-light); display: block; margin-bottom: 4px; font-size: 1.05rem; }
 .slib-nadpis-zavazky { font-size: 1.25rem; font-weight: 800; color: var(--accent-gold); margin-bottom: 14px; letter-spacing: 0.02em; }
-.slib-zavazky { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
-.slib-bod { display: flex; align-items: flex-start; gap: 10px; font-size: 1rem; color: var(--text-light); line-height: 1.5; }
-.slib-bod-ikona { font-size: 1.2rem; flex-shrink: 0; margin-top: 1px; }
-.slib-podpis { font-size: 0.92rem; color: var(--text-muted); font-style: italic; text-align: right; margin-top: 4px; }
+.slib-podpis { font-size: 0.92rem; color: var(--text-muted); font-style: italic; text-align: right; margin-top: 4px; margin-bottom: 0; }
 .slib-podpis strong { color: var(--accent-gold); }
-.slib-footer { padding: 16px 32px 28px; border-top: 1px solid var(--panel-border); }
+.slib-footer { padding: 16px 32px 28px; border-top: 1px solid var(--panel-border); position: sticky; bottom: 0; background: var(--panel-bg); }
 .slib-btn-prijimam { width: 100%; background: var(--orange); color: #fff; border: none; border-radius: 10px; padding: 14px 24px; font-size: 1.15rem; font-weight: 700; cursor: pointer; transition: background 0.2s; font-family: inherit; }
 .slib-btn-prijimam:hover { background: var(--orange-light); }
 @media (max-width: 600px) {
   .slib-box { width: 100% !important; height: 92svh !important; max-height: none !important; overflow-y: scroll !important; -webkit-overflow-scrolling: touch !important; overscroll-behavior: contain; border-radius: 16px 16px 0 0 !important; }
-  .slib-header { padding: 20px 18px 14px; }
-  .slib-header-nadpis { font-size: 1.25rem; }
-  .slib-body { padding: 16px 18px; }
+  .slib-header { padding: 16px 16px 12px; }
+  .slib-header-nadpis { font-size: 1.15rem; }
+  .slib-body { padding: 14px 16px 8px; }
+  .slib-desatero li { padding: 12px 12px 12px 52px; font-size: 0.93rem; }
+  .slib-footer { padding: 12px 16px 20px; }
   .slib-footer { padding: 12px 18px 22px; }
 }
 .eb-foto-smazat:hover { background: #a33; }

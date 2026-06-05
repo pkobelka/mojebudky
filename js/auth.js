@@ -363,21 +363,26 @@ function _zobrazSlibSpravce(loginId, spravceInfo, budkaText, osloveni) {
   modal.innerHTML = `
     <div class="modal-box slib-box">
       <div class="slib-header">
-        <div class="slib-header-nadpis">🌿 Slib správce MojeBudky.cz</div>
-        <div class="slib-header-sub">${budkaText}</div>
+        <div class="slib-header-nadpis">🌿 Desatero odpovědného správce budky</div>
+        <div class="slib-header-sub">Přečtěte si závazky a potvrďte je níže · ${budkaText}</div>
       </div>
       <div class="slib-body">
-        <div class="slib-nadpis-zavazky">Slibuji, že:</div>
-        <div class="slib-zavazky">
-          <div class="slib-bod"><span class="slib-bod-ikona">🔍</span><span>Alespoň jednou ročně provést kontrolu budky</span></div>
-          <div class="slib-bod"><span class="slib-bod-ikona">📝</span><span>Zapsat výsledky kontroly a čištění do aplikace</span></div>
-          <div class="slib-bod"><span class="slib-bod-ikona">📧</span><span>Udržovat aktuální kontaktní e-mail — ozveme se jen výjimečně</span></div>
-          <div class="slib-bod"><span class="slib-bod-ikona">🔔</span><span>Hlásit důležité změny: přemístění budky, poškození, zánik stanoviště</span></div>
-        </div>
+        <ol class="slib-desatero">
+          <li><strong>Bezpečí ptáků je na prvním místě</strong>Při umisťování, kontrole i čištění budky vždy dbám na to, aby nebyli ohroženi její obyvatelé ani já sám. Respektuji přírodu a do hnízdění zasahuji jen v nejnutnějších případech.</li>
+          <li><strong>Správné umístění je základ úspěchu</strong>Budku instaluji na bezpečné místo – dostatečně vysoko před predátory (kočky, kuny), stabilně a s vletovým otvorem ideálně na jihovýchod až východ, aby do ní nefoukalo a nepršelo.</li>
+          <li><strong>Pravidelný podzimní úklid je povinnost</strong>Před zimou budku pečlivě vyčistím a odstraním staré hnízdo. Tím chráním budoucí generace ptáčat před parazity a připravuji jim čistý domov na další jaro. Na jaře provedu kontrolu před hnízděním.</li>
+          <li><strong>V době hnízdění neruším</strong>Když ptáci sedí na vejcích nebo krmí malá ptáčata, budku neotvírám a pozoruji ji jen z bezpečné vzdálenosti. Klid na hnízdění je klíčem k úspěšnému vyvedení mladých.</li>
+          <li><strong>Data v aplikaci udržuji aktuální</strong>Pravidelně a poctivě zapisuji všechna pozorování, kontroly a stav budky do naší webové aplikace MojeBudky. Každý záznam a nahraná fotka pomáhají celému projektu.</li>
+          <li><strong>Jsem očima a ušima své budky</strong>Sleduji technický stav budky. Pokud je poškozená, opravím ji, nebo včas nahlásím potřebu opravy, aby byla pro ptáky stále bezpečným útočištěm.</li>
+          <li><strong>Šířím osvětu a radost z přírody</strong>O své zážitky a znalosti se dělím s rodinou, přáteli nebo sousedy. Pomáhám ostatním pochopit, proč je ochrana ptactva důležitá a jak jim správně pomáhat.</li>
+          <li><strong>Respektuji pravidla komunity MojeBudky</strong>Jsem hrdým členem naší komunity. Jednám fér, pomáhám ostatním správcům, sdílím své zkušenosti a táhnu za jeden provaz pro dobrou věc.</li>
+          <li><strong>Pomáhám ptákům po celý rok</strong>V zimě přikrmuji kvalitní stravou v krmítkách, v létě nabízím ptákům na zahradě bezpečné napajedlo s čistou vodou. Budka je jen začátek péče.</li>
+          <li><strong>Chráním přírodu jako celek</strong>Uvědomuji si, že ptáci potřebují k životu zdravé prostředí. Nepoužívám na zahradě zbytečnou chemii a podporuji rozmanitost přírody v okolí své budky.</li>
+        </ol>
         <p class="slib-podpis">Za komunitu MojeBudky.cz děkuji!<br><strong>Petr Kobelka</strong></p>
       </div>
       <div class="slib-footer">
-        <button class="slib-btn-prijimam" id="slibPrijimam">✅ Beru na vědomí a přijímám závazky správce</button>
+        <button class="slib-btn-prijimam" id="slibPrijimam">✅ Slibuji, že tato pravidla budu dodržovat</button>
       </div>
     </div>
   `;
@@ -387,8 +392,8 @@ function _zobrazSlibSpravce(loginId, spravceInfo, budkaText, osloveni) {
   document.getElementById('slibPrijimam').addEventListener('click', () => {
     localStorage.setItem('mb_slib_' + loginId, '1');
     modal.remove();
-    _zobrazToast(`Ahoj ${osloveni}, vítám Tě v komunitě správců mých budek! 🌿 Petr`);
-    setTimeout(() => _zobrazProfilSpravce(loginId, spravceInfo, budkaText), 5000);
+    _zobrazToast(`🙏 Děkujeme za složení slibu, ${osloveni}! Vítej mezi správci MojeBudky.cz! 🌿`);
+    setTimeout(() => _zobrazProfilSpravce(loginId, spravceInfo, budkaText), 6000);
   });
 }
 
