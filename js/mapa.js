@@ -576,10 +576,14 @@ async function inicializujMapu() {
           const elS = document.getElementById('stat-osidlenych');
           if (elS) elS.textContent = pocet;
 
-          // Aktivních budek = má záznam v budky_edit nebo spravce_aktivita
+          // Aktivních budek = Firebase aktivita NEBO osídlená v JSON
+          // (aktivních vždy ≥ osídlených — osídlení = někdo to nahlásil = aktivita)
           const aktivnichCisla = new Set([
             ...Object.keys(edits),
-            ...Object.keys(aktivita)
+            ...Object.keys(aktivita),
+            ...Object.entries(window._budkyDataMap || {})
+              .filter(([, b]) => b.stav === 'osidlena')
+              .map(([c]) => String(c))
           ]);
           const elA = document.getElementById('stat-aktivnich');
           if (elA) elA.textContent = aktivnichCisla.size;
