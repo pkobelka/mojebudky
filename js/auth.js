@@ -419,6 +419,11 @@ function _zobrazProfilSpravce(loginId, info, budkaText) {
     </div>
   `;
   document.body.appendChild(modal);
+  // Scroll na začátek – prohlížeč by jinak skočil na první input
+  requestAnimationFrame(() => {
+    const box = modal.querySelector('.profil-box');
+    if (box) box.scrollTop = 0;
+  });
 
   // Silently update fields from Firebase (may be more recent than localStorage)
   _nacistProfilFirebase(loginId).then(profilFB => {
