@@ -854,6 +854,8 @@ html, body {
 .stav-pasivni   { color: #c09060; }
 .stav-nezajem   { color: #444; }
 .popup-osidlena-chip { display: inline-block; font-size: 0.75rem; font-weight: 600; color: #fff; background: #3a9a3a; border-radius: 10px; padding: 1px 8px; margin-left: 6px; vertical-align: middle; }
+.popup-osidlena-chip--nezjisteno { background: #b8860b; }
+.popup-ptak--nezjisteno { color: #b8860b; font-style: italic; }
 .popup-spravce-stav { font-size: 0.85rem; font-weight: normal; margin-left: 4px; }
 .popup-aktivni-datum { color: var(--text-muted); font-size: 0.83rem; }
 .zadost-cas { color: var(--text-muted); font-size: 0.82rem; }

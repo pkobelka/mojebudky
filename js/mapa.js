@@ -219,7 +219,7 @@ function _spravceStav(ts, stavBudky) {
     if (days <= 60)  return { emoji: '👍',   text: '', cls: 'stav-aktivni', datum };
     if (days <= 90)  return { emoji: '😐',   text: '', cls: 'stav-pasivni', datum };
   }
-  return { emoji: '☝️❗', text: '', cls: 'stav-nezajem', datum };
+  return { emoji: '👎', text: '', cls: 'stav-nezajem', datum };
 }
 
 const BIRD_SVG = {
@@ -383,7 +383,9 @@ function formatPopup(b) {
   const { color: stavColor, label: stavLabel } = _stavInfo(b);
 
   const osidlenaBadge = b.stav === 'osidlena'
-    ? ` <span class="popup-osidlena-chip">🟢 Osídlená</span>`
+    ? nezjisteno
+      ? ` <span class="popup-osidlena-chip popup-osidlena-chip--nezjisteno">❓ Osídlená</span>`
+      : ` <span class="popup-osidlena-chip">🟢 Osídlená</span>`
     : '';
   const nadpis = b.nazev
     ? `<span class="popup-nazev-hlavni">${b.nazev}</span><span class="popup-cislo-sub"> · č. ${b.cislo}</span>${osidlenaBadge}`
@@ -391,7 +393,7 @@ function formatPopup(b) {
 
   const birdSvg = b.ptak && BIRD_SVG[b.ptak] ? BIRD_SVG[b.ptak] : null;
   const ptakBlock = nezjisteno
-    ? `<div class="popup-ptak" style="color:#b8860b">❓ <span>Druh zatím nezjištěn</span></div>`
+    ? `<div class="popup-ptak popup-ptak--nezjisteno">❓ <span>Budka je obsazená, druh zatím neznáme</span></div>`
     : b.ptak
       ? `<div class="popup-ptak">${birdSvg ? `<span class="popup-bird-icon">${birdSvg}</span>` : '🐦'}<span>${b.ptak}</span></div>`
       : '';
