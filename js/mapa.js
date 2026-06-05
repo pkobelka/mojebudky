@@ -148,13 +148,13 @@ window._fotoNav = function(btn, dir) {
   if (idx < 0 || idx >= total) return;
   blok.dataset.idx = idx;
   const src = idx === 0
-    ? `img/budky/${FOTO_ROKY[0]}/${cislo}.jpg`
+    ? `img/budky/${cislo}.jpg`
     : `img/budky/${cislo}_${idx}.jpg`;
   const img = blok.querySelector('img');
   if (img) {
     img.src = src;
     img.onerror = idx === 0
-      ? function() { window._tryBudkaFoto(this, cislo, [...FOTO_ROKY.slice(1), 'flat']); }
+      ? function() { window._tryBudkaFoto(this, cislo, [...FOTO_ROKY]); }
       : null;
   }
   const counter = blok.querySelector('.foto-counter');
@@ -328,8 +328,8 @@ function formatPopup(b) {
       : '';
 
   const cisloStr = String(b.cislo).padStart(3, '0');
-  const fotoSrc = b.foto || `img/budky/${FOTO_ROKY[0]}/${b.cislo}.jpg`;
-  const fotoFallback = `window._tryBudkaFoto(this,${b.cislo},[${FOTO_ROKY.slice(1).map(r=>`'${r}'`).join(',')},'flat'])`;
+  const fotoSrc = b.foto || `img/budky/${b.cislo}.jpg`;
+  const fotoFallback = `window._tryBudkaFoto(this,${b.cislo},[${FOTO_ROKY.map(r=>`'${r}'`).join(',')}])`;
   const extraCount = b.foto_extra || 0;
   const totalFotos = 1 + extraCount;
   const galNav = totalFotos > 1
