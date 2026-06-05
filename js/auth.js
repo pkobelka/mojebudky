@@ -368,15 +368,28 @@ function _zobrazZadosti() {
     const data = snap.val() || {};
     const container = document.getElementById('zadostiObsah');
     let html = '';
-    ['gps', 'druhy', 'zpravy'].forEach(typ => {
+    ['zmeny', 'zpravy', 'gps', 'druhy'].forEach(typ => {
       const kat = data[typ] || {};
       const polozky = Object.entries(kat).filter(([,v]) => !v.vyrizeno);
       if (!polozky.length) return;
-      const typLabel = typ === 'gps' ? '📍 Opravy GPS' : typ === 'druhy' ? '🐦 Nové druhy' : '✉️ Zprávy správců';
+      const typLabel = typ === 'gps' ? '📍 Opravy GPS' : typ === 'druhy' ? '🐦 Nové druhy'
+        : typ === 'zpravy' ? '✉️ Zprávy správců' : '🔄 Změny profilu';
       html += `<div class="zadosti-skupina"><div class="zadosti-typ">${typLabel}</div>`;
       polozky.forEach(([klic, z]) => {
         const cas = z.ts ? new Date(z.ts).toLocaleString('cs-CZ') : '';
-        if (typ === 'gps') {
+        if (typ === 'zmeny') {
+          const zmenHtml = Object.entries(z.zmeny || {}).map(([,v]) =>
+            `<span class="zadost-detail">${v.label}: <s style="color:var(--text-muted)">${v.stara || '—'}</s> → <strong>${v.nova}</strong></span>`
+          ).join('<br>');
+          html += `<div class="zadost-item" data-typ="${typ}" data-klic="${klic}" data-loginid="${z.loginId}">
+            <strong>${z.jmeno_spravce || z.loginId}</strong> (ID: ${z.loginId}) <span class="zadost-cas">${cas}</span><br>
+            ${zmenHtml}<br>
+            <div class="zadost-btn-row">
+              <button class="zadost-btn-ok" data-typ="${typ}" data-klic="${klic}">✅ Schválit</button>
+              <button class="zadost-btn-zamit" data-typ="${typ}" data-klic="${klic}">✗ Zamítnout</button>
+            </div>
+          </div>`;
+        } else if (typ === 'gps') {
           html += `<div class="zadost-item" data-typ="${typ}" data-klic="${klic}">
             <strong>Budka č. ${z.budka_cislo}</strong> – správce ${z.jmeno || z.spravce}<br>
             <span class="zadost-detail">Nové souřadnice: ${z.nova_lat}, ${z.nova_lng}</span><br>
@@ -402,12 +415,32 @@ function _zobrazZadosti() {
     container.innerHTML = html || '<div style="color:var(--text-muted)">Žádné čekající žádosti 🎉</div>';
 
     container.addEventListener('click', async e => {
-      const btn = e.target.closest('.zadost-btn-ok');
+      const btnOk    = e.target.closest('.zadost-btn-ok');
+      const btnZamit = e.target.closest('.zadost-btn-zamit');
+      const btn = btnOk || btnZamit;
       if (!btn) return;
-      await db.ref(`admin_requests/${btn.dataset.typ}/${btn.dataset.klic}/vyrizeno`).set(true);
-      btn.closest('.zadost-item').style.opacity = '0.4';
-      btn.disabled = true;
-      btn.textContent = '✓ Hotovo';
+
+      const typ  = btn.dataset.typ;
+      const klic = btn.dataset.klic;
+      const item = btn.closest('.zadost-item');
+
+      if (btnOk && typ === 'zmeny') {
+        // Schválit změnu profilu → uložit nové hodnoty do Firebase
+        try {
+          const snap = await db.ref(`admin_requests/zmeny/${klic}`).once('value');
+          const z = snap.val();
+          if (z && z.zmeny && z.loginId) {
+            const updates = {};
+            Object.entries(z.zmeny).forEach(([pole, v]) => { updates[pole] = v.nova; });
+            await db.ref(`spravci/${z.loginId}/profil`).update(updates);
+          }
+        } catch {}
+      }
+
+      await db.ref(`admin_requests/${typ}/${klic}/vyrizeno`).set(true);
+      item.style.opacity = '0.4';
+      item.querySelectorAll('button').forEach(b => { b.disabled = true; });
+      btn.textContent = btnOk ? '✓ Hotovo' : '✗ Zamítnuto';
     });
   });
 }
@@ -606,29 +639,68 @@ function _zobrazProfilSpravce(loginId, info, budkaText) {
 
   document.getElementById('profilUlozit').addEventListener('click', async () => {
     const foto = document.getElementById('profilFotoNahled').src;
-    const data = {
+    const CITLIVA = ['jmeno', 'prijmeni', 'telefon', 'email'];
+    const CITLIVA_LABELY = { jmeno: 'Jméno', prijmeni: 'Příjmení', telefon: 'Telefon', email: 'E-mail' };
+
+    const noveCitlive = {
+      jmeno:    document.getElementById('pJmeno').value.trim(),
+      prijmeni: document.getElementById('pPrijmeni').value.trim(),
+      telefon:  document.getElementById('pTelefon').value.trim(),
+      email:    document.getElementById('pEmail').value.trim(),
+    };
+    const volnaData = {
       titul_pred:     document.getElementById('pTitulPred').value.trim(),
-      jmeno:          document.getElementById('pJmeno').value.trim(),
-      prijmeni:       document.getElementById('pPrijmeni').value.trim(),
       titul_za:       document.getElementById('pTitulZa').value.trim(),
       osloveni:       document.getElementById('pOsloveni').value.trim(),
       datum_narozeni: document.getElementById('pDatum').value,
-      telefon:        document.getElementById('pTelefon').value.trim(),
-      email:          document.getElementById('pEmail').value.trim(),
       foto:           foto.startsWith('data:') ? foto : null,
     };
-    const fbOK = await _ulozitProfilFirebase(loginId, data);
-    _ulozitProfilLocal(loginId, data);
+
+    // Porovnej citlivá pole se současnými hodnotami
+    const zmeny = {};
+    CITLIVA.forEach(k => {
+      const stara = (d[k] || '').trim();
+      const nova  = noveCitlive[k];
+      if (nova !== stara) zmeny[k] = { stara, nova, label: CITLIVA_LABELY[k] };
+    });
+
+    // Ulož volná pole + beze-změny citlivá pole přímo
+    const dataKUlozeni = { ...volnaData };
+    CITLIVA.forEach(k => { if (!zmeny[k]) dataKUlozeni[k] = noveCitlive[k]; });
+
+    const fbOK = await _ulozitProfilFirebase(loginId, dataKUlozeni);
+    _ulozitProfilLocal(loginId, { ...dataKUlozeni, ...Object.fromEntries(CITLIVA.map(k => [k, d[k] || ''])) });
+
+    // Pošli žádost adminovi pro změněná citlivá pole
+    const db = _getFirebaseDB();
+    const zmenPocet = Object.keys(zmeny).length;
+    if (zmenPocet > 0 && db) {
+      try {
+        await db.ref('admin_requests/zmeny').push({
+          loginId,
+          jmeno_spravce: d.jmeno || info.jmeno || loginId,
+          zmeny,
+          ts: firebase.database.ServerValue.TIMESTAMP,
+          vyrizeno: false
+        });
+      } catch {}
+    }
+
     const vzdy = document.getElementById('profilVzdy');
     if (vzdy && vzdy.checked) {
       localStorage.removeItem('mb_firstlogin_' + loginId);
     } else {
       localStorage.setItem('mb_firstlogin_' + loginId, '1');
     }
+
     const msg = document.getElementById('profilUlozeno');
-    msg.textContent = fbOK ? '✓ Uloženo do cloudu!' : '✓ Uloženo lokálně';
+    if (zmenPocet > 0) {
+      msg.textContent = '✓ Uloženo · změna jméno/kontakt čeká na schválení admina';
+    } else {
+      msg.textContent = fbOK ? '✓ Uloženo do cloudu!' : '✓ Uloženo lokálně';
+    }
     msg.hidden = false;
-    setTimeout(() => { msg.hidden = true; }, 2500);
+    setTimeout(() => { msg.hidden = true; }, 3500);
   });
 }
 

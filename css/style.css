@@ -811,6 +811,9 @@ html, body {
 .zadost-item { background: rgba(255,255,255,0.05); border: 1px solid var(--panel-border); border-radius: 8px; padding: 12px 14px; margin-bottom: 8px; font-size: 0.95rem; color: var(--text-light); line-height: 1.6; }
 .zadost-detail { color: var(--accent-gold); }
 .zadost-zprava-text { color: var(--text-light); white-space: pre-wrap; }
+.zadost-btn-row { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
+.zadost-btn-zamit { background: #7a2020; color: #fff; border: none; border-radius: 6px; padding: 6px 14px; font-size: 0.9rem; cursor: pointer; }
+.zadost-btn-zamit:hover { background: #a03030; }
 .zadost-cas { color: var(--text-muted); font-size: 0.82rem; }
 .zadost-btn-ok { margin-top: 8px; background: #2d7a2d; border: none; border-radius: 6px; color: #fff; padding: 6px 16px; font-size: 0.9rem; cursor: pointer; }
 .zadost-btn-ok:hover { background: #3aaa3a; }
