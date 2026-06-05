@@ -132,16 +132,17 @@ async function _zobrazAdminPanel(loginId) {
   const profil = profilFirebase ? Object.assign({}, profilLocal, profilFirebase) : profilLocal;
   const osloveni = (profil && profil.osloveni) ? profil.osloveni
     : (spravceInfo && spravceInfo.osloveni) ? spravceInfo.osloveni : _vokativ(jmeno);
-  _zobrazToast(`Ahoj ${osloveni}, vítám Tě v komunitě správců mých budek! 🌿 Petr`);
 
   const jePoprve = !localStorage.getItem('mb_firstlogin_' + loginId);
   const jeSlib   = !!localStorage.getItem('mb_slib_' + loginId);
-  if (jePoprve) {
-    if (!jeSlib) {
-      // První přihlášení bez potvrzeného slibu → nejdřív slib, pak profil
-      setTimeout(() => _zobrazSlibSpravce(loginId, spravceInfo, budkaText), 4000);
-    } else {
-      // Slib již potvrzen, ale profil má být znovu zobrazen (resetUvitani)
+  if (jePoprve && !jeSlib) {
+    // Úplně poprvé: slib bez uvítacího toastu, ten přijde až po potvrzení
+    setTimeout(() => _zobrazSlibSpravce(loginId, spravceInfo, budkaText, osloveni), 1500);
+  } else {
+    // Vracející se správce nebo slib už potvrzen: normální uvítací toast
+    _zobrazToast(`Ahoj ${osloveni}, vítám Tě v komunitě správců mých budek! 🌿 Petr`);
+    if (jePoprve && jeSlib) {
+      // Slib potvrzen, resetUvitani: ukáž profil po toastu
       setTimeout(() => _zobrazProfilSpravce(loginId, spravceInfo, budkaText), 7000);
     }
   }
@@ -344,7 +345,7 @@ function _ulozitProfilLocal(loginId, data) {
   localStorage.setItem('mb_profil_' + loginId, JSON.stringify(data));
 }
 
-function _zobrazSlibSpravce(loginId, spravceInfo, budkaText) {
+function _zobrazSlibSpravce(loginId, spravceInfo, budkaText, osloveni) {
   const existujici = document.getElementById('modalSlib');
   if (existujici) existujici.remove();
 
@@ -378,9 +379,8 @@ function _zobrazSlibSpravce(loginId, spravceInfo, budkaText) {
   document.getElementById('slibPrijimam').addEventListener('click', () => {
     localStorage.setItem('mb_slib_' + loginId, '1');
     modal.remove();
-    // Uvítací zpráva jako toast na 4 sekundy
-    _zobrazToastDlouhy('🐦 Vítejte v komunitě správců! Vaše záznamy pomáhají sledovat ptačí populace po celé ČR a SR. Děkujeme, že se o budku staráte!');
-    setTimeout(() => _zobrazProfilSpravce(loginId, spravceInfo, budkaText), 4500);
+    _zobrazToast(`Ahoj ${osloveni}, vítám Tě v komunitě správců mých budek! 🌿 Petr`);
+    setTimeout(() => _zobrazProfilSpravce(loginId, spravceInfo, budkaText), 5000);
   });
 }
 
