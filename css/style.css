@@ -814,6 +814,18 @@ html, body {
 .zadost-btn-row { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
 .zadost-btn-zamit { background: #7a2020; color: #fff; border: none; border-radius: 6px; padding: 6px 14px; font-size: 0.9rem; cursor: pointer; }
 .zadost-btn-zamit:hover { background: #a03030; }
+.prehled-filtry { display: flex; gap: 8px; padding: 10px 16px 4px; flex-wrap: wrap; }
+.prehled-filtr { background: rgba(255,255,255,0.07); color: var(--text-light); border: 1px solid var(--panel-border); border-radius: 20px; padding: 5px 14px; font-size: 0.88rem; cursor: pointer; }
+.prehled-filtr--aktivni { background: var(--orange); border-color: var(--orange); }
+.prehled-kopirovat { display: flex; gap: 8px; padding: 6px 16px 10px; flex-wrap: wrap; }
+.prehled-kopir-btn { background: rgba(255,255,255,0.07); color: var(--accent-gold); border: 1px solid var(--panel-border); border-radius: 8px; padding: 5px 12px; font-size: 0.85rem; cursor: pointer; }
+.prehled-kopir-btn:hover { background: rgba(255,255,255,0.13); }
+.prehled-radek { padding: 10px 16px; border-bottom: 1px solid var(--panel-border); display: flex; flex-direction: column; gap: 3px; }
+.prehled-jmeno { font-size: 0.97rem; color: var(--text-light); font-weight: 600; }
+.prehled-id { font-size: 0.8rem; color: var(--text-muted); font-weight: normal; }
+.prehled-kontakt { font-size: 0.9rem; color: var(--accent-gold); text-decoration: none; }
+.prehled-kontakt:hover { text-decoration: underline; }
+.prehled-prazdny { font-size: 0.85rem; color: var(--text-muted); font-style: italic; }
 .zadost-cas { color: var(--text-muted); font-size: 0.82rem; }
 .zadost-btn-ok { margin-top: 8px; background: #2d7a2d; border: none; border-radius: 6px; color: #fff; padding: 6px 16px; font-size: 0.9rem; cursor: pointer; }
 .zadost-btn-ok:hover { background: #3aaa3a; }

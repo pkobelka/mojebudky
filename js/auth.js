@@ -180,7 +180,7 @@ async function _zobrazAdminPanel(loginId) {
     ${budkyMenuHTML}
     <button class="admin-dropdown-item pripravujeme" data-akce="clanek">📝 Vložit článek</button>
     <button class="admin-dropdown-item" data-akce="napisAdminovi">✉️ Napsat adminovi</button>
-    ${jeAdmin ? `<div class="admin-dropdown-oddelovac"></div><button class="admin-dropdown-item admin-item-zadosti" data-akce="zadosti">📬 Žádosti správců <span class="admin-badge" id="adminBadge" hidden>0</span></button><button class="admin-dropdown-item" data-akce="resetSlib" style="font-size:0.85rem;color:var(--text-muted)">🧪 Reset slibu (test)</button>` : ''}
+    ${jeAdmin ? `<div class="admin-dropdown-oddelovac"></div><button class="admin-dropdown-item admin-item-zadosti" data-akce="zadosti">📬 Žádosti správců <span class="admin-badge" id="adminBadge" hidden>0</span></button><button class="admin-dropdown-item" data-akce="prehledSpravcu">👥 Přehled správců</button><button class="admin-dropdown-item" data-akce="resetSlib" style="font-size:0.85rem;color:var(--text-muted)">🧪 Reset slibu (test)</button>` : ''}
     <div class="admin-dropdown-oddelovac"></div>
     <button class="admin-dropdown-item odhlasit" data-akce="odhlasit">🚪 Odhlásit se</button>
   `;
@@ -265,6 +265,12 @@ async function _zobrazAdminPanel(loginId) {
       return;
     }
 
+    if (akce === 'prehledSpravcu') {
+      _zobrazPrehledSpravcu();
+      dropdown.classList.remove('open');
+      return;
+    }
+
     if (item.classList.contains('pripravujeme')) {
       item.textContent = item.textContent.replace(' – Připravujeme…', '') + ' – Připravujeme…';
       setTimeout(() => { item.textContent = item.textContent.replace(' – Připravujeme…', ''); }, 2000);
@@ -287,6 +293,98 @@ function _sledujZadosti() {
     if (!badge) return;
     if (pocet > 0) { badge.textContent = pocet; badge.hidden = false; }
     else badge.hidden = true;
+  });
+}
+
+async function _zobrazPrehledSpravcu() {
+  const existujici = document.getElementById('modalPrehled');
+  if (existujici) existujici.remove();
+
+  const modal = document.createElement('div');
+  modal.id = 'modalPrehled';
+  modal.className = 'modal-overlay profil-overlay';
+  modal.innerHTML = `
+    <div class="modal-box profil-box">
+      <button class="modal-zavrit" id="prehledZavrit">×</button>
+      <div class="profil-header"><div class="profil-header-text">
+        <div class="profil-nadpis">👥 Přehled správců</div>
+      </div></div>
+      <div class="prehled-filtry">
+        <button class="prehled-filtr prehled-filtr--aktivni" data-filtr="vse">Všichni</button>
+        <button class="prehled-filtr" data-filtr="telefon">📞 S telefonem</button>
+        <button class="prehled-filtr" data-filtr="email">📧 S e-mailem</button>
+      </div>
+      <div class="prehled-kopirovat">
+        <button class="prehled-kopir-btn" id="prehledKopirTel" title="Zkopírovat všechna telefonní čísla">📋 Kopírovat telefony</button>
+        <button class="prehled-kopir-btn" id="prehledKopirEmail" title="Zkopírovat všechny e-maily">📋 Kopírovat e-maily</button>
+      </div>
+      <div class="profil-form" id="prehledObsah"><div style="color:var(--text-muted);padding:16px">Načítám…</div></div>
+    </div>`;
+  document.body.appendChild(modal);
+  document.getElementById('prehledZavrit').addEventListener('click', () => modal.remove());
+  modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
+
+  const info = await _nactiSpravciInfo() || {};
+  const db = _getFirebaseDB();
+  let profily = {};
+  if (db) {
+    try {
+      const snap = await db.ref('spravci').once('value');
+      const data = snap.val() || {};
+      Object.entries(data).forEach(([id, v]) => { if (v.profil) profily[id] = v.profil; });
+    } catch {}
+  }
+
+  // Sloučit data
+  const spravci = Object.entries(info).map(([id, s]) => {
+    const p = profily[id] || {};
+    return {
+      id,
+      jmeno:    p.jmeno    || s.jmeno    || '—',
+      prijmeni: p.prijmeni || s.prijmeni || '',
+      telefon:  p.telefon  || s.telefon  || '',
+      email:    p.email    || s.email    || '',
+      budky:    s.budky ? s.budky.map(b => b.cislo).join(', ') : (s.budka_cislo || '?'),
+    };
+  }).sort((a, b) => (a.jmeno + a.prijmeni).localeCompare(b.jmeno + b.prijmeni, 'cs'));
+
+  let aktFiltr = 'vse';
+
+  function renderSeznam() {
+    const filtered = spravci.filter(s => {
+      if (aktFiltr === 'telefon') return !!s.telefon;
+      if (aktFiltr === 'email')   return !!s.email;
+      return true;
+    });
+    const container = document.getElementById('prehledObsah');
+    if (!container) return;
+    if (!filtered.length) { container.innerHTML = '<div style="color:var(--text-muted);padding:16px">Žádní správci pro tento filtr</div>'; return; }
+    container.innerHTML = filtered.map(s => `
+      <div class="prehled-radek">
+        <div class="prehled-jmeno">${s.jmeno} ${s.prijmeni} <span class="prehled-id">· ID ${s.id} · 🏠 ${s.budky}</span></div>
+        ${s.telefon ? `<a class="prehled-kontakt" href="tel:${s.telefon}">📞 ${s.telefon}</a>` : '<span class="prehled-prazdny">bez telefonu</span>'}
+        ${s.email   ? `<a class="prehled-kontakt" href="mailto:${s.email}">📧 ${s.email}</a>` : '<span class="prehled-prazdny">bez e-mailu</span>'}
+      </div>`).join('');
+  }
+
+  renderSeznam();
+
+  modal.querySelectorAll('.prehled-filtr').forEach(btn => {
+    btn.addEventListener('click', () => {
+      aktFiltr = btn.dataset.filtr;
+      modal.querySelectorAll('.prehled-filtr').forEach(b => b.classList.remove('prehled-filtr--aktivni'));
+      btn.classList.add('prehled-filtr--aktivni');
+      renderSeznam();
+    });
+  });
+
+  document.getElementById('prehledKopirTel').addEventListener('click', () => {
+    const cisla = spravci.filter(s => s.telefon).map(s => s.telefon).join('\n');
+    navigator.clipboard.writeText(cisla).then(() => _zobrazToast('📋 Telefony zkopírovány!', 2500));
+  });
+  document.getElementById('prehledKopirEmail').addEventListener('click', () => {
+    const emaily = spravci.filter(s => s.email).map(s => s.email).join('\n');
+    navigator.clipboard.writeText(emaily).then(() => _zobrazToast('📋 E-maily zkopírovány!', 2500));
   });
 }
 
@@ -573,8 +671,8 @@ function _zobrazProfilSpravce(loginId, info, budkaText) {
             <input type="tel" id="pTelefon" value="${d.telefon || ''}">
           </div>
           <div class="profil-field profil-field--wide">
-            <label>E-mail</label>
-            <input type="email" id="pEmail" value="${d.email || ''}">
+            <label>E-mail <span class="profil-hint">— potřebný pro reset hesla</span></label>
+            <input type="email" id="pEmail" value="${d.email || ''}" placeholder="váš@email.cz">
           </div>
         </div>
       </div>
@@ -639,20 +737,20 @@ function _zobrazProfilSpravce(loginId, info, budkaText) {
 
   document.getElementById('profilUlozit').addEventListener('click', async () => {
     const foto = document.getElementById('profilFotoNahled').src;
-    const CITLIVA = ['jmeno', 'prijmeni', 'telefon', 'email'];
-    const CITLIVA_LABELY = { jmeno: 'Jméno', prijmeni: 'Příjmení', telefon: 'Telefon', email: 'E-mail' };
+    const CITLIVA = ['jmeno', 'prijmeni', 'telefon'];
+    const CITLIVA_LABELY = { jmeno: 'Jméno', prijmeni: 'Příjmení', telefon: 'Telefon' };
 
     const noveCitlive = {
       jmeno:    document.getElementById('pJmeno').value.trim(),
       prijmeni: document.getElementById('pPrijmeni').value.trim(),
       telefon:  document.getElementById('pTelefon').value.trim(),
-      email:    document.getElementById('pEmail').value.trim(),
     };
     const volnaData = {
       titul_pred:     document.getElementById('pTitulPred').value.trim(),
       titul_za:       document.getElementById('pTitulZa').value.trim(),
       osloveni:       document.getElementById('pOsloveni').value.trim(),
       datum_narozeni: document.getElementById('pDatum').value,
+      email:          document.getElementById('pEmail').value.trim(),
       foto:           foto.startsWith('data:') ? foto : null,
     };
 
