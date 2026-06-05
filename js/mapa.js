@@ -312,7 +312,7 @@ function formatTooltip(b) {
   const ptakRadek = (b.ptak && b.ptak !== 'nezjisteno')
     ? `<div class="tt-ptak">🐦 ${b.ptak}</div>`
     : nezjisteno ? `<div class="tt-ptak" style="color:#b8860b">❓ Druh zatím nezjištěn</div>` : '';
-  const spravceStav = (b.spravce || b.spravce_last_ts) ? _spravceStav(b.spravce_last_ts, b.stav) : null;
+  const spravceStav = (b.spravce || b.spravce_last_ts || b.stav === 'osidlena') ? _spravceStav(b.spravce_last_ts, b.stav) : null;
   const spravceRadek = b.spravce
     ? `<div class="tt-spravce ${spravceStav.cls}">👤 ${b.spravce} ${spravceStav.emoji}</div>`
     : (spravceStav ? `<div class="tt-spravce ${spravceStav.cls}">${spravceStav.emoji} ${spravceStav.text}</div>` : '');
@@ -399,7 +399,7 @@ function formatPopup(b) {
     ${galNav}
   </div>`;
 
-  const spravceStavP = (b.spravce || b.spravce_last_ts) ? _spravceStav(b.spravce_last_ts, b.stav) : null;
+  const spravceStavP = (b.spravce || b.spravce_last_ts || b.stav === 'osidlena') ? _spravceStav(b.spravce_last_ts, b.stav) : null;
   const spravceBlock = b.spravce
     ? `<div class="popup-radek">👤 Správce: <strong>${b.spravce}</strong> <span class="popup-spravce-stav ${spravceStavP.cls}">${spravceStavP.emoji} ${spravceStavP.text}${spravceStavP.datum ? ` · <span class="popup-spravce-datum">${spravceStavP.datum}</span>` : ''}</span></div>`
     : (spravceStavP ? `<div class="popup-radek"><span class="popup-spravce-stav ${spravceStavP.cls}">${spravceStavP.emoji} ${spravceStavP.text}${spravceStavP.datum ? ` · <span class="popup-spravce-datum">${spravceStavP.datum}</span>` : ''}</span></div>` : '');
