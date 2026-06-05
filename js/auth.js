@@ -346,7 +346,7 @@ function _zobrazProfilSpravce(loginId, info, budkaText) {
 
   const modal = document.createElement('div');
   modal.id = 'modalProfil';
-  modal.className = 'modal-overlay';
+  modal.className = 'modal-overlay profil-overlay';
   modal.innerHTML = `
     <div class="modal-box profil-box">
       <button class="modal-zavrit" id="profilZavrit">×</button>
@@ -419,11 +419,11 @@ function _zobrazProfilSpravce(loginId, info, budkaText) {
     </div>
   `;
   document.body.appendChild(modal);
-  // Scroll na začátek – prohlížeč by jinak skočil na první input
-  requestAnimationFrame(() => {
+  // Scroll na začátek – setTimeout nutný, rAF se spustí dřív než browser auto-scroll na první input
+  setTimeout(() => {
     const box = modal.querySelector('.profil-box');
-    if (box) box.scrollTop = 0;
-  });
+    if (box) { box.scrollTop = 0; box.scrollLeft = 0; }
+  }, 80);
 
   // Silently update fields from Firebase (may be more recent than localStorage)
   _nacistProfilFirebase(loginId).then(profilFB => {
@@ -847,12 +847,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function otevritModal() {
     modal.hidden = false;
-    inputId.value = '';
+    const savedId = localStorage.getItem('mb_saved_loginId') || '';
+    inputId.value = savedId;
     inputHeslo.value = '';
     loginError.hidden = true;
     loginLoading.hidden = true;
     loginBtn.disabled = false;
-    setTimeout(() => inputId.focus(), 50);
+    const cbZapamatovat = document.getElementById('cbZapamatovat');
+    if (cbZapamatovat) cbZapamatovat.checked = !!savedId;
+    setTimeout(() => (savedId ? inputHeslo : inputId).focus(), 50);
   }
 
   function zavritModal() {
@@ -893,6 +896,12 @@ document.addEventListener('DOMContentLoaded', () => {
     try {
       const ok = await _overitPrihlaseni(id, heslo);
       if (ok) {
+        const cbZapamatovat = document.getElementById('cbZapamatovat');
+        if (cbZapamatovat && cbZapamatovat.checked) {
+          localStorage.setItem('mb_saved_loginId', id);
+        } else {
+          localStorage.removeItem('mb_saved_loginId');
+        }
         zavritModal();
         _zobrazAdminPanel(id);
       } else {

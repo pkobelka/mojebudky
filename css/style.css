@@ -654,8 +654,9 @@ html, body {
 
   /* Modaly na mobilu — overlay centrovaný, box sám scrolluje */
   .modal-overlay { align-items: center; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 12px 6px; }
-  /* Karta správce — max výška viewportu, scroll uvnitř */
-  .profil-box { width: 100% !important; max-height: 92svh; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+  /* Karta správce — bottom-sheet: overlay neroluje, box má pevnou výšku a roluje (iOS) */
+  .profil-overlay { align-items: flex-start !important; overflow: hidden !important; padding: 4svh 0 0 !important; }
+  .profil-box { width: 100% !important; height: 92svh !important; max-height: none !important; overflow-y: scroll !important; -webkit-overflow-scrolling: touch !important; overscroll-behavior: contain; border-radius: 16px 16px 0 0 !important; }
   .profil-header { padding: 16px 14px; gap: 12px; }
   .profil-foto { width: 64px; height: 64px; }
   .profil-nadpis { font-size: 1.15rem; }
