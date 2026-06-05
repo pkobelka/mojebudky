@@ -7,6 +7,7 @@ const PREZDIVKY = {
   'Petra': ['Peťa'], 'Kateřina': ['Katka'], 'Anna': ['Anička'],
   'Vladimíra': ['Vlaďka'], 'Gabriela': ['Gábi'],
   'Dobroslav': ['Dobroš'],
+  'Ladislav': ['Laďa'],
 };
 const KANONICKY = {};
 for (const [k, arr] of Object.entries(PREZDIVKY)) arr.forEach(p => KANONICKY[p] = k);
