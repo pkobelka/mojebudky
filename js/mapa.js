@@ -311,8 +311,8 @@ function formatTooltip(b) {
     : nezjisteno ? `<div class="tt-ptak" style="color:#b8860b">❓ Druh zatím nezjištěn</div>` : '';
   const spravceStav = (b.spravce || b.spravce_last_ts || b.stav === 'osidlena') ? _spravceStav(b.spravce_last_ts, b.stav) : null;
   const spravceRadek = b.spravce
-    ? `<div class="tt-spravce ${spravceStav.cls}">👤 ${b.spravce} ${spravceStav.emoji}${spravceStav.datum ? ' <span class="tt-datum">' + spravceStav.datum + '</span>' : ''}</div>`
-    : (spravceStav ? `<div class="tt-spravce ${spravceStav.cls}">${spravceStav.emoji}${spravceStav.datum ? ' <span class="tt-datum">' + spravceStav.datum + '</span>' : ''}</div>` : '');
+    ? `<div class="tt-spravce ${spravceStav.cls}">👤 ${b.spravce} ${spravceStav.emoji}</div>${spravceStav.datum ? `<div class="tt-aktivni-datum">naposledy aktivní: ${spravceStav.datum}</div>` : ''}`
+    : (spravceStav ? `<div class="tt-spravce ${spravceStav.cls}">${spravceStav.emoji}</div>${spravceStav.datum ? `<div class="tt-aktivni-datum">naposledy aktivní: ${spravceStav.datum}</div>` : ''}` : '');
   if (b.nazev) {
     return `<div class="budka-tooltip">
       <div class="tt-nazev-hlavni" style="border-left:3px solid ${stavColor}">${b.nazev}</div>
@@ -398,8 +398,8 @@ function formatPopup(b) {
 
   const spravceStavP = (b.spravce || b.spravce_last_ts || b.stav === 'osidlena') ? _spravceStav(b.spravce_last_ts, b.stav) : null;
   const spravceBlock = b.spravce
-    ? `<div class="popup-radek">👤 Správce: <strong>${b.spravce}</strong> <span class="popup-spravce-stav ${spravceStavP.cls}">${spravceStavP.emoji} ${spravceStavP.text}${spravceStavP.datum ? ` · <span class="popup-spravce-datum">${spravceStavP.datum}</span>` : ''}</span></div>`
-    : (spravceStavP ? `<div class="popup-radek"><span class="popup-spravce-stav ${spravceStavP.cls}">${spravceStavP.emoji} ${spravceStavP.text}${spravceStavP.datum ? ` · <span class="popup-spravce-datum">${spravceStavP.datum}</span>` : ''}</span></div>` : '');
+    ? `<div class="popup-radek">👤 Správce: <strong>${b.spravce}</strong> <span class="popup-spravce-stav ${spravceStavP.cls}">${spravceStavP.emoji}</span></div>${spravceStavP.datum ? `<div class="popup-radek popup-aktivni-datum">⏱ naposledy aktivní: <strong>${spravceStavP.datum}</strong></div>` : ''}`
+    : (spravceStavP ? `<div class="popup-radek"><span class="popup-spravce-stav ${spravceStavP.cls}">${spravceStavP.emoji}</span></div>${spravceStavP.datum ? `<div class="popup-radek popup-aktivni-datum">⏱ naposledy aktivní: <strong>${spravceStavP.datum}</strong></div>` : ''}` : '');
 
   const instBlock = b.instalace
     ? `<div class="popup-radek">📅 Instalace: <strong>${b.instalace}</strong></div>`

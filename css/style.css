@@ -848,12 +848,12 @@ html, body {
 .prehled-hledat:focus { border-color: var(--accent-gold); }
 .prehled-pocet { font-size: 0.85rem; color: var(--text-muted); font-weight: normal; }
 .tt-spravce { font-size: 0.82rem; margin-top: 3px; }
-.tt-datum { color: #888; font-size: 0.78rem; margin-left: 4px; }
+.tt-aktivni-datum { color: #888; font-size: 0.77rem; margin-top: 2px; }
 .stav-aktivni   { color: #5db85d; }
 .stav-spici     { color: #c8960a; }
 .stav-neaktivni { color: #888; }
 .popup-spravce-stav { font-size: 0.85rem; font-weight: normal; margin-left: 4px; }
-.popup-spravce-datum { color: var(--text-muted); font-size: 0.82rem; }
+.popup-aktivni-datum { color: var(--text-muted); font-size: 0.83rem; }
 .zadost-cas { color: var(--text-muted); font-size: 0.82rem; }
 .zadost-btn-ok { margin-top: 8px; background: #2d7a2d; border: none; border-radius: 6px; color: #fff; padding: 6px 16px; font-size: 0.9rem; cursor: pointer; }
 .zadost-btn-ok:hover { background: #3aaa3a; }
