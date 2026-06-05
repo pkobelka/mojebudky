@@ -849,9 +849,11 @@ html, body {
 .prehled-pocet { font-size: 0.85rem; color: var(--text-muted); font-weight: normal; }
 .tt-spravce { font-size: 0.82rem; margin-top: 3px; }
 .tt-aktivni-datum { color: #888; font-size: 0.77rem; margin-top: 2px; }
-.stav-aktivni   { color: #5db85d; }
-.stav-spici     { color: #c8960a; }
-.stav-neaktivni { color: #888; }
+.stav-top       { color: #3aaa3a; }
+.stav-aktivni   { color: #c8a000; }
+.stav-pasivni   { color: #c09060; }
+.stav-nezajem   { color: #444; }
+.popup-osidlena-chip { display: inline-block; font-size: 0.75rem; font-weight: 600; color: #fff; background: #3a9a3a; border-radius: 10px; padding: 1px 8px; margin-left: 6px; vertical-align: middle; }
 .popup-spravce-stav { font-size: 0.85rem; font-weight: normal; margin-left: 4px; }
 .popup-aktivni-datum { color: var(--text-muted); font-size: 0.83rem; }
 .zadost-cas { color: var(--text-muted); font-size: 0.82rem; }

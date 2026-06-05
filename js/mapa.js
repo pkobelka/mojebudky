@@ -211,9 +211,15 @@ function _formatDatum(ts) {
 
 function _spravceStav(ts, stavBudky) {
   const datum = ts ? _formatDatum(ts) : '';
-  if (stavBudky === 'osidlena' || (ts && (Date.now() - ts) / 86400000 < 365))
-    return { emoji: '👍', text: '', cls: 'stav-aktivni',   datum };
-  return   { emoji: '👎', text: '', cls: 'stav-neaktivni', datum };
+  if (stavBudky === 'osidlena')
+    return { emoji: '👍👍', text: '', cls: 'stav-top',     datum };
+  if (ts) {
+    const days = (Date.now() - ts) / 86400000;
+    if (days <= 30)  return { emoji: '👍👍', text: '', cls: 'stav-top',     datum };
+    if (days <= 60)  return { emoji: '👍',   text: '', cls: 'stav-aktivni', datum };
+    if (days <= 90)  return { emoji: '😐',   text: '', cls: 'stav-pasivni', datum };
+  }
+  return { emoji: '☝️❗', text: '', cls: 'stav-nezajem', datum };
 }
 
 const BIRD_SVG = {
@@ -309,10 +315,11 @@ function _stavInfo(b) {
       : { color: '#3a9a3a', label: '🟢 Osídlená' };
   if (b.spravce_last_ts) {
     const days = (Date.now() - b.spravce_last_ts) / 86400000;
-    if (days < 90)  return { color: '#3a9a3a', label: '🟢 Aktivní' };
-    if (days < 365) return { color: '#e06820', label: '🟠 Aktivní' };
+    if (days <= 30) return { color: '#3a9a3a', label: '🟢 Top správce' };
+    if (days <= 60) return { color: '#c8a000', label: '🟡 Aktivní' };
+    if (days <= 90) return { color: '#c09060', label: '🟫 Pasivní' };
   }
-  return { color: '#7B3810', label: '🟤 Aktivní' };
+  return { color: '#222222', label: '⚫ Bez zájmu' };
 }
 
 function formatTooltip(b) {
@@ -375,9 +382,12 @@ function formatPopup(b) {
   const nezjisteno = b.stav === 'osidlena' && (!b.ptak || b.ptak === 'nezjisteno');
   const { color: stavColor, label: stavLabel } = _stavInfo(b);
 
+  const osidlenaBadge = b.stav === 'osidlena'
+    ? ` <span class="popup-osidlena-chip">🟢 Osídlená</span>`
+    : '';
   const nadpis = b.nazev
-    ? `<span class="popup-nazev-hlavni">${b.nazev}</span><span class="popup-cislo-sub"> · č. ${b.cislo}</span>`
-    : `Budka č. ${b.cislo}`;
+    ? `<span class="popup-nazev-hlavni">${b.nazev}</span><span class="popup-cislo-sub"> · č. ${b.cislo}</span>${osidlenaBadge}`
+    : `Budka č. ${b.cislo}${osidlenaBadge}`;
 
   const birdSvg = b.ptak && BIRD_SVG[b.ptak] ? BIRD_SVG[b.ptak] : null;
   const ptakBlock = nezjisteno
