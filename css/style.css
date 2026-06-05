@@ -370,6 +370,7 @@ html, body {
 .popup-historie th { background: #f0e8d8; color: #5a3010; font-weight: 700; padding: 7px 12px; text-align: left; border-bottom: 1px solid #e0d0b8; }
 .popup-historie td { padding: 7px 12px; color: #555; border-bottom: 1px solid #f0e8e0; }
 .popup-historie tr:last-child td { border-bottom: none; }
+.popup-poznamka { font-style: italic; color: #7a5030; font-size: 1rem; background: #fdf6ee; }
 .popup-edit-btn { display: block; width: 100%; background: #c96420; color: #fff; border: none; padding: 14px 22px; font-size: 1.2rem; font-weight: 700; cursor: pointer; text-align: center; transition: background 0.15s; font-family: inherit; }
 .popup-edit-btn:hover { background: #a0501a; }
 .popup-edit-spravce-btn { background: #2d6010; }

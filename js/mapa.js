@@ -296,12 +296,15 @@ function formatHistorie(historie) {
     const cisteno = r.cisteno ? '✅' : '—';
     const kontrola = r.kontrolovano ? '✅' : '—';
     const obsazeno = r.obsazeno || '—';
+    const poznamkaRow = r.poznamka
+      ? `<tr><td colspan="4" class="popup-poznamka">📝 ${r.poznamka}</td></tr>`
+      : '';
     return `<tr>
       <td>${r.rok}</td>
       <td>${cisteno}</td>
       <td>${kontrola}</td>
       <td>${obsazeno}</td>
-    </tr>`;
+    </tr>${poznamkaRow}`;
   }).join('');
   return `<div class="popup-sekce-title">📋 Historie</div>
     <table class="popup-historie">
