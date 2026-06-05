@@ -209,10 +209,11 @@ function _formatDatum(ts) {
   return `${d.getDate()}. ${d.getMonth() + 1}. ${d.getFullYear()}`;
 }
 
-function _spravceStav(ts) {
+function _spravceStav(ts, stavBudky) {
+  const datum = ts ? _formatDatum(ts) : '';
+  if (stavBudky === 'osidlena') return { emoji: '😊', text: 'Hnízdí!', cls: 'stav-aktivni', datum };
   if (!ts) return { emoji: '😟', text: 'Neaktivní', cls: 'stav-neaktivni', datum: '' };
   const dny = (Date.now() - ts) / 86400000;
-  const datum = _formatDatum(ts);
   if (dny < 365)  return { emoji: '👍', text: 'Aktivní',   cls: 'stav-aktivni',   datum };
   if (dny < 730)  return { emoji: '😴', text: 'Spící',     cls: 'stav-spici',     datum };
   return              { emoji: '😟', text: 'Neaktivní', cls: 'stav-neaktivni', datum };
@@ -311,7 +312,7 @@ function formatTooltip(b) {
   const ptakRadek = (b.ptak && b.ptak !== 'nezjisteno')
     ? `<div class="tt-ptak">🐦 ${b.ptak}</div>`
     : nezjisteno ? `<div class="tt-ptak" style="color:#b8860b">❓ Druh zatím nezjištěn</div>` : '';
-  const spravceStav = b.spravce ? _spravceStav(b.spravce_last_ts) : null;
+  const spravceStav = b.spravce ? _spravceStav(b.spravce_last_ts, b.stav) : null;
   const spravceRadek = b.spravce
     ? `<div class="tt-spravce ${spravceStav.cls}">👤 ${b.spravce} ${spravceStav.emoji}</div>`
     : '';
@@ -398,7 +399,7 @@ function formatPopup(b) {
     ${galNav}
   </div>`;
 
-  const spravceStavP = b.spravce ? _spravceStav(b.spravce_last_ts) : null;
+  const spravceStavP = b.spravce ? _spravceStav(b.spravce_last_ts, b.stav) : null;
   const spravceBlock = b.spravce
     ? `<div class="popup-radek">👤 Správce: <strong>${b.spravce}</strong> <span class="popup-spravce-stav ${spravceStavP.cls}">${spravceStavP.emoji} ${spravceStavP.text}${spravceStavP.datum ? ` · <span class="popup-spravce-datum">${spravceStavP.datum}</span>` : ''}</span></div>`
     : '';
