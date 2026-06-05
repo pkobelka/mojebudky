@@ -13,6 +13,7 @@
   if (!firebase.apps.length) firebase.initializeApp(cfg);
   const db = firebase.database();
   let myRef = null;
+  let _presenceVals = [];
 
   db.ref('.info/connected').on('value', snap => {
     if (!snap.val()) return;
@@ -23,9 +24,9 @@
   });
 
   db.ref('presence').on('value', snap => {
-    const vals = Object.values(snap.val() || {});
-    const total = vals.length;
-    const admins = vals.filter(v => v.admin).length;
+    _presenceVals = Object.values(snap.val() || {});
+    const total  = _presenceVals.length;
+    const admins = _presenceVals.filter(v => v.admin).length;
     const el = document.getElementById('onlinePocet');
     if (!el) return;
 
@@ -35,6 +36,44 @@
       txt += ` <span class="online-admins">(z toho ${admins} ${aSlovo})</span>`;
     }
     el.innerHTML = txt;
+
+    const jeAdmin = window._aktualniSpravce && window._aktualniSpravce.jeAdmin;
+    el.style.cursor = jeAdmin ? 'pointer' : '';
+    el.title = jeAdmin ? 'Klikni pro seznam online uživatelů' : '';
+  });
+
+  document.addEventListener('click', e => {
+    const el = document.getElementById('onlinePocet');
+    const popup = document.getElementById('onlinePopup');
+
+    if (el && el.contains(e.target)) {
+      const jeAdmin = window._aktualniSpravce && window._aktualniSpravce.jeAdmin;
+      if (!jeAdmin) return;
+
+      if (popup) { popup.remove(); return; }
+
+      const seznam = _presenceVals.map(v => {
+        if (v.jmeno) {
+          const badge = v.admin ? ' <span class="op-badge">správce</span>' : '';
+          const budky = v.budky ? ` · 🏠 ${v.budky}` : '';
+          return `<div class="op-radek">👤 <strong>${v.jmeno}</strong>${budky}${badge}</div>`;
+        }
+        return `<div class="op-radek op-navstevnik">🌐 Anonymní návštěvník</div>`;
+      }).join('');
+
+      const div = document.createElement('div');
+      div.id = 'onlinePopup';
+      div.className = 'online-popup';
+      div.innerHTML = `<div class="op-nadpis">🟢 Právě online</div>${seznam}`;
+
+      const rect = el.getBoundingClientRect();
+      div.style.top  = (rect.bottom + 6) + 'px';
+      div.style.left = rect.left + 'px';
+      document.body.appendChild(div);
+      return;
+    }
+
+    if (popup && !popup.contains(e.target)) popup.remove();
   });
 
   // Volá se z auth.js po přihlášení — přidá jméno, budky a loginId do presence záznamu
