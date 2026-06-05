@@ -358,10 +358,7 @@ function _zobrazSlibSpravce(loginId, spravceInfo, budkaText) {
         <div class="slib-header-sub">${budkaText}</div>
       </div>
       <div class="slib-body">
-        <p class="slib-uvod">
-          Vítejte v komunitě správců! Vaše záznamy pomáhají sledovat ptačí populace
-          po celé České a Slovenské republice. Děkujeme, že se o budku staráte. 🐦
-        </p>
+        <div class="slib-nadpis-zavazky">Slibuji, že:</div>
         <div class="slib-zavazky">
           <div class="slib-bod"><span class="slib-bod-ikona">🔍</span><span>Alespoň jednou ročně provést kontrolu budky</span></div>
           <div class="slib-bod"><span class="slib-bod-ikona">📝</span><span>Zapsat výsledky kontroly a čištění do aplikace</span></div>
@@ -381,7 +378,9 @@ function _zobrazSlibSpravce(loginId, spravceInfo, budkaText) {
   document.getElementById('slibPrijimam').addEventListener('click', () => {
     localStorage.setItem('mb_slib_' + loginId, '1');
     modal.remove();
-    _zobrazProfilSpravce(loginId, spravceInfo, budkaText);
+    // Uvítací zpráva jako toast na 4 sekundy
+    _zobrazToastDlouhy('🐦 Vítejte v komunitě správců! Vaše záznamy pomáhají sledovat ptačí populace po celé ČR a SR. Děkujeme, že se o budku staráte!');
+    setTimeout(() => _zobrazProfilSpravce(loginId, spravceInfo, budkaText), 4500);
   });
 }
 
@@ -864,7 +863,7 @@ function _vokativ(jmeno) {
   return normalized + 'e';
 }
 
-function _zobrazToast(text) {
+function _zobrazToast(text, ms) {
   const existujici = document.getElementById('adminToast');
   if (existujici) existujici.remove();
 
@@ -874,11 +873,16 @@ function _zobrazToast(text) {
   toast.textContent = text;
   document.body.appendChild(toast);
 
+  const doba = ms || 6000;
   setTimeout(() => toast.classList.add('admin-toast--show'), 50);
   setTimeout(() => {
     toast.classList.remove('admin-toast--show');
     setTimeout(() => toast.remove(), 500);
-  }, 6000);
+  }, doba);
+}
+
+function _zobrazToastDlouhy(text) {
+  _zobrazToast(text, 4000);
 }
 
 document.addEventListener('DOMContentLoaded', () => {

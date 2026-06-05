@@ -915,7 +915,7 @@ html, body {
 .slib-header-nadpis { font-size: 1.5rem; font-weight: 800; color: var(--accent-gold); margin-bottom: 6px; }
 .slib-header-sub { font-size: 1rem; color: var(--text-muted); }
 .slib-body { padding: 24px 32px; }
-.slib-uvod { font-size: 1rem; color: var(--text-light); line-height: 1.6; margin-bottom: 18px; }
+.slib-nadpis-zavazky { font-size: 1.25rem; font-weight: 800; color: var(--accent-gold); margin-bottom: 14px; letter-spacing: 0.02em; }
 .slib-zavazky { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
 .slib-bod { display: flex; align-items: flex-start; gap: 10px; font-size: 1rem; color: var(--text-light); line-height: 1.5; }
 .slib-bod-ikona { font-size: 1.2rem; flex-shrink: 0; margin-top: 1px; }
