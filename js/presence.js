@@ -30,10 +30,10 @@
     const el = document.getElementById('onlinePocet');
     if (!el) return;
 
-    let txt = `🟢 <strong>${total}</strong> online`;
+    let txt = `🟢 ${total} online`;
     if (admins > 0) {
       const aSlovo = admins === 1 ? 'správce' : admins <= 4 ? 'správci' : 'správců';
-      txt += ` <span class="online-admins">(z toho ${admins} ${aSlovo})</span>`;
+      txt += `, z toho <span class="online-admins">${admins} ${aSlovo}</span>`;
     }
     el.innerHTML = txt;
 
