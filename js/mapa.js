@@ -211,12 +211,10 @@ function _formatDatum(ts) {
 
 function _spravceStav(ts, stavBudky) {
   const datum = ts ? _formatDatum(ts) : '';
-  if (stavBudky === 'osidlena') return { emoji: '😊', text: 'Hnízdí!', cls: 'stav-aktivni', datum };
-  if (!ts) return { emoji: '😟', text: 'Neaktivní', cls: 'stav-neaktivni', datum: '' };
-  const dny = (Date.now() - ts) / 86400000;
-  if (dny < 365)  return { emoji: '👍', text: 'Aktivní',   cls: 'stav-aktivni',   datum };
-  if (dny < 730)  return { emoji: '😴', text: 'Spící',     cls: 'stav-spici',     datum };
-  return              { emoji: '😟', text: 'Neaktivní', cls: 'stav-neaktivni', datum };
+  if (stavBudky === 'osidlena') return { emoji: '😊', text: 'Hnízdí!',    cls: 'stav-aktivni',   datum };
+  if (ts && (Date.now() - ts) / 86400000 < 365)
+                               return { emoji: '👍', text: 'Aktivní',    cls: 'stav-aktivni',   datum };
+  return                              { emoji: '👎', text: 'Nekomunikuje', cls: 'stav-neaktivni', datum };
 }
 
 const BIRD_SVG = {
