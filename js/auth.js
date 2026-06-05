@@ -625,7 +625,8 @@ function _zobrazProfilSpravce(loginId, info, budkaText) {
         <div class="profil-foto-wrap">
           <img id="profilFotoNahled" src="${d.foto || 'img/Favikon.png'}" class="profil-foto profil-foto--klikatelna" alt="Foto správce" title="Kliknout pro změnu fotky">
           <button type="button" class="profil-foto-btn" id="profilFotoBtn" title="Nahrát nebo vyfotit">📷</button>
-          <input type="file" id="profilFotoInput" accept="image/*" style="position:absolute;opacity:0;pointer-events:none;width:0;height:0">
+          <input type="file" id="profilFotoInputGalerie" accept="image/*" style="position:absolute;opacity:0;pointer-events:none;width:0;height:0">
+          <input type="file" id="profilFotoInputKamera" accept="image/*" capture="environment" style="position:absolute;opacity:0;pointer-events:none;width:0;height:0">
         </div>
         <div class="profil-header-text">
           <div class="profil-nadpis">🪪 Karta správce</div>
@@ -711,12 +712,35 @@ function _zobrazProfilSpravce(loginId, info, budkaText) {
   document.getElementById('profilZavrit').addEventListener('click', () => modal.remove());
   modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
 
-  const profilFotoInput = document.getElementById('profilFotoInput');
-  document.getElementById('profilFotoBtn').addEventListener('click', () => profilFotoInput.click());
-  document.getElementById('profilFotoNahled').addEventListener('click', () => profilFotoInput.click());
+  function _otevritFotoSheet() {
+    const existSheet = document.getElementById('fotoSheet');
+    if (existSheet) { existSheet.remove(); return; }
+    const sheet = document.createElement('div');
+    sheet.id = 'fotoSheet';
+    sheet.className = 'foto-sheet-overlay';
+    sheet.innerHTML = `
+      <div class="foto-sheet">
+        <button class="foto-sheet-btn" id="fotoSheetKamera">📷 Vyfotit</button>
+        <button class="foto-sheet-btn" id="fotoSheetGalerie">🖼️ Vybrat z galerie</button>
+        <button class="foto-sheet-btn foto-sheet-zrusit" id="fotoSheetZrusit">Zrušit</button>
+      </div>`;
+    document.body.appendChild(sheet);
+    sheet.addEventListener('click', e => { if (e.target === sheet) sheet.remove(); });
+    document.getElementById('fotoSheetZrusit').addEventListener('click', () => sheet.remove());
+    document.getElementById('fotoSheetKamera').addEventListener('click', () => {
+      sheet.remove();
+      document.getElementById('profilFotoInputKamera').click();
+    });
+    document.getElementById('fotoSheetGalerie').addEventListener('click', () => {
+      sheet.remove();
+      document.getElementById('profilFotoInputGalerie').click();
+    });
+  }
 
-  profilFotoInput.addEventListener('change', e => {
-    const file = e.target.files[0];
+  document.getElementById('profilFotoBtn').addEventListener('click', _otevritFotoSheet);
+  document.getElementById('profilFotoNahled').addEventListener('click', _otevritFotoSheet);
+
+  function _zpracujFoto(file) {
     if (!file) return;
     const reader = new FileReader();
     reader.onload = ev => {
@@ -733,7 +757,9 @@ function _zobrazProfilSpravce(loginId, info, budkaText) {
       img.src = ev.target.result;
     };
     reader.readAsDataURL(file);
-  });
+  }
+  document.getElementById('profilFotoInputGalerie').addEventListener('change', e => _zpracujFoto(e.target.files[0]));
+  document.getElementById('profilFotoInputKamera').addEventListener('change',  e => _zpracujFoto(e.target.files[0]));
 
   document.getElementById('profilUlozit').addEventListener('click', async () => {
     const foto = document.getElementById('profilFotoNahled').src;
