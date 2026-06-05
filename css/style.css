@@ -819,10 +819,11 @@ html, body {
 .zadost-btn-row { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
 .zadost-btn-zamit { background: #7a2020; color: #fff; border: none; border-radius: 6px; padding: 6px 14px; font-size: 0.9rem; cursor: pointer; }
 .zadost-btn-zamit:hover { background: #a03030; }
-.prehled-filtry { display: flex; gap: 8px; padding: 10px 16px 4px; flex-wrap: wrap; }
+.prehled-box .profil-header { flex-shrink: 0; }
+.prehled-filtry { display: flex; gap: 8px; padding: 10px 16px 4px; flex-wrap: wrap; flex-shrink: 0; }
 .prehled-filtr { background: rgba(255,255,255,0.07); color: var(--text-light); border: 1px solid var(--panel-border); border-radius: 20px; padding: 5px 14px; font-size: 0.88rem; cursor: pointer; }
 .prehled-filtr--aktivni { background: var(--orange); border-color: var(--orange); }
-.prehled-kopirovat { display: flex; gap: 8px; padding: 6px 16px 10px; flex-wrap: wrap; }
+.prehled-kopirovat { display: flex; gap: 8px; padding: 6px 16px 10px; flex-wrap: wrap; flex-shrink: 0; }
 .prehled-kopir-btn { background: rgba(255,255,255,0.07); color: var(--accent-gold); border: 1px solid var(--panel-border); border-radius: 8px; padding: 5px 12px; font-size: 0.85rem; cursor: pointer; }
 .prehled-kopir-btn:hover { background: rgba(255,255,255,0.13); }
 .prehled-radek { padding: 10px 16px; border-bottom: 1px solid var(--panel-border); display: flex; flex-direction: column; gap: 3px; }
@@ -836,7 +837,9 @@ html, body {
 .zh-pravidla-nadpis { color: var(--accent-gold); font-size: 0.85rem; font-weight: 700; margin-bottom: 4px; }
 .zh-pravidla-seznam { margin: 0; padding-left: 18px; color: var(--text-muted); font-size: 0.85rem; line-height: 1.7; }
 .zh-pravidla-seznam strong { color: var(--text-light); }
-.prehled-hledat-wrap { padding: 8px 16px 4px; }
+.prehled-box { max-width: 580px; width: 96%; max-height: 88vh; display: flex; flex-direction: column; padding: 0; overflow: hidden; }
+.prehled-seznam { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+.prehled-hledat-wrap { padding: 8px 16px 4px; flex-shrink: 0; }
 .prehled-hledat { width: 100%; box-sizing: border-box; background: rgba(255,255,255,0.07); border: 1px solid var(--panel-border); border-radius: 10px; color: var(--text-light); font-size: 1rem; padding: 10px 14px; outline: none; }
 .prehled-hledat:focus { border-color: var(--accent-gold); }
 .prehled-pocet { font-size: 0.85rem; color: var(--text-muted); font-weight: normal; }

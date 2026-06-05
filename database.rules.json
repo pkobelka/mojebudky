@@ -6,6 +6,9 @@
     "aktivita":       { ".read": true, ".write": true },
     "budky_edit":     { ".read": true, ".write": true },
     "admin_requests": { ".read": true, ".write": true },
-    "spravci":        { ".read": true, ".write": true }
+    "spravci":        { ".read": true, ".write": true },
+    "hesla": {
+      "$uid": { ".read": true, ".write": true }
+    }
   }
 }

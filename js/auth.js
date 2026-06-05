@@ -422,9 +422,9 @@ async function _zobrazPrehledSpravcu() {
 
   const modal = document.createElement('div');
   modal.id = 'modalPrehled';
-  modal.className = 'modal-overlay profil-overlay';
+  modal.className = 'modal-overlay';
   modal.innerHTML = `
-    <div class="modal-box profil-box">
+    <div class="modal-box prehled-box">
       <button class="modal-zavrit" id="prehledZavrit">×</button>
       <div class="profil-header"><div class="profil-header-text">
         <div class="profil-nadpis">👥 Přehled správců <span class="prehled-pocet" id="prehledPocet"></span></div>
@@ -441,7 +441,7 @@ async function _zobrazPrehledSpravcu() {
         <button class="prehled-kopir-btn" id="prehledKopirTel">📋 Kopírovat telefony</button>
         <button class="prehled-kopir-btn" id="prehledKopirEmail">📋 Kopírovat e-maily</button>
       </div>
-      <div class="profil-form" id="prehledObsah"></div>
+      <div class="prehled-seznam" id="prehledObsah"></div>
     </div>`;
   document.body.appendChild(modal);
   document.getElementById('prehledZavrit').addEventListener('click', () => modal.remove());
