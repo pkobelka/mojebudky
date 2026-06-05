@@ -2,11 +2,12 @@
   "rules": {
     ".read": false,
     ".write": false,
-    "presence":       { ".read": true, ".write": true },
-    "aktivita":       { ".read": true, ".write": true },
-    "budky_edit":     { ".read": true, ".write": true },
-    "admin_requests": { ".read": true, ".write": true },
-    "spravci":        { ".read": true, ".write": true },
+    "presence":          { ".read": true, ".write": true },
+    "aktivita":          { ".read": true, ".write": true },
+    "budky_edit":        { ".read": true, ".write": true },
+    "admin_requests":    { ".read": true, ".write": true },
+    "spravci":           { ".read": true, ".write": true },
+    "spravce_aktivita":  { ".read": true, ".write": true },
     "hesla": {
       "$uid": { ".read": true, ".write": true }
     }

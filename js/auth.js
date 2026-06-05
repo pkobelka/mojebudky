@@ -162,6 +162,15 @@ async function _zobrazAdminPanel(loginId) {
   if (typeof window._presenceSetAdmin === 'function') window._presenceSetAdmin(true);
   _prihlasitPush(loginId);
 
+  // Zaznamenat aktivitu správce (pro indikátor aktivity na mapě)
+  const dbAkt = _getFirebaseDB();
+  if (dbAkt) {
+    const ts = firebase.database.ServerValue.TIMESTAMP;
+    budkyList.forEach(b => {
+      dbAkt.ref(`spravce_aktivita/${b.cislo}`).set(ts);
+    });
+  }
+
   const jeAdmin = !!(spravceInfo && spravceInfo.spravce === 'admin');
   window._aktualniSpravce = { loginId, spravceInfo, budkyList, jeAdmin };
   window._editBudku = _zobrazEditBudky;

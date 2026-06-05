@@ -199,6 +199,14 @@ window._tryBudkaFoto = function(img, cislo, roky) {
                             : 'img/budky/' + next + '/' + cislo + '.jpg';
 };
 
+function _spravceStav(ts) {
+  if (!ts) return { emoji: '😟', text: 'Neaktivní', cls: 'stav-neaktivni' };
+  const dny = (Date.now() - ts) / 86400000;
+  if (dny < 365)  return { emoji: '😊', text: 'Aktivní',   cls: 'stav-aktivni' };
+  if (dny < 730)  return { emoji: '😴', text: 'Spící',     cls: 'stav-spici' };
+  return              { emoji: '😟', text: 'Neaktivní', cls: 'stav-neaktivni' };
+}
+
 const BIRD_SVG = {
   'Sýkora koňadra': `<svg viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg" width="32" height="32">
     <ellipse cx="18" cy="30" rx="11" ry="15" fill="#f5c800" transform="rotate(-8,18,30)"/>
@@ -292,18 +300,24 @@ function formatTooltip(b) {
   const ptakRadek = (b.ptak && b.ptak !== 'nezjisteno')
     ? `<div class="tt-ptak">🐦 ${b.ptak}</div>`
     : nezjisteno ? `<div class="tt-ptak" style="color:#b8860b">❓ Druh zatím nezjištěn</div>` : '';
+  const spravceStav = b.spravce ? _spravceStav(b.spravce_last_ts) : null;
+  const spravceRadek = b.spravce
+    ? `<div class="tt-spravce ${spravceStav.cls}">👤 ${b.spravce} ${spravceStav.emoji}</div>`
+    : '';
   if (b.nazev) {
     return `<div class="budka-tooltip">
       <div class="tt-nazev-hlavni" style="border-left:3px solid ${stavColor}">${b.nazev}</div>
       <div class="tt-cislo-sub">Budka č. ${b.cislo}</div>
       <div class="tt-stav" style="color:${stavColor}">${stavLabel}</div>
       ${ptakRadek}
+      ${spravceRadek}
     </div>`;
   }
   return `<div class="budka-tooltip">
     <div class="tt-cislo" style="border-left:3px solid ${stavColor}">Budka č. ${b.cislo}</div>
     <div class="tt-stav" style="color:${stavColor}">${stavLabel}</div>
     ${ptakRadek}
+    ${spravceRadek}
   </div>`;
 }
 
@@ -373,8 +387,9 @@ function formatPopup(b) {
     ${galNav}
   </div>`;
 
+  const spravceStavP = b.spravce ? _spravceStav(b.spravce_last_ts) : null;
   const spravceBlock = b.spravce
-    ? `<div class="popup-radek">👤 Správce: <strong>${b.spravce}</strong></div>`
+    ? `<div class="popup-radek">👤 Správce: <strong>${b.spravce}</strong> <span class="popup-spravce-stav ${spravceStavP.cls}">${spravceStavP.emoji} ${spravceStavP.text}</span></div>`
     : '';
 
   const instBlock = b.instalace
@@ -518,15 +533,36 @@ async function inicializujMapu() {
 
     document.getElementById('stat-celkem').textContent = budky.length;
 
-    // Po načtení markerů překryj ikonami z Firebase budky_edit
+    // Po načtení markerů překryj daty z Firebase (osídlení + aktivita správce)
     if (typeof firebase !== 'undefined') {
       try {
-        firebase.database().ref('budky_edit').once('value').then(snap => {
-          const edits = snap.val() || {};
+        Promise.all([
+          firebase.database().ref('budky_edit').once('value'),
+          firebase.database().ref('spravce_aktivita').once('value')
+        ]).then(([editSnap, aktSnap]) => {
+          const edits   = editSnap.val() || {};
+          const aktivita = aktSnap.val() || {};
+          window._spravceAktivita = aktivita;
+
           Object.entries(edits).forEach(([cislo, edit]) => {
             if (edit.kdo_hnizdi) _aktualizujMarkerZFirebase(Number(cislo), edit.kdo_hnizdi);
           });
-          // Přepočítat počet osídlených po načtení všech Firebase editů
+
+          // Aktualizuj tooltipy a popupy s aktivitou správce
+          Object.entries(window._budkyDataMap || {}).forEach(([cislo, bData]) => {
+            const editTs = (edits[cislo] && edits[cislo].ts) || 0;
+            const aktTs  = aktivita[cislo] || 0;
+            const lastTs = Math.max(editTs, aktTs);
+            if (lastTs) {
+              bData.spravce_last_ts = lastTs;
+              const marker = markersByCislo[Number(cislo)];
+              if (marker) {
+                marker.unbindTooltip();
+                marker.bindTooltip(formatTooltip(bData), { direction: 'top', offset: [0, -46], className: 'budka-tooltip-wrap', sticky: false });
+              }
+            }
+          });
+
           const pocet = Object.values(window._budkyDataMap || {}).filter(b => b.stav === 'osidlena').length;
           const elS = document.getElementById('stat-osidlenych');
           if (elS) elS.textContent = pocet;

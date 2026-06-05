@@ -843,6 +843,11 @@ html, body {
 .prehled-hledat { width: 100%; box-sizing: border-box; background: rgba(255,255,255,0.07); border: 1px solid var(--panel-border); border-radius: 10px; color: var(--text-light); font-size: 1rem; padding: 10px 14px; outline: none; }
 .prehled-hledat:focus { border-color: var(--accent-gold); }
 .prehled-pocet { font-size: 0.85rem; color: var(--text-muted); font-weight: normal; }
+.tt-spravce { font-size: 0.82rem; margin-top: 3px; }
+.stav-aktivni   { color: #5db85d; }
+.stav-spici     { color: #c8960a; }
+.stav-neaktivni { color: #888; }
+.popup-spravce-stav { font-size: 0.85rem; font-weight: normal; margin-left: 4px; }
 .zadost-cas { color: var(--text-muted); font-size: 0.82rem; }
 .zadost-btn-ok { margin-top: 8px; background: #2d7a2d; border: none; border-radius: 6px; color: #fff; padding: 6px 16px; font-size: 0.9rem; cursor: pointer; }
 .zadost-btn-ok:hover { background: #3aaa3a; }
