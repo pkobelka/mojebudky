@@ -847,6 +847,7 @@ html, body {
 .prehled-hledat:focus { border-color: var(--accent-gold); }
 .prehled-pocet { font-size: 0.85rem; color: var(--text-muted); font-weight: normal; }
 .tt-spravce { font-size: 0.82rem; margin-top: 3px; }
+.tt-datum { color: #888; font-size: 0.78rem; margin-left: 4px; }
 .stav-aktivni   { color: #5db85d; }
 .stav-spici     { color: #c8960a; }
 .stav-neaktivni { color: #888; }

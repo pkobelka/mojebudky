@@ -311,8 +311,8 @@ function formatTooltip(b) {
     : nezjisteno ? `<div class="tt-ptak" style="color:#b8860b">❓ Druh zatím nezjištěn</div>` : '';
   const spravceStav = (b.spravce || b.spravce_last_ts || b.stav === 'osidlena') ? _spravceStav(b.spravce_last_ts, b.stav) : null;
   const spravceRadek = b.spravce
-    ? `<div class="tt-spravce ${spravceStav.cls}">👤 ${b.spravce} ${spravceStav.emoji}</div>`
-    : (spravceStav ? `<div class="tt-spravce ${spravceStav.cls}">${spravceStav.emoji} ${spravceStav.text}</div>` : '');
+    ? `<div class="tt-spravce ${spravceStav.cls}">👤 ${b.spravce} ${spravceStav.emoji}${spravceStav.datum ? ' <span class="tt-datum">' + spravceStav.datum + '</span>' : ''}</div>`
+    : (spravceStav ? `<div class="tt-spravce ${spravceStav.cls}">${spravceStav.emoji}${spravceStav.datum ? ' <span class="tt-datum">' + spravceStav.datum + '</span>' : ''}</div>` : '');
   if (b.nazev) {
     return `<div class="budka-tooltip">
       <div class="tt-nazev-hlavni" style="border-left:3px solid ${stavColor}">${b.nazev}</div>
