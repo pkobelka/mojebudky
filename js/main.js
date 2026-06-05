@@ -25,7 +25,7 @@ let _narozeniniceDnes = [];  // správci s narozeninami dnes
 function pluralSpravcu(n) {
   if (n === 1) return '1 správce';
   if (n >= 2 && n <= 4) return `${n} správci`;
-  return `${n} správce`;
+  return `${n} správců`;
 }
 
 function najdiSvatekSpravce(svarekJmeno) {

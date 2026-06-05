@@ -140,7 +140,7 @@ async function _zobrazAdminPanel(loginId) {
     setTimeout(() => _zobrazSlibSpravce(loginId, spravceInfo, budkaText, osloveni), 1500);
   } else {
     // Slib potvrzen → normální uvítací toast
-    _zobrazToast(`Ahoj ${osloveni}, vítám Tě v komunitě správců mých budek! 🌿 Petr`);
+    _zobrazToast(`Ahoj ${osloveni}, vítám Tě mezi správci MojeBudky! 🌿 Petr`);
     if (jePoprve) {
       // Profil k vyplnění (první přihlášení nebo resetUvitani)
       setTimeout(() => _zobrazProfilSpravce(loginId, spravceInfo, budkaText), 7000);
@@ -464,7 +464,7 @@ function _zobrazProfilSpravce(loginId, info, budkaText) {
           </div>
           <div class="profil-field profil-field--wide">
             <label>Datum narození
-              <span class="profil-hint profil-narozeniny" title="Popřejeme Vám k narozeninám! 🎂">🎂 popřejeme!</span>
+              <span class="profil-hint profil-narozeniny" title="Popřejeme ti k narozeninám! 🎂">🎂 popřejeme!</span>
             </label>
             <input type="date" id="pDatum" value="${d.datum_narozeni || ''}">
           </div>
