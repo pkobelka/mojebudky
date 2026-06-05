@@ -179,7 +179,7 @@ async function _zobrazAdminPanel(loginId) {
     <button class="admin-dropdown-item" data-akce="resetUvitani" title="Karta se při příštím přihlášení ukáže automaticky">🔄 Zobrazit kartu při příštím přihlášení</button>
     ${budkyMenuHTML}
     <button class="admin-dropdown-item pripravujeme" data-akce="clanek">📝 Vložit článek</button>
-    ${jeAdmin ? `<div class="admin-dropdown-oddelovac"></div><button class="admin-dropdown-item admin-item-zadosti" data-akce="zadosti">📬 Žádosti správců <span class="admin-badge" id="adminBadge" hidden>0</span></button>` : ''}
+    ${jeAdmin ? `<div class="admin-dropdown-oddelovac"></div><button class="admin-dropdown-item admin-item-zadosti" data-akce="zadosti">📬 Žádosti správců <span class="admin-badge" id="adminBadge" hidden>0</span></button><button class="admin-dropdown-item" data-akce="resetSlib" style="font-size:0.85rem;color:var(--text-muted)">🧪 Reset slibu (test)</button>` : ''}
     <div class="admin-dropdown-oddelovac"></div>
     <button class="admin-dropdown-item odhlasit" data-akce="odhlasit">🚪 Odhlásit se</button>
   `;
@@ -230,6 +230,14 @@ async function _zobrazAdminPanel(loginId) {
       localStorage.removeItem('mb_firstlogin_' + loginId);
       dropdown.classList.remove('open');
       _zobrazToast('✅ Při příštím přihlášení se karta ukáže automaticky');
+      return;
+    }
+
+    if (akce === 'resetSlib') {
+      localStorage.removeItem('mb_slib_' + loginId);
+      localStorage.removeItem('mb_firstlogin_' + loginId);
+      dropdown.classList.remove('open');
+      _zobrazToast('🧪 Slib resetován — při příštím přihlášení se celý tok ukáže znovu');
       return;
     }
 
