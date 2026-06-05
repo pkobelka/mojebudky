@@ -523,7 +523,7 @@ html, body {
   .nav-links a { padding: 7px 12px; font-size: 1.05rem; }
   .btn-login { font-size: 1rem; padding: 9px 16px; }
   .search-box { display: none; }
-  .admin-dropdown { min-width: unset; width: auto; }
+  .admin-dropdown { min-width: unset; }
 }
 
 /* ── TABLET 900px ── */
@@ -551,7 +551,7 @@ html, body {
   .nav-podpora-btn { font-size: 1.1rem; padding: 7px 12px; }
   .btn-login { font-size: 1rem; padding: 9px 16px; }
   .budka-popup { min-width: 300px; }
-  .admin-dropdown { min-width: unset; position: fixed; top: 68px; left: 8px; right: 8px; width: auto; }
+  .admin-dropdown { min-width: unset; }
 }
 
 @media (max-width: 600px) {
@@ -642,8 +642,8 @@ html, body {
   .btn-zpet-mapa { font-size: 1rem; padding: 10px 18px; top: auto; bottom: 56px; }
   .btn-zpet-mapa--tr { display: none !important; }
 
-  /* Admin dropdown — full-width na mobilu */
-  .admin-dropdown { position: fixed; top: 58px; left: 8px; right: 8px; width: auto; min-width: unset; border-radius: 12px; max-height: 80vh; overflow-y: auto; }
+  /* Admin dropdown — full-width na mobilu (pozicování viz konec souboru) */
+  .admin-dropdown { min-width: unset; border-radius: 12px; }
   .admin-dropdown-hlavicka { padding: 12px 16px; font-size: 0.95rem; }
   .admin-dropdown-item { font-size: 1rem; padding: 12px 16px; }
   .admin-dropdown-sec { padding: 10px 16px 4px; font-size: 0.8rem; }
@@ -771,7 +771,8 @@ html, body {
 
 /* ── ADMIN DROPDOWN ── */
 #authNavArea { position: relative; }
-.admin-dropdown { display: none; position: absolute; top: calc(100% + 8px); right: 0; background: var(--panel-bg); border: 1px solid var(--accent-gold); border-radius: 14px; min-width: 300px; max-height: 80vh; overflow-y: auto; box-shadow: 0 10px 36px rgba(0,0,0,0.55); z-index: 1200; }
+/* Pozicování jen přes media queries níže — base rule nemá position aby ji nepřebilo */
+.admin-dropdown { display: none; background: var(--panel-bg); border: 1px solid var(--accent-gold); border-radius: 14px; min-width: 300px; max-height: 80vh; overflow-y: auto; box-shadow: 0 10px 36px rgba(0,0,0,0.55); z-index: 1200; }
 .admin-dropdown.open { display: block; }
 .admin-dropdown-hlavicka { padding: 14px 20px; font-size: 1.05rem; color: var(--accent-gold); border-bottom: 1px solid var(--panel-border); font-weight: 700; }
 .admin-dropdown-item { display: block; width: 100%; text-align: left; background: none; border: none; color: var(--text-light); font-size: 1.05rem; padding: 12px 20px; cursor: pointer; transition: background 0.15s; font-family: inherit; }
@@ -931,3 +932,14 @@ html, body {
   .slib-footer { padding: 12px 18px 22px; }
 }
 .eb-foto-smazat:hover { background: #a33; }
+
+/* ── ADMIN DROPDOWN POZICOVÁNÍ (musí být na konci — přebíjí base rule) ── */
+@media (min-width: 901px) {
+  .admin-dropdown { position: absolute; top: calc(100% + 8px); right: 0; }
+}
+@media (max-width: 900px) {
+  .admin-dropdown { position: fixed; top: 68px; left: 8px; right: 8px; width: auto; }
+}
+@media (max-width: 600px) {
+  .admin-dropdown { position: fixed; top: 58px; left: 8px; right: 8px; width: auto; }
+}
