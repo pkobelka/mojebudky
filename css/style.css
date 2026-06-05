@@ -621,7 +621,7 @@ html, body {
   .splash-box { padding: 40px 28px 36px; }
   .splash-nadpis { font-size: 2rem; }
   /* Přihlašovací toast */
-  .admin-toast { font-size: 1.4rem; padding: 32px 24px; border-radius: 20px; }
+  .admin-toast { font-size: 1.1rem; padding: 22px 18px; border-radius: 16px; max-width: 88vw; }
   .panel-title { font-size: 1rem; padding: 10px 14px; }
   .pribeh-druh { font-size: 1rem; }
   .pribeh-popis { font-size: 0.95rem; }
@@ -652,18 +652,20 @@ html, body {
   /* Admin banner — kompakt */
   .admin-banner { flex-wrap: wrap; gap: 6px; padding: 8px 12px; font-size: 0.82rem; }
 
-  /* Modaly na mobilu — overlay scrollovatelný, ne centrovaný */
-  .modal-overlay { align-items: flex-start; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 8px 4px; }
-  /* Karta správce — bez omezení výšky, scrolluje overlay */
-  .profil-box { width: 100% !important; max-height: none; overflow-y: visible; }
-  .profil-header { padding: 18px 16px; gap: 14px; }
-  .profil-foto { width: 72px; height: 72px; }
-  .profil-nadpis { font-size: 1.2rem; }
-  .profil-budka { font-size: 0.95rem; }
-  .profil-form { padding: 16px; gap: 14px; }
-  .profil-row { flex-direction: column; gap: 10px; }
+  /* Modaly na mobilu — overlay centrovaný, box sám scrolluje */
+  .modal-overlay { align-items: center; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 12px 6px; }
+  /* Karta správce — max výška viewportu, scroll uvnitř */
+  .profil-box { width: 100% !important; max-height: 92svh; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+  .profil-header { padding: 16px 14px; gap: 12px; }
+  .profil-foto { width: 64px; height: 64px; }
+  .profil-nadpis { font-size: 1.15rem; }
+  .profil-budka { font-size: 0.9rem; }
+  .profil-form { padding: 14px; gap: 12px; }
+  .profil-row { flex-direction: column; gap: 8px; }
   .profil-field--wide { flex: 1; min-width: unset; }
-  .profil-actions { padding: 14px 16px 20px; }
+  .profil-actions { padding: 12px 14px 18px; gap: 10px; }
+  .profil-btn-ulozit { padding: 12px 24px; font-size: 1.1rem; }
+  .profil-btn-zpet { padding: 10px 16px; font-size: 0.95rem; }
 
   /* Modaly obecně — plná šířka, větší padding */
   .modal-box { width: 98% !important; max-width: unset !important; padding: 2rem 1.4rem 1.8rem !important; }
