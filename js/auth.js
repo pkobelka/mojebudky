@@ -99,8 +99,20 @@ async function _nactiSpravciInfo() {
 }
 
 async function _overitPrihlaseni(id, heslo) {
-  const spravci = await _nactiAuthSpravce();
   const hash = await sha256hex(heslo);
+
+  // Firebase hesla mají přednost (umožňuje změnu hesla správcem)
+  const db = _getFirebaseDB();
+  if (db) {
+    try {
+      const snap = await db.ref(`hesla/${id}`).once('value');
+      const fbHash = snap.val();
+      if (fbHash) return fbHash === hash;
+    } catch {}
+  }
+
+  // Fallback na statický JSON
+  const spravci = await _nactiAuthSpravce();
   return spravci[id] && spravci[id] === hash;
 }
 
@@ -179,6 +191,7 @@ async function _zobrazAdminPanel(loginId) {
     <button class="admin-dropdown-item" data-akce="resetUvitani" title="Karta se při příštím přihlášení ukáže automaticky">🔄 Zobrazit kartu při příštím přihlášení</button>
     ${budkyMenuHTML}
     <button class="admin-dropdown-item pripravujeme" data-akce="clanek">📝 Vložit článek</button>
+    <button class="admin-dropdown-item" data-akce="zmenitHeslo">🔑 Změnit heslo</button>
     <button class="admin-dropdown-item" data-akce="napisAdminovi">✉️ Napsat adminovi</button>
     ${jeAdmin ? `<div class="admin-dropdown-oddelovac"></div><button class="admin-dropdown-item admin-item-zadosti" data-akce="zadosti">📬 Žádosti správců <span class="admin-badge" id="adminBadge" hidden>0</span></button><button class="admin-dropdown-item" data-akce="prehledSpravcu">👥 Přehled správců</button><button class="admin-dropdown-item" data-akce="resetSlib" style="font-size:0.85rem;color:var(--text-muted)">🧪 Reset slibu (test)</button>` : ''}
     <div class="admin-dropdown-oddelovac"></div>
@@ -271,6 +284,12 @@ async function _zobrazAdminPanel(loginId) {
       return;
     }
 
+    if (akce === 'zmenitHeslo') {
+      _zobrazZmenitHeslo(loginId);
+      dropdown.classList.remove('open');
+      return;
+    }
+
     if (item.classList.contains('pripravujeme')) {
       item.textContent = item.textContent.replace(' – Připravujeme…', '') + ' – Připravujeme…';
       setTimeout(() => { item.textContent = item.textContent.replace(' – Připravujeme…', ''); }, 2000);
@@ -294,6 +313,81 @@ function _sledujZadosti() {
     if (pocet > 0) { badge.textContent = pocet; badge.hidden = false; }
     else badge.hidden = true;
   });
+}
+
+function _zobrazZmenitHeslo(loginId) {
+  const existujici = document.getElementById('modalZmenitHeslo');
+  if (existujici) existujici.remove();
+
+  const modal = document.createElement('div');
+  modal.id = 'modalZmenitHeslo';
+  modal.className = 'modal-overlay';
+  modal.innerHTML = `
+    <div class="modal-box" style="max-width:420px;width:94%">
+      <button class="modal-zavrit" id="zmenitHesloZavrit">×</button>
+      <div class="profil-header"><div class="profil-header-text">
+        <div class="profil-nadpis">🔑 Změnit heslo</div>
+        <div class="profil-budka">ID: ${loginId}</div>
+      </div></div>
+      <div class="profil-form" style="padding:20px 24px">
+        <div class="profil-field profil-field--wide" style="margin-bottom:14px">
+          <label>Současné heslo</label>
+          <input type="password" id="zhStare" maxlength="20" autocomplete="current-password">
+        </div>
+        <div class="profil-field profil-field--wide" style="margin-bottom:14px">
+          <label>Nové heslo</label>
+          <input type="password" id="zhNove" maxlength="20" autocomplete="new-password">
+        </div>
+        <div class="profil-field profil-field--wide">
+          <label>Nové heslo znovu</label>
+          <input type="password" id="zhNove2" maxlength="20" autocomplete="new-password">
+        </div>
+        <div class="zh-error" id="zhError" hidden></div>
+      </div>
+      <div class="profil-actions">
+        <button class="profil-btn-ulozit" id="zhUlozit">🔑 Uložit nové heslo</button>
+        <span class="profil-ulozeno" id="zhMsg" hidden></span>
+      </div>
+    </div>`;
+  document.body.appendChild(modal);
+  document.getElementById('zmenitHesloZavrit').addEventListener('click', () => modal.remove());
+  modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
+  setTimeout(() => document.getElementById('zhStare').focus(), 80);
+
+  document.getElementById('zhUlozit').addEventListener('click', async () => {
+    const stare  = document.getElementById('zhStare').value;
+    const nove   = document.getElementById('zhNove').value;
+    const nove2  = document.getElementById('zhNove2').value;
+    const errEl  = document.getElementById('zhError');
+    const msgEl  = document.getElementById('zhMsg');
+
+    errEl.hidden = true;
+    function chyba(t) { errEl.textContent = t; errEl.hidden = false; }
+
+    if (!stare)           return chyba('Zadej současné heslo.');
+    if (nove.length < 4)  return chyba('Nové heslo musí mít alespoň 4 znaky.');
+    if (nove !== nove2)   return chyba('Nová hesla se neshodují.');
+    if (nove === stare)   return chyba('Nové heslo musí být jiné než současné.');
+
+    const ok = await _overitPrihlaseni(loginId, stare);
+    if (!ok) return chyba('Současné heslo není správné.');
+
+    const db = _getFirebaseDB();
+    if (!db) return chyba('Firebase není dostupná.');
+    try {
+      const novyHash = await sha256hex(nove);
+      await db.ref(`hesla/${loginId}`).set(novyHash);
+      msgEl.textContent = '✓ Heslo bylo změněno!';
+      msgEl.hidden = false;
+      document.getElementById('zhUlozit').disabled = true;
+      setTimeout(() => modal.remove(), 2000);
+    } catch {
+      chyba('Nepodařilo se uložit. Zkus to znovu.');
+    }
+  });
+
+  [document.getElementById('zhStare'), document.getElementById('zhNove'), document.getElementById('zhNove2')]
+    .forEach(el => el.addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('zhUlozit').click(); }));
 }
 
 async function _zobrazPrehledSpravcu() {

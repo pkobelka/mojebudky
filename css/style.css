@@ -831,6 +831,7 @@ html, body {
 .prehled-kontakt { font-size: 0.9rem; color: var(--accent-gold); text-decoration: none; }
 .prehled-kontakt:hover { text-decoration: underline; }
 .prehled-prazdny { font-size: 0.85rem; color: var(--text-muted); font-style: italic; }
+.zh-error { color: #ff9090; font-size: 0.9rem; margin-top: 10px; padding: 8px 10px; background: rgba(255,80,80,0.1); border-radius: 6px; }
 .zadost-cas { color: var(--text-muted); font-size: 0.82rem; }
 .zadost-btn-ok { margin-top: 8px; background: #2d7a2d; border: none; border-radius: 6px; color: #fff; padding: 6px 16px; font-size: 0.9rem; cursor: pointer; }
 .zadost-btn-ok:hover { background: #3aaa3a; }
