@@ -179,6 +179,7 @@ async function _zobrazAdminPanel(loginId) {
     <button class="admin-dropdown-item" data-akce="resetUvitani" title="Karta se při příštím přihlášení ukáže automaticky">🔄 Zobrazit kartu při příštím přihlášení</button>
     ${budkyMenuHTML}
     <button class="admin-dropdown-item pripravujeme" data-akce="clanek">📝 Vložit článek</button>
+    <button class="admin-dropdown-item" data-akce="napisAdminovi">✉️ Napsat adminovi</button>
     ${jeAdmin ? `<div class="admin-dropdown-oddelovac"></div><button class="admin-dropdown-item admin-item-zadosti" data-akce="zadosti">📬 Žádosti správců <span class="admin-badge" id="adminBadge" hidden>0</span></button><button class="admin-dropdown-item" data-akce="resetSlib" style="font-size:0.85rem;color:var(--text-muted)">🧪 Reset slibu (test)</button>` : ''}
     <div class="admin-dropdown-oddelovac"></div>
     <button class="admin-dropdown-item odhlasit" data-akce="odhlasit">🚪 Odhlásit se</button>
@@ -258,6 +259,12 @@ async function _zobrazAdminPanel(loginId) {
       return;
     }
 
+    if (akce === 'napisAdminovi') {
+      _zobrazNapisAdminovi(loginId, jmeno);
+      dropdown.classList.remove('open');
+      return;
+    }
+
     if (item.classList.contains('pripravujeme')) {
       item.textContent = item.textContent.replace(' – Připravujeme…', '') + ' – Připravujeme…';
       setTimeout(() => { item.textContent = item.textContent.replace(' – Připravujeme…', ''); }, 2000);
@@ -280,6 +287,59 @@ function _sledujZadosti() {
     if (!badge) return;
     if (pocet > 0) { badge.textContent = pocet; badge.hidden = false; }
     else badge.hidden = true;
+  });
+}
+
+function _zobrazNapisAdminovi(loginId, jmeno) {
+  const existujici = document.getElementById('modalNapisAdmin');
+  if (existujici) existujici.remove();
+
+  const modal = document.createElement('div');
+  modal.id = 'modalNapisAdmin';
+  modal.className = 'modal-overlay';
+  modal.innerHTML = `
+    <div class="modal-box" style="max-width:480px;width:94%">
+      <button class="modal-zavrit" id="napisAdminZavrit">×</button>
+      <div class="profil-header"><div class="profil-header-text">
+        <div class="profil-nadpis">✉️ Napsat adminovi</div>
+        <div class="profil-budka">Zpráva pro Petra Kobelku</div>
+      </div></div>
+      <div class="profil-form">
+        <div class="profil-field profil-field--wide">
+          <label>Zpráva</label>
+          <textarea id="napisAdminText" rows="5" placeholder="Sem napiš svůj dotaz nebo připomínku…" style="width:100%;box-sizing:border-box;background:var(--panel-bg);color:var(--text-light);border:1px solid var(--panel-border);border-radius:8px;padding:10px;font-size:1rem;resize:vertical"></textarea>
+        </div>
+      </div>
+      <div class="profil-actions">
+        <button class="profil-btn-ulozit" id="napisAdminOdeslat">📨 Odeslat zprávu</button>
+        <span class="profil-ulozeno" id="napisAdminMsg" hidden></span>
+      </div>
+    </div>`;
+  document.body.appendChild(modal);
+  document.getElementById('napisAdminZavrit').addEventListener('click', () => modal.remove());
+  modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
+  setTimeout(() => document.getElementById('napisAdminText').focus(), 100);
+
+  document.getElementById('napisAdminOdeslat').addEventListener('click', async () => {
+    const text = document.getElementById('napisAdminText').value.trim();
+    const msg  = document.getElementById('napisAdminMsg');
+    if (!text) { msg.textContent = '⚠ Napiš něco…'; msg.hidden = false; return; }
+    const db = _getFirebaseDB();
+    if (!db) { msg.textContent = '⚠ Firebase není dostupná'; msg.hidden = false; return; }
+    try {
+      await db.ref('admin_requests/zpravy').push({
+        loginId, jmeno, text,
+        ts: firebase.database.ServerValue.TIMESTAMP,
+        vyrizeno: false
+      });
+      msg.textContent = '✓ Zpráva odeslána!';
+      msg.hidden = false;
+      document.getElementById('napisAdminOdeslat').disabled = true;
+      setTimeout(() => modal.remove(), 2000);
+    } catch {
+      msg.textContent = '⚠ Nepodařilo se odeslat';
+      msg.hidden = false;
+    }
   });
 }
 
@@ -308,11 +368,12 @@ function _zobrazZadosti() {
     const data = snap.val() || {};
     const container = document.getElementById('zadostiObsah');
     let html = '';
-    ['gps', 'druhy'].forEach(typ => {
+    ['gps', 'druhy', 'zpravy'].forEach(typ => {
       const kat = data[typ] || {};
       const polozky = Object.entries(kat).filter(([,v]) => !v.vyrizeno);
       if (!polozky.length) return;
-      html += `<div class="zadosti-skupina"><div class="zadosti-typ">${typ === 'gps' ? '📍 Opravy GPS' : '🐦 Nové druhy'}</div>`;
+      const typLabel = typ === 'gps' ? '📍 Opravy GPS' : typ === 'druhy' ? '🐦 Nové druhy' : '✉️ Zprávy správců';
+      html += `<div class="zadosti-skupina"><div class="zadosti-typ">${typLabel}</div>`;
       polozky.forEach(([klic, z]) => {
         const cas = z.ts ? new Date(z.ts).toLocaleString('cs-CZ') : '';
         if (typ === 'gps') {
@@ -322,10 +383,16 @@ function _zobrazZadosti() {
             <span class="zadost-cas">${cas}</span>
             <button class="zadost-btn-ok" data-typ="${typ}" data-klic="${klic}">✓ Vyřízeno</button>
           </div>`;
-        } else {
+        } else if (typ === 'druhy') {
           html += `<div class="zadost-item" data-typ="${typ}" data-klic="${klic}">
             <strong>Druh: ${z.druh}</strong> – správce ${z.spravce}<br>
             <span class="zadost-cas">${cas}</span>
+            <button class="zadost-btn-ok" data-typ="${typ}" data-klic="${klic}">✓ Vyřízeno</button>
+          </div>`;
+        } else {
+          html += `<div class="zadost-item" data-typ="${typ}" data-klic="${klic}">
+            <strong>${z.jmeno || z.loginId}</strong> <span class="zadost-cas">${cas}</span><br>
+            <span class="zadost-detail zadost-zprava-text">${z.text ? z.text.replace(/</g,'&lt;') : ''}</span><br>
             <button class="zadost-btn-ok" data-typ="${typ}" data-klic="${klic}">✓ Vyřízeno</button>
           </div>`;
         }
