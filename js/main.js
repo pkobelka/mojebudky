@@ -677,7 +677,23 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!item) return;
     const jeOtevrena = item.classList.contains('pod-open');
     document.querySelectorAll('.podekovani-item--ma-text.pod-open').forEach(el => el.classList.remove('pod-open'));
-    if (!jeOtevrena) item.classList.add('pod-open');
+    if (!jeOtevrena) {
+      item.classList.add('pod-open');
+      const bublina = item.querySelector('.pod-bublina');
+      if (bublina) requestAnimationFrame(() => {
+        bublina.style.left = '50%';
+        bublina.style.transform = 'translateX(-50%)';
+        const r = bublina.getBoundingClientRect();
+        const vw = window.innerWidth;
+        if (r.right > vw - 8) {
+          bublina.style.left = `calc(50% - ${r.right - vw + 8}px)`;
+          bublina.style.transform = 'none';
+        } else if (r.left < 8) {
+          bublina.style.left = `calc(50% + ${8 - r.left}px)`;
+          bublina.style.transform = 'none';
+        }
+      });
+    }
   });
 
   // Desatero správce → modal
