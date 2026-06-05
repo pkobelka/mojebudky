@@ -135,8 +135,15 @@ async function _zobrazAdminPanel(loginId) {
   _zobrazToast(`Ahoj ${osloveni}, vítám Tě v komunitě správců mých budek! 🌿 Petr`);
 
   const jePoprve = !localStorage.getItem('mb_firstlogin_' + loginId);
+  const jeSlib   = !!localStorage.getItem('mb_slib_' + loginId);
   if (jePoprve) {
-    setTimeout(() => _zobrazProfilSpravce(loginId, spravceInfo, budkaText), 7000);
+    if (!jeSlib) {
+      // První přihlášení bez potvrzeného slibu → nejdřív slib, pak profil
+      setTimeout(() => _zobrazSlibSpravce(loginId, spravceInfo, budkaText), 4000);
+    } else {
+      // Slib již potvrzen, ale profil má být znovu zobrazen (resetUvitani)
+      setTimeout(() => _zobrazProfilSpravce(loginId, spravceInfo, budkaText), 7000);
+    }
   }
 
   if (typeof window._presenceSetAdmin === 'function') window._presenceSetAdmin(true);
@@ -335,6 +342,47 @@ function _nacistProfilLocal(loginId) {
 
 function _ulozitProfilLocal(loginId, data) {
   localStorage.setItem('mb_profil_' + loginId, JSON.stringify(data));
+}
+
+function _zobrazSlibSpravce(loginId, spravceInfo, budkaText) {
+  const existujici = document.getElementById('modalSlib');
+  if (existujici) existujici.remove();
+
+  const modal = document.createElement('div');
+  modal.id = 'modalSlib';
+  modal.className = 'modal-overlay profil-overlay';
+  modal.innerHTML = `
+    <div class="modal-box slib-box">
+      <div class="slib-header">
+        <div class="slib-header-nadpis">🌿 Slib správce MojeBudky.cz</div>
+        <div class="slib-header-sub">${budkaText}</div>
+      </div>
+      <div class="slib-body">
+        <p class="slib-uvod">
+          Vítejte v komunitě správců! Vaše záznamy pomáhají sledovat ptačí populace
+          po celé České a Slovenské republice. Děkujeme, že se o budku staráte. 🐦
+        </p>
+        <div class="slib-zavazky">
+          <div class="slib-bod"><span class="slib-bod-ikona">🔍</span><span>Alespoň jednou ročně provést kontrolu budky</span></div>
+          <div class="slib-bod"><span class="slib-bod-ikona">📝</span><span>Zapsat výsledky kontroly a čištění do aplikace</span></div>
+          <div class="slib-bod"><span class="slib-bod-ikona">📧</span><span>Udržovat aktuální kontaktní e-mail — ozveme se jen výjimečně</span></div>
+          <div class="slib-bod"><span class="slib-bod-ikona">🔔</span><span>Hlásit důležité změny: přemístění budky, poškození, zánik stanoviště</span></div>
+        </div>
+        <p class="slib-podpis">Za komunitu MojeBudky.cz děkuji!<br><strong>Petr Kobelka</strong></p>
+      </div>
+      <div class="slib-footer">
+        <button class="slib-btn-prijimam" id="slibPrijimam">✅ Beru na vědomí a přijímám závazky správce</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(modal);
+  setTimeout(() => { const b = modal.querySelector('.slib-box'); if (b) b.scrollTop = 0; }, 80);
+
+  document.getElementById('slibPrijimam').addEventListener('click', () => {
+    localStorage.setItem('mb_slib_' + loginId, '1');
+    modal.remove();
+    _zobrazProfilSpravce(loginId, spravceInfo, budkaText);
+  });
 }
 
 function _zobrazProfilSpravce(loginId, info, budkaText) {
