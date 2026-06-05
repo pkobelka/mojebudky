@@ -464,7 +464,7 @@ function _zobrazProfilSpravce(loginId, info, budkaText) {
           </div>
           <div class="profil-field profil-field--wide">
             <label>Datum narození
-              <span class="profil-hint profil-narozeniny" title="Popřejeme ti k narozeninám! 🎂">🎂 popřejeme!</span>
+              <span class="profil-hint profil-narozeniny" title="Popřejeme Ti k narozeninám! 🎂">🎂 popřejeme!</span>
             </label>
             <input type="date" id="pDatum" value="${d.datum_narozeni || ''}">
           </div>
