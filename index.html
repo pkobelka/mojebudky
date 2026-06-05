@@ -8,7 +8,7 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=20260605z">
+  <link rel="stylesheet" href="css/style.css?v=20260606c">
   <link rel="icon" type="image/svg+xml" href="img/favicon.svg">
   <link rel="icon" type="image/png" sizes="512x512" href="img/icon-512.png">
   <link rel="icon" type="image/png" sizes="192x192" href="img/icon-192.png">
@@ -81,6 +81,8 @@
     <div class="info-bar" id="infoBar" role="status" aria-live="polite">
       <span class="bar-left">Načítám...</span>
     </div>
+    <!-- Online pruh pod info-barem — jen mobil -->
+    <div class="online-mobile-bar" id="onlineMobile">🟢 Online: <strong>…</strong></div>
   </header>
 
   <!-- Hlavní obsah: 3 sloupce -->
@@ -306,7 +308,7 @@
 <script src="js/mapa.js?v=20260606c"></script>
 <script src="js/main.js?v=20260605e"></script>
 <script src="js/auth.js?v=20260605y"></script>
-<script src="js/presence.js?v=20260605y"></script>
+<script src="js/presence.js?v=20260606c"></script>
 <script>
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('/mojebudky/firebase-messaging-sw.js')

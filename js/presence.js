@@ -37,16 +37,21 @@
     }
     el.innerHTML = txt;
 
+    const mob = document.getElementById('onlineMobile');
+    if (mob) mob.innerHTML = txt;
+
     const jeAdmin = window._aktualniSpravce && window._aktualniSpravce.jeAdmin;
     el.style.cursor = jeAdmin ? 'pointer' : '';
     el.title = jeAdmin ? 'Klikni pro seznam online uživatelů' : '';
+    if (mob) { mob.style.cursor = jeAdmin ? 'pointer' : ''; mob.title = el.title; }
   });
 
   document.addEventListener('click', e => {
     const el = document.getElementById('onlinePocet');
     const popup = document.getElementById('onlinePopup');
 
-    if (el && el.contains(e.target)) {
+    const mob = document.getElementById('onlineMobile');
+    if ((el && el.contains(e.target)) || (mob && mob.contains(e.target))) {
       const jeAdmin = window._aktualniSpravce && window._aktualniSpravce.jeAdmin;
       if (!jeAdmin) return;
 
