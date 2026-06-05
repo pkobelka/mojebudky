@@ -425,11 +425,9 @@ function _zobrazProfilSpravce(loginId, info, budkaText) {
 
       <div class="profil-header">
         <div class="profil-foto-wrap">
-          <img id="profilFotoNahled" src="${d.foto || 'img/Favikon.png'}" class="profil-foto" alt="Foto správce">
-          <label class="profil-foto-btn" title="Nahrát nebo vyfotit">
-            📷
-            <input type="file" id="profilFotoInput" accept="image/*" style="display:none">
-          </label>
+          <img id="profilFotoNahled" src="${d.foto || 'img/Favikon.png'}" class="profil-foto profil-foto--klikatelna" alt="Foto správce" title="Kliknout pro změnu fotky">
+          <button type="button" class="profil-foto-btn" id="profilFotoBtn" title="Nahrát nebo vyfotit">📷</button>
+          <input type="file" id="profilFotoInput" accept="image/*" style="position:absolute;opacity:0;pointer-events:none;width:0;height:0">
         </div>
         <div class="profil-header-text">
           <div class="profil-nadpis">🪪 Karta správce</div>
@@ -515,7 +513,11 @@ function _zobrazProfilSpravce(loginId, info, budkaText) {
   document.getElementById('profilZavrit').addEventListener('click', () => modal.remove());
   modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
 
-  document.getElementById('profilFotoInput').addEventListener('change', e => {
+  const profilFotoInput = document.getElementById('profilFotoInput');
+  document.getElementById('profilFotoBtn').addEventListener('click', () => profilFotoInput.click());
+  document.getElementById('profilFotoNahled').addEventListener('click', () => profilFotoInput.click());
+
+  profilFotoInput.addEventListener('change', e => {
     const file = e.target.files[0];
     if (!file) return;
     const reader = new FileReader();

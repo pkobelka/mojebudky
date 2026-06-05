@@ -715,6 +715,8 @@ html, body {
 .profil-foto { width: 110px; height: 110px; border-radius: 50%; object-fit: cover; border: 3px solid var(--accent-gold); box-shadow: 0 4px 16px rgba(0,0,0,0.5); display: block; }
 .profil-foto-btn { position: absolute; bottom: 2px; right: 2px; background: var(--orange); color: #fff; border-radius: 50%; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; font-size: 1rem; cursor: pointer; border: 2px solid var(--panel-bg); transition: background 0.2s; }
 .profil-foto-btn:hover { background: var(--orange-light); }
+.profil-foto--klikatelna { cursor: pointer; }
+.profil-foto--klikatelna:hover { opacity: 0.85; transition: opacity 0.15s; }
 .profil-header-text { flex: 1; }
 .profil-nadpis { color: var(--accent-gold); font-size: 1.5rem; font-weight: 700; margin-bottom: 6px; }
 .profil-budka { color: var(--text-light); font-size: 1.1rem; margin-bottom: 4px; }
