@@ -211,7 +211,7 @@ function _formatDatum(ts) {
 
 function _spravceStav(ts, stavBudky) {
   const datum = ts ? _formatDatum(ts) : '';
-  if (stavBudky === 'osidlena') return { emoji: '😊', text: 'Hnízdí!',    cls: 'stav-aktivni',   datum };
+  if (stavBudky === 'osidlena') return { emoji: '😊', text: '',           cls: 'stav-aktivni',   datum };
   if (ts && (Date.now() - ts) / 86400000 < 365)
                                return { emoji: '👍', text: 'Aktivní',    cls: 'stav-aktivni',   datum };
   return                              { emoji: '👎', text: 'Nekomunikuje', cls: 'stav-neaktivni', datum };
