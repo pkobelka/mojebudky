@@ -65,7 +65,7 @@ html, body {
 .search-box { display: flex; background: rgba(255,255,255,0.12); border-radius: 20px; overflow: hidden; }
 .search-box input { background: none; border: none; color: var(--text-light); padding: 10px 16px; font-size: 1.1rem; outline: none; width: 220px; }
 .search-box input::placeholder { color: var(--text-muted); }
-.search-box button { background: none; border: none; color: var(--text-muted); padding: 8px 12px; cursor: pointer; font-size: 1.1rem; }
+.search-box button { background: none; border: none; color: var(--text-muted); padding: 8px 12px; cursor: pointer; font-size: 1.1rem; min-width: 44px; min-height: 44px; touch-action: manipulation; }
 .search-box button:hover { color: var(--text-light); }
 .btn-login { background: var(--orange); color: white; text-decoration: none; padding: 10px 22px; border-radius: 8px; font-size: 1.1rem; font-weight: 600; white-space: nowrap; transition: background 0.2s; border: none; cursor: pointer; }
 .btn-login:hover { background: var(--orange-dark); }
@@ -357,7 +357,7 @@ html, body {
 .popup-foto { padding: 0; position: relative; }
 .popup-foto img { width: 100%; display: block; height: 200px; object-fit: cover; }
 .foto-nav { position: absolute; bottom: 0; left: 0; right: 0; display: flex; align-items: center; justify-content: center; gap: 12px; padding: 8px 0; background: linear-gradient(transparent, rgba(0,0,0,0.6)); }
-.foto-nav-btn { background: rgba(255,255,255,0.9); border: none; border-radius: 50%; width: 38px; height: 38px; font-size: 1.7rem; line-height: 1; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.15s; padding: 0; box-shadow: 0 2px 6px rgba(0,0,0,0.3); }
+.foto-nav-btn { background: rgba(255,255,255,0.9); border: none; border-radius: 50%; width: 44px; height: 44px; font-size: 1.7rem; line-height: 1; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.15s; padding: 0; box-shadow: 0 2px 6px rgba(0,0,0,0.3); touch-action: manipulation; }
 .foto-nav-btn:hover:not(:disabled) { background: #fff; }
 .foto-nav-btn:disabled { opacity: 0.3; cursor: default; }
 .foto-counter { color: #fff; font-size: 0.95rem; font-weight: 700; text-shadow: 0 1px 3px rgba(0,0,0,0.8); min-width: 40px; text-align: center; }
@@ -413,7 +413,7 @@ html, body {
 .btn-zpet-mapa--tr { left: auto; right: 16px; }
 
 /* ── HAMBURGER ── */
-.nav-hamburger { display: none; flex-direction: column; justify-content: center; gap: 5px; background: none; border: none; cursor: pointer; padding: 6px; margin-left: 6px; }
+.nav-hamburger { display: none; flex-direction: column; justify-content: center; gap: 5px; background: none; border: none; cursor: pointer; padding: 6px; margin-left: 6px; min-width: 44px; min-height: 44px; touch-action: manipulation; }
 .nav-napsat-mobile { display: none; }
 .nav-podpora-mobile { display: none; }
 .nav-hamburger span { display: block; width: 22px; height: 2px; background: var(--text-light); border-radius: 2px; transition: all 0.25s; }
@@ -823,7 +823,7 @@ html, body {
 .zadost-detail { color: var(--accent-gold); }
 .zadost-zprava-text { color: var(--text-light); white-space: pre-wrap; }
 .zadost-btn-row { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
-.zadost-btn-zamit { background: #7a2020; color: #fff; border: none; border-radius: 6px; padding: 6px 14px; font-size: 0.9rem; cursor: pointer; }
+.zadost-btn-zamit { background: #7a2020; color: #fff; border: none; border-radius: 6px; padding: 6px 14px; font-size: 0.9rem; cursor: pointer; min-height: 44px; touch-action: manipulation; }
 .zadost-btn-zamit:hover { background: #a03030; }
 .prehled-box .profil-header { flex-shrink: 0; }
 .prehled-filtry { display: flex; gap: 8px; padding: 10px 16px 4px; flex-wrap: wrap; flex-shrink: 0; }
@@ -861,7 +861,7 @@ html, body {
 .popup-spravce-stav { font-size: 0.85rem; font-weight: normal; margin-left: 4px; }
 .popup-aktivni-datum { color: var(--text-muted); font-size: 0.83rem; }
 .zadost-cas { color: var(--text-muted); font-size: 0.82rem; }
-.zadost-btn-ok { margin-top: 8px; background: #2d7a2d; border: none; border-radius: 6px; color: #fff; padding: 6px 16px; font-size: 0.9rem; cursor: pointer; }
+.zadost-btn-ok { margin-top: 8px; background: #2d7a2d; border: none; border-radius: 6px; color: #fff; padding: 6px 16px; font-size: 0.9rem; cursor: pointer; min-height: 44px; touch-action: manipulation; }
 .zadost-btn-ok:hover { background: #3aaa3a; }
 
 /* ── UVÍTACÍ MODAL (první přihlášení) ── */
@@ -995,6 +995,18 @@ html, body {
 }
 .eb-foto-smazat:hover { background: #a33; }
 
+/* ── VELMI ÚZKÉ OBRAZOVKY (360px a méně) ── */
+@media (max-width: 360px) {
+  .navbar { padding: 0 8px; gap: 4px; }
+  .logo-text { display: none; }
+  .logo-autor { display: none; }
+  .nav-logo { padding: 3px 6px; gap: 6px; border: none; background: none; }
+  .btn-login { font-size: 0.78rem; padding: 6px 8px; max-width: 120px; overflow: hidden; text-overflow: ellipsis; }
+  .stats-grid { grid-template-columns: 1fr 1fr; gap: 4px; padding: 6px; }
+  .stat-value { font-size: 1.6rem; }
+  .stat-label { font-size: 0.7rem; }
+}
+
 /* ── ADMIN DROPDOWN POZICOVÁNÍ (musí být na konci — přebíjí base rule) ── */
 @media (min-width: 901px) {
   .admin-dropdown { position: absolute; top: calc(100% + 8px); right: 0; }
@@ -1039,7 +1051,7 @@ html, body {
 .zprava-neprectena { border-left: 3px solid #e53935 !important; background: rgba(229,57,53,0.08) !important; }
 .zpravy-nav-badge--prazdny { background: transparent !important; color: var(--text-muted) !important; animation: none !important; font-size: 1rem !important; padding: 0 2px !important; }
 .zpravy-nova-bublina { display: inline-block; background: #e53935; color: #fff; border-radius: 8px; font-size: 0.72rem; font-weight: 700; padding: 1px 7px; margin-left: 6px; text-transform: uppercase; vertical-align: middle; }
-.zadost-btn-odpovedet { background: rgba(212,160,64,0.15); color: var(--accent-gold); border: 1px solid rgba(212,160,64,0.4); border-radius: 6px; padding: 5px 13px; font-size: 0.88rem; cursor: pointer; transition: background 0.15s; }
+.zadost-btn-odpovedet { background: rgba(212,160,64,0.15); color: var(--accent-gold); border: 1px solid rgba(212,160,64,0.4); border-radius: 6px; padding: 5px 13px; font-size: 0.88rem; cursor: pointer; transition: background 0.15s; min-height: 44px; touch-action: manipulation; }
 .zadost-btn-odpovedet:hover { background: rgba(212,160,64,0.28); }
 .zadost-odpoved-wrap { margin-top: 10px; display: flex; flex-direction: column; gap: 8px; }
 .zadost-odpoved-ta { width: 100%; box-sizing: border-box; background: rgba(255,255,255,0.07); border: 1px solid var(--panel-border); border-radius: 8px; color: var(--text-light); font-size: 0.95rem; padding: 9px 12px; resize: vertical; font-family: inherit; line-height: 1.5; outline: none; }
