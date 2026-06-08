@@ -697,18 +697,13 @@ function inicializujSplash() {
   const splash = document.getElementById('splashScreen');
   if (!splash) return;
 
-  const mesic = new Date().getMonth() + 1;
   const navstev = parseInt(localStorage.getItem('mb_visit_count') || '0', 10);
-  const poprve = navstev === 0;
 
   let text;
-  if (poprve) {
+  if (navstev === 0) {
     text = { nadpis: 'Ahoj, naše budky jsou všude okolo!', podnadpis: 'Pojď s námi sledovat ptačí život', ikony: '🤝 👏 👍' };
   } else {
-    const jeSezona = navstev % 4 === 0;
-    text = jeSezona
-      ? _SPLASH_SEZONNI[mesic]
-      : _SPLASH_TEXTY[navstev % _SPLASH_TEXTY.length];
+    text = _SPLASH_TEXTY[Math.floor(Math.random() * _SPLASH_TEXTY.length)];
   }
 
   if (text) {
