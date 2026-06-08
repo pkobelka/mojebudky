@@ -668,29 +668,104 @@ function inicializujFullscreenMapu() {
   if (btnZpetTR) btnZpetTR.addEventListener('click', e => { e.stopPropagation(); sbalMapu(); });
 }
 
-const _SPLASH_SEZONNI = {
-  1:  { nadpis: 'Nový rok, nové hnízdění!',        podnadpis: 'Budky čekají na jarní obsazení',         ikony: '🎆 🐦 ❄️' },
-  2:  { nadpis: 'Jaro klepe na dveře!',             podnadpis: 'Ptáci už se chystají na hnízdění',       ikony: '🌸 🐦 ☀️' },
-  3:  { nadpis: 'Jaro je tady!',                    podnadpis: 'Sleduj první obsazení budek',             ikony: '🌱 🐦 🌸' },
-  4:  { nadpis: 'Hnízdění v plném proudu!',         podnadpis: 'Kolik budek je obsazených?',             ikony: '🥚 🐦 🌿' },
-  5:  { nadpis: 'Mláďata jsou na cestě!',           podnadpis: 'Největší hnízdící sezóna roku',          ikony: '🐣 🌸 🌿' },
-  6:  { nadpis: 'Léto klepe na dveře budek!',       podnadpis: 'Příroda je v plném rozkvětu',            ikony: '☀️ 🌻 🐦' },
-  7:  { nadpis: 'Léto, teplo a plné budky!',        podnadpis: 'Krásný čas sledovat přírodu',            ikony: '☀️ 🌿 🐦' },
-  8:  { nadpis: 'Poslední letní hnízdění...',       podnadpis: 'Ještě je čas na překvapení',             ikony: '🌻 🍃 🐦' },
-  9:  { nadpis: 'Podzim klepe na dveře!',           podnadpis: 'Budky se připravují na zimu',            ikony: '🍂 🍁 🐦' },
-  10: { nadpis: 'Říjen – čas inventury budek!',     podnadpis: 'Jak se daří naší síti?',                 ikony: '🍂 📋 🏡' },
-  11: { nadpis: 'Zima se blíží...',                 podnadpis: 'Podzimní klid před velkou zimou',        ikony: '🍁 ❄️ 🏡' },
-  12: { nadpis: 'Budky v zimním spánku...',         podnadpis: 'Ale my nezaspíme ani v prosinci!',       ikony: '❄️ 🏡 🌨️' },
-};
-
 const _SPLASH_TEXTY = [
-  { nadpis: 'Budky čekají na pozorovatele!',     podnadpis: 'Podívej se, co je nového na mapě',     ikony: '🗺️ 🐦 🌿' },
-  { nadpis: 'Každá budka má svůj příběh.',       podnadpis: 'Příroda nespí, ani my!',               ikony: '🌱 🏡 👁️' },
-  { nadpis: 'Díky, že se vracíš!',               podnadpis: 'Společně sledujeme ptačí svět',        ikony: '❤️ 🐦 🌍' },
-  { nadpis: 'Co nového v budkách?',              podnadpis: 'Mapa se aktualizuje v reálném čase',   ikony: '📍 🔔 ✨' },
-  { nadpis: 'Každý pohled do budky se počítá!',  podnadpis: 'Tvůj zájem pomáhá ptactvu',           ikony: '👀 🌿 💚' },
-  { nadpis: 'Příroda říká: Vítej zpět!',         podnadpis: 'Sleduj, hnízdí a sdílej',              ikony: '🌳 🐦 🏡' },
-  { nadpis: 'Naše budky jsou všude okolo!',      podnadpis: 'Pojď s námi sledovat ptačí život',     ikony: '🤝 👏 👍' },
+  'Vítej zpátky – ptáci tě nepřestali sledovat.',
+  'Díky, že se staráš o místo, kde to žije.',
+  'Každá budka se počítá. Díky, že jsi tady.',
+  'Ptáci to bez tebe nedají.',
+  'Vstup povolen. Budky čekají.',
+  'Něco tu na tebe pípá.',
+  'Vítej tam, kde mají přehled i sýkorky.',
+  'Tady se ví, kdo kde hnízdí.',
+  'Ptačí realitní trh tě vítá.',
+  'Díky, že pomáháš udržet budky v kondici.',
+  'Všechno je připravené. Jdeme na to.',
+  'V klidu… budky nikam neodletí.',
+  'Nebo možná jo. Radši to zkontroluj.',
+  'Vítej zpět. Přehled čeká.',
+  'Ptačí inspekce začíná právě teď.',
+  'Dneska to vypadá na dobrý den pro kontrolu.',
+  'Budky hlášeny, systém připraven.',
+  'Kdo má přehled, ten nepanikaří.',
+  'A kdo nemá, ten ho teď získá.',
+  'Vítej v systému, kde i ptáci mají pořádek.',
+  'Díky, že ses vrátil. Už jsme tě čekali.',
+  'Ano, i dnes se někde něco děje.',
+  'Najdeš to tady.',
+  'Všechno důležité na jednom místě.',
+  'Bez keře kolem – jdeme na to.',
+  'Malý krok pro tebe, velký pro budky.',
+  'Tady začíná přehled.',
+  'A někdy i překvapení.',
+  'Jsi připraven? Oni už ano.',
+  'Budky připraveny, ptáci v pozoru.',
+  'Díky, že jim věnuješ čas.',
+  'Bez tebe by to byla jen prázdná prkna.',
+  'Vítej zpátky.',
+  'Zkontroluj, co je nového v korunách stromů.',
+  'Něco se změnilo. Možná víc, než čekáš.',
+  'Ptačí svět se nezastavil.',
+  'Naštěstí ty taky ne.',
+  'Tady máš přehled.',
+  'Každé kliknutí pomáhá.',
+  'Dneska to zvládneš levou zadní.',
+  'I pravou, kdyby bylo potřeba.',
+  'Vítej.',
+  'Teď začíná akce.',
+  'Nebo aspoň kontrola 😄',
+  'Klid… všechno má svoje místo.',
+  'A když nemá, ty to spravíš.',
+  'Díky za tvoji péči.',
+  'Ptáci by ti zatleskali.',
+  'Kdyby měli ruce.',
+  'Nebo Wi‑Fi.',
+  'Ale mají tebe.',
+  'Takže dobrý.',
+  'Vítej v MojeBudky.',
+  'Tady se z chaosu stává přehled.',
+  'A z přehledu klid.',
+  'Něco tu čeká na tvoji pozornost.',
+  'Možná víc věcí.',
+  'Ale žádný stres.',
+  'Jdeš na to postupně.',
+  'Jako vždycky.',
+  'Díky, že pomáháš přírodě dávat smysl.',
+  'Ptačí komunita si toho (asi) váží.',
+  'Minimálně ti neutekla.',
+  'Zatím.',
+  'Vítej zpátky.',
+  'Dneska bude produktivní den.',
+  'I kdyby jen trochu.',
+  'A to stačí.',
+  'Budky jsou tvůj revír.',
+  'Zkontroluj ho.',
+  'Všechno běží.',
+  'Teď jsi na tahu ty.',
+  'Nepodceňuj malé detaily.',
+  'Ptáci to určitě nedělají.',
+  'Díky, že držíš přehled.',
+  'Bez tebe by to bylo… no… divoké.',
+  'Hodně divoké.',
+  'Vítej v systému, který dává smysl.',
+  'A občas i radost.',
+  'Ano, i to se počítá.',
+  'Jsi zpátky.',
+  'A to je hlavní.',
+  'Tak co dnes zjistíš?',
+  'Kdo kde bydlí?',
+  'Kdo se nastěhoval bez smlouvy?',
+  'Realita budek je neúprosná 😄',
+  'Ale ty to zvládneš.',
+  'Jako vždycky.',
+  'Díky, že se staráš.',
+  'Má to smysl.',
+  'I když to někdy vypadá jen jako čísla.',
+  'Za těmi čísly něco žije.',
+  'A ty to víš.',
+  'Vítej zpátky.',
+  'Přehled čeká.',
+  'Klikni a uvidíš.',
+  'Možná tě překvapí.',
 ];
 
 function inicializujSplash() {
@@ -699,20 +774,19 @@ function inicializujSplash() {
 
   const navstev = parseInt(localStorage.getItem('mb_visit_count') || '0', 10);
 
-  let text;
-  if (navstev === 0) {
-    text = { nadpis: 'Ahoj, naše budky jsou všude okolo!', podnadpis: 'Pojď s námi sledovat ptačí život', ikony: '🤝 👏 👍' };
-  } else {
-    text = _SPLASH_TEXTY[Math.floor(Math.random() * _SPLASH_TEXTY.length)];
-  }
+  const elN = splash.querySelector('.splash-nadpis');
+  const elP = splash.querySelector('.splash-podnadpis');
+  const elI = splash.querySelector('.splash-ikony');
 
-  if (text) {
-    const elN = splash.querySelector('.splash-nadpis');
-    const elP = splash.querySelector('.splash-podnadpis');
-    const elI = splash.querySelector('.splash-ikony');
-    if (elN) elN.textContent = text.nadpis;
-    if (elP) elP.textContent = text.podnadpis;
-    if (elI) elI.textContent = text.ikony;
+  if (navstev === 0) {
+    if (elN) elN.textContent = 'Ahoj, naše budky jsou všude okolo!';
+    if (elP) elP.textContent = 'Pojď s námi sledovat ptačí život';
+    if (elI) elI.textContent = '🤝 👏 👍';
+  } else {
+    const nadpis = _SPLASH_TEXTY[Math.floor(Math.random() * _SPLASH_TEXTY.length)];
+    if (elN) elN.textContent = nadpis;
+    if (elP) { elP.textContent = ''; elP.hidden = true; }
+    if (elI) { elI.textContent = ''; elI.hidden = true; }
   }
 
   localStorage.setItem('mb_visit_count', navstev + 1);
