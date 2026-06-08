@@ -4,6 +4,17 @@ let budkyData = [];
 window._markersByCislo = markersByCislo;
 window._getMapInstance = () => mapInstance;
 
+function _prepocitejDruhy() {
+  if (!window._nactiDruhyPtaku || !window._druhy_ptaku_base) return;
+  const pocty = {};
+  Object.values(window._budkyDataMap || {}).forEach(b => {
+    if (b.stav === 'osidlena' && b.ptak && b.ptak !== 'nezjisteno')
+      pocty[b.ptak] = (pocty[b.ptak] || 0) + 1;
+  });
+  const updated = window._druhy_ptaku_base.map(d => ({ ...d, pocet: pocty[d.nazev] || 0 }));
+  window._nactiDruhyPtaku(updated);
+}
+
 function _aktualizujMarkerZFirebase(cisloNum, kdoHnizdi) {
   const marker = markersByCislo[cisloNum];
   if (!marker) return;
@@ -28,10 +39,11 @@ function _aktualizujMarkerZFirebase(cisloNum, kdoHnizdi) {
     });
     if (window._budkyDataMap) window._budkyDataMap[cisloNum] = bUp;
   }
-  // Přepočítat počet osídlených v UI (vždy)
+  // Přepočítat počet osídlených + druhy ptáků v UI (vždy)
   const pocetOsidl = Object.values(window._budkyDataMap || {}).filter(b => b.stav === 'osidlena').length;
   const elOsidl = document.getElementById('stat-osidlenych');
   if (elOsidl) elOsidl.textContent = pocetOsidl;
+  _prepocitejDruhy();
 }
 window._aktualizujMarkerZFirebase = _aktualizujMarkerZFirebase;
 
@@ -597,6 +609,7 @@ async function inicializujMapu() {
           const pocet = Object.values(window._budkyDataMap || {}).filter(b => b.stav === 'osidlena').length;
           const elS = document.getElementById('stat-osidlenych');
           if (elS) elS.textContent = pocet;
+          _prepocitejDruhy();
 
           // Aktivních budek = Firebase aktivita NEBO osídlená v JSON
           // (aktivních vždy ≥ osídlených — osídlení = někdo to nahlásil = aktivita)

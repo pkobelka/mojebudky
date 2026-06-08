@@ -112,6 +112,8 @@ async function nactiStatistiky() {
     nactiPartnery(data.partneri);
     nactiPodekovani(data.podekovani);
     nactiDruhyPtaku(data.druhy_ptaku);
+    window._druhy_ptaku_base = data.druhy_ptaku;
+    window._nactiDruhyPtaku  = nactiDruhyPtaku;
 
     const nav = data.navstevnost;
     const elCelkem = document.getElementById('navst-celkem');
