@@ -161,6 +161,7 @@ async function _zobrazAdminPanel(loginId) {
 
   if (typeof window._presenceSetAdmin === 'function') window._presenceSetAdmin(true);
   _prihlasitPush(loginId);
+  _sledujZpravySpravce(loginId);
 
   // Zaznamenat aktivitu správce (pro indikátor aktivity na mapě)
   const dbAkt = _getFirebaseDB();
@@ -202,6 +203,7 @@ async function _zobrazAdminPanel(loginId) {
     <button class="admin-dropdown-item pripravujeme" data-akce="clanek">📝 Vložit článek</button>
     <button class="admin-dropdown-item" data-akce="zmenitHeslo">🔑 Změnit heslo</button>
     <button class="admin-dropdown-item" data-akce="napisAdminovi">✉️ Napsat adminovi</button>
+    <button class="admin-dropdown-item" data-akce="zpravyOdAdmina">📨 Zprávy od admina <span class="admin-badge" id="zpravyOdAdminaBadge" hidden>0</span></button>
     ${jeAdmin ? `<div class="admin-dropdown-oddelovac"></div><button class="admin-dropdown-item admin-item-zadosti" data-akce="zadosti">📬 Žádosti správců <span class="admin-badge" id="adminBadge" hidden>0</span></button><button class="admin-dropdown-item" data-akce="prehledSpravcu">👥 Přehled správců</button><button class="admin-dropdown-item" data-akce="aktivitaSpravcu">🏆 Aktivita správců</button><button class="admin-dropdown-item" data-akce="resetSlib" style="font-size:0.85rem;color:var(--text-muted)">🧪 Reset slibu (test)</button>` : ''}
     <div class="admin-dropdown-oddelovac"></div>
     <button class="admin-dropdown-item odhlasit" data-akce="odhlasit">🚪 Odhlásit se</button>
@@ -292,6 +294,12 @@ async function _zobrazAdminPanel(loginId) {
       return;
     }
 
+    if (akce === 'zpravyOdAdmina') {
+      _zobrazZpravySpravce(loginId);
+      dropdown.classList.remove('open');
+      return;
+    }
+
     if (akce === 'prehledSpravcu') {
       _zobrazPrehledSpravcu();
       dropdown.classList.remove('open');
@@ -361,6 +369,121 @@ function _sledujZadosti() {
     _nastavFaviconBadge(pocet);
   });
 }
+
+// ── ZPRÁVY SPRÁVCI (admin → správce) ─────────────────────────────────────────
+let _zpravySpravceRef = null;
+
+function _sledujZpravySpravce(loginId) {
+  const db = _getFirebaseDB();
+  if (!db) return;
+  if (_zpravySpravceRef) { _zpravySpravceRef.off(); _zpravySpravceRef = null; }
+  _zpravySpravceRef = db.ref(`zpravy_spravci/${loginId}`);
+  _zpravySpravceRef.on('value', snap => {
+    const data = snap.val() || {};
+    const pocet = Object.values(data).filter(z => z && !z.precteno).length;
+    const navBadge = document.getElementById('zpravyNavBadge');
+    if (navBadge) { if (pocet > 0) { navBadge.textContent = pocet; navBadge.hidden = false; } else navBadge.hidden = true; }
+    const ddBadge = document.getElementById('zpravyOdAdminaBadge');
+    if (ddBadge) { if (pocet > 0) { ddBadge.textContent = pocet; ddBadge.hidden = false; } else ddBadge.hidden = true; }
+    _nastavFaviconBadge(pocet);
+  });
+}
+
+function _zobrazZpravySpravce(loginId) {
+  const existujici = document.getElementById('modalZpravySpravce');
+  if (existujici) existujici.remove();
+  const db = _getFirebaseDB();
+  if (!db) return;
+  db.ref(`zpravy_spravci/${loginId}`).once('value', snap => {
+    const data = snap.val() || {};
+    const zpravy = Object.entries(data).filter(([, z]) => z).sort(([, a], [, b]) => (b.ts || 0) - (a.ts || 0));
+    const html = zpravy.length ? zpravy.map(([klic, z]) => {
+      const cas = z.ts ? new Date(z.ts).toLocaleString('cs-CZ') : '';
+      return `<div class="zadost-item ${!z.precteno ? 'zprava-neprectena' : ''}" data-klic="${klic}">
+        <span class="zadost-cas">📨 Admin &nbsp;·&nbsp; ${cas}${!z.precteno ? ' <span class="zpravy-nova-bublina">NOVÉ</span>' : ''}</span><br>
+        <span class="zadost-zprava-text">${(z.text || '').replace(/</g, '&lt;')}</span>
+        ${!z.precteno ? `<br><button class="zadost-btn-ok zprava-precist-btn" data-klic="${klic}" style="margin-top:6px">✓ Přečteno</button>` : ''}
+      </div>`;
+    }).join('') : '<div style="color:var(--text-muted);padding:16px">Žádné zprávy 🎉</div>';
+    const modal = document.createElement('div');
+    modal.id = 'modalZpravySpravce';
+    modal.className = 'modal-overlay';
+    modal.innerHTML = `<div class="modal-box profil-box">
+      <button class="modal-zavrit" id="zpravySpravceZavrit">×</button>
+      <div class="profil-header"><div class="profil-header-text"><div class="profil-nadpis">📨 Zprávy od admina</div></div></div>
+      <div class="profil-form" id="zpravySpravceObsah">${html}</div>
+    </div>`;
+    document.body.appendChild(modal);
+    document.getElementById('zpravySpravceZavrit').addEventListener('click', () => modal.remove());
+    modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
+    modal.querySelector('#zpravySpravceObsah').addEventListener('click', async e => {
+      const btn = e.target.closest('.zprava-precist-btn');
+      if (!btn) return;
+      const klic = btn.dataset.klic;
+      await db.ref(`zpravy_spravci/${loginId}/${klic}/precteno`).set(true);
+      btn.closest('.zadost-item')?.classList.remove('zprava-neprectena');
+      btn.closest('.zadost-item')?.querySelector('.zpravy-nova-bublina')?.remove();
+      btn.remove();
+    });
+  });
+}
+
+window._napisSpravci = function(loginId, jmeno) {
+  const existujici = document.getElementById('modalNapisSpravci');
+  if (existujici) existujici.remove();
+  const db = _getFirebaseDB();
+  if (!db) { alert('Firebase není dostupná'); return; }
+  const modal = document.createElement('div');
+  modal.id = 'modalNapisSpravci';
+  modal.className = 'modal-overlay';
+  modal.innerHTML = `<div class="modal-box" style="max-width:480px;width:94%">
+    <button class="modal-zavrit" id="napisSpravciZavrit">×</button>
+    <div class="profil-header"><div class="profil-header-text">
+      <div class="profil-nadpis">✉️ Napsat správci</div>
+      <div class="profil-budka">Příjemce: ${jmeno || loginId}</div>
+    </div></div>
+    <div class="profil-form">
+      <div class="profil-field profil-field--wide">
+        <label>Zpráva</label>
+        <textarea id="napisSpravciText" rows="5" placeholder="Sem napiš zprávu…" style="width:100%;box-sizing:border-box;background:var(--panel-bg);color:var(--text-light);border:1px solid var(--panel-border);border-radius:8px;padding:10px;font-size:1rem;resize:vertical"></textarea>
+      </div>
+    </div>
+    <div class="profil-actions">
+      <button class="profil-btn-ulozit" id="napisSpravciOdeslat">📨 Odeslat</button>
+      <span class="profil-ulozeno" id="napisSpravciMsg" hidden></span>
+    </div>
+  </div>`;
+  document.body.appendChild(modal);
+  document.getElementById('napisSpravciZavrit').addEventListener('click', () => modal.remove());
+  modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
+  setTimeout(() => document.getElementById('napisSpravciText')?.focus(), 80);
+  document.getElementById('napisSpravciOdeslat').addEventListener('click', async () => {
+    const text = document.getElementById('napisSpravciText').value.trim();
+    const msg = document.getElementById('napisSpravciMsg');
+    if (!text) { msg.textContent = '⚠ Napiš něco…'; msg.hidden = false; return; }
+    document.getElementById('napisSpravciOdeslat').disabled = true;
+    try {
+      await db.ref(`zpravy_spravci/${loginId}`).push({ text, ts: firebase.database.ServerValue.TIMESTAMP, precteno: false });
+      msg.textContent = '✓ Odesláno!'; msg.style.color = '#4caf50'; msg.hidden = false;
+      setTimeout(() => modal.remove(), 1500);
+    } catch {
+      msg.textContent = '⚠ Nepodařilo se odeslat'; msg.hidden = false;
+      document.getElementById('napisSpravciOdeslat').disabled = false;
+    }
+  });
+};
+
+window._napisSpravciByBudka = async function(cislo) {
+  const info = await _nactiSpravciInfo();
+  if (!info) { alert('Nepodařilo se načíst správce'); return; }
+  const entry = Object.entries(info).find(([, s]) => {
+    const budky = s.budky || [{ cislo: s.budka_cislo }];
+    return budky.some(b => Number(b.cislo) === Number(cislo));
+  });
+  if (!entry) { alert(`Budka č. ${cislo} nemá přiřazeného správce v systému`); return; }
+  const [loginId, s] = entry;
+  window._napisSpravci(loginId, s.jmeno ? `${s.jmeno} (ID: ${loginId})` : loginId);
+};
 
 function _zobrazZmenitHeslo(loginId) {
   const existujici = document.getElementById('modalZmenitHeslo');
@@ -785,10 +908,19 @@ function _zobrazZadosti() {
             <button class="zadost-btn-ok" data-typ="${typ}" data-klic="${klic}">✓ Vyřízeno</button>
           </div>`;
         } else {
+          const emailInfo = z.email && z.email !== '(neuvedeno)' ? ` · ${z.email}` : '';
+          const mozeOdpovedet = z.loginId && z.loginId !== 'navstevnik';
           html += `<div class="zadost-item" data-typ="${typ}" data-klic="${klic}">
-            <strong>${z.jmeno || z.loginId}</strong> <span class="zadost-cas">${cas}</span><br>
+            <strong>${z.jmeno || z.loginId}</strong>${emailInfo} <span class="zadost-cas">${cas}</span><br>
             <span class="zadost-detail zadost-zprava-text">${z.text ? z.text.replace(/</g,'&lt;') : ''}</span><br>
-            <button class="zadost-btn-ok" data-typ="${typ}" data-klic="${klic}">✓ Vyřízeno</button>
+            <div class="zadost-btn-row">
+              ${mozeOdpovedet ? `<button class="zadost-btn-odpovedet" data-loginid="${z.loginId}" data-jmeno="${z.jmeno || z.loginId}" data-klic="${klic}">💬 Odpovědět</button>` : ''}
+              <button class="zadost-btn-ok" data-typ="${typ}" data-klic="${klic}">✓ Vyřízeno</button>
+            </div>
+            <div class="zadost-odpoved-wrap" id="odpov-${klic}" hidden>
+              <textarea class="zadost-odpoved-ta" rows="3" placeholder="Tvoje odpověď…"></textarea>
+              <button class="zadost-btn-odeslat-odpoved" data-loginid="${z.loginId}" data-jmeno="${z.jmeno || z.loginId}" data-klic="${klic}">📨 Odeslat</button>
+            </div>
           </div>`;
         }
       });
@@ -797,6 +929,29 @@ function _zobrazZadosti() {
     container.innerHTML = html || '<div style="color:var(--text-muted)">Žádné čekající žádosti 🎉</div>';
 
     container.addEventListener('click', async e => {
+      // Odpovědět — toggle textarea
+      const btnOdpovedet = e.target.closest('.zadost-btn-odpovedet');
+      if (btnOdpovedet) {
+        const wrap = document.getElementById('odpov-' + btnOdpovedet.dataset.klic);
+        if (wrap) { wrap.hidden = !wrap.hidden; if (!wrap.hidden) wrap.querySelector('textarea')?.focus(); }
+        return;
+      }
+      // Odeslat odpověď
+      const btnOdeslatOdpoved = e.target.closest('.zadost-btn-odeslat-odpoved');
+      if (btnOdeslatOdpoved) {
+        const wrap = document.getElementById('odpov-' + btnOdeslatOdpoved.dataset.klic);
+        const text = wrap?.querySelector('textarea')?.value.trim();
+        if (!text) return;
+        btnOdeslatOdpoved.disabled = true;
+        try {
+          await db.ref(`zpravy_spravci/${btnOdeslatOdpoved.dataset.loginid}`).push({ text, ts: firebase.database.ServerValue.TIMESTAMP, precteno: false });
+          await db.ref(`admin_requests/zpravy/${btnOdeslatOdpoved.dataset.klic}/vyrizeno`).set(true);
+          wrap.innerHTML = '<span style="color:#4caf50">✓ Odpověď odeslána!</span>';
+          btnOdeslatOdpoved.closest('.zadost-item')?.querySelectorAll('.zadost-btn-odpovedet,.zadost-btn-ok').forEach(b => b.disabled = true);
+        } catch { btnOdeslatOdpoved.disabled = false; }
+        return;
+      }
+
       const btnOk    = e.target.closest('.zadost-btn-ok');
       const btnZamit = e.target.closest('.zadost-btn-zamit');
       const btn = btnOk || btnZamit;

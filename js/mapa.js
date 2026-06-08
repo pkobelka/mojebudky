@@ -684,6 +684,17 @@ async function inicializujMapu() {
       });
       if (content) content.appendChild(btnSpr);
     }
+
+    if (spravce.jeAdmin && typeof window._napisSpravciByBudka === 'function') {
+      const btnNapis = document.createElement('button');
+      btnNapis.className = 'popup-edit-btn popup-edit-napis-btn';
+      btnNapis.textContent = '✉ Napsat správci';
+      btnNapis.addEventListener('click', () => {
+        popup.close();
+        window._napisSpravciByBudka(cislo);
+      });
+      if (content) content.appendChild(btnNapis);
+    }
   }
 
   mapInstance.on('popupopen', e => {

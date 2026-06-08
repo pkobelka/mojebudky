@@ -12,6 +12,9 @@
     "push_tokens": {
       "$id": { ".read": true, ".write": true }
     },
+    "zpravy_spravci": {
+      "$loginId": { ".read": true, ".write": true }
+    },
     "hesla": {
       "$uid": { ".read": true, ".write": true }
     }
