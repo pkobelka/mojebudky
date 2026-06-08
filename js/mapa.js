@@ -21,10 +21,26 @@ window._filtrovatMapuPoDruhu = function(nazev) {
   }
 };
 
+window._filtrovatMapuOsidlene = function() {
+  _aktivniDruhFilter = '__osidlene__';
+  const data = window._budkyDataMap || {};
+  const matching = [];
+  Object.entries(markersByCislo).forEach(([cislo, marker]) => {
+    const b = data[parseInt(cislo)];
+    const shoda = b && b.stav === 'osidlena';
+    marker.setOpacity(shoda ? 1.0 : 0.15);
+    if (shoda) matching.push(marker.getLatLng());
+  });
+  if (matching.length > 0 && mapInstance)
+    mapInstance.fitBounds(L.latLngBounds(matching), { padding: [50, 50], maxZoom: 15 });
+};
+
 window._zrusitFilterMapy = function() {
   _aktivniDruhFilter = null;
   Object.values(markersByCislo).forEach(m => m.setOpacity(1.0));
   if (typeof window._aktualizujFilterBtn === 'function') window._aktualizujFilterBtn(null);
+  const el = document.getElementById('stat-osidlenych');
+  if (el) el.classList.remove('stat-value--klik-aktivni');
 };
 
 function _prepocitejDruhy() {
@@ -598,6 +614,23 @@ async function inicializujMapu() {
     });
 
     document.getElementById('stat-celkem').textContent = budky.length;
+
+    const elStatOsidl = document.getElementById('stat-osidlenych');
+    if (elStatOsidl && !elStatOsidl.dataset.filterBound) {
+      elStatOsidl.dataset.filterBound = '1';
+      elStatOsidl.classList.add('stat-value--klikatelny');
+      elStatOsidl.title = 'Zobrazit osídlené budky na mapě';
+      elStatOsidl.addEventListener('click', () => {
+        if (_aktivniDruhFilter === '__osidlene__') {
+          window._zrusitFilterMapy();
+        } else {
+          window._filtrovatMapuOsidlene();
+          elStatOsidl.classList.add('stat-value--klik-aktivni');
+          if (typeof window._aktualizujFilterBtn === 'function') window._aktualizujFilterBtn('Osídlené budky');
+          document.querySelector('.map-wrapper')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    }
 
     // Po načtení markerů překryj daty z Firebase (osídlení + aktivita správce)
     if (typeof firebase !== 'undefined') {

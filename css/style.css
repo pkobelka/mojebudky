@@ -157,6 +157,9 @@ html, body {
 .stat-icon { font-size: 1.5rem; flex-shrink: 0; width: auto; text-align: center; }
 .stat-icon-druhy { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; width: 50px; height: 50px; align-items: center; justify-items: center; font-size: 1rem; }
 .stat-value { font-size: 2.4rem; font-weight: 800; color: var(--text-light); line-height: 1; }
+.stat-value--klikatelny { cursor: pointer; border-bottom: 2px dotted rgba(255,255,255,0.35); transition: color 0.15s; touch-action: manipulation; }
+.stat-value--klikatelny:hover { color: #3aff3a; }
+.stat-value--klik-aktivni { color: #3aff3a !important; border-bottom-color: #3aff3a; }
 .stat-label { font-size: 0.92rem; color: var(--text-muted); margin-top: 4px; text-align: center; }
 .stat-item:nth-child(1) { border-top-color: #c8a800; background: rgba(230,200,0,0.18); }
 .stat-item:nth-child(1) .stat-value { color: #f0d800; }
