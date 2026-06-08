@@ -176,7 +176,7 @@ async function _zobrazAdminPanel(loginId) {
   window._editBudku = _zobrazEditBudky;
 
   const btn = document.getElementById('btnPrihlasit');
-  if (btn) { btn.textContent = `Přihlášen ${jmeno} ▾`; btn.classList.add('prihlaseny'); }
+  if (btn) { btn.innerHTML = `Přihlášen ${jmeno} ▾ <span class="zpravy-nav-badge" id="zpravyNavBadge" hidden>0</span>`; btn.classList.add('prihlaseny'); }
 
   const existujiciDropdown = document.getElementById('adminDropdown');
   if (existujiciDropdown) existujiciDropdown.remove();
@@ -244,6 +244,7 @@ async function _zobrazAdminPanel(loginId) {
         btn.classList.remove('prihlaseny');
         btn.removeEventListener('click', btn._dropdownHandler);
       }
+      _nastavFaviconBadge(0);
       return;
     }
 
@@ -316,6 +317,32 @@ async function _zobrazAdminPanel(loginId) {
   });
 }
 
+function _nastavFaviconBadge(count) {
+  const canvas = document.createElement('canvas');
+  canvas.width = 32; canvas.height = 32;
+  const ctx = canvas.getContext('2d');
+  const img = new Image();
+  img.onload = () => {
+    ctx.drawImage(img, 0, 0, 32, 32);
+    if (count > 0) {
+      ctx.fillStyle = '#e53935';
+      ctx.beginPath();
+      ctx.arc(25, 7, 7, 0, 2 * Math.PI);
+      ctx.fill();
+      ctx.fillStyle = '#fff';
+      ctx.font = 'bold 9px Arial';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(count > 9 ? '9+' : String(count), 25, 7);
+    }
+    let link = document.querySelector("link[rel='icon'][type='image/svg+xml']") || document.querySelector("link[rel='icon']");
+    if (!link) { link = document.createElement('link'); link.rel = 'icon'; document.head.appendChild(link); }
+    link.type = 'image/png';
+    link.href = canvas.toDataURL('image/png');
+  };
+  img.src = document.querySelector("link[rel='icon'][type='image/svg+xml']")?.href || '/mojebudky/img/favicon.svg';
+}
+
 function _sledujZadosti() {
   const db = _getFirebaseDB();
   if (!db) return;
@@ -328,9 +355,10 @@ function _sledujZadosti() {
       }
     });
     const badge = document.getElementById('adminBadge');
-    if (!badge) return;
-    if (pocet > 0) { badge.textContent = pocet; badge.hidden = false; }
-    else badge.hidden = true;
+    if (badge) { if (pocet > 0) { badge.textContent = pocet; badge.hidden = false; } else badge.hidden = true; }
+    const navBadge = document.getElementById('zpravyNavBadge');
+    if (navBadge) { if (pocet > 0) { navBadge.textContent = pocet; navBadge.hidden = false; } else navBadge.hidden = true; }
+    _nastavFaviconBadge(pocet);
   });
 }
 
@@ -1550,6 +1578,43 @@ document.addEventListener('DOMContentLoaded', () => {
     linkZapomnel.addEventListener('click', e => {
       e.preventDefault();
       zapomnelMsg.hidden = !zapomnelMsg.hidden;
+    });
+  }
+
+  // ── Kontaktní formulář (tlačítko "✉ Napište nám") ──
+  const btnNapsat      = document.getElementById('btnNapsat');
+  const modalKontakt   = document.getElementById('modalKontakt');
+  const kontaktZavrit  = document.getElementById('kontaktZavrit');
+  const kontaktOdeslat = document.getElementById('kontaktOdeslat');
+
+  if (btnNapsat && modalKontakt) {
+    btnNapsat.addEventListener('click', () => { modalKontakt.hidden = false; setTimeout(() => document.getElementById('kontaktJmeno')?.focus(), 80); });
+    kontaktZavrit?.addEventListener('click', () => { modalKontakt.hidden = true; });
+    modalKontakt.addEventListener('click', e => { if (e.target === modalKontakt) modalKontakt.hidden = true; });
+
+    kontaktOdeslat?.addEventListener('click', async () => {
+      const jmeno = document.getElementById('kontaktJmeno').value.trim();
+      const email = document.getElementById('kontaktEmail').value.trim();
+      const text  = document.getElementById('kontaktText').value.trim();
+      const msg   = document.getElementById('kontaktMsg');
+      if (!jmeno || !text) { msg.textContent = '⚠ Vyplňte jméno a zprávu.'; msg.hidden = false; return; }
+      const db = _getFirebaseDB();
+      if (!db) { msg.textContent = '⚠ Nelze odeslat — zkuste info@mojebudky.cz'; msg.hidden = false; return; }
+      kontaktOdeslat.disabled = true;
+      try {
+        await db.ref('admin_requests/zpravy').push({
+          loginId: 'navstevnik', jmeno, email: email || '(neuvedeno)', text,
+          ts: firebase.database.ServerValue.TIMESTAMP, vyrizeno: false
+        });
+        msg.style.color = '#4caf50';
+        msg.textContent = '✓ Zpráva odeslána, ozve se vám co nejdříve!';
+        msg.hidden = false;
+        setTimeout(() => { modalKontakt.hidden = true; msg.hidden = true; kontaktOdeslat.disabled = false; document.getElementById('kontaktJmeno').value = ''; document.getElementById('kontaktEmail').value = ''; document.getElementById('kontaktText').value = ''; }, 2500);
+      } catch {
+        msg.textContent = '⚠ Nepodařilo se odeslat — zkuste info@mojebudky.cz';
+        msg.hidden = false;
+        kontaktOdeslat.disabled = false;
+      }
     });
   }
 });

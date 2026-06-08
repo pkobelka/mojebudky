@@ -8,7 +8,7 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=20260606m">
+  <link rel="stylesheet" href="css/style.css?v=20260608d">
   <link rel="icon" type="image/svg+xml" href="img/favicon.svg">
   <link rel="icon" type="image/png" sizes="512x512" href="img/icon-512.png">
   <link rel="icon" type="image/png" sizes="192x192" href="img/icon-192.png">
@@ -65,10 +65,10 @@
           <button aria-label="Hledat">🔍</button>
         </div>
         <div id="authNavArea">
-          <a href="mailto:info@mojebudky.cz" class="btn-napsat" aria-label="Napište nám">
+          <button type="button" class="btn-napsat" id="btnNapsat" aria-label="Napište nám">
             ✉ Napište nám
             <span class="napsat-tip">Dotaz, nápad nebo zájem o partnerství?<br><strong>info@mojebudky.cz</strong></span>
-          </a>
+          </button>
           <button type="button" class="btn-login" id="btnPrihlasit">Vstup pro správce</button>
         </div>
         <button class="nav-hamburger" id="navHamburger" aria-label="Otevřít menu" aria-expanded="false">
@@ -286,6 +286,23 @@
   </div>
 </div>
 
+<!-- Kontaktní formulář -->
+<div id="modalKontakt" class="modal-overlay" role="dialog" aria-modal="true" aria-label="Napište nám" hidden>
+  <div class="modal-box" style="max-width:480px;width:94%">
+    <button class="modal-zavrit" id="kontaktZavrit" aria-label="Zavřít">×</button>
+    <div class="modal-logo-wrap"><img src="img/logo.svg" alt="" aria-hidden="true" width="48"></div>
+    <h2 class="modal-nadpis">Napište nám</h2>
+    <p class="modal-uvitani">Dotaz, nápad nebo zájem o partnerství? Napište Petrovi, odpovíme co nejdříve.</p>
+    <div class="modal-form">
+      <input type="text" id="kontaktJmeno" placeholder="Vaše jméno" maxlength="60" autocomplete="name">
+      <input type="email" id="kontaktEmail" placeholder="E-mail (nepovinné)" maxlength="80" autocomplete="email">
+      <textarea id="kontaktText" rows="5" placeholder="Vaše zpráva…" style="resize:vertical;background:rgba(255,255,255,0.07);color:var(--text-light);border:1px solid rgba(255,255,255,0.18);border-radius:8px;padding:10px;font-size:1rem;font-family:inherit;width:100%;box-sizing:border-box"></textarea>
+      <button type="button" id="kontaktOdeslat">📨 Odeslat zprávu</button>
+    </div>
+    <div id="kontaktMsg" class="login-error" hidden></div>
+  </div>
+</div>
+
 <!-- Uvítací splash screen -->
 <div id="splashScreen" class="splash-overlay" role="dialog" aria-label="Uvítání">
   <div class="splash-box">
@@ -308,7 +325,7 @@
 <script src="js/svatky.js"></script>
 <script src="js/mapa.js?v=20260608b"></script>
 <script src="js/main.js?v=20260608b"></script>
-<script src="js/auth.js?v=20260608c"></script>
+<script src="js/auth.js?v=20260608d"></script>
 <script src="js/presence.js?v=20260606d"></script>
 <script>
   if ('serviceWorker' in navigator) {
