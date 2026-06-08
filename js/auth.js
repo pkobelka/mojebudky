@@ -4,22 +4,20 @@
 const _PUSH_VAPID_KEY = 'BECytJs05OiT5rzwuhX-CwtXl1OUcebv8gXBTqSHf2SWkjEqJ0qSOXjDWn7XSf4whZgSLU3CfDc33b-O5tKNii4';
 
 async function _prihlasitPush(loginId) {
-  if (!_PUSH_VAPID_KEY) { alert('Push DEBUG: chybí VAPID klíč'); return; }
-  if (!('Notification' in window)) { alert('Push DEBUG: Notification API není'); return; }
-  if (!('serviceWorker' in navigator)) { alert('Push DEBUG: SW nepodporován'); return; }
+  if (!_PUSH_VAPID_KEY) return;
+  if (!('Notification' in window) || !('serviceWorker' in navigator)) return;
   try {
     const perm = await Notification.requestPermission();
-    if (perm !== 'granted') { alert('Push DEBUG: notifikace nepovoleny – ' + perm); return; }
+    if (perm !== 'granted') return;
     const reg = window._swReg || await navigator.serviceWorker.ready;
     const msg = typeof firebase !== 'undefined' ? firebase.messaging() : null;
-    if (!msg) { alert('Push DEBUG: Firebase messaging nenalezen'); return; }
+    if (!msg) return;
     const token = await msg.getToken({ vapidKey: _PUSH_VAPID_KEY, serviceWorkerRegistration: reg });
-    if (!token) { alert('Push DEBUG: token je prázdný'); return; }
+    if (!token) return;
     const db = _getFirebaseDB();
     if (db) db.ref(`push_tokens/${loginId}`).set({ token, ts: Date.now(), ua: navigator.userAgent.slice(0,80) });
-    alert('Push DEBUG: ✅ token uložen! ' + token.slice(0, 20) + '…');
+    console.log('Push token uložen:', token.slice(0, 20) + '…');
   } catch (err) {
-    alert('Push DEBUG chyba: ' + (err.code || err.message || String(err)));
     console.warn('Push subscription:', err);
   }
 }
