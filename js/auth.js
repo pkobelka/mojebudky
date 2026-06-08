@@ -8,16 +8,18 @@ async function _prihlasitPush(loginId) {
   if (!('Notification' in window) || !('serviceWorker' in navigator)) return;
   try {
     const perm = await Notification.requestPermission();
-    if (perm !== 'granted') return;
+    if (perm !== 'granted') { _zobrazToast('🔕 Push: notifikace nepovoleny'); return; }
     const reg = window._swReg || await navigator.serviceWorker.ready;
     const msg = typeof firebase !== 'undefined' ? firebase.messaging() : null;
-    if (!msg) return;
+    if (!msg) { _zobrazToast('⚠ Push: Firebase messaging nenalezen'); return; }
     const token = await msg.getToken({ vapidKey: _PUSH_VAPID_KEY, serviceWorkerRegistration: reg });
-    if (!token) return;
+    if (!token) { _zobrazToast('⚠ Push: token je prázdný'); return; }
     const db = _getFirebaseDB();
     if (db) db.ref(`push_tokens/${loginId}`).set({ token, ts: Date.now(), ua: navigator.userAgent.slice(0,80) });
+    _zobrazToast('✅ Push notifikace aktivní!');
     console.log('Push token uložen:', token.slice(0, 20) + '…');
   } catch (err) {
+    _zobrazToast('⚠ Push chyba: ' + (err.code || err.message || err));
     console.warn('Push subscription:', err);
   }
 }
