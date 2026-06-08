@@ -10,7 +10,7 @@ nastavit_heslo.html
 nastavit_heslo.py
 sms_log.txt
 service-account-key.json
-send_push.py
+# send_push.py je bezpečný (bez klíčů) — commitnutý do repo pro GitHub Actions
 
 # OS
 .DS_Store
