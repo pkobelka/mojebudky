@@ -4,11 +4,12 @@
 const _PUSH_VAPID_KEY = 'BECytJs05OiT5rzwuhX-CwtXl1OUcebv8gXBTqSHf2SWkjEqJ0qSOXjDWn7XSf4whZgSLU3CfDc33b-O5tKNii4';
 
 async function _prihlasitPush(loginId) {
-  if (!_PUSH_VAPID_KEY) return;
-  if (!('Notification' in window) || !('serviceWorker' in navigator)) return;
+  if (!_PUSH_VAPID_KEY) { _zobrazToast('⚠ Push: chybí VAPID klíč'); return; }
+  if (!('Notification' in window)) { _zobrazToast('⚠ Push: Notification API není'); return; }
+  if (!('serviceWorker' in navigator)) { _zobrazToast('⚠ Push: SW nepodporován'); return; }
   try {
     const perm = await Notification.requestPermission();
-    if (perm !== 'granted') { _zobrazToast('🔕 Push: notifikace nepovoleny'); return; }
+    if (perm !== 'granted') { _zobrazToast('🔕 Push: notifikace nepovoleny (' + perm + ')'); return; }
     const reg = window._swReg || await navigator.serviceWorker.ready;
     const msg = typeof firebase !== 'undefined' ? firebase.messaging() : null;
     if (!msg) { _zobrazToast('⚠ Push: Firebase messaging nenalezen'); return; }
