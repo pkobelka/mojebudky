@@ -382,7 +382,11 @@ function _sledujZpravySpravce(loginId) {
     const data = snap.val() || {};
     const pocet = Object.values(data).filter(z => z && !z.precteno).length;
     const navBadge = document.getElementById('zpravyNavBadge');
-    if (navBadge) { if (pocet > 0) { navBadge.textContent = pocet; navBadge.hidden = false; } else navBadge.hidden = true; }
+    if (navBadge) {
+      navBadge.hidden = false;
+      if (pocet > 0) { navBadge.textContent = pocet; navBadge.classList.remove('zpravy-nav-badge--prazdny'); }
+      else { navBadge.textContent = '📨'; navBadge.classList.add('zpravy-nav-badge--prazdny'); }
+    }
     const ddBadge = document.getElementById('zpravyOdAdminaBadge');
     if (ddBadge) { if (pocet > 0) { ddBadge.textContent = pocet; ddBadge.hidden = false; } else ddBadge.hidden = true; }
     _nastavFaviconBadge(pocet);

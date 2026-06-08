@@ -1037,6 +1037,7 @@ html, body {
 
 /* ── ZPRÁVY SPRÁVCI (dvoucestné zprávy) ───────────────────────────────── */
 .zprava-neprectena { border-left: 3px solid #e53935 !important; background: rgba(229,57,53,0.08) !important; }
+.zpravy-nav-badge--prazdny { background: transparent !important; color: var(--text-muted) !important; animation: none !important; font-size: 1rem !important; padding: 0 2px !important; }
 .zpravy-nova-bublina { display: inline-block; background: #e53935; color: #fff; border-radius: 8px; font-size: 0.72rem; font-weight: 700; padding: 1px 7px; margin-left: 6px; text-transform: uppercase; vertical-align: middle; }
 .zadost-btn-odpovedet { background: rgba(212,160,64,0.15); color: var(--accent-gold); border: 1px solid rgba(212,160,64,0.4); border-radius: 6px; padding: 5px 13px; font-size: 0.88rem; cursor: pointer; transition: background 0.15s; }
 .zadost-btn-odpovedet:hover { background: rgba(212,160,64,0.28); }
