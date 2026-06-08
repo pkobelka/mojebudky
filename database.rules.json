@@ -9,6 +9,9 @@
     "spravci":           { ".read": true, ".write": true },
     "spravce_aktivita":  { ".read": true, ".write": true },
     "prihlaseni":        { ".read": true, ".write": true },
+    "push_tokens": {
+      "$id": { ".read": true, ".write": true }
+    },
     "hesla": {
       "$uid": { ".read": true, ".write": true }
     }

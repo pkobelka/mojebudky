@@ -481,20 +481,45 @@ function inicializujPushNotifikace() {
   const area = document.getElementById('pushNotifArea');
   if (!area) return;
 
-  if (!('Notification' in window)) {
+  if (!('Notification' in window) || !('serviceWorker' in navigator)) {
     area.innerHTML = '<span class="push-info">⚠️ Notifikace nejsou podporovány</span>';
     return;
   }
 
+  async function ulozToken() {
+    if (typeof _PUSH_VAPID_KEY === 'undefined' || !_PUSH_VAPID_KEY) return;
+    try {
+      const reg = window._swReg || await navigator.serviceWorker.ready;
+      const msg = typeof firebase !== 'undefined' ? firebase.messaging() : null;
+      if (!msg) return;
+      const token = await msg.getToken({ vapidKey: _PUSH_VAPID_KEY, serviceWorkerRegistration: reg });
+      if (!token) return;
+      const db = typeof firebase !== 'undefined' ? firebase.database() : null;
+      if (!db) return;
+      const loginId = window._aktualniSpravce?.loginId || 'anon';
+      const klic = loginId === 'anon' ? 'anon_' + token.slice(0, 20) : loginId;
+      db.ref('push_tokens/' + klic).set({
+        token,
+        loginId,
+        ts: firebase.database.ServerValue.TIMESTAMP,
+        ua: navigator.userAgent.slice(0, 80)
+      });
+    } catch (e) {
+      console.warn('FCM token:', e.message);
+    }
+  }
+
   function aktualizujStav() {
     if (Notification.permission === 'granted') {
+      ulozToken();
       area.innerHTML = '<span class="push-info push-ok">✅ Notifikace povoleny</span>';
     } else if (Notification.permission === 'denied') {
       area.innerHTML = '<span class="push-info push-denied">❌ Notifikace blokovány – změňte v nastavení prohlížeče</span>';
     } else {
       area.innerHTML = '<button class="btn-push-notif" id="btnPushNotif">🔔 Povolit push notifikace</button>';
       document.getElementById('btnPushNotif').addEventListener('click', async () => {
-        await Notification.requestPermission();
+        const perm = await Notification.requestPermission();
+        if (perm === 'granted') await ulozToken();
         aktualizujStav();
       });
     }

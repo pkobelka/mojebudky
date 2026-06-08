@@ -9,6 +9,8 @@ generuj_spravci.html
 nastavit_heslo.html
 nastavit_heslo.py
 sms_log.txt
+service-account-key.json
+send_push.py
 
 # OS
 .DS_Store
