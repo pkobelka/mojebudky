@@ -4,6 +4,29 @@ let budkyData = [];
 window._markersByCislo = markersByCislo;
 window._getMapInstance = () => mapInstance;
 
+let _aktivniDruhFilter = null;
+
+window._filtrovatMapuPoDruhu = function(nazev) {
+  _aktivniDruhFilter = nazev;
+  const data = window._budkyDataMap || {};
+  const matching = [];
+  Object.entries(markersByCislo).forEach(([cislo, marker]) => {
+    const b = data[parseInt(cislo)];
+    const shoda = b && b.stav === 'osidlena' && b.ptak === nazev;
+    marker.setOpacity(shoda ? 1.0 : 0.15);
+    if (shoda) matching.push(marker.getLatLng());
+  });
+  if (matching.length > 0 && mapInstance) {
+    mapInstance.fitBounds(L.latLngBounds(matching), { padding: [50, 50], maxZoom: 15 });
+  }
+};
+
+window._zrusitFilterMapy = function() {
+  _aktivniDruhFilter = null;
+  Object.values(markersByCislo).forEach(m => m.setOpacity(1.0));
+  if (typeof window._aktualizujFilterBtn === 'function') window._aktualizujFilterBtn(null);
+};
+
 function _prepocitejDruhy() {
   if (!window._nactiDruhyPtaku || !window._druhy_ptaku_base) return;
   const pocty = {};

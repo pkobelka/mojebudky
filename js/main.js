@@ -376,21 +376,50 @@ function nactiDruhyPtaku(druhy) {
   const aktivnich = druhy.filter(d => d.pocet > 0).length;
   const druhSlovo = aktivnich === 1 ? 'druh' : aktivnich <= 4 ? 'druhy' : 'druhů';
   el.innerHTML = `
-    <div class="druhy-title">🐦 Druhy ptáků v budkách</div>
+    <div class="druhy-title-row">
+      <span class="druhy-title">🐦 Druhy ptáků v budkách</span>
+      <button class="druhy-filter-reset" id="druhyFilterReset" hidden title="Zrušit filtr mapy">× Zrušit filtr</button>
+    </div>
     <div class="druhy-intro">Aktuálně evidujeme v budkách tyto <strong>${aktivnich} ${druhSlovo}</strong>:</div>
     <div class="druhy-list" id="druhyList">
       ${druhy.map(d => {
         const key = BIRD_KEY_MAP[d.nazev] || 'konadra';
         const icon = BIRD_ICONS[key].replace(/width="38" height="38"/, 'width="28" height="28"');
-        return `<div class="druh-item" data-id="${d.id}">
+        const mapBtn = d.pocet > 0
+          ? `<button class="druh-mapa-btn" data-nazev="${d.nazev.replace(/"/g,'&quot;')}" title="Zobrazit na mapě" tabindex="-1">🗺</button>`
+          : '';
+        return `<div class="druh-item" data-id="${d.id}" data-nazev="${d.nazev.replace(/"/g,'&quot;')}">
           <div class="druh-svg">${icon}</div>
           <span class="druh-nazev">${d.nazev}</span>
-          <span class="druh-pocet">${d.pocet}</span><span class="druh-pocet-label">${d.pocet === 1 ? 'budka' : d.pocet <= 4 ? 'budky' : 'budek'}</span>
+          <span class="druh-pocet${d.pocet > 0 ? ' druh-pocet--klik' : ''}" data-nazev="${d.nazev.replace(/"/g,'&quot;')}" title="${d.pocet > 0 ? 'Zobrazit na mapě' : ''}">${d.pocet}</span><span class="druh-pocet-label">${d.pocet === 1 ? 'budka' : d.pocet <= 4 ? 'budky' : 'budek'}</span>${mapBtn}
         </div>`;
       }).join('')}
     </div>`;
 
+  window._aktualizujFilterBtn = function(nazev) {
+    const btn = document.getElementById('druhyFilterReset');
+    if (!btn) return;
+    if (nazev) { btn.textContent = `× ${nazev}`; btn.hidden = false; }
+    else btn.hidden = true;
+    document.querySelectorAll('.druh-item').forEach(el => el.classList.toggle('druh-item--aktivni-filter', el.dataset.nazev === nazev));
+  };
+
+  document.getElementById('druhyFilterReset').addEventListener('click', () => {
+    if (typeof window._zrusitFilterMapy === 'function') window._zrusitFilterMapy();
+  });
+
   document.getElementById('druhyList').addEventListener('click', e => {
+    const pocetBtn = e.target.closest('.druh-pocet--klik, .druh-mapa-btn');
+    if (pocetBtn) {
+      e.stopPropagation();
+      const nazev = pocetBtn.dataset.nazev;
+      if (typeof window._filtrovatMapuPoDruhu === 'function') {
+        window._filtrovatMapuPoDruhu(nazev);
+        window._aktualizujFilterBtn(nazev);
+        document.querySelector('.map-wrapper')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+      return;
+    }
     const item = e.target.closest('.druh-item');
     if (!item) return;
     const druh = druhy.find(d => String(d.id) === item.dataset.id);

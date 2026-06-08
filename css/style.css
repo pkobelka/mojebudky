@@ -440,7 +440,10 @@ html, body {
 
 /* ── DRUHY PTÁKŮ ── */
 .druhy-panel { }
-.druhy-title { color: var(--accent-gold); font-size: 1.0rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+.druhy-title-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; gap: 8px; }
+.druhy-title { color: var(--accent-gold); font-size: 1.0rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+.druhy-filter-reset { background: rgba(229,57,53,0.15); color: #ff7070; border: 1px solid rgba(229,57,53,0.35); border-radius: 20px; padding: 3px 10px; font-size: 0.82rem; font-weight: 600; cursor: pointer; white-space: nowrap; transition: background 0.15s; touch-action: manipulation; }
+.druhy-filter-reset:hover { background: rgba(229,57,53,0.3); }
 .druhy-intro { color: var(--text-muted); font-size: 1.05rem; margin-bottom: 6px; line-height: 1.45; }
 .druhy-intro strong { color: var(--text-light); }
 .druhy-list { display: flex; flex-direction: column; gap: 6px; }
@@ -449,7 +452,12 @@ html, body {
 .druh-svg { flex-shrink: 0; line-height: 0; }
 .druh-nazev { flex: 1; color: var(--text-light); font-size: 1.32rem; font-weight: 600; }
 .druh-pocet { color: var(--accent-gold); font-size: 1.35rem; font-weight: 700; }
+.druh-pocet--klik { cursor: pointer; border-bottom: 2px dotted rgba(212,160,64,0.5); transition: color 0.15s; }
+.druh-pocet--klik:hover { color: #fff; border-bottom-color: #fff; }
 .druh-pocet-label { color: var(--text-muted); font-size: 1.0rem; margin-left: 3px; }
+.druh-mapa-btn { background: none; border: none; color: var(--text-muted); font-size: 1rem; cursor: pointer; padding: 2px 4px; margin-left: 4px; border-radius: 4px; transition: color 0.15s, background 0.15s; touch-action: manipulation; }
+.druh-mapa-btn:hover { color: var(--accent-gold); background: rgba(255,255,255,0.1); }
+.druh-item--aktivni-filter { background: rgba(212,160,64,0.15) !important; border: 1px solid rgba(212,160,64,0.4); }
 
 /* ── PŘIDAT NA PLOCHU ── */
 .pridat-na-plochu { border-top: 1px solid var(--panel-border); padding: 8px 10px; background: rgba(0,0,0,0.1); flex-shrink: 0; display: none; }
