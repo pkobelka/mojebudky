@@ -147,14 +147,18 @@ async function _zobrazAdminPanel(loginId) {
 
   const jePoprve = !localStorage.getItem('mb_firstlogin_' + loginId);
   const jeSlib   = !!localStorage.getItem('mb_slib_' + loginId);
+  const _lsKlicLogin = 'mb_last_login_' + loginId;
+  const posledniLoginTs = parseInt(localStorage.getItem(_lsKlicLogin) || '0', 10);
+  localStorage.setItem(_lsKlicLogin, Date.now());
+
   if (!jeSlib) {
-    // Slib ještě nepotvrzen (bez ohledu na to zda je poprvé) → slib první, bez toastu
     setTimeout(() => _zobrazSlibSpravce(loginId, spravceInfo, budkaText, osloveni), 1500);
   } else {
-    // Slib potvrzen → normální uvítací toast
-    _zobrazToast(`Ahoj ${osloveni}, vítám Tě mezi správci MojeBudky! 🌿 Petr`);
+    const posledniText = posledniLoginTs
+      ? ` · naposledy přihlášen ${new Date(posledniLoginTs).toLocaleDateString('cs-CZ', { day: 'numeric', month: 'long', year: 'numeric' })}`
+      : '';
+    _zobrazToast(`Ahoj ${osloveni}! 🌿${posledniText}`);
     if (jePoprve) {
-      // Profil k vyplnění (první přihlášení nebo resetUvitani)
       setTimeout(() => _zobrazProfilSpravce(loginId, spravceInfo, budkaText), 7000);
     }
   }

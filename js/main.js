@@ -668,9 +668,60 @@ function inicializujFullscreenMapu() {
   if (btnZpetTR) btnZpetTR.addEventListener('click', e => { e.stopPropagation(); sbalMapu(); });
 }
 
+const _SPLASH_SEZONNI = {
+  1:  { nadpis: 'Nový rok, nové hnízdění!',        podnadpis: 'Budky čekají na jarní obsazení',         ikony: '🎆 🐦 ❄️' },
+  2:  { nadpis: 'Jaro klepe na dveře!',             podnadpis: 'Ptáci už se chystají na hnízdění',       ikony: '🌸 🐦 ☀️' },
+  3:  { nadpis: 'Jaro je tady!',                    podnadpis: 'Sleduj první obsazení budek',             ikony: '🌱 🐦 🌸' },
+  4:  { nadpis: 'Hnízdění v plném proudu!',         podnadpis: 'Kolik budek je obsazených?',             ikony: '🥚 🐦 🌿' },
+  5:  { nadpis: 'Mláďata jsou na cestě!',           podnadpis: 'Největší hnízdící sezóna roku',          ikony: '🐣 🌸 🌿' },
+  6:  { nadpis: 'Léto klepe na dveře budek!',       podnadpis: 'Příroda je v plném rozkvětu',            ikony: '☀️ 🌻 🐦' },
+  7:  { nadpis: 'Léto, teplo a plné budky!',        podnadpis: 'Krásný čas sledovat přírodu',            ikony: '☀️ 🌿 🐦' },
+  8:  { nadpis: 'Poslední letní hnízdění...',       podnadpis: 'Ještě je čas na překvapení',             ikony: '🌻 🍃 🐦' },
+  9:  { nadpis: 'Podzim klepe na dveře!',           podnadpis: 'Budky se připravují na zimu',            ikony: '🍂 🍁 🐦' },
+  10: { nadpis: 'Říjen – čas inventury budek!',     podnadpis: 'Jak se daří naší síti?',                 ikony: '🍂 📋 🏡' },
+  11: { nadpis: 'Zima se blíží...',                 podnadpis: 'Podzimní klid před velkou zimou',        ikony: '🍁 ❄️ 🏡' },
+  12: { nadpis: 'Budky v zimním spánku...',         podnadpis: 'Ale my nezaspíme ani v prosinci!',       ikony: '❄️ 🏡 🌨️' },
+};
+
+const _SPLASH_TEXTY = [
+  { nadpis: 'Budky čekají na pozorovatele!',     podnadpis: 'Podívej se, co je nového na mapě',     ikony: '🗺️ 🐦 🌿' },
+  { nadpis: 'Každá budka má svůj příběh.',       podnadpis: 'Příroda nespí, ani my!',               ikony: '🌱 🏡 👁️' },
+  { nadpis: 'Díky, že se vracíš!',               podnadpis: 'Společně sledujeme ptačí svět',        ikony: '❤️ 🐦 🌍' },
+  { nadpis: 'Co nového v budkách?',              podnadpis: 'Mapa se aktualizuje v reálném čase',   ikony: '📍 🔔 ✨' },
+  { nadpis: 'Každý pohled do budky se počítá!',  podnadpis: 'Tvůj zájem pomáhá ptactvu',           ikony: '👀 🌿 💚' },
+  { nadpis: 'Příroda říká: Vítej zpět!',         podnadpis: 'Sleduj, hnízdí a sdílej',              ikony: '🌳 🐦 🏡' },
+  { nadpis: 'Naše budky jsou všude okolo!',      podnadpis: 'Pojď s námi sledovat ptačí život',     ikony: '🤝 👏 👍' },
+];
+
 function inicializujSplash() {
   const splash = document.getElementById('splashScreen');
   if (!splash) return;
+
+  const mesic = new Date().getMonth() + 1;
+  const navstev = parseInt(localStorage.getItem('mb_visit_count') || '0', 10);
+  const poprve = navstev === 0;
+
+  let text;
+  if (poprve) {
+    text = { nadpis: 'Ahoj, naše budky jsou všude okolo!', podnadpis: 'Pojď s námi sledovat ptačí život', ikony: '🤝 👏 👍' };
+  } else {
+    const jeSezona = navstev % 4 === 0;
+    text = jeSezona
+      ? _SPLASH_SEZONNI[mesic]
+      : _SPLASH_TEXTY[navstev % _SPLASH_TEXTY.length];
+  }
+
+  if (text) {
+    const elN = splash.querySelector('.splash-nadpis');
+    const elP = splash.querySelector('.splash-podnadpis');
+    const elI = splash.querySelector('.splash-ikony');
+    if (elN) elN.textContent = text.nadpis;
+    if (elP) elP.textContent = text.podnadpis;
+    if (elI) elI.textContent = text.ikony;
+  }
+
+  localStorage.setItem('mb_visit_count', navstev + 1);
+
   splash.addEventListener('click', () => {
     splash.classList.add('fade-out');
     setTimeout(() => splash.remove(), 800);
