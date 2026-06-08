@@ -81,7 +81,7 @@ function aktualizujListu() {
   const sva = svarek ? `&nbsp;| Svátek má: <strong>${svarek}</strong>${oslavenciText}` : '';
 
   const narozBar = _narozeniniceDnes.length > 0
-    ? `&nbsp;| 🎂 <span class="bar-narozeniny">Narozeniny slaví: <strong>${_narozeniniceDnes.map(n => n.jmeno).join(', ')}</strong> – gratulujeme!</span>`
+    ? `&nbsp;| 🎂 <span class="bar-narozeniny">Narozeniny má: <strong>${_narozeniniceDnes.map(n => n.jmeno).join(', ')}</strong> – gratulujeme a děkujeme za péči o budky!</span>`
     : '';
 
   bar.innerHTML = `<span class="bar-left">${cal}${sva}${narozBar}</span>
