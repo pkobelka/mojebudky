@@ -1,7 +1,7 @@
 // ── PUSH NOTIFIKACE ──────────────────────────────────────────────────────────
 // VAPID klíč: Firebase Console → Project Settings → Cloud Messaging
 //             → Web Push certificates → Generate key pair → zkopírovat klíč
-const _PUSH_VAPID_KEY = 'BECytJs05OiT5rzwuhX-CwtXl1OUcebv8gXBTqSHf2SWkjEqJ0qSOXjDWn7XSf4whZgSLU3CfDc33b-O5tKNii4';
+const _PUSH_VAPID_KEY = 'BCn3YD9DqB2ejEGoqAxpnUpKuo6oG3TPBrGhjgXtLuQl4kbEee_hghSKE6nJ8ttffH-RIMjtyPNY-PPflKiCSho';
 
 async function _prihlasitPush(loginId) {
   if (!_PUSH_VAPID_KEY) return;
