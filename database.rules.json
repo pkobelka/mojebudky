@@ -10,6 +10,7 @@
     "spravce_aktivita":  { ".read": true, ".write": true },
     "prihlaseni":        { ".read": true, ".write": true },
     "push_broadcast": { ".read": true, ".write": false },
+    "push_history":   { ".read": true, ".write": true },
     "push_tokens": {
       "$id": { ".read": true, ".write": true }
     },
