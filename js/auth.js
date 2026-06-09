@@ -15,6 +15,8 @@ function _nastavPushForeground() {
     if (!d || !d.ts) return;
     if (d.ts <= _posledniPushTs) return;
     if (Date.now() - d.ts > 30000) { _posledniPushTs = d.ts; return; }
+    const myId = window._aktualniSpravce?.loginId || '';
+    if (d.target && myId && d.target !== myId) { _posledniPushTs = d.ts; return; }
     _posledniPushTs = d.ts;
     _zobrazPushBanner(d.title || 'MojeBudky.cz', d.body || '');
   });

@@ -4,7 +4,7 @@ MojeBudky.cz – odesílání push notifikací
 ==========================================
 Použití:
     python send_push.py "Titulek" "Text zprávy"
-    python send_push.py "Nové hnízdění!" "Budka č. 42 hlásí sýkoru koňadru 🐦"
+    python send_push.py "Titulek" "Text zprávy" "loginId"   # jen jednomu správci
 
 Potřebuješ:
     1. service-account-key.json  (stáhnout z Firebase Console →
@@ -17,6 +17,7 @@ node: push_tokens/{id}/token
 
 import sys
 import json
+import time
 import firebase_admin
 from firebase_admin import credentials, messaging, db
 
@@ -27,17 +28,18 @@ CLICK_URL       = 'https://pkobelka.github.io/mojebudky/'
 
 def main():
     if len(sys.argv) < 3:
-        print('Použití: python send_push.py "Titulek" "Text zprávy"')
+        print('Použití: python send_push.py "Titulek" "Text zprávy" ["loginId"]')
         sys.exit(1)
 
-    title = sys.argv[1]
-    body  = sys.argv[2]
+    title     = sys.argv[1]
+    body      = sys.argv[2]
+    target_id = sys.argv[3].strip() if len(sys.argv) > 3 else ''
 
     # Inicializace Firebase Admin
     cred = credentials.Certificate(SERVICE_ACCOUNT)
     firebase_admin.initialize_app(cred, {'databaseURL': DATABASE_URL})
 
-    # Načti všechny tokeny
+    # Načti tokeny (všechny nebo jen cílového správce)
     snap = db.reference('push_tokens').get()
     if not snap:
         print('Žádné uložené tokeny – nikdo ještě nepovolil notifikace.')
@@ -45,15 +47,23 @@ def main():
 
     tokens = []
     for key, val in snap.items():
+        if target_id and key != target_id:
+            continue
         t = val.get('token') if isinstance(val, dict) else None
         if t:
             tokens.append((key, t))
 
     if not tokens:
-        print('Žádné platné tokeny.')
+        if target_id:
+            print(f'Správce "{target_id}" nemá uložený push token.')
+        else:
+            print('Žádné platné tokeny.')
         return
 
-    print(f'Odesílám notifikaci {len(tokens)} příjemcům…')
+    if target_id:
+        print(f'Odesílám notifikaci správci "{target_id}"…')
+    else:
+        print(f'Odesílám notifikaci {len(tokens)} příjemcům…')
     print(f'  Titulek: {title}')
     print(f'  Text:    {body}')
 
@@ -79,7 +89,6 @@ def main():
             messaging.send(msg)
             ok += 1
         except messaging.UnregisteredError:
-            # Token vypršel nebo byl odvolán – smaž ho
             db.reference(f'push_tokens/{key}').delete()
             neplatne.append(key)
             err += 1
@@ -92,8 +101,10 @@ def main():
         print(f'Odstraněno {len(neplatne)} neplatných tokenů: {neplatne}')
 
     # Zapíše broadcast do DB — app zachytí a zobrazí banner i při otevřené stránce
-    import time
-    db.reference('push_broadcast').set({'title': title, 'body': body, 'ts': int(time.time() * 1000)})
+    broadcast = {'title': title, 'body': body, 'ts': int(time.time() * 1000)}
+    if target_id:
+        broadcast['target'] = target_id
+    db.reference('push_broadcast').set(broadcast)
 
 if __name__ == '__main__':
     main()
