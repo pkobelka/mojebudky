@@ -3,6 +3,38 @@
 //             → Web Push certificates → Generate key pair → zkopírovat klíč
 const _PUSH_VAPID_KEY = 'BCn3YD9DqB2ejEGoqAxpnUpKuo6oG3TPBrGhjgXtLuQl4kbEee_hghSKE6nJ8ttffH-RIMjtyPNY-PPflKiCSho';
 
+let _pushForegroundNastazen = false;
+
+function _nastavPushForeground() {
+  if (_pushForegroundNastazen) return;
+  try {
+    const msg = typeof firebase !== 'undefined' ? firebase.messaging() : null;
+    if (!msg) return;
+    msg.onMessage(payload => {
+      const title = payload.notification?.title || payload.data?.title || 'MojeBudky.cz';
+      const body  = payload.notification?.body  || payload.data?.body  || '';
+      _zobrazPushBanner(title, body);
+    });
+    _pushForegroundNastazen = true;
+  } catch {}
+}
+
+function _zobrazPushBanner(title, body) {
+  const existujici = document.getElementById('pushBanner');
+  if (existujici) existujici.remove();
+  const banner = document.createElement('div');
+  banner.id = 'pushBanner';
+  banner.className = 'push-banner';
+  banner.innerHTML = `<div class="push-banner-inner">
+    <span class="push-banner-ico">🔔</span>
+    <div class="push-banner-text"><strong>${title}</strong><br>${body}</div>
+    <button class="push-banner-zavrit" onclick="this.closest('#pushBanner').remove()">×</button>
+  </div>`;
+  document.body.appendChild(banner);
+  setTimeout(() => banner.classList.add('push-banner--show'), 50);
+  setTimeout(() => { banner.classList.remove('push-banner--show'); setTimeout(() => banner.remove(), 400); }, 8000);
+}
+
 async function _prihlasitPush(loginId) {
   if (!_PUSH_VAPID_KEY) return;
   if (!('Notification' in window) || !('serviceWorker' in navigator)) return;
@@ -16,6 +48,7 @@ async function _prihlasitPush(loginId) {
     if (!token) return;
     const db = _getFirebaseDB();
     if (db) db.ref(`push_tokens/${loginId}`).set({ token, ts: Date.now(), ua: navigator.userAgent.slice(0,80) });
+    _nastavPushForeground();
     console.log('Push token uložen:', token.slice(0, 20) + '…');
   } catch (err) {
     console.warn('Push subscription:', err);
