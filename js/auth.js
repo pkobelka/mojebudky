@@ -34,7 +34,6 @@ function _zobrazPushBanner(title, body) {
   </div>`;
   document.body.appendChild(banner);
   setTimeout(() => banner.classList.add('push-banner--show'), 50);
-  setTimeout(() => { banner.classList.remove('push-banner--show'); setTimeout(() => banner.remove(), 400); }, 8000);
 }
 
 async function _prihlasitPush(loginId) {
