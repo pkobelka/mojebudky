@@ -15,14 +15,20 @@ const messaging = firebase.messaging();
 
 // Notifikace na pozadí (když je karta zavřená / na pozadí)
 messaging.onBackgroundMessage(payload => {
-  const title = payload.notification?.title || 'MojeBudky.cz';
-  const body  = payload.notification?.body  || '';
+  const title   = payload.notification?.title || 'MojeBudky.cz';
+  const body    = payload.notification?.body  || '';
+  const pushId  = payload.data?.push_id  || '';
+  const loginId = payload.data?.login_id || '';
+  const baseUrl = 'https://pkobelka.github.io/mojebudky/';
+  const clickUrl = (pushId && loginId)
+    ? `${baseUrl}?pr=${pushId}&u=${encodeURIComponent(loginId)}`
+    : baseUrl;
   return self.registration.showNotification(title, {
     body,
     icon:    '/mojebudky/img/icon-192.png',
     badge:   '/mojebudky/img/icon-192.png',
     vibrate: [200, 100, 200],
-    data:    { url: payload.data?.url || 'https://pkobelka.github.io/mojebudky/' }
+    data:    { url: clickUrl }
   });
 });
 

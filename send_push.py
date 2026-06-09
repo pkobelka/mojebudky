@@ -10,13 +10,9 @@ Potřebuješ:
     1. service-account-key.json  (stáhnout z Firebase Console →
        Project Settings → Service accounts → Generate new private key)
     2. pip install firebase-admin
-
-Skript pošle notifikaci všem uloženým tokenům v Firebase
-node: push_tokens/{id}/token
 """
 
 import sys
-import json
 import time
 import firebase_admin
 from firebase_admin import credentials, messaging, db
@@ -34,6 +30,7 @@ def main():
     title     = sys.argv[1]
     body      = sys.argv[2]
     target_id = sys.argv[3].strip() if len(sys.argv) > 3 else ''
+    push_id   = str(int(time.time() * 1000))
 
     # Inicializace Firebase Admin
     cred = credentials.Certificate(SERVICE_ACCOUNT)
@@ -66,10 +63,12 @@ def main():
         print(f'Odesílám notifikaci {len(tokens)} příjemcům…')
     print(f'  Titulek: {title}')
     print(f'  Text:    {body}')
+    print(f'  Push ID: {push_id}')
 
     ok = 0
     err = 0
     neplatne = []
+    sent_to = {}
 
     for key, token in tokens:
         msg = messaging.Message(
@@ -83,11 +82,13 @@ def main():
                 ),
                 fcm_options=messaging.WebpushFCMOptions(link=CLICK_URL),
             ),
+            data={'push_id': push_id, 'login_id': key},
             token=token,
         )
         try:
             messaging.send(msg)
             ok += 1
+            sent_to[key] = int(time.time() * 1000)
         except messaging.UnregisteredError:
             db.reference(f'push_tokens/{key}').delete()
             neplatne.append(key)
@@ -100,8 +101,18 @@ def main():
     if neplatne:
         print(f'Odstraněno {len(neplatne)} neplatných tokenů: {neplatne}')
 
-    # Zapíše broadcast do DB — app zachytí a zobrazí banner i při otevřené stránce
-    broadcast = {'title': title, 'body': body, 'ts': int(time.time() * 1000)}
+    # Zapiš do push_history (pro přehled s fajfkami v admin panelu)
+    history_entry = {
+        'title':  title,
+        'body':   body,
+        'ts':     int(push_id),
+        'target': target_id or '',
+        'sent':   sent_to,
+    }
+    db.reference(f'push_history/{push_id}').set(history_entry)
+
+    # Zapiš broadcast — app zobrazí foreground banner i při otevřené stránce
+    broadcast = {'title': title, 'body': body, 'ts': int(push_id), 'push_id': push_id}
     if target_id:
         broadcast['target'] = target_id
     db.reference('push_broadcast').set(broadcast)

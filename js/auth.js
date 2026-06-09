@@ -18,12 +18,12 @@ function _nastavPushForeground() {
     const myId = window._aktualniSpravce?.loginId || '';
     if (d.target && myId && d.target !== myId) { _posledniPushTs = d.ts; return; }
     _posledniPushTs = d.ts;
-    _zobrazPushBanner(d.title || 'MojeBudky.cz', d.body || '');
+    _zobrazPushBanner(d.title || 'MojeBudky.cz', d.body || '', d.push_id || '');
   });
   _pushForegroundNastazen = true;
 }
 
-function _zobrazPushBanner(title, body) {
+function _zobrazPushBanner(title, body, pushId) {
   const existujici = document.getElementById('pushBanner');
   if (existujici) existujici.remove();
   const banner = document.createElement('div');
@@ -36,6 +36,10 @@ function _zobrazPushBanner(title, body) {
   </div>`;
   document.body.appendChild(banner);
   setTimeout(() => banner.classList.add('push-banner--show'), 50);
+  if (pushId && window._aktualniSpravce?.loginId) {
+    const db = _getFirebaseDB();
+    if (db) db.ref(`push_history/${pushId}/read/${window._aktualniSpravce.loginId}`).set(Date.now());
+  }
 }
 
 async function _prihlasitPush(loginId) {
@@ -245,7 +249,7 @@ async function _zobrazAdminPanel(loginId) {
     <button class="admin-dropdown-item" data-akce="zmenitHeslo">🔑 Změnit heslo</button>
     <button class="admin-dropdown-item" data-akce="napisAdminovi">✉️ Napsat adminovi</button>
     <button class="admin-dropdown-item" data-akce="zpravyOdAdmina">📨 Zprávy od admina <span class="admin-badge" id="zpravyOdAdminaBadge" hidden>0</span></button>
-    ${jeAdmin ? `<div class="admin-dropdown-oddelovac"></div><button class="admin-dropdown-item admin-item-zadosti" data-akce="zadosti">📬 Žádosti správců <span class="admin-badge" id="adminBadge" hidden>0</span></button><button class="admin-dropdown-item" data-akce="prehledSpravcu">👥 Přehled správců</button><button class="admin-dropdown-item" data-akce="aktivitaSpravcu">🏆 Aktivita správců</button><button class="admin-dropdown-item" data-akce="resetSlib" style="font-size:0.85rem;color:var(--text-muted)">🧪 Reset slibu (test)</button>` : ''}
+    ${jeAdmin ? `<div class="admin-dropdown-oddelovac"></div><button class="admin-dropdown-item admin-item-zadosti" data-akce="zadosti">📬 Žádosti správců <span class="admin-badge" id="adminBadge" hidden>0</span></button><button class="admin-dropdown-item" data-akce="prehledSpravcu">👥 Přehled správců</button><button class="admin-dropdown-item" data-akce="aktivitaSpravcu">🏆 Aktivita správců</button><button class="admin-dropdown-item" data-akce="pushHistorie">📩 Push notifikace</button><button class="admin-dropdown-item" data-akce="resetSlib" style="font-size:0.85rem;color:var(--text-muted)">🧪 Reset slibu (test)</button>` : ''}
     <div class="admin-dropdown-oddelovac"></div>
     <button class="admin-dropdown-item odhlasit" data-akce="odhlasit">🚪 Odhlásit se</button>
   `;
@@ -349,6 +353,12 @@ async function _zobrazAdminPanel(loginId) {
 
     if (akce === 'aktivitaSpravcu') {
       _zobrazAktivitaSpravcu();
+      dropdown.classList.remove('open');
+      return;
+    }
+
+    if (akce === 'pushHistorie') {
+      _zobrazPushHistorie();
       dropdown.classList.remove('open');
       return;
     }
@@ -838,6 +848,68 @@ async function _zobrazAktivitaSpravcu() {
       renderLeaderboard();
     });
   });
+}
+
+async function _zobrazPushHistorie() {
+  const existujici = document.getElementById('modalPushHistorie');
+  if (existujici) existujici.remove();
+
+  const db = _getFirebaseDB();
+  const modal = document.createElement('div');
+  modal.id = 'modalPushHistorie';
+  modal.className = 'modal-overlay';
+  modal.innerHTML = `
+    <div class="modal-box prehled-box">
+      <button class="modal-zavrit" id="pushHistorieZavrit">×</button>
+      <div class="profil-header"><div class="profil-header-text">
+        <div class="profil-nadpis">📩 Push notifikace</div>
+      </div></div>
+      <div id="pushHistorieObsah" style="padding:0 4px">
+        <div style="text-align:center;color:var(--text-muted);padding:32px 0">Načítám…</div>
+      </div>
+    </div>`;
+  document.body.appendChild(modal);
+  modal.hidden = false;
+  document.getElementById('pushHistorieZavrit').addEventListener('click', () => modal.remove());
+  modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
+
+  if (!db) {
+    document.getElementById('pushHistorieObsah').innerHTML = '<p style="color:var(--text-muted);text-align:center">Firebase nedostupný.</p>';
+    return;
+  }
+
+  const info = await _nactiSpravciInfo().catch(() => ({})) || {};
+  const jmenoSpravce = id => (info[id] && (info[id].jmeno || id)) || id;
+
+  const snap = await db.ref('push_history').orderByKey().limitToLast(20).once('value');
+  const data = snap.val();
+
+  if (!data) {
+    document.getElementById('pushHistorieObsah').innerHTML = '<p style="text-align:center;color:var(--text-muted);padding:32px 0">Žádné odeslané push notifikace.</p>';
+    return;
+  }
+
+  const zaznamy = Object.entries(data)
+    .sort(([a], [b]) => b.localeCompare(a))
+    .slice(0, 15);
+
+  const html = zaznamy.map(([pushId, z]) => {
+    const cas = new Date(z.ts).toLocaleString('cs-CZ', { day: 'numeric', month: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+    const sentIds  = z.sent ? Object.keys(z.sent) : [];
+    const readIds  = z.read ? Object.keys(z.read) : [];
+    const sentText = sentIds.length ? sentIds.map(jmenoSpravce).join(', ') : '—';
+    const readText = readIds.length ? readIds.map(jmenoSpravce).join(', ') : '—';
+    const target   = z.target ? `<span style="font-size:0.8rem;color:var(--text-muted)"> → ${jmenoSpravce(z.target)}</span>` : '';
+    return `<div style="border-bottom:1px solid rgba(255,255,255,0.07);padding:12px 0">
+      <div style="font-weight:600;margin-bottom:3px">${z.title || ''}${target}</div>
+      <div style="font-size:0.9rem;color:var(--text-muted);margin-bottom:6px">${z.body || ''}</div>
+      <div style="font-size:0.8rem;color:var(--text-muted);margin-bottom:4px">🕐 ${cas}</div>
+      <div style="font-size:0.85rem;margin-bottom:2px"><span style="color:#aaa">✓</span> Odesláno: <span style="color:var(--text-light)">${sentText}</span></div>
+      <div style="font-size:0.85rem"><span style="color:#4caf50">✓✓</span> Zobrazeno: <span style="color:${readIds.length ? '#4caf50' : 'var(--text-muted)'}">${readText}</span></div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('pushHistorieObsah').innerHTML = html || '<p style="color:var(--text-muted);text-align:center">Žádné záznamy.</p>';
 }
 
 function _zobrazNapisAdminovi(loginId, jmeno) {
@@ -1676,6 +1748,20 @@ document.addEventListener('DOMContentLoaded', () => {
   if (typeof Notification !== 'undefined' && Notification.permission === 'granted') {
     setTimeout(_nastavPushForeground, 2000);
   }
+
+  // Potvrzenka z kliknutí na background notifikaci (?pr=pushId&u=loginId)
+  (function() {
+    const p = new URLSearchParams(location.search);
+    const pr = p.get('pr');
+    const u  = p.get('u');
+    if (pr && u) {
+      history.replaceState({}, '', location.pathname);
+      setTimeout(() => {
+        const db = _getFirebaseDB();
+        if (db) db.ref(`push_history/${pr}/read/${u}`).set(Date.now());
+      }, 3000);
+    }
+  })();
 
   const btnPrihlasit = document.getElementById('btnPrihlasit');
   const modal        = document.getElementById('modalPrihlaseni');
