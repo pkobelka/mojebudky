@@ -1668,6 +1668,11 @@ function _zobrazToastDlouhy(text) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+  // Foreground push handler — aktivuj hned pokud je oprávnění už uděleno
+  if (typeof Notification !== 'undefined' && Notification.permission === 'granted') {
+    setTimeout(_nastavPushForeground, 2000);
+  }
+
   const btnPrihlasit = document.getElementById('btnPrihlasit');
   const modal        = document.getElementById('modalPrihlaseni');
   const modalZavrit  = document.getElementById('modalZavrit');
