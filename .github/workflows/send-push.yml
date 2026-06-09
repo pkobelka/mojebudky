@@ -11,6 +11,10 @@ on:
         description: 'Text zprávy'
         required: true
         default: 'Nová zpráva od admina!'
+      target_id:
+        description: 'LoginId příjemce (prázdné = všichni)'
+        required: false
+        default: ''
 
 jobs:
   send-push:
@@ -30,4 +34,4 @@ jobs:
         run: echo '${{ secrets.FIREBASE_SERVICE_ACCOUNT }}' > service-account-key.json
 
       - name: Odešli push notifikaci
-        run: python send_push.py "${{ github.event.inputs.title }}" "${{ github.event.inputs.body }}"
+        run: python send_push.py "${{ github.event.inputs.title }}" "${{ github.event.inputs.body }}" "${{ github.event.inputs.target_id }}"
