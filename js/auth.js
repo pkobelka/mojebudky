@@ -7,16 +7,18 @@ let _pushForegroundNastazen = false;
 
 function _nastavPushForeground() {
   if (_pushForegroundNastazen) return;
-  try {
-    const msg = typeof firebase !== 'undefined' ? firebase.messaging() : null;
-    if (!msg) return;
-    msg.onMessage(payload => {
-      const title = payload.notification?.title || payload.data?.title || 'MojeBudky.cz';
-      const body  = payload.notification?.body  || payload.data?.body  || '';
-      _zobrazPushBanner(title, body);
-    });
-    _pushForegroundNastazen = true;
-  } catch {}
+  const db = _getFirebaseDB();
+  if (!db) return;
+  let _posledniPushTs = 0;
+  db.ref('push_broadcast').on('value', snap => {
+    const d = snap.val();
+    if (!d || !d.ts) return;
+    if (d.ts <= _posledniPushTs) return;
+    if (Date.now() - d.ts > 30000) { _posledniPushTs = d.ts; return; }
+    _posledniPushTs = d.ts;
+    _zobrazPushBanner(d.title || 'MojeBudky.cz', d.body || '');
+  });
+  _pushForegroundNastazen = true;
 }
 
 function _zobrazPushBanner(title, body) {

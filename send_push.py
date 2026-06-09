@@ -91,5 +91,9 @@ def main():
     if neplatne:
         print(f'Odstraněno {len(neplatne)} neplatných tokenů: {neplatne}')
 
+    # Zapíše broadcast do DB — app zachytí a zobrazí banner i při otevřené stránce
+    import time
+    db.reference('push_broadcast').set({'title': title, 'body': body, 'ts': int(time.time() * 1000)})
+
 if __name__ == '__main__':
     main()
