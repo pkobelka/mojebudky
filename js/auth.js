@@ -199,6 +199,7 @@ async function _zobrazAdminPanel(loginId) {
   }
 
   if (typeof window._presenceSetAdmin === 'function') window._presenceSetAdmin(true);
+  _nastavPushForeground();
   _prihlasitPush(loginId);
   _sledujZpravySpravce(loginId);
 
