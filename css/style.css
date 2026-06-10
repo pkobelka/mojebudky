@@ -733,6 +733,19 @@ html, body {
   .info-bar .bar-right { display: block; width: auto; }
 }
 
+/* ── PŘÁNÍ K NAROZENINÁM / SVÁTKU ── */
+.prani-overlay { position: fixed; inset: 0; z-index: 2500; background: rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; backdrop-filter: blur(4px); opacity: 0; transition: opacity 0.4s; pointer-events: none; }
+.prani-overlay--show { opacity: 1; pointer-events: auto; }
+.prani-box { border-radius: 28px; padding: 52px 64px 44px; text-align: center; max-width: 560px; width: 92%; box-shadow: 0 20px 70px rgba(0,0,0,0.6); transform: scale(0.88); transition: transform 0.4s ease; }
+.prani-overlay--show .prani-box { transform: scale(1); }
+.prani-box--narozeniny { background: linear-gradient(150deg, #fff8e0 0%, #ffe9a0 50%, #ffd060 100%); border: 3px solid #e8a800; color: #5a3800; }
+.prani-box--svatek    { background: linear-gradient(150deg, #e0f5ff 0%, #a8dff5 50%, #60bce8 100%); border: 3px solid #2080b8; color: #0a3050; }
+.prani-ikona   { font-size: 4rem; margin-bottom: 12px; }
+.prani-nadpis  { font-size: 2.2rem; font-weight: 800; margin-bottom: 14px; }
+.prani-text    { font-size: 1.15rem; font-weight: 500; line-height: 1.7; margin-bottom: 32px; opacity: 0.9; }
+.prani-btn     { background: rgba(0,0,0,0.15); border: 2px solid rgba(0,0,0,0.2); border-radius: 50px; padding: 12px 36px; font-size: 1.1rem; font-weight: 700; cursor: pointer; transition: background 0.2s; font-family: inherit; color: inherit; }
+.prani-btn:hover { background: rgba(0,0,0,0.25); }
+
 /* ── PŘIHLAŠOVACÍ TOAST ── */
 .admin-toast { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -40%); background: linear-gradient(135deg, #d4f5d4 0%, #a8e6a8 60%, #7dd67d 100%); border: 3px solid #3aaa3a; border-radius: 28px; color: #1a4a1a; font-size: 2.1rem; font-weight: 700; padding: 48px 80px; box-shadow: 0 16px 60px rgba(0,0,0,0.55); z-index: 2000; text-align: center; opacity: 0; transition: opacity 0.5s, transform 0.5s; pointer-events: none; max-width: 90vw; line-height: 1.6; }
 .admin-toast--show { opacity: 1; transform: translate(-50%, -50%); }

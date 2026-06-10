@@ -191,6 +191,17 @@ async function _zobrazAdminPanel(loginId) {
   const posledniLoginTs = parseInt(localStorage.getItem(_lsKlicLogin) || '0', 10);
   localStorage.setItem(_lsKlicLogin, Date.now());
 
+  // Narozeniny / svátek
+  const dnes = new Date();
+  const dnesDen = dnes.getDate(), dnesMes = dnes.getMonth() + 1;
+  const datNar = profil && profil.datum_narozeni;
+  const mNar = datNar && datNar.match(/^\d{4}-(\d{2})-(\d{2})$/);
+  const jeNarozeniny = mNar && parseInt(mNar[2]) === dnesDen && parseInt(mNar[1]) === dnesMes;
+  const svatekDnes = typeof SVATKY !== 'undefined' && SVATKY[`${dnesDen}.${dnesMes}`];
+  const jeSvatek = svatekDnes && jmeno && jmeno.toLowerCase() === svatekDnes.toLowerCase();
+  const lsPraniKlic = `mb_prani_${loginId}_${dnes.toISOString().slice(0,10)}`;
+  const praniUkazano = !!localStorage.getItem(lsPraniKlic);
+
   if (!jeSlib) {
     setTimeout(() => _zobrazSlibSpravce(loginId, spravceInfo, budkaText, osloveni), 1500);
   } else {
@@ -201,6 +212,11 @@ async function _zobrazAdminPanel(loginId) {
     if (jePoprve) {
       setTimeout(() => _zobrazProfilSpravce(loginId, spravceInfo, budkaText), 7000);
     }
+  }
+
+  if ((jeNarozeniny || jeSvatek) && !praniUkazano) {
+    localStorage.setItem(lsPraniKlic, '1');
+    setTimeout(() => _zobrazPrani(jeNarozeniny ? 'narozeniny' : 'svatek', osloveni), 2500);
   }
 
   if (typeof window._presenceSetAdmin === 'function') window._presenceSetAdmin(true);
@@ -1876,6 +1892,32 @@ function _vokativ(jmeno) {
   if (normalized.endsWith('ek')) return normalized.slice(0, -2) + 'ku';
   if (normalized.endsWith('a')) return normalized.slice(0, -1) + 'o';
   return normalized + 'e';
+}
+
+function _zobrazPrani(typ, osloveni) {
+  const existujici = document.getElementById('praniOverlay');
+  if (existujici) existujici.remove();
+
+  const jeNar = typ === 'narozeniny';
+  const overlay = document.createElement('div');
+  overlay.id = 'praniOverlay';
+  overlay.className = 'prani-overlay';
+  overlay.innerHTML = `
+    <div class="prani-box prani-box--${typ}">
+      <div class="prani-ikona">${jeNar ? '🎂' : '🎉'}</div>
+      <div class="prani-nadpis">${jeNar ? 'Všechno nejlepší!' : 'Dnes máš svátek!'}</div>
+      <div class="prani-text">${jeNar
+        ? `Přejeme Ti, ${osloveni}, krásný den plný zpěvu ptáků a radosti z přírody. 🐦`
+        : `Přejeme Ti, ${osloveni}, krásný den. Ať Ti to dnes v budkách i v životě klape! 🌿`
+      }</div>
+      <button class="prani-btn" id="praniZavrit">Díky! 😊</button>
+    </div>`;
+  document.body.appendChild(overlay);
+  setTimeout(() => overlay.classList.add('prani-overlay--show'), 50);
+  document.getElementById('praniZavrit').addEventListener('click', () => {
+    overlay.classList.remove('prani-overlay--show');
+    setTimeout(() => overlay.remove(), 500);
+  });
 }
 
 function _zobrazToast(text, ms, isHtml) {
