@@ -1034,7 +1034,7 @@ async function _zobrazPushHistorie() {
       <div class="profil-header"><div class="profil-header-text">
         <div class="profil-nadpis">📩 Push notifikace</div>
       </div></div>
-      <div id="pushHistorieObsah" style="padding:0 4px">
+      <div id="pushHistorieObsah" class="prehled-seznam" style="padding:0 12px">
         <div style="text-align:center;color:var(--text-muted);padding:32px 0">Načítám…</div>
       </div>
     </div>`;
