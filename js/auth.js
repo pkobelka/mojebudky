@@ -540,6 +540,83 @@ window._napisSpravciByBudka = async function(cislo) {
   window._napisSpravci(loginId, s.jmeno ? `${s.jmeno} (ID: ${loginId})` : loginId);
 };
 
+window._poslatPushSpravciByBudka = async function(cislo) {
+  const info = await _nactiSpravciInfo();
+  if (!info) { alert('Nepodařilo se načíst správce'); return; }
+  const entry = Object.entries(info).find(([, s]) => {
+    const budky = s.budky || [{ cislo: s.budka_cislo }];
+    return budky.some(b => Number(b.cislo) === Number(cislo));
+  });
+  if (!entry) { alert(`Budka č. ${cislo} nemá přiřazeného správce v systému`); return; }
+  const [loginId, s] = entry;
+  const jmeno = s.jmeno || loginId;
+
+  const existujici = document.getElementById('modalPoslatPush');
+  if (existujici) existujici.remove();
+
+  const modal = document.createElement('div');
+  modal.id = 'modalPoslatPush';
+  modal.className = 'modal-overlay';
+  modal.innerHTML = `
+    <div class="modal-box" style="max-width:420px;width:94%">
+      <button class="modal-zavrit" id="poslatPushZavrit">×</button>
+      <div class="profil-header"><div class="profil-header-text">
+        <div class="profil-nadpis">📩 Poslat push</div>
+        <div class="profil-budka">Příjemce: ${jmeno}</div>
+      </div></div>
+      <div class="profil-form" style="padding:20px 24px 24px">
+        <div class="profil-field">
+          <label class="profil-label">Titulek</label>
+          <input type="text" id="pushTitulek" class="profil-input" value="MojeBudky.cz" maxlength="60">
+        </div>
+        <div class="profil-field">
+          <label class="profil-label">Zpráva</label>
+          <textarea id="pushZprava" class="profil-input" rows="3" maxlength="200" placeholder="Text zprávy…" style="resize:vertical"></textarea>
+        </div>
+        <div id="pushMsg" style="font-size:0.9rem;margin-bottom:8px;min-height:20px"></div>
+        <button id="pushOdeslat" class="btn-primary" style="width:100%">📩 Odeslat</button>
+        <div style="font-size:0.78rem;color:var(--text-muted);margin-top:10px;text-align:center">
+          Banner se zobrazí, pokud má správce otevřenou stránku.<br>
+          Pro offline notifikaci použij GitHub Actions.
+        </div>
+      </div>
+    </div>`;
+  document.body.appendChild(modal);
+  modal.hidden = false;
+  document.getElementById('poslatPushZavrit').addEventListener('click', () => modal.remove());
+  modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
+  setTimeout(() => document.getElementById('pushZprava').focus(), 80);
+
+  document.getElementById('pushOdeslat').addEventListener('click', async () => {
+    const title = document.getElementById('pushTitulek').value.trim();
+    const body  = document.getElementById('pushZprava').value.trim();
+    const msg   = document.getElementById('pushMsg');
+    if (!body) { msg.style.color = '#e57373'; msg.textContent = '⚠ Vyplň text zprávy.'; return; }
+    const db = _getFirebaseDB();
+    if (!db) { msg.style.color = '#e57373'; msg.textContent = '⚠ Firebase nedostupný.'; return; }
+    document.getElementById('pushOdeslat').disabled = true;
+    try {
+      const pushId  = String(Date.now());
+      const myId    = window._aktualniSpravce?.loginId || 'admin';
+      const myJmeno = window._aktualniSpravce?.spravceInfo?.jmeno || myId;
+      await db.ref('push_broadcast').set({ title, body, ts: Date.now(), push_id: pushId, target: loginId });
+      await db.ref(`push_history/${pushId}`).set({
+        title, body, ts: parseInt(pushId), target: loginId,
+        sent: { [myId]: Date.now() },
+        sent_by: myJmeno,
+        source: 'app',
+      });
+      msg.style.color = '#7ed957';
+      msg.textContent = `✓ Odesláno! Banner se zobrazí správci ${jmeno}.`;
+      setTimeout(() => modal.remove(), 2000);
+    } catch(e) {
+      msg.style.color = '#e57373';
+      msg.textContent = '⚠ Nepodařilo se odeslat.';
+      document.getElementById('pushOdeslat').disabled = false;
+    }
+  });
+};
+
 function _zobrazZmenitHeslo(loginId) {
   const existujici = document.getElementById('modalZmenitHeslo');
   if (existujici) existujici.remove();
@@ -904,8 +981,14 @@ async function _zobrazPushHistorie() {
       <div style="font-weight:600;margin-bottom:3px">${z.title || ''}${target}</div>
       <div style="font-size:0.9rem;color:var(--text-muted);margin-bottom:6px">${z.body || ''}</div>
       <div style="font-size:0.8rem;color:var(--text-muted);margin-bottom:4px">🕐 ${cas}</div>
-      <div style="font-size:0.85rem;margin-bottom:2px"><span style="color:#aaa">✓</span> Odesláno: <span style="color:var(--text-light)">${sentText}</span></div>
-      <div style="font-size:0.85rem"><span style="color:#4caf50">✓✓</span> Zobrazeno: <span style="color:${readIds.length ? '#4caf50' : 'var(--text-muted)'}">${readText}</span></div>
+      <div style="font-size:0.9rem;margin-bottom:2px">
+        <span style="font-size:1.1rem;font-weight:700;color:#e0e0e0">✓</span>
+        <span style="color:var(--text-muted)"> Odesláno: </span><span style="color:var(--text-light)">${sentText}</span>
+      </div>
+      <div style="font-size:0.9rem">
+        <span style="font-size:1.1rem;font-weight:700;color:${readIds.length ? '#7ed957' : '#555'}">✓✓</span>
+        <span style="color:var(--text-muted)"> Zobrazeno: </span><span style="color:${readIds.length ? '#7ed957' : 'var(--text-muted)'}">${readText}</span>
+      </div>
     </div>`;
   }).join('');
 

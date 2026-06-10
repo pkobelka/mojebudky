@@ -1080,3 +1080,5 @@ html, body {
 .zadost-btn-odeslat-odpoved:hover { background: var(--orange-light); }
 .popup-edit-napis-btn { background: rgba(212,160,64,0.12); color: var(--accent-gold); border: 1px solid rgba(212,160,64,0.35); }
 .popup-edit-napis-btn:hover { background: rgba(212,160,64,0.25); }
+.popup-edit-push-btn { background: rgba(80,160,80,0.12); color: #7ed957; border: 1px solid rgba(80,180,80,0.35); }
+.popup-edit-push-btn:hover { background: rgba(80,160,80,0.25); }
