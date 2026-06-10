@@ -425,6 +425,24 @@ function _nastavFaviconBadge(count) {
   img.src = document.querySelector("link[rel='icon'][type='image/svg+xml']")?.href || '/mojebudky/img/favicon.svg';
 }
 
+// Kombinovaný čítač pro navbar badge (admin žádosti + zprávy správci)
+const _navBadgePocty = { zadosti: 0, zpravy: 0 };
+function _aktualizujNavBadge() {
+  const total = _navBadgePocty.zadosti + _navBadgePocty.zpravy;
+  const navBadge = document.getElementById('zpravyNavBadge');
+  if (!navBadge) return;
+  if (total > 0) {
+    navBadge.textContent = total;
+    navBadge.hidden = false;
+    navBadge.classList.remove('zpravy-nav-badge--prazdny');
+  } else {
+    navBadge.textContent = '📨';
+    navBadge.hidden = false;
+    navBadge.classList.add('zpravy-nav-badge--prazdny');
+  }
+  _nastavFaviconBadge(total);
+}
+
 function _sledujZadosti() {
   const db = _getFirebaseDB();
   if (!db) return;
@@ -438,7 +456,8 @@ function _sledujZadosti() {
     });
     const badge = document.getElementById('adminBadge');
     if (badge) { if (pocet > 0) { badge.textContent = pocet; badge.hidden = false; } else badge.hidden = true; }
-    _nastavFaviconBadge(pocet);
+    _navBadgePocty.zadosti = pocet;
+    _aktualizujNavBadge();
   });
 }
 
@@ -453,15 +472,10 @@ function _sledujZpravySpravce(loginId) {
   _zpravySpravceRef.on('value', snap => {
     const data = snap.val() || {};
     const pocet = Object.values(data).filter(z => z && !z.precteno).length;
-    const navBadge = document.getElementById('zpravyNavBadge');
-    if (navBadge) {
-      navBadge.hidden = false;
-      if (pocet > 0) { navBadge.textContent = pocet; navBadge.classList.remove('zpravy-nav-badge--prazdny'); }
-      else { navBadge.textContent = '📨'; navBadge.classList.add('zpravy-nav-badge--prazdny'); }
-    }
     const ddBadge = document.getElementById('zpravyOdAdminaBadge');
     if (ddBadge) { if (pocet > 0) { ddBadge.textContent = pocet; ddBadge.hidden = false; } else ddBadge.hidden = true; }
-    _nastavFaviconBadge(pocet);
+    _navBadgePocty.zpravy = pocet;
+    _aktualizujNavBadge();
   });
 }
 
