@@ -1941,6 +1941,145 @@ function _vokativ(jmeno) {
   return normalized + 'e';
 }
 
+function _loadImg(src, useCors) {
+  return new Promise(resolve => {
+    const img = new Image();
+    if (useCors) img.crossOrigin = 'anonymous';
+    img.onload = () => resolve(img);
+    img.onerror = () => resolve(null);
+    img.src = src;
+  });
+}
+
+function _roundRect(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.lineTo(x + w - r, y);
+  ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+  ctx.lineTo(x + w, y + h - r);
+  ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+  ctx.lineTo(x + r, y + h);
+  ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+  ctx.lineTo(x, y + r);
+  ctx.quadraticCurveTo(x, y, x + r, y);
+  ctx.closePath();
+}
+
+async function _vizitkaNaCanvas({ loginId, celJmeno, jmeno, prijmeni, telefon, email, foto, budkyText, qrSrc }) {
+  const W = 850, H = 540, S = 2;
+  const canvas = document.createElement('canvas');
+  canvas.width = W * S; canvas.height = H * S;
+  const ctx = canvas.getContext('2d');
+  ctx.scale(S, S);
+
+  // Background
+  const bg = ctx.createLinearGradient(0, 0, W, H);
+  bg.addColorStop(0, '#0e2706');
+  bg.addColorStop(0.5, '#1c4210');
+  bg.addColorStop(1, '#2a5c18');
+  ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
+
+  // Gold border
+  ctx.strokeStyle = 'rgba(212,160,64,0.6)'; ctx.lineWidth = 3;
+  ctx.strokeRect(8, 8, W - 16, H - 16);
+  ctx.strokeStyle = 'rgba(212,160,64,0.2)'; ctx.lineWidth = 1;
+  ctx.strokeRect(15, 15, W - 30, H - 30);
+
+  // Header strip
+  const hdr = ctx.createLinearGradient(0, 0, 0, 75);
+  hdr.addColorStop(0, 'rgba(0,0,0,0.4)'); hdr.addColorStop(1, 'rgba(0,0,0,0)');
+  ctx.fillStyle = hdr; ctx.fillRect(0, 0, W, 75);
+
+  // Logo
+  const logo = await _loadImg('img/logo.svg', false);
+  if (logo) ctx.drawImage(logo, 26, 14, 42, 42);
+
+  // Brand
+  ctx.textBaseline = 'alphabetic';
+  ctx.font = 'bold 23px "Segoe UI",Arial,sans-serif';
+  ctx.fillStyle = '#d4a040';
+  ctx.fillText('MojeBudky', 76, 40);
+  const bw = ctx.measureText('MojeBudky').width;
+  ctx.fillStyle = '#9dc44a';
+  ctx.fillText('.cz', 76 + bw, 40);
+  ctx.fillStyle = 'rgba(200,225,155,0.65)';
+  ctx.font = '11px "Segoe UI",Arial,sans-serif';
+  ctx.fillText('Síť ptačích budek', 26, 60);
+
+  // Header divider
+  ctx.strokeStyle = 'rgba(212,160,64,0.35)'; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(26, 74); ctx.lineTo(W - 26, 74); ctx.stroke();
+
+  // Photo circle
+  const px = 72, py = 295, pr = 72;
+  ctx.save();
+  ctx.beginPath(); ctx.arc(px, py, pr, 0, Math.PI * 2); ctx.clip();
+  const fotoImg = foto ? await _loadImg(foto, true) : null;
+  if (fotoImg) {
+    ctx.drawImage(fotoImg, px - pr, py - pr, pr * 2, pr * 2);
+  } else {
+    ctx.fillStyle = 'rgba(255,255,255,0.07)'; ctx.fillRect(px - pr, py - pr, pr * 2, pr * 2);
+    ctx.fillStyle = 'rgba(200,225,155,0.45)';
+    ctx.font = `${pr}px Arial`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText('👤', px, py + 4);
+  }
+  ctx.restore();
+  ctx.strokeStyle = '#d4a040'; ctx.lineWidth = 3;
+  ctx.beginPath(); ctx.arc(px, py, pr + 4, 0, Math.PI * 2); ctx.stroke();
+
+  // Name & role
+  const nx = 168, ny = 220;
+  ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+  ctx.fillStyle = '#f0e8c0';
+  ctx.font = 'bold 29px "Segoe UI",Arial,sans-serif';
+  ctx.fillText(celJmeno || loginId || '', nx, ny);
+  ctx.fillStyle = '#9dc44a';
+  ctx.font = '11px "Segoe UI",Arial,sans-serif';
+  ctx.fillText('SPRÁVCE PTAČÍCH BUDEK', nx, ny + 22);
+  ctx.strokeStyle = 'rgba(212,160,64,0.3)'; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(nx, ny + 34); ctx.lineTo(nx + 370, ny + 34); ctx.stroke();
+
+  // Budky
+  ctx.fillStyle = '#c8dca0'; ctx.font = '14px "Segoe UI",Arial,sans-serif';
+  ctx.fillText('🏠 Budka ' + budkyText, nx, ny + 58);
+
+  // Contacts
+  let cy = ny + 100;
+  ctx.font = '14px "Segoe UI",Arial,sans-serif';
+  if (telefon) {
+    ctx.fillStyle = '#d4a040'; ctx.fillText('📞', nx, cy);
+    ctx.fillStyle = '#e0eecc'; ctx.fillText(' ' + telefon, nx + 22, cy);
+    cy += 28;
+  }
+  if (email) {
+    ctx.fillStyle = '#d4a040'; ctx.fillText('✉', nx, cy);
+    ctx.fillStyle = '#e0eecc'; ctx.fillText(' ' + email, nx + 20, cy);
+    cy += 28;
+  }
+  ctx.fillStyle = 'rgba(157,196,74,0.8)'; ctx.font = '12px "Segoe UI",Arial,sans-serif';
+  ctx.fillText('🌿 mojebudky.cz', nx, cy + 8);
+
+  // QR code
+  const qrImg = await _loadImg(qrSrc, true);
+  const qrSize = 112, qrX = W - qrSize - 28, qrY = H - qrSize - 28;
+  if (qrImg) {
+    ctx.fillStyle = 'rgba(0,0,0,0.28)';
+    _roundRect(ctx, qrX - 8, qrY - 8, qrSize + 16, qrSize + 16, 10);
+    ctx.fill();
+    ctx.drawImage(qrImg, qrX, qrY, qrSize, qrSize);
+  }
+
+  // Bottom bar
+  const bar = ctx.createLinearGradient(0, H - 38, 0, H);
+  bar.addColorStop(0, 'rgba(0,0,0,0)'); bar.addColorStop(1, 'rgba(0,0,0,0.45)');
+  ctx.fillStyle = bar; ctx.fillRect(0, H - 38, W, 38);
+  ctx.fillStyle = 'rgba(212,160,64,0.6)';
+  ctx.font = 'bold 10px "Segoe UI",Arial,sans-serif'; ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+  ctx.fillText('MojeBudky.cz – síť ptačích budek', 26, H - 12);
+
+  return canvas;
+}
+
 function _zobrazVizitku(loginId, spravceInfo, profil) {
   const existujici = document.getElementById('modalVizitka');
   if (existujici) existujici.remove();
@@ -2003,6 +2142,7 @@ function _zobrazVizitku(loginId, spravceInfo, profil) {
         <div class="vizitka-akce">
           <button class="profil-btn-ulozit" id="vizitkaTisknout">🖨 Vytisknout</button>
           <button class="profil-btn-ulozit" id="vizitkaOdeslat" style="background:var(--accent-gold);color:#1a3a00">📤 Odeslat</button>
+          <button class="profil-btn-ulozit" id="vizitkaObrazek" style="background:#2a6018;color:#eef4e8;border:1.5px solid var(--accent-gold)">🖼 Obrázek</button>
         </div>
       </div>
     </div>`;
@@ -2038,6 +2178,29 @@ function _zobrazVizitku(loginId, spravceInfo, profil) {
       const a = document.createElement('a');
       a.href = url; a.download = soubor; a.click();
       setTimeout(() => URL.revokeObjectURL(url), 2000);
+    }
+  });
+
+  document.getElementById('vizitkaObrazek').addEventListener('click', async () => {
+    const btn = document.getElementById('vizitkaObrazek');
+    btn.disabled = true; btn.textContent = '⏳ Generuji…';
+    try {
+      const canvas = await _vizitkaNaCanvas({ loginId, celJmeno, jmeno, prijmeni, telefon, email, foto, budkyText, qrSrc });
+      canvas.toBlob(async blob => {
+        const soubor = `${[jmeno, prijmeni].filter(Boolean).join('_') || 'vizitka'}_MojeBudky.png`;
+        const pngFile = new File([blob], soubor, { type: 'image/png' });
+        if (navigator.share && navigator.canShare && navigator.canShare({ files: [pngFile] })) {
+          navigator.share({ files: [pngFile], title: celJmeno }).catch(() => {});
+        } else {
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url; a.download = soubor; a.click();
+          setTimeout(() => URL.revokeObjectURL(url), 2000);
+        }
+        btn.disabled = false; btn.textContent = '🖼 Obrázek';
+      }, 'image/png');
+    } catch(e) {
+      btn.disabled = false; btn.textContent = '🖼 Obrázek';
     }
   });
 }
