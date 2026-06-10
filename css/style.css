@@ -78,7 +78,7 @@ html, body {
 .splash-overlay.fade-out .splash-box { transform: scale(0.92); opacity: 0; }
 @keyframes splashIn { from { transform: scale(0.85); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 .splash-logo { width: 150px; height: auto; margin-bottom: 6px; filter: drop-shadow(0 4px 12px rgba(0,0,0,0.2)); }
-.splash-autor { color: #c96420; font-size: 0.78rem; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 22px; opacity: 0.85; }
+.splash-autor { color: #1a1a1a; font-size: 0.78rem; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 22px; opacity: 0.85; }
 .splash-nadpis { color: #1a5a1a; font-size: 2.6rem; font-weight: 800; margin-bottom: 12px; letter-spacing: 0.3px; }
 .splash-podnadpis { color: #2d7a2d; font-size: 1.25rem; font-weight: 500; margin-bottom: 24px; line-height: 1.5; }
 .splash-ikony { font-size: 2.2rem; margin-bottom: 20px; letter-spacing: 8px; }
@@ -733,6 +733,19 @@ html, body {
   .info-bar .bar-right { display: block; width: auto; }
 }
 
+/* ── PŘÁNÍ K NAROZENINÁM / SVÁTKU ── */
+.prani-overlay { position: fixed; inset: 0; z-index: 2500; background: rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; backdrop-filter: blur(4px); opacity: 0; transition: opacity 0.4s; pointer-events: none; }
+.prani-overlay--show { opacity: 1; pointer-events: auto; }
+.prani-box { border-radius: 28px; padding: 52px 64px 44px; text-align: center; max-width: 560px; width: 92%; box-shadow: 0 20px 70px rgba(0,0,0,0.6); transform: scale(0.88); transition: transform 0.4s ease; }
+.prani-overlay--show .prani-box { transform: scale(1); }
+.prani-box--narozeniny { background: linear-gradient(150deg, #fff8e0 0%, #ffe9a0 50%, #ffd060 100%); border: 3px solid #e8a800; color: #5a3800; }
+.prani-box--svatek    { background: linear-gradient(150deg, #e0f5ff 0%, #a8dff5 50%, #60bce8 100%); border: 3px solid #2080b8; color: #0a3050; }
+.prani-ikona   { font-size: 4rem; margin-bottom: 12px; }
+.prani-nadpis  { font-size: 2.2rem; font-weight: 800; margin-bottom: 14px; }
+.prani-text    { font-size: 1.15rem; font-weight: 500; line-height: 1.7; margin-bottom: 32px; opacity: 0.9; }
+.prani-btn     { background: rgba(0,0,0,0.15); border: 2px solid rgba(0,0,0,0.2); border-radius: 50px; padding: 12px 36px; font-size: 1.1rem; font-weight: 700; cursor: pointer; transition: background 0.2s; font-family: inherit; color: inherit; }
+.prani-btn:hover { background: rgba(0,0,0,0.25); }
+
 /* ── PŘIHLAŠOVACÍ TOAST ── */
 .admin-toast { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -40%); background: linear-gradient(135deg, #d4f5d4 0%, #a8e6a8 60%, #7dd67d 100%); border: 3px solid #3aaa3a; border-radius: 28px; color: #1a4a1a; font-size: 2.1rem; font-weight: 700; padding: 48px 80px; box-shadow: 0 16px 60px rgba(0,0,0,0.55); z-index: 2000; text-align: center; opacity: 0; transition: opacity 0.5s, transform 0.5s; pointer-events: none; max-width: 90vw; line-height: 1.6; }
 .admin-toast--show { opacity: 1; transform: translate(-50%, -50%); }
@@ -1095,4 +1108,38 @@ html, body {
 .popup-edit-napis-btn { background: rgba(212,160,64,0.12); color: var(--accent-gold); border: 1px solid rgba(212,160,64,0.35); }
 .popup-edit-napis-btn:hover { background: rgba(212,160,64,0.25); }
 .popup-edit-push-btn { background: rgba(80,160,80,0.12); color: #7ed957; border: 1px solid rgba(80,180,80,0.35); }
+
+/* ── VIZITKA SPRÁVCE ── */
+.vizitka-modal { max-width: 520px; }
+.vizitka-wrap { padding: 24px 28px 28px; }
+.vizitka-karta { background: linear-gradient(150deg, #0e2706 0%, #1c4210 60%, #2a6018 100%); border-radius: 16px; padding: 20px 24px 18px; color: #eef4e8; box-shadow: 0 8px 32px rgba(0,0,0,0.5); border: 1px solid rgba(212,160,64,0.35); }
+.vizitka-top { display: flex; align-items: center; gap: 10px; margin-bottom: 18px; border-bottom: 1px solid rgba(212,160,64,0.25); padding-bottom: 14px; }
+.vizitka-logo { width: 32px; height: auto; }
+.vizitka-brand { font-size: 1.15rem; font-weight: 800; color: #eef4e8; letter-spacing: 0.3px; }
+.vizitka-brand-cz { color: var(--accent-gold); }
+.vizitka-telo { display: flex; align-items: center; gap: 18px; margin-bottom: 18px; }
+.vizitka-foto { width: 72px; height: 72px; border-radius: 50%; object-fit: cover; border: 2px solid var(--accent-gold); flex-shrink: 0; }
+.vizitka-foto--placeholder { background: rgba(255,255,255,0.08); display: flex; align-items: center; justify-content: center; font-size: 2rem; }
+.vizitka-info { flex: 1; }
+.vizitka-jmeno { font-size: 1.25rem; font-weight: 800; color: #fff; line-height: 1.2; margin-bottom: 4px; }
+.vizitka-role { font-size: 0.78rem; color: var(--accent-gold); text-transform: uppercase; letter-spacing: 1px; font-weight: 600; margin-bottom: 8px; }
+.vizitka-budky { font-size: 0.88rem; color: rgba(238,244,232,0.8); }
+.vizitka-kontakt { display: flex; flex-wrap: wrap; gap: 8px 20px; font-size: 0.88rem; color: rgba(238,244,232,0.75); border-top: 1px solid rgba(212,160,64,0.25); padding-top: 14px; align-items: center; }
+.vizitka-web { margin-left: auto; color: var(--accent-gold); font-weight: 700; font-size: 0.82rem; }
+.vizitka-qr { width: 64px; height: 64px; border-radius: 6px; flex-shrink: 0; }
+.vizitka-akce { display: flex; justify-content: center; margin-top: 18px; }
+
+/* ── TISK VIZITKY ── */
+@media print {
+  body > *:not(#modalVizitka) { display: none !important; }
+  #modalVizitka { position: static !important; background: none !important; backdrop-filter: none !important; padding: 0 !important; display: block !important; }
+  .vizitka-modal { box-shadow: none !important; border: none !important; max-width: none !important; width: auto !important; }
+  .modal-zavrit, .profil-header, .vizitka-akce { display: none !important; }
+  .vizitka-wrap { padding: 0 !important; }
+  .vizitka-karta { box-shadow: none !important; border: 1px solid #aaa !important; width: 85mm; min-height: 50mm; page-break-inside: avoid; }
+  .vizitka-brand { color: #000 !important; }
+  .vizitka-brand-cz { color: #4a7a1a !important; }
+  .vizitka-jmeno { color: #fff !important; }
+  .vizitka-kontakt, .vizitka-budky, .vizitka-role { color: rgba(238,244,232,0.9) !important; }
+}
 .popup-edit-push-btn:hover { background: rgba(80,160,80,0.25); }

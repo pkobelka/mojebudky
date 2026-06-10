@@ -191,6 +191,17 @@ async function _zobrazAdminPanel(loginId) {
   const posledniLoginTs = parseInt(localStorage.getItem(_lsKlicLogin) || '0', 10);
   localStorage.setItem(_lsKlicLogin, Date.now());
 
+  // Narozeniny / svátek
+  const dnes = new Date();
+  const dnesDen = dnes.getDate(), dnesMes = dnes.getMonth() + 1;
+  const datNar = profil && profil.datum_narozeni;
+  const mNar = datNar && datNar.match(/^\d{4}-(\d{2})-(\d{2})$/);
+  const jeNarozeniny = mNar && parseInt(mNar[2]) === dnesDen && parseInt(mNar[1]) === dnesMes;
+  const svatekDnes = typeof SVATKY !== 'undefined' && SVATKY[`${dnesDen}.${dnesMes}`];
+  const jeSvatek = svatekDnes && jmeno && jmeno.toLowerCase() === svatekDnes.toLowerCase();
+  const lsPraniKlic = `mb_prani_${loginId}_${dnes.toISOString().slice(0,10)}`;
+  const praniUkazano = !!localStorage.getItem(lsPraniKlic);
+
   if (!jeSlib) {
     setTimeout(() => _zobrazSlibSpravce(loginId, spravceInfo, budkaText, osloveni), 1500);
   } else {
@@ -201,6 +212,11 @@ async function _zobrazAdminPanel(loginId) {
     if (jePoprve) {
       setTimeout(() => _zobrazProfilSpravce(loginId, spravceInfo, budkaText), 7000);
     }
+  }
+
+  if ((jeNarozeniny || jeSvatek) && !praniUkazano) {
+    localStorage.setItem(lsPraniKlic, '1');
+    setTimeout(() => _zobrazPrani(jeNarozeniny ? 'narozeniny' : 'svatek', osloveni), 2500);
   }
 
   if (typeof window._presenceSetAdmin === 'function') window._presenceSetAdmin(true);
@@ -243,6 +259,7 @@ async function _zobrazAdminPanel(loginId) {
   dropdown.innerHTML = `
     <div class="admin-dropdown-hlavicka">👤 ${jmeno} &nbsp;·&nbsp; ${hlavickaText}</div>
     <button class="admin-dropdown-item" data-akce="karta">🪪 Karta správce / Editovat</button>
+    <button class="admin-dropdown-item" data-akce="vizitka">🎴 Vizitka správce</button>
     <button class="admin-dropdown-item" data-akce="resetUvitani" title="Karta se při příštím přihlášení ukáže automaticky">🔄 Zobrazit kartu při příštím přihlášení</button>
     ${budkyMenuHTML}
 
@@ -297,6 +314,12 @@ async function _zobrazAdminPanel(loginId) {
 
     if (akce === 'karta' || akce === 'editSpravce') {
       _zobrazProfilSpravce(loginId, spravceInfo, budkaText);
+      dropdown.classList.remove('open');
+      return;
+    }
+
+    if (akce === 'vizitka') {
+      _zobrazVizitku(loginId, spravceInfo, profil);
       dropdown.classList.remove('open');
       return;
     }
@@ -1639,7 +1662,7 @@ async function _zobrazEditBudky(loginId, spravceInfo, budkaText, budkaCislo, bud
             <div class="eb-foto-wrap">
               ${ulozeno.foto ? `<img src="${ulozeno.foto}" class="eb-foto-nahled" id="ebFotoNahled" alt="Foto budky">` : `<div class="eb-foto-placeholder" id="ebFotoNahled">📷<span>Bez fotky</span></div>`}
               <label class="eb-foto-btn" for="ebFotoInput">📷 ${ulozeno.foto ? 'Změnit foto' : 'Přidat foto'}</label>
-              <input type="file" id="ebFotoInput" accept="image/*" capture="environment" style="display:none">
+              <input type="file" id="ebFotoInput" accept="image/*" style="display:none">
             </div>
           </div>
           <div class="profil-field profil-field--wide">
@@ -1876,6 +1899,103 @@ function _vokativ(jmeno) {
   if (normalized.endsWith('ek')) return normalized.slice(0, -2) + 'ku';
   if (normalized.endsWith('a')) return normalized.slice(0, -1) + 'o';
   return normalized + 'e';
+}
+
+function _zobrazVizitku(loginId, spravceInfo, profil) {
+  const existujici = document.getElementById('modalVizitka');
+  if (existujici) existujici.remove();
+
+  const d = profil || {};
+  const si = spravceInfo || {};
+  const titulPred  = (d.titul_pred  || '').trim();
+  const titulZa    = (d.titul_za    || '').trim();
+  const jmeno      = (d.jmeno      || si.jmeno      || '').trim();
+  const prijmeni   = (d.prijmeni   || si.prijmeni   || '').trim();
+  const telefon    = (d.telefon    || si.telefon    || '').trim();
+  const email      = (d.email      || si.email      || '').trim();
+  const foto       = d.foto || null;
+
+  const budkyList  = (si.budky && si.budky.length)
+    ? si.budky
+    : [{ cislo: si.budka_cislo, nazev: si.budka_nazev || '' }];
+  const budkyText  = budkyList.map(b => `č. ${b.cislo}${b.nazev ? ' – ' + b.nazev : ''}`).join(', ');
+
+  const celJmeno = [titulPred, jmeno, prijmeni].filter(Boolean).join(' ') + (titulZa ? `, ${titulZa}` : '');
+  const fotoHtml = foto
+    ? `<img src="${foto}" class="vizitka-foto" alt="Foto správce">`
+    : `<div class="vizitka-foto vizitka-foto--placeholder">👤</div>`;
+
+  const qrUrl = 'https://pkobelka.github.io/mojebudky/';
+  const qrSrc = `https://api.qrserver.com/v1/create-qr-code/?size=88x88&color=eef4e8&bgcolor=1c4210&data=${encodeURIComponent(qrUrl)}`;
+
+  const modal = document.createElement('div');
+  modal.id = 'modalVizitka';
+  modal.className = 'modal-overlay';
+  modal.innerHTML = `
+    <div class="modal-box profil-box vizitka-modal">
+      <button class="modal-zavrit" id="vizitkaZavrit">×</button>
+      <div class="profil-header" style="padding:20px 56px 20px 28px">
+        <div class="profil-header-text">
+          <div class="profil-nadpis">🎴 Vizitka správce</div>
+        </div>
+      </div>
+      <div class="vizitka-wrap">
+        <div class="vizitka-karta" id="vizitkaTisk">
+          <div class="vizitka-top">
+            <img src="img/logo.svg" class="vizitka-logo" alt="MojeBudky">
+            <span class="vizitka-brand">MojeBudky<span class="vizitka-brand-cz">.cz</span></span>
+          </div>
+          <div class="vizitka-telo">
+            ${fotoHtml}
+            <div class="vizitka-info">
+              <div class="vizitka-jmeno">${celJmeno || loginId}</div>
+              <div class="vizitka-role">Správce ptačích budek</div>
+              <div class="vizitka-budky">🏠 Budka ${budkyText}</div>
+            </div>
+            <img src="${qrSrc}" class="vizitka-qr" alt="QR mojebudky.cz">
+          </div>
+          <div class="vizitka-kontakt">
+            ${telefon ? `<span>📞 ${telefon}</span>` : ''}
+            ${email    ? `<span>✉ ${email}</span>`    : ''}
+            <span class="vizitka-web">mojebudky.cz</span>
+          </div>
+        </div>
+        <div class="vizitka-akce">
+          <button class="profil-btn-ulozit" id="vizitkaTisknout">🖨 Vytisknout</button>
+        </div>
+      </div>
+    </div>`;
+  document.body.appendChild(modal);
+
+  document.getElementById('vizitkaZavrit').addEventListener('click', () => modal.remove());
+  modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
+  document.getElementById('vizitkaTisknout').addEventListener('click', () => window.print());
+}
+
+function _zobrazPrani(typ, osloveni) {
+  const existujici = document.getElementById('praniOverlay');
+  if (existujici) existujici.remove();
+
+  const jeNar = typ === 'narozeniny';
+  const overlay = document.createElement('div');
+  overlay.id = 'praniOverlay';
+  overlay.className = 'prani-overlay';
+  overlay.innerHTML = `
+    <div class="prani-box prani-box--${typ}">
+      <div class="prani-ikona">${jeNar ? '🎂' : '🎉'}</div>
+      <div class="prani-nadpis">${jeNar ? 'Všechno nejlepší!' : 'Dnes máš svátek!'}</div>
+      <div class="prani-text">${jeNar
+        ? `Přejeme Ti, ${osloveni}, krásný den plný zpěvu ptáků a radosti z přírody. 🐦`
+        : `Přejeme Ti, ${osloveni}, krásný den. Ať Ti to dnes v budkách i v životě klape! 🌿`
+      }</div>
+      <button class="prani-btn" id="praniZavrit">Díky! 😊</button>
+    </div>`;
+  document.body.appendChild(overlay);
+  setTimeout(() => overlay.classList.add('prani-overlay--show'), 50);
+  document.getElementById('praniZavrit').addEventListener('click', () => {
+    overlay.classList.remove('prani-overlay--show');
+    setTimeout(() => overlay.remove(), 500);
+  });
 }
 
 function _zobrazToast(text, ms, isHtml) {
