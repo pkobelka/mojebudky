@@ -602,7 +602,7 @@ window._poslatPushSpravciByBudka = async function(cislo) {
       await db.ref('push_broadcast').set({ title, body, ts: Date.now(), push_id: pushId, target: loginId });
       await db.ref(`push_history/${pushId}`).set({
         title, body, ts: parseInt(pushId), target: loginId,
-        sent: { [myId]: Date.now() },
+        sent: { [loginId]: Date.now() },
         sent_by: myJmeno,
         source: 'app',
       });
@@ -974,16 +974,17 @@ async function _zobrazPushHistorie() {
     const cas = new Date(z.ts).toLocaleString('cs-CZ', { day: 'numeric', month: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' });
     const sentIds  = z.sent ? Object.keys(z.sent) : [];
     const readIds  = z.read ? Object.keys(z.read) : [];
-    const sentText = sentIds.length ? sentIds.map(jmenoSpravce).join(', ') : '—';
+    const prijemciIds = z.target ? [z.target] : sentIds;
+    const prijemciText = prijemciIds.length ? prijemciIds.map(jmenoSpravce).join(', ') : (sentIds.length ? sentIds.map(jmenoSpravce).join(', ') : '— všichni');
     const readText = readIds.length ? readIds.map(jmenoSpravce).join(', ') : '—';
-    const target   = z.target ? `<span style="font-size:0.8rem;color:var(--text-muted)"> → ${jmenoSpravce(z.target)}</span>` : '';
+    const sentBy = z.sent_by ? `<span style="font-size:0.78rem;color:var(--text-muted)"> · odesílatel: ${z.sent_by}</span>` : '';
     return `<div style="border-bottom:1px solid rgba(255,255,255,0.07);padding:12px 0">
-      <div style="font-weight:600;margin-bottom:3px">${z.title || ''}${target}</div>
-      <div style="font-size:0.9rem;color:var(--text-muted);margin-bottom:6px">${z.body || ''}</div>
-      <div style="font-size:0.8rem;color:var(--text-muted);margin-bottom:4px">🕐 ${cas}</div>
+      <div style="font-weight:600;margin-bottom:3px">${z.title || ''}</div>
+      <div style="font-size:0.9rem;color:var(--text-muted);margin-bottom:4px">${z.body || ''}</div>
+      <div style="font-size:0.8rem;color:var(--text-muted);margin-bottom:6px">🕐 ${cas}${sentBy}</div>
       <div style="font-size:0.9rem;margin-bottom:2px">
         <span style="font-size:1.1rem;font-weight:700;color:#e0e0e0">✓</span>
-        <span style="color:var(--text-muted)"> Odesláno: </span><span style="color:var(--text-light)">${sentText}</span>
+        <span style="color:var(--text-muted)"> Příjemce: </span><span style="color:var(--text-light)">${prijemciText}</span>
       </div>
       <div style="font-size:0.9rem">
         <span style="font-size:1.1rem;font-weight:700;color:${readIds.length ? '#7ed957' : '#555'}">✓✓</span>
