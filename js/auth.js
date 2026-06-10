@@ -566,34 +566,34 @@ window._poslatPushSpravciByBudka = async function(cislo) {
   modal.id = 'modalPoslatPush';
   modal.className = 'modal-overlay';
   modal.innerHTML = `
-    <div class="modal-box" style="max-width:420px;width:94%">
+    <div class="modal-box" style="max-width:460px;width:96%">
       <button class="modal-zavrit" id="poslatPushZavrit">×</button>
       <div class="profil-header"><div class="profil-header-text">
         <div class="profil-nadpis">📩 Poslat push</div>
-        <div class="profil-budka">Příjemce: ${jmeno}</div>
+        <div class="profil-budka" style="font-size:1rem">Příjemce: ${jmeno}</div>
       </div></div>
       <div class="profil-form" style="padding:20px 24px 24px">
         <div class="profil-field">
-          <label class="profil-label">Titulek</label>
-          <input type="text" id="pushTitulek" class="profil-input" value="MojeBudky.cz" maxlength="60">
+          <label class="profil-label" style="font-size:1rem">Titulek</label>
+          <input type="text" id="pushTitulek" class="profil-input" value="MojeBudky.cz" maxlength="60" style="font-size:1rem">
         </div>
         <div class="profil-field">
-          <label class="profil-label">Zpráva</label>
-          <textarea id="pushZprava" class="profil-input" rows="3" maxlength="200" placeholder="Text zprávy…" style="resize:vertical"></textarea>
+          <label class="profil-label" style="font-size:1rem">Zpráva</label>
+          <textarea id="pushZprava" class="profil-input" rows="4" maxlength="200" placeholder="Text zprávy…" style="resize:vertical;font-size:1rem"></textarea>
         </div>
-        <div style="font-size:0.82rem;margin-bottom:12px;padding:8px 10px;background:rgba(255,255,255,0.05);border-radius:8px">
+        <div style="font-size:0.95rem;margin-bottom:14px;padding:10px 12px;background:rgba(255,255,255,0.05);border-radius:8px;line-height:1.6">
           ${patStatus}
-          <button id="pushNastavitPAT" style="display:block;margin-top:6px;background:none;border:none;color:var(--text-muted);font-size:0.8rem;cursor:pointer;padding:0;text-decoration:underline">
+          <button id="pushNastavitPAT" style="display:block;margin-top:6px;background:none;border:none;color:var(--text-muted);font-size:0.88rem;cursor:pointer;padding:0;text-decoration:underline">
             ${pat ? '⚙ Změnit GitHub token' : '⚙ Nastavit GitHub token'}
           </button>
-          <div id="pushPATWrap" hidden style="margin-top:8px">
-            <input type="password" id="pushPATInput" class="profil-input" placeholder="ghp_xxxxxxxxxxxx" style="font-size:0.85rem;margin-bottom:4px">
-            <div style="font-size:0.75rem;color:var(--text-muted)">Token se uloží jen v tomto prohlížeči.</div>
-            <button id="pushUlozitPAT" style="margin-top:6px;background:rgba(80,160,80,0.15);border:1px solid rgba(80,180,80,0.3);color:#7ed957;border-radius:6px;padding:4px 12px;cursor:pointer;font-size:0.82rem">Uložit token</button>
+          <div id="pushPATWrap" hidden style="margin-top:10px">
+            <input type="password" id="pushPATInput" class="profil-input" placeholder="ghp_xxxxxxxxxxxx" style="font-size:0.9rem;margin-bottom:4px">
+            <div style="font-size:0.82rem;color:var(--text-muted)">Token se uloží jen v tomto prohlížeči.</div>
+            <button id="pushUlozitPAT" style="margin-top:8px;background:rgba(80,160,80,0.15);border:1px solid rgba(80,180,80,0.3);color:#7ed957;border-radius:6px;padding:6px 16px;cursor:pointer;font-size:0.9rem">Uložit token</button>
           </div>
         </div>
-        <div id="pushMsg" style="font-size:0.9rem;margin-bottom:8px;min-height:20px"></div>
-        <button id="pushOdeslat" class="btn-primary" style="width:100%">📩 Odeslat</button>
+        <div id="pushMsg" style="font-size:0.95rem;margin-bottom:10px;min-height:22px"></div>
+        <button id="pushOdeslat" class="btn-primary" style="width:100%;font-size:1.05rem;padding:14px">📩 Odeslat</button>
       </div>
     </div>`;
   document.body.appendChild(modal);
