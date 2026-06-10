@@ -1479,6 +1479,28 @@ function _zobrazProfilSpravce(loginId, info, budkaText) {
       if (nova !== stara) zmeny[k] = { stara, nova, label: CITLIVA_LABELY[k] };
     });
 
+    // Validace
+    const emailInput = document.getElementById('pEmail');
+    const emailVal = emailInput.value.trim();
+    if (emailVal && !emailInput.validity.valid) {
+      const errEl = document.getElementById('profilUlozeno');
+      errEl.textContent = '⚠ Neplatný formát e-mailu (příklad: jmeno@domena.cz)';
+      errEl.style.color = '#e07070';
+      errEl.hidden = false;
+      emailInput.focus();
+      setTimeout(() => { errEl.hidden = true; errEl.style.color = ''; }, 5000);
+      return;
+    }
+    if (!noveCitlive.jmeno || !noveCitlive.prijmeni) {
+      const errEl = document.getElementById('profilUlozeno');
+      errEl.textContent = '⚠ Jméno a příjmení jsou povinná pole';
+      errEl.style.color = '#e07070';
+      errEl.hidden = false;
+      document.getElementById(!noveCitlive.jmeno ? 'pJmeno' : 'pPrijmeni').focus();
+      setTimeout(() => { errEl.hidden = true; errEl.style.color = ''; }, 5000);
+      return;
+    }
+
     // Ulož volná pole + beze-změny citlivá pole přímo
     const dataKUlozeni = { ...volnaData };
     CITLIVA.forEach(k => { if (!zmeny[k]) dataKUlozeni[k] = noveCitlive[k]; });
