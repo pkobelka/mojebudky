@@ -195,9 +195,9 @@ async function _zobrazAdminPanel(loginId) {
     setTimeout(() => _zobrazSlibSpravce(loginId, spravceInfo, budkaText, osloveni), 1500);
   } else {
     const posledniText = posledniLoginTs
-      ? ` · naposledy přihlášen ${new Date(posledniLoginTs).toLocaleDateString('cs-CZ', { day: 'numeric', month: 'long', year: 'numeric' })}`
+      ? `<small class="toast-posledni">Poslední přihlášení: ${new Date(posledniLoginTs).toLocaleString('cs-CZ', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</small>`
       : '';
-    _zobrazToast(`Ahoj ${osloveni}! 🌿${posledniText}`);
+    _zobrazToast(`Ahoj ${osloveni}! 🌿${posledniText}`, 6000, true);
     if (jePoprve) {
       setTimeout(() => _zobrazProfilSpravce(loginId, spravceInfo, budkaText), 7000);
     }
@@ -1878,14 +1878,14 @@ function _vokativ(jmeno) {
   return normalized + 'e';
 }
 
-function _zobrazToast(text, ms) {
+function _zobrazToast(text, ms, isHtml) {
   const existujici = document.getElementById('adminToast');
   if (existujici) existujici.remove();
 
   const toast = document.createElement('div');
   toast.id = 'adminToast';
   toast.className = 'admin-toast';
-  toast.textContent = text;
+  if (isHtml) toast.innerHTML = text; else toast.textContent = text;
   document.body.appendChild(toast);
 
   const doba = ms || 6000;
