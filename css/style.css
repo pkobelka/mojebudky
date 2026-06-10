@@ -122,8 +122,8 @@ html, body {
 .admin-banner button:hover { color: var(--text-light); border-color: var(--text-muted); }
 .admin-budka-link { color: var(--accent-gold); font-size: 0.85rem; font-style: italic; }
 .btn-login.prihlaseny { background: transparent !important; color: var(--accent-gold) !important; text-decoration: underline; border-color: transparent !important; }
-.zpravy-nav-badge { display: inline-block; background: #e53935; color: #fff; border-radius: 10px; font-size: 0.72rem; font-weight: 700; padding: 1px 6px; margin-left: 5px; vertical-align: middle; animation: badgePulse 1.5s ease-in-out 3; }
-@keyframes badgePulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.3); } }
+.zpravy-nav-badge { display: inline-block; background: #e53935; color: #fff; border-radius: 12px; font-size: 0.82rem; font-weight: 800; padding: 2px 8px; margin-left: 7px; vertical-align: middle; box-shadow: 0 0 0 0 rgba(229,57,53,0.7); animation: badgePulse 1.8s ease-in-out infinite; }
+@keyframes badgePulse { 0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(229,57,53,0.7); } 60% { transform: scale(1.25); box-shadow: 0 0 0 7px rgba(229,57,53,0); } 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(229,57,53,0); } }
 
 .info-bar { background: var(--bar-bg); color: var(--bar-text); font-size: 1.1rem; padding: 8px 28px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #d0c0a0; min-height: 42px; }
 .info-bar .bar-right { color: var(--tree-mid); font-style: italic; font-size: 1.1rem; }
@@ -808,8 +808,8 @@ html, body {
 .profil-btn-zpet { background: rgba(255,255,255,0.08); color: var(--text-muted); border: 1px solid var(--panel-border); border-radius: 8px; padding: 12px 22px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: background 0.2s; font-family: inherit; }
 .profil-btn-zpet:hover { background: rgba(255,255,255,0.14); color: var(--text-light); }
 .profil-ulozeno { color: #6dcc6d; font-size: 1.1rem; font-weight: 600; }
-.profil-vzdy-label { display: flex; align-items: center; gap: 8px; color: var(--text-muted); font-size: 0.95rem; cursor: pointer; width: 100%; padding-bottom: 10px; border-bottom: 1px solid var(--panel-border); margin-bottom: 4px; }
-.profil-vzdy-label input[type=checkbox] { width: 18px; height: 18px; accent-color: var(--accent-gold); cursor: pointer; flex-shrink: 0; }
+.profil-vzdy-label { display: flex; align-items: center; gap: 8px; color: var(--text-muted); font-size: 0.95rem; cursor: pointer; width: 100%; padding: 10px 0; border-bottom: 1px solid var(--panel-border); margin-bottom: 4px; min-height: 44px; touch-action: manipulation; user-select: none; }
+.profil-vzdy-label input[type=checkbox] { width: 20px; height: 20px; accent-color: var(--accent-gold); cursor: pointer; flex-shrink: 0; touch-action: manipulation; }
 
 /* ── ADMIN SEZNAM SPRÁVCŮ ── */
 .admin-seznam-box { max-width: 960px; width: 98%; padding: 0; overflow: hidden; text-align: left; max-height: 92vh; display: flex; flex-direction: column; }

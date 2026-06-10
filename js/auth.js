@@ -438,8 +438,6 @@ function _sledujZadosti() {
     });
     const badge = document.getElementById('adminBadge');
     if (badge) { if (pocet > 0) { badge.textContent = pocet; badge.hidden = false; } else badge.hidden = true; }
-    const navBadge = document.getElementById('zpravyNavBadge');
-    if (navBadge) { if (pocet > 0) { navBadge.textContent = pocet; navBadge.hidden = false; } else navBadge.hidden = true; }
     _nastavFaviconBadge(pocet);
   });
 }
@@ -674,6 +672,10 @@ window._poslatPushSpravciByBudka = async function(cislo) {
         sent_by: myJmeno,
         source: ghOk ? 'app+fcm' : 'app',
       });
+
+      // Uložit do schránky zpráv správce, aby viděl historii v "Zprávy od admina"
+      const zpravyText = title !== 'MojeBudky.cz' ? `${title}: ${body}` : body;
+      await db.ref(`zpravy_spravci/${loginId}`).push({ text: zpravyText, ts: parseInt(pushId), precteno: false });
 
       if (ghOk) {
         msg.style.color = '#7ed957';
