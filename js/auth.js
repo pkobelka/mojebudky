@@ -554,6 +554,14 @@ window._poslatPushSpravciByBudka = async function(cislo) {
   const existujici = document.getElementById('modalPoslatPush');
   if (existujici) existujici.remove();
 
+  const GH_REPO   = 'pkobelka/mojebudky';
+  const GH_WF     = 'send-push.yml';
+  const LS_PAT    = 'mb_github_pat';
+  const pat       = localStorage.getItem(LS_PAT) || '';
+  const patStatus = pat
+    ? `<span style="color:#7ed957">✓ GitHub token nastaven — posílá FCM i offline</span>`
+    : `<span style="color:#e5a050">⚠ GitHub token není nastaven — pošle jen banner (online)</span>`;
+
   const modal = document.createElement('div');
   modal.id = 'modalPoslatPush';
   modal.className = 'modal-overlay';
@@ -573,12 +581,19 @@ window._poslatPushSpravciByBudka = async function(cislo) {
           <label class="profil-label">Zpráva</label>
           <textarea id="pushZprava" class="profil-input" rows="3" maxlength="200" placeholder="Text zprávy…" style="resize:vertical"></textarea>
         </div>
+        <div style="font-size:0.82rem;margin-bottom:12px;padding:8px 10px;background:rgba(255,255,255,0.05);border-radius:8px">
+          ${patStatus}
+          <button id="pushNastavitPAT" style="display:block;margin-top:6px;background:none;border:none;color:var(--text-muted);font-size:0.8rem;cursor:pointer;padding:0;text-decoration:underline">
+            ${pat ? '⚙ Změnit GitHub token' : '⚙ Nastavit GitHub token'}
+          </button>
+          <div id="pushPATWrap" hidden style="margin-top:8px">
+            <input type="password" id="pushPATInput" class="profil-input" placeholder="ghp_xxxxxxxxxxxx" style="font-size:0.85rem;margin-bottom:4px">
+            <div style="font-size:0.75rem;color:var(--text-muted)">Token se uloží jen v tomto prohlížeči.</div>
+            <button id="pushUlozitPAT" style="margin-top:6px;background:rgba(80,160,80,0.15);border:1px solid rgba(80,180,80,0.3);color:#7ed957;border-radius:6px;padding:4px 12px;cursor:pointer;font-size:0.82rem">Uložit token</button>
+          </div>
+        </div>
         <div id="pushMsg" style="font-size:0.9rem;margin-bottom:8px;min-height:20px"></div>
         <button id="pushOdeslat" class="btn-primary" style="width:100%">📩 Odeslat</button>
-        <div style="font-size:0.78rem;color:var(--text-muted);margin-top:10px;text-align:center">
-          Banner se zobrazí, pokud má správce otevřenou stránku.<br>
-          Pro offline notifikaci použij GitHub Actions.
-        </div>
       </div>
     </div>`;
   document.body.appendChild(modal);
@@ -587,28 +602,64 @@ window._poslatPushSpravciByBudka = async function(cislo) {
   modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
   setTimeout(() => document.getElementById('pushZprava').focus(), 80);
 
+  document.getElementById('pushNastavitPAT').addEventListener('click', () => {
+    const wrap = document.getElementById('pushPATWrap');
+    wrap.hidden = !wrap.hidden;
+    if (!wrap.hidden) document.getElementById('pushPATInput').focus();
+  });
+
+  document.getElementById('pushUlozitPAT').addEventListener('click', () => {
+    const val = document.getElementById('pushPATInput').value.trim();
+    if (val) { localStorage.setItem(LS_PAT, val); _zobrazToast('✓ GitHub token uložen'); }
+    else      { localStorage.removeItem(LS_PAT); _zobrazToast('Token odstraněn'); }
+    modal.remove();
+  });
+
   document.getElementById('pushOdeslat').addEventListener('click', async () => {
-    const title = document.getElementById('pushTitulek').value.trim();
-    const body  = document.getElementById('pushZprava').value.trim();
-    const msg   = document.getElementById('pushMsg');
+    const title   = document.getElementById('pushTitulek').value.trim();
+    const body    = document.getElementById('pushZprava').value.trim();
+    const msg     = document.getElementById('pushMsg');
+    const curPat  = localStorage.getItem(LS_PAT) || '';
     if (!body) { msg.style.color = '#e57373'; msg.textContent = '⚠ Vyplň text zprávy.'; return; }
     const db = _getFirebaseDB();
     if (!db) { msg.style.color = '#e57373'; msg.textContent = '⚠ Firebase nedostupný.'; return; }
     document.getElementById('pushOdeslat').disabled = true;
+    msg.style.color = 'var(--text-muted)'; msg.textContent = 'Odesílám…';
     try {
       const pushId  = String(Date.now());
-      const myId    = window._aktualniSpravce?.loginId || 'admin';
-      const myJmeno = window._aktualniSpravce?.spravceInfo?.jmeno || myId;
+      const myJmeno = window._aktualniSpravce?.spravceInfo?.jmeno || window._aktualniSpravce?.loginId || 'admin';
+
+      // Foreground banner (vždy)
       await db.ref('push_broadcast').set({ title, body, ts: Date.now(), push_id: pushId, target: loginId });
+
+      let ghOk = false;
+      if (curPat) {
+        try {
+          const ghResp = await fetch(`https://api.github.com/repos/${GH_REPO}/actions/workflows/${GH_WF}/dispatches`, {
+            method: 'POST',
+            headers: { Authorization: `Bearer ${curPat}`, 'Content-Type': 'application/json', Accept: 'application/vnd.github+json' },
+            body: JSON.stringify({ ref: 'main', inputs: { title, body, target_id: loginId } }),
+          });
+          ghOk = ghResp.status === 204;
+          if (!ghOk) { msg.style.color = '#e5a050'; msg.textContent = `⚠ GitHub API chyba ${ghResp.status} — zkontroluj token.`; }
+        } catch { msg.style.color = '#e5a050'; msg.textContent = '⚠ GitHub API nedostupné.'; }
+      }
+
       await db.ref(`push_history/${pushId}`).set({
         title, body, ts: parseInt(pushId), target: loginId,
         sent: { [loginId]: Date.now() },
         sent_by: myJmeno,
-        source: 'app',
+        source: ghOk ? 'app+fcm' : 'app',
       });
-      msg.style.color = '#7ed957';
-      msg.textContent = `✓ Odesláno! Banner se zobrazí správci ${jmeno}.`;
-      setTimeout(() => modal.remove(), 2000);
+
+      if (ghOk) {
+        msg.style.color = '#7ed957';
+        msg.textContent = `✓ Odesláno přes FCM! Správce ${jmeno} dostane notifikaci i offline.`;
+      } else if (!curPat) {
+        msg.style.color = '#7ed957';
+        msg.textContent = `✓ Banner odeslán. Pro offline notifikaci nastav GitHub token.`;
+      }
+      setTimeout(() => modal.remove(), 2500);
     } catch(e) {
       msg.style.color = '#e57373';
       msg.textContent = '⚠ Nepodařilo se odeslat.';
