@@ -673,6 +673,10 @@ window._poslatPushSpravciByBudka = async function(cislo) {
         source: ghOk ? 'app+fcm' : 'app',
       });
 
+      // Uložit do schránky zpráv správce, aby viděl historii v "Zprávy od admina"
+      const zpravyText = title !== 'MojeBudky.cz' ? `${title}: ${body}` : body;
+      await db.ref(`zpravy_spravci/${loginId}`).push({ text: zpravyText, ts: parseInt(pushId), precteno: false });
+
       if (ghOk) {
         msg.style.color = '#7ed957';
         msg.textContent = `✓ Odesláno přes FCM! Správce ${jmeno} dostane notifikaci i offline.`;
