@@ -222,7 +222,6 @@ async function _zobrazAdminPanel(loginId) {
   if (typeof window._presenceSetAdmin === 'function') window._presenceSetAdmin(true);
   _nastavPushForeground();
   _prihlasitPush(loginId);
-  if (!jeAdmin) _sledujZpravySpravce(loginId);
 
   // Zaznamenat aktivitu správce (pro indikátor aktivity na mapě)
   const dbAkt = _getFirebaseDB();
@@ -236,6 +235,7 @@ async function _zobrazAdminPanel(loginId) {
   const jeAdmin = !!(spravceInfo && spravceInfo.spravce === 'admin');
   window._aktualniSpravce = { loginId, spravceInfo, budkyList, jeAdmin };
   window._editBudku = _zobrazEditBudky;
+  if (!jeAdmin) _sledujZpravySpravce(loginId);
 
   const btn = document.getElementById('btnPrihlasit');
   if (btn) { btn.innerHTML = `Přihlášen ${jmeno} ▾ <span class="zpravy-nav-badge" id="zpravyNavBadge" hidden>0</span>`; btn.classList.add('prihlaseny'); }
