@@ -90,7 +90,12 @@ html, body {
 .modal-overlay { position: fixed; inset: 0; z-index: 1000; background: rgba(10, 30, 5, 0.78); display: flex; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
 .modal-overlay[hidden] { display: none; }
 .modal-box { background: var(--panel-bg); border: 1px solid var(--panel-border); border-radius: 16px; padding: 3rem 3.5rem 2.8rem; max-width: 560px; width: 94%; position: relative; text-align: center; box-shadow: 0 8px 40px rgba(0,0,0,0.55); }
-.modal-box-login { max-width: 640px; }
+.modal-box-login { max-width: 760px; }
+.modal-box-login .modal-nadpis { font-size: 2.2rem; }
+.modal-box-login .modal-hint { font-size: 1.25rem; }
+.modal-box-login .modal-uvitani { font-size: 1.2rem; }
+.modal-box-login .modal-form input { font-size: 1.7rem; padding: 1.1rem 1.5rem; }
+.modal-box-login .modal-form button { font-size: 1.55rem; padding: 1.2rem 1.5rem; }
 .modal-uvitani { color: var(--text-muted); font-size: 1.1rem; line-height: 1.7; margin-bottom: 1.8rem; padding: 1.2rem 1.4rem; background: rgba(255,255,255,0.04); border-radius: 10px; border: 1px solid var(--panel-border); }
 .modal-uvitani strong { color: var(--accent-gold); }
 .modal-zavrit { position: absolute; top: 0.9rem; right: 1.2rem; background: none; border: none; color: var(--text-muted); font-size: 2rem; line-height: 1; cursor: pointer; }
