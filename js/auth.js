@@ -2002,6 +2002,7 @@ function _zobrazVizitku(loginId, spravceInfo, profil) {
         </div>
         <div class="vizitka-akce">
           <button class="profil-btn-ulozit" id="vizitkaTisknout">🖨 Vytisknout</button>
+          <button class="profil-btn-ulozit" id="vizitkaOdeslat" style="background:var(--accent-gold);color:#1a3a00">📤 Odeslat</button>
         </div>
       </div>
     </div>`;
@@ -2010,6 +2011,35 @@ function _zobrazVizitku(loginId, spravceInfo, profil) {
   document.getElementById('vizitkaZavrit').addEventListener('click', () => modal.remove());
   modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
   document.getElementById('vizitkaTisknout').addEventListener('click', () => window.print());
+
+  document.getElementById('vizitkaOdeslat').addEventListener('click', () => {
+    const vcf = [
+      'BEGIN:VCARD',
+      'VERSION:3.0',
+      `FN:${celJmeno || [jmeno, prijmeni].filter(Boolean).join(' ')}`,
+      `N:${prijmeni};${jmeno};;;${titulPred ? titulPred + ' ' : ''}`,
+      titulZa ? `TITLE:${titulZa}` : '',
+      `ORG:MojeBudky.cz`,
+      `NOTE:Správce ptačích budek – ${budkyText}`,
+      telefon ? `TEL;TYPE=CELL:${telefon}` : '',
+      email   ? `EMAIL:${email}` : '',
+      `URL:https://pkobelka.github.io/mojebudky/`,
+    ].filter(Boolean).join('\r\n') + '\r\nEND:VCARD';
+
+    const blob = new Blob([vcf], { type: 'text/vcard' });
+    const soubor = `${[jmeno, prijmeni].filter(Boolean).join('_') || 'vizitka'}_MojeBudky.vcf`;
+
+    if (navigator.share) {
+      const file = new File([blob], soubor, { type: 'text/vcard' });
+      navigator.share({ files: [file], title: celJmeno, text: `Vizitka správce – MojeBudky.cz` })
+        .catch(() => {});
+    } else {
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = soubor; a.click();
+      setTimeout(() => URL.revokeObjectURL(url), 2000);
+    }
+  });
 }
 
 function _zobrazPrani(typ, osloveni) {
