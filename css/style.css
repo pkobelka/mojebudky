@@ -603,10 +603,10 @@ html, body {
   .logo-autor { font-size: 0.6rem; }
   .btn-login { font-size: 0.88rem; padding: 8px 12px; }
   .btn-napsat { display: none; }
-  .nav-hamburger { display: flex; }
+  .nav-hamburger { display: flex; margin-left: auto; }
   .nav-napsat-mobile { display: block; }
   .nav-podpora-mobile { display: block; }
-  .nav-links { display: none; position: fixed; top: 58px; left: 0; right: 0; background: var(--nav-bg); flex-direction: column; padding: 8px 0 12px; box-shadow: 0 6px 20px rgba(0,0,0,0.5); z-index: 999; gap: 0; }
+  .nav-links { display: none; position: fixed; top: 58px; left: 0; right: 0; background: var(--nav-bg); flex-direction: column; padding: 8px 0 12px; box-shadow: 0 6px 20px rgba(0,0,0,0.5); z-index: 1100; gap: 0; }
   .nav-links.open { display: flex; }
   .nav-links li { width: 100%; }
   .nav-links a { display: block; padding: 14px 20px; font-size: 1.1rem; border-bottom: 1px solid rgba(255,255,255,0.07); }
