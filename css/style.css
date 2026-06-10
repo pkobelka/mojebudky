@@ -870,6 +870,7 @@ html, body {
 .zadosti-skupina { margin-bottom: 16px; }
 .zadosti-typ { color: var(--accent-gold); font-size: 1rem; font-weight: 700; margin-bottom: 8px; }
 .zadost-item { background: rgba(255,255,255,0.05); border: 1px solid var(--panel-border); border-radius: 8px; padding: 12px 14px; margin-bottom: 8px; font-size: 0.95rem; color: var(--text-light); line-height: 1.6; }
+.zadost-item--vyrizena { opacity: 0.5; background: transparent; }
 .zadost-detail { color: var(--accent-gold); }
 .zadost-zprava-text { color: var(--text-light); white-space: pre-wrap; }
 .zadost-btn-row { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }

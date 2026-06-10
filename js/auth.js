@@ -222,7 +222,7 @@ async function _zobrazAdminPanel(loginId) {
   if (typeof window._presenceSetAdmin === 'function') window._presenceSetAdmin(true);
   _nastavPushForeground();
   _prihlasitPush(loginId);
-  _sledujZpravySpravce(loginId);
+  if (!jeAdmin) _sledujZpravySpravce(loginId);
 
   // Zaznamenat aktivitu správce (pro indikátor aktivity na mapě)
   const dbAkt = _getFirebaseDB();
@@ -264,8 +264,8 @@ async function _zobrazAdminPanel(loginId) {
     ${budkyMenuHTML}
 
     <button class="admin-dropdown-item" data-akce="zmenitHeslo">🔑 Změnit heslo</button>
-    <button class="admin-dropdown-item" data-akce="napisAdminovi">✉️ Napsat adminovi</button>
-    <button class="admin-dropdown-item" data-akce="zpravyOdAdmina">📨 Zprávy od admina <span class="admin-badge" id="zpravyOdAdminaBadge" hidden>0</span></button>
+    ${!jeAdmin ? `<button class="admin-dropdown-item" data-akce="napisAdminovi">✉️ Napsat adminovi</button>
+    <button class="admin-dropdown-item" data-akce="zpravyOdAdmina">📨 Zprávy od admina <span class="admin-badge" id="zpravyOdAdminaBadge" hidden>0</span></button>` : ''}
     ${jeAdmin ? `<div class="admin-dropdown-oddelovac"></div><button class="admin-dropdown-item admin-item-zadosti" data-akce="zadosti">📬 Žádosti správců <span class="admin-badge" id="adminBadge" hidden>0</span></button><button class="admin-dropdown-item" data-akce="prehledSpravcu">👥 Přehled správců</button><button class="admin-dropdown-item" data-akce="aktivitaSpravcu">🏆 Aktivita správců</button><button class="admin-dropdown-item" data-akce="pushHistorie">📩 Push notifikace</button>` : ''}
     <div class="admin-dropdown-oddelovac"></div>
     <button class="admin-dropdown-item odhlasit" data-akce="odhlasit">🚪 Odhlásit se</button>
@@ -1167,14 +1167,33 @@ function _zobrazZadosti() {
     const data = snap.val() || {};
     const container = document.getElementById('zadostiObsah');
     let html = '';
+
+    const renderZprava = (klic, z, vyrizena) => {
+      const cas = z.ts ? new Date(z.ts).toLocaleString('cs-CZ') : '';
+      const emailInfo = z.email && z.email !== '(neuvedeno)' ? ` · ${z.email}` : '';
+      const mozeOdpovedet = !vyrizena && z.loginId && z.loginId !== 'navstevnik';
+      return `<div class="zadost-item${vyrizena ? ' zadost-item--vyrizena' : ''}" data-typ="zpravy" data-klic="${klic}">
+        <strong>${z.jmeno || z.loginId}</strong>${emailInfo} <span class="zadost-cas">${cas}</span>${vyrizena ? ' <span style="color:#6dcc6d;font-size:0.82rem">✓ vyřízeno</span>' : ''}<br>
+        <span class="zadost-detail zadost-zprava-text">${z.text ? z.text.replace(/</g,'&lt;') : ''}</span><br>
+        ${!vyrizena ? `<div class="zadost-btn-row">
+          ${mozeOdpovedet ? `<button class="zadost-btn-odpovedet" data-loginid="${z.loginId}" data-jmeno="${z.jmeno || z.loginId}" data-klic="${klic}">💬 Odpovědět</button>` : ''}
+          <button class="zadost-btn-ok" data-typ="zpravy" data-klic="${klic}">✓ Vyřízeno</button>
+        </div>
+        <div class="zadost-odpoved-wrap" id="odpov-${klic}" hidden>
+          <textarea class="zadost-odpoved-ta" rows="3" placeholder="Tvoje odpověď…"></textarea>
+          <button class="zadost-btn-odeslat-odpoved" data-loginid="${z.loginId}" data-jmeno="${z.jmeno || z.loginId}" data-klic="${klic}">📨 Odeslat</button>
+        </div>` : ''}
+      </div>`;
+    };
+
     ['zmeny', 'zpravy', 'gps', 'druhy'].forEach(typ => {
       const kat = data[typ] || {};
-      const polozky = Object.entries(kat).filter(([,v]) => !v.vyrizeno);
+      const polozky = Object.entries(kat).filter(([,v]) => v && !v.vyrizeno);
       if (!polozky.length) return;
       const typLabel = typ === 'gps' ? '📍 Opravy GPS' : typ === 'druhy' ? '🐦 Nové druhy'
         : typ === 'zpravy' ? '✉️ Zprávy správců' : '🔄 Změny profilu';
       html += `<div class="zadosti-skupina"><div class="zadosti-typ">${typLabel}</div>`;
-      polozky.forEach(([klic, z]) => {
+      polozky.sort(([,a],[,b]) => (b.ts||0)-(a.ts||0)).forEach(([klic, z]) => {
         const cas = z.ts ? new Date(z.ts).toLocaleString('cs-CZ') : '';
         if (typ === 'zmeny') {
           const zmenHtml = Object.entries(z.zmeny || {}).map(([,v]) =>
@@ -1202,24 +1221,22 @@ function _zobrazZadosti() {
             <button class="zadost-btn-ok" data-typ="${typ}" data-klic="${klic}">✓ Vyřízeno</button>
           </div>`;
         } else {
-          const emailInfo = z.email && z.email !== '(neuvedeno)' ? ` · ${z.email}` : '';
-          const mozeOdpovedet = z.loginId && z.loginId !== 'navstevnik';
-          html += `<div class="zadost-item" data-typ="${typ}" data-klic="${klic}">
-            <strong>${z.jmeno || z.loginId}</strong>${emailInfo} <span class="zadost-cas">${cas}</span><br>
-            <span class="zadost-detail zadost-zprava-text">${z.text ? z.text.replace(/</g,'&lt;') : ''}</span><br>
-            <div class="zadost-btn-row">
-              ${mozeOdpovedet ? `<button class="zadost-btn-odpovedet" data-loginid="${z.loginId}" data-jmeno="${z.jmeno || z.loginId}" data-klic="${klic}">💬 Odpovědět</button>` : ''}
-              <button class="zadost-btn-ok" data-typ="${typ}" data-klic="${klic}">✓ Vyřízeno</button>
-            </div>
-            <div class="zadost-odpoved-wrap" id="odpov-${klic}" hidden>
-              <textarea class="zadost-odpoved-ta" rows="3" placeholder="Tvoje odpověď…"></textarea>
-              <button class="zadost-btn-odeslat-odpoved" data-loginid="${z.loginId}" data-jmeno="${z.jmeno || z.loginId}" data-klic="${klic}">📨 Odeslat</button>
-            </div>
-          </div>`;
+          html += renderZprava(klic, z, false);
         }
       });
       html += '</div>';
     });
+
+    // Historie vyřízených zpráv správců
+    const vyrizeneZpravy = Object.entries(data.zpravy || {}).filter(([,v]) => v && v.vyrizeno)
+      .sort(([,a],[,b]) => (b.ts||0)-(a.ts||0));
+    if (vyrizeneZpravy.length) {
+      html += `<div class="zadosti-skupina zadosti-skupina--historie">
+        <div class="zadosti-typ" style="opacity:0.55">📁 Historie zpráv (vyřízené)</div>
+        ${vyrizeneZpravy.map(([k,z]) => renderZprava(k, z, true)).join('')}
+      </div>`;
+    }
+
     container.innerHTML = html || '<div style="color:var(--text-muted)">Žádné čekající žádosti 🎉</div>';
 
     container.addEventListener('click', async e => {
