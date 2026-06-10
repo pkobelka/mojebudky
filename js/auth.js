@@ -222,7 +222,7 @@ async function _zobrazAdminPanel(loginId) {
   if (typeof window._presenceSetAdmin === 'function') window._presenceSetAdmin(true);
   _nastavPushForeground();
   _prihlasitPush(loginId);
-  _sledujZpravySpravce(loginId);
+  if (!jeAdmin) _sledujZpravySpravce(loginId);
 
   // Zaznamenat aktivitu správce (pro indikátor aktivity na mapě)
   const dbAkt = _getFirebaseDB();
@@ -264,8 +264,8 @@ async function _zobrazAdminPanel(loginId) {
     ${budkyMenuHTML}
 
     <button class="admin-dropdown-item" data-akce="zmenitHeslo">🔑 Změnit heslo</button>
-    <button class="admin-dropdown-item" data-akce="napisAdminovi">✉️ Napsat adminovi</button>
-    <button class="admin-dropdown-item" data-akce="zpravyOdAdmina">📨 Zprávy od admina <span class="admin-badge" id="zpravyOdAdminaBadge" hidden>0</span></button>
+    ${!jeAdmin ? `<button class="admin-dropdown-item" data-akce="napisAdminovi">✉️ Napsat adminovi</button>
+    <button class="admin-dropdown-item" data-akce="zpravyOdAdmina">📨 Zprávy od admina <span class="admin-badge" id="zpravyOdAdminaBadge" hidden>0</span></button>` : ''}
     ${jeAdmin ? `<div class="admin-dropdown-oddelovac"></div><button class="admin-dropdown-item admin-item-zadosti" data-akce="zadosti">📬 Žádosti správců <span class="admin-badge" id="adminBadge" hidden>0</span></button><button class="admin-dropdown-item" data-akce="prehledSpravcu">👥 Přehled správců</button><button class="admin-dropdown-item" data-akce="aktivitaSpravcu">🏆 Aktivita správců</button><button class="admin-dropdown-item" data-akce="pushHistorie">📩 Push notifikace</button>` : ''}
     <div class="admin-dropdown-oddelovac"></div>
     <button class="admin-dropdown-item odhlasit" data-akce="odhlasit">🚪 Odhlásit se</button>
@@ -425,20 +425,40 @@ function _nastavFaviconBadge(count) {
   img.src = document.querySelector("link[rel='icon'][type='image/svg+xml']")?.href || '/mojebudky/img/favicon.svg';
 }
 
+// Kombinovaný čítač pro navbar badge (admin žádosti + zprávy správci)
+const _navBadgePocty = { zadosti: 0, zpravy: 0 };
+function _aktualizujNavBadge() {
+  const total = _navBadgePocty.zadosti + _navBadgePocty.zpravy;
+  const navBadge = document.getElementById('zpravyNavBadge');
+  if (!navBadge) return;
+  if (total > 0) {
+    navBadge.textContent = total;
+    navBadge.hidden = false;
+    navBadge.classList.remove('zpravy-nav-badge--prazdny');
+  } else {
+    navBadge.textContent = '📨';
+    navBadge.hidden = false;
+    navBadge.classList.add('zpravy-nav-badge--prazdny');
+  }
+  _nastavFaviconBadge(total);
+}
+
 function _sledujZadosti() {
   const db = _getFirebaseDB();
   if (!db) return;
   db.ref('admin_requests').on('value', snap => {
     const data = snap.val() || {};
     let pocet = 0;
-    Object.values(data).forEach(kategorie => {
-      if (typeof kategorie === 'object') {
-        Object.values(kategorie).forEach(z => { if (!z.vyrizeno) pocet++; });
+    ['zmeny', 'zpravy', 'gps', 'druhy'].forEach(typ => {
+      const kat = data[typ];
+      if (kat && typeof kat === 'object') {
+        Object.values(kat).forEach(z => { if (z && !z.vyrizeno) pocet++; });
       }
     });
     const badge = document.getElementById('adminBadge');
     if (badge) { if (pocet > 0) { badge.textContent = pocet; badge.hidden = false; } else badge.hidden = true; }
-    _nastavFaviconBadge(pocet);
+    _navBadgePocty.zadosti = pocet;
+    _aktualizujNavBadge();
   });
 }
 
@@ -453,15 +473,10 @@ function _sledujZpravySpravce(loginId) {
   _zpravySpravceRef.on('value', snap => {
     const data = snap.val() || {};
     const pocet = Object.values(data).filter(z => z && !z.precteno).length;
-    const navBadge = document.getElementById('zpravyNavBadge');
-    if (navBadge) {
-      navBadge.hidden = false;
-      if (pocet > 0) { navBadge.textContent = pocet; navBadge.classList.remove('zpravy-nav-badge--prazdny'); }
-      else { navBadge.textContent = '📨'; navBadge.classList.add('zpravy-nav-badge--prazdny'); }
-    }
     const ddBadge = document.getElementById('zpravyOdAdminaBadge');
     if (ddBadge) { if (pocet > 0) { ddBadge.textContent = pocet; ddBadge.hidden = false; } else ddBadge.hidden = true; }
-    _nastavFaviconBadge(pocet);
+    _navBadgePocty.zpravy = pocet;
+    _aktualizujNavBadge();
   });
 }
 
@@ -478,7 +493,7 @@ function _zobrazZpravySpravce(loginId) {
       return `<div class="zadost-item ${!z.precteno ? 'zprava-neprectena' : ''}" data-klic="${klic}">
         <span class="zadost-cas">📨 Admin &nbsp;·&nbsp; ${cas}${!z.precteno ? ' <span class="zpravy-nova-bublina">NOVÉ</span>' : ''}</span><br>
         <span class="zadost-zprava-text">${(z.text || '').replace(/</g, '&lt;')}</span>
-        ${!z.precteno ? `<br><button class="zadost-btn-ok zprava-precist-btn" data-klic="${klic}" style="margin-top:6px">✓ Přečteno</button>` : ''}
+        ${!z.precteno ? `<br><button class="zadost-btn-ok zprava-precist-btn" data-klic="${klic}" data-push-id="${z.push_id || ''}" style="margin-top:6px">✓ Přečteno</button>` : ''}
       </div>`;
     }).join('') : '<div style="color:var(--text-muted);padding:16px">Žádné zprávy 🎉</div>';
     const modal = document.createElement('div');
@@ -496,7 +511,9 @@ function _zobrazZpravySpravce(loginId) {
       const btn = e.target.closest('.zprava-precist-btn');
       if (!btn) return;
       const klic = btn.dataset.klic;
+      const pushId = btn.dataset.pushId;
       await db.ref(`zpravy_spravci/${loginId}/${klic}/precteno`).set(true);
+      if (pushId) db.ref(`push_history/${pushId}/read/${loginId}`).set(Date.now());
       btn.closest('.zadost-item')?.classList.remove('zprava-neprectena');
       btn.closest('.zadost-item')?.querySelector('.zpravy-nova-bublina')?.remove();
       btn.remove();
@@ -675,7 +692,7 @@ window._poslatPushSpravciByBudka = async function(cislo) {
 
       // Uložit do schránky zpráv správce, aby viděl historii v "Zprávy od admina"
       const zpravyText = title !== 'MojeBudky.cz' ? `${title}: ${body}` : body;
-      await db.ref(`zpravy_spravci/${loginId}`).push({ text: zpravyText, ts: parseInt(pushId), precteno: false });
+      await db.ref(`zpravy_spravci/${loginId}`).push({ text: zpravyText, ts: parseInt(pushId), precteno: false, push_id: pushId });
 
       if (ghOk) {
         msg.style.color = '#7ed957';
@@ -1150,14 +1167,33 @@ function _zobrazZadosti() {
     const data = snap.val() || {};
     const container = document.getElementById('zadostiObsah');
     let html = '';
+
+    const renderZprava = (klic, z, vyrizena) => {
+      const cas = z.ts ? new Date(z.ts).toLocaleString('cs-CZ') : '';
+      const emailInfo = z.email && z.email !== '(neuvedeno)' ? ` · ${z.email}` : '';
+      const mozeOdpovedet = !vyrizena && z.loginId && z.loginId !== 'navstevnik';
+      return `<div class="zadost-item${vyrizena ? ' zadost-item--vyrizena' : ''}" data-typ="zpravy" data-klic="${klic}">
+        <strong>${z.jmeno || z.loginId}</strong>${emailInfo} <span class="zadost-cas">${cas}</span>${vyrizena ? ' <span style="color:#6dcc6d;font-size:0.82rem">✓ vyřízeno</span>' : ''}<br>
+        <span class="zadost-detail zadost-zprava-text">${z.text ? z.text.replace(/</g,'&lt;') : ''}</span><br>
+        ${!vyrizena ? `<div class="zadost-btn-row">
+          ${mozeOdpovedet ? `<button class="zadost-btn-odpovedet" data-loginid="${z.loginId}" data-jmeno="${z.jmeno || z.loginId}" data-klic="${klic}">💬 Odpovědět</button>` : ''}
+          <button class="zadost-btn-ok" data-typ="zpravy" data-klic="${klic}">✓ Vyřízeno</button>
+        </div>
+        <div class="zadost-odpoved-wrap" id="odpov-${klic}" hidden>
+          <textarea class="zadost-odpoved-ta" rows="3" placeholder="Tvoje odpověď…"></textarea>
+          <button class="zadost-btn-odeslat-odpoved" data-loginid="${z.loginId}" data-jmeno="${z.jmeno || z.loginId}" data-klic="${klic}">📨 Odeslat</button>
+        </div>` : ''}
+      </div>`;
+    };
+
     ['zmeny', 'zpravy', 'gps', 'druhy'].forEach(typ => {
       const kat = data[typ] || {};
-      const polozky = Object.entries(kat).filter(([,v]) => !v.vyrizeno);
+      const polozky = Object.entries(kat).filter(([,v]) => v && !v.vyrizeno);
       if (!polozky.length) return;
       const typLabel = typ === 'gps' ? '📍 Opravy GPS' : typ === 'druhy' ? '🐦 Nové druhy'
         : typ === 'zpravy' ? '✉️ Zprávy správců' : '🔄 Změny profilu';
       html += `<div class="zadosti-skupina"><div class="zadosti-typ">${typLabel}</div>`;
-      polozky.forEach(([klic, z]) => {
+      polozky.sort(([,a],[,b]) => (b.ts||0)-(a.ts||0)).forEach(([klic, z]) => {
         const cas = z.ts ? new Date(z.ts).toLocaleString('cs-CZ') : '';
         if (typ === 'zmeny') {
           const zmenHtml = Object.entries(z.zmeny || {}).map(([,v]) =>
@@ -1185,24 +1221,22 @@ function _zobrazZadosti() {
             <button class="zadost-btn-ok" data-typ="${typ}" data-klic="${klic}">✓ Vyřízeno</button>
           </div>`;
         } else {
-          const emailInfo = z.email && z.email !== '(neuvedeno)' ? ` · ${z.email}` : '';
-          const mozeOdpovedet = z.loginId && z.loginId !== 'navstevnik';
-          html += `<div class="zadost-item" data-typ="${typ}" data-klic="${klic}">
-            <strong>${z.jmeno || z.loginId}</strong>${emailInfo} <span class="zadost-cas">${cas}</span><br>
-            <span class="zadost-detail zadost-zprava-text">${z.text ? z.text.replace(/</g,'&lt;') : ''}</span><br>
-            <div class="zadost-btn-row">
-              ${mozeOdpovedet ? `<button class="zadost-btn-odpovedet" data-loginid="${z.loginId}" data-jmeno="${z.jmeno || z.loginId}" data-klic="${klic}">💬 Odpovědět</button>` : ''}
-              <button class="zadost-btn-ok" data-typ="${typ}" data-klic="${klic}">✓ Vyřízeno</button>
-            </div>
-            <div class="zadost-odpoved-wrap" id="odpov-${klic}" hidden>
-              <textarea class="zadost-odpoved-ta" rows="3" placeholder="Tvoje odpověď…"></textarea>
-              <button class="zadost-btn-odeslat-odpoved" data-loginid="${z.loginId}" data-jmeno="${z.jmeno || z.loginId}" data-klic="${klic}">📨 Odeslat</button>
-            </div>
-          </div>`;
+          html += renderZprava(klic, z, false);
         }
       });
       html += '</div>';
     });
+
+    // Historie vyřízených zpráv správců
+    const vyrizeneZpravy = Object.entries(data.zpravy || {}).filter(([,v]) => v && v.vyrizeno)
+      .sort(([,a],[,b]) => (b.ts||0)-(a.ts||0));
+    if (vyrizeneZpravy.length) {
+      html += `<div class="zadosti-skupina zadosti-skupina--historie">
+        <div class="zadosti-typ" style="opacity:0.55">📁 Historie zpráv (vyřízené)</div>
+        ${vyrizeneZpravy.map(([k,z]) => renderZprava(k, z, true)).join('')}
+      </div>`;
+    }
+
     container.innerHTML = html || '<div style="color:var(--text-muted)">Žádné čekající žádosti 🎉</div>';
 
     container.addEventListener('click', async e => {
