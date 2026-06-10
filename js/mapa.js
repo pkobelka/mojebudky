@@ -751,6 +751,17 @@ async function inicializujMapu() {
       });
       if (content) content.appendChild(btnNapis);
     }
+
+    if (spravce.jeAdmin && typeof window._poslatPushSpravciByBudka === 'function') {
+      const btnPush = document.createElement('button');
+      btnPush.className = 'popup-edit-btn popup-edit-push-btn';
+      btnPush.textContent = '📩 Poslat push';
+      btnPush.addEventListener('click', () => {
+        popup.close();
+        window._poslatPushSpravciByBudka(cislo);
+      });
+      if (content) content.appendChild(btnPush);
+    }
   }
 
   mapInstance.on('popupopen', e => {
