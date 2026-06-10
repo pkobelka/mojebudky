@@ -492,7 +492,7 @@ function _zobrazZpravySpravce(loginId) {
       return `<div class="zadost-item ${!z.precteno ? 'zprava-neprectena' : ''}" data-klic="${klic}">
         <span class="zadost-cas">📨 Admin &nbsp;·&nbsp; ${cas}${!z.precteno ? ' <span class="zpravy-nova-bublina">NOVÉ</span>' : ''}</span><br>
         <span class="zadost-zprava-text">${(z.text || '').replace(/</g, '&lt;')}</span>
-        ${!z.precteno ? `<br><button class="zadost-btn-ok zprava-precist-btn" data-klic="${klic}" style="margin-top:6px">✓ Přečteno</button>` : ''}
+        ${!z.precteno ? `<br><button class="zadost-btn-ok zprava-precist-btn" data-klic="${klic}" data-push-id="${z.push_id || ''}" style="margin-top:6px">✓ Přečteno</button>` : ''}
       </div>`;
     }).join('') : '<div style="color:var(--text-muted);padding:16px">Žádné zprávy 🎉</div>';
     const modal = document.createElement('div');
@@ -510,7 +510,9 @@ function _zobrazZpravySpravce(loginId) {
       const btn = e.target.closest('.zprava-precist-btn');
       if (!btn) return;
       const klic = btn.dataset.klic;
+      const pushId = btn.dataset.pushId;
       await db.ref(`zpravy_spravci/${loginId}/${klic}/precteno`).set(true);
+      if (pushId) db.ref(`push_history/${pushId}/read/${loginId}`).set(Date.now());
       btn.closest('.zadost-item')?.classList.remove('zprava-neprectena');
       btn.closest('.zadost-item')?.querySelector('.zpravy-nova-bublina')?.remove();
       btn.remove();
@@ -689,7 +691,7 @@ window._poslatPushSpravciByBudka = async function(cislo) {
 
       // Uložit do schránky zpráv správce, aby viděl historii v "Zprávy od admina"
       const zpravyText = title !== 'MojeBudky.cz' ? `${title}: ${body}` : body;
-      await db.ref(`zpravy_spravci/${loginId}`).push({ text: zpravyText, ts: parseInt(pushId), precteno: false });
+      await db.ref(`zpravy_spravci/${loginId}`).push({ text: zpravyText, ts: parseInt(pushId), precteno: false, push_id: pushId });
 
       if (ghOk) {
         msg.style.color = '#7ed957';
