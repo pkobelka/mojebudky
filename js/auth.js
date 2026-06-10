@@ -303,6 +303,9 @@ async function _zobrazAdminPanel(loginId) {
       _spravciInfoCache = null;
       if (typeof window._presenceSetAdmin === 'function') window._presenceSetAdmin(false);
       window._aktualniSpravce = null;
+      if (_zpravySpravceRef) { _zpravySpravceRef.off(); _zpravySpravceRef = null; }
+      if (_zadostiRef) { _zadostiRef.off(); _zadostiRef = null; }
+      _navBadgePocty.zadosti = 0; _navBadgePocty.zpravy = 0;
       if (btn) {
         btn.textContent = 'Vstup pro správce';
         btn.classList.remove('prihlaseny');
@@ -446,7 +449,9 @@ function _aktualizujNavBadge() {
 function _sledujZadosti() {
   const db = _getFirebaseDB();
   if (!db) return;
-  db.ref('admin_requests').on('value', snap => {
+  if (_zadostiRef) { _zadostiRef.off(); _zadostiRef = null; }
+  _zadostiRef = db.ref('admin_requests');
+  _zadostiRef.on('value', snap => {
     const data = snap.val() || {};
     let pocet = 0;
     ['zmeny', 'zpravy', 'gps', 'druhy'].forEach(typ => {
@@ -464,6 +469,8 @@ function _sledujZadosti() {
 
 // ── ZPRÁVY SPRÁVCI (admin → správce) ─────────────────────────────────────────
 let _zpravySpravceRef = null;
+let _zadostiRef = null;
+let _pushHistorieRef = null;
 
 function _sledujZpravySpravce(loginId) {
   const db = _getFirebaseDB();
@@ -1022,7 +1029,10 @@ async function _zobrazAktivitaSpravcu() {
 
 async function _zobrazPushHistorie() {
   const existujici = document.getElementById('modalPushHistorie');
-  if (existujici) existujici.remove();
+  if (existujici) {
+    if (_pushHistorieRef) { _pushHistorieRef.off(); _pushHistorieRef = null; }
+    existujici.remove();
+  }
 
   const db = _getFirebaseDB();
   const modal = document.createElement('div');
@@ -1040,8 +1050,12 @@ async function _zobrazPushHistorie() {
     </div>`;
   document.body.appendChild(modal);
   modal.hidden = false;
-  document.getElementById('pushHistorieZavrit').addEventListener('click', () => modal.remove());
-  modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
+  const _zastavitPushHistorii = () => {
+    if (_pushHistorieRef) { _pushHistorieRef.off(); _pushHistorieRef = null; }
+    modal.remove();
+  };
+  document.getElementById('pushHistorieZavrit').addEventListener('click', _zastavitPushHistorii);
+  modal.addEventListener('click', e => { if (e.target === modal) _zastavitPushHistorii(); });
 
   if (!db) {
     document.getElementById('pushHistorieObsah').innerHTML = '<p style="color:var(--text-muted);text-align:center">Firebase nedostupný.</p>';
@@ -1083,12 +1097,8 @@ async function _zobrazPushHistorie() {
     if (obsah) obsah.innerHTML = html || '<p style="color:var(--text-muted);text-align:center">Žádné záznamy.</p>';
   };
 
-  const phRef = db.ref('push_history').orderByKey().limitToLast(20);
-  phRef.on('value', snap => renderHistorie(snap.val()));
-  // Zastavit listener při zavření modalu
-  const zavritBtn = document.getElementById('pushHistorieZavrit');
-  if (zavritBtn) zavritBtn.addEventListener('click', () => phRef.off(), { once: true });
-  modal.addEventListener('click', e => { if (e.target === modal) phRef.off(); }, { once: true });
+  _pushHistorieRef = db.ref('push_history').orderByKey().limitToLast(20);
+  _pushHistorieRef.on('value', snap => renderHistorie(snap.val()));
 }
 
 function _zobrazNapisAdminovi(loginId, jmeno) {
@@ -1170,16 +1180,16 @@ function _zobrazZadosti() {
     const container = document.getElementById('zadostiObsah');
     let html = '';
 
-    const renderZprava = (klic, z, vyrizena) => {
+    const renderZprava = (klic, z, vyrizena, typ = 'zpravy') => {
       const cas = z.ts ? new Date(z.ts).toLocaleString('cs-CZ') : '';
       const emailInfo = z.email && z.email !== '(neuvedeno)' ? ` · ${z.email}` : '';
       const mozeOdpovedet = !vyrizena && z.loginId && z.loginId !== 'navstevnik';
-      return `<div class="zadost-item${vyrizena ? ' zadost-item--vyrizena' : ''}" data-typ="zpravy" data-klic="${klic}">
+      return `<div class="zadost-item${vyrizena ? ' zadost-item--vyrizena' : ''}" data-typ="${typ}" data-klic="${klic}">
         <strong>${z.jmeno || z.loginId}</strong>${emailInfo} <span class="zadost-cas">${cas}</span>${vyrizena ? ' <span style="color:#6dcc6d;font-size:0.82rem">✓ vyřízeno</span>' : ''}<br>
         <span class="zadost-detail zadost-zprava-text">${z.text ? z.text.replace(/</g,'&lt;') : ''}</span><br>
         ${!vyrizena ? `<div class="zadost-btn-row">
           ${mozeOdpovedet ? `<button class="zadost-btn-odpovedet" data-loginid="${z.loginId}" data-jmeno="${z.jmeno || z.loginId}" data-klic="${klic}">💬 Odpovědět</button>` : ''}
-          <button class="zadost-btn-ok" data-typ="zpravy" data-klic="${klic}">✓ Vyřízeno</button>
+          <button class="zadost-btn-ok" data-typ="${typ}" data-klic="${klic}">✓ Vyřízeno</button>
         </div>
         <div class="zadost-odpoved-wrap" id="odpov-${klic}" hidden>
           <textarea class="zadost-odpoved-ta" rows="3" placeholder="Tvoje odpověď…"></textarea>
@@ -1223,7 +1233,7 @@ function _zobrazZadosti() {
             <button class="zadost-btn-ok" data-typ="${typ}" data-klic="${klic}">✓ Vyřízeno</button>
           </div>`;
         } else {
-          html += renderZprava(klic, z, false);
+          html += renderZprava(klic, z, false, typ);
         }
       });
       html += '</div>';
@@ -1965,7 +1975,7 @@ function _roundRect(ctx, x, y, w, h, r) {
   ctx.closePath();
 }
 
-async function _vizitkaNaCanvas({ loginId, celJmeno, jmeno, prijmeni, telefon, email, foto, budkyText, qrSrc }) {
+async function _vizitkaNaCanvas({ loginId, celJmeno, jmeno, prijmeni, telefon, email, foto, budkyText, budkyLabel = 'Budka', qrSrc }) {
   const W = 850, H = 540, S = 2;
   const canvas = document.createElement('canvas');
   canvas.width = W * S; canvas.height = H * S;
@@ -2004,7 +2014,7 @@ async function _vizitkaNaCanvas({ loginId, celJmeno, jmeno, prijmeni, telefon, e
   ctx.fillText('.cz', 76 + bw, 40);
   ctx.fillStyle = 'rgba(200,225,155,0.65)';
   ctx.font = '11px "Segoe UI",Arial,sans-serif';
-  ctx.fillText('Síť ptačích budek', 26, 60);
+  ctx.fillText('Síť ptačích budek', 76, 62);
 
   // Header divider
   ctx.strokeStyle = 'rgba(212,160,64,0.35)'; ctx.lineWidth = 1;
@@ -2041,7 +2051,7 @@ async function _vizitkaNaCanvas({ loginId, celJmeno, jmeno, prijmeni, telefon, e
 
   // Budky
   ctx.fillStyle = '#c8dca0'; ctx.font = '14px "Segoe UI",Arial,sans-serif';
-  ctx.fillText('🏠 Budka ' + budkyText, nx, ny + 58);
+  ctx.fillText('🏠 ' + budkyLabel + ' ' + budkyText, nx, ny + 58);
 
   // Contacts
   let cy = ny + 100;
@@ -2096,8 +2106,9 @@ function _zobrazVizitku(loginId, spravceInfo, profil) {
 
   const budkyList  = (si.budky && si.budky.length)
     ? si.budky
-    : [{ cislo: si.budka_cislo, nazev: si.budka_nazev || '' }];
-  const budkyText  = budkyList.map(b => `č. ${b.cislo}${b.nazev ? ' – ' + b.nazev : ''}`).join(', ');
+    : (si.budka_cislo ? [{ cislo: si.budka_cislo, nazev: si.budka_nazev || '' }] : []);
+  const budkyText  = budkyList.length ? budkyList.map(b => `č. ${b.cislo}${b.nazev ? ' – ' + b.nazev : ''}`).join(', ') : '—';
+  const budkyLabel = budkyList.length > 1 ? 'Budky' : 'Budka';
 
   const celJmeno = [titulPred, jmeno, prijmeni].filter(Boolean).join(' ') + (titulZa ? `, ${titulZa}` : '');
   const fotoHtml = foto
@@ -2129,7 +2140,7 @@ function _zobrazVizitku(loginId, spravceInfo, profil) {
             <div class="vizitka-info">
               <div class="vizitka-jmeno">${celJmeno || loginId}</div>
               <div class="vizitka-role">Správce ptačích budek</div>
-              <div class="vizitka-budky">🏠 Budka ${budkyText}</div>
+              <div class="vizitka-budky">🏠 ${budkyLabel} ${budkyText}</div>
             </div>
             <img src="${qrSrc}" class="vizitka-qr" alt="QR mojebudky.cz">
           </div>
@@ -2157,7 +2168,7 @@ function _zobrazVizitku(loginId, spravceInfo, profil) {
       'BEGIN:VCARD',
       'VERSION:3.0',
       `FN:${celJmeno || [jmeno, prijmeni].filter(Boolean).join(' ')}`,
-      `N:${prijmeni};${jmeno};;;${titulPred ? titulPred + ' ' : ''}`,
+      `N:${prijmeni};${jmeno};;${titulPred};${titulZa || ''}`,
       titulZa ? `TITLE:${titulZa}` : '',
       `ORG:MojeBudky.cz`,
       `NOTE:Správce ptačích budek – ${budkyText}`,
@@ -2185,21 +2196,22 @@ function _zobrazVizitku(loginId, spravceInfo, profil) {
     const btn = document.getElementById('vizitkaObrazek');
     btn.disabled = true; btn.textContent = '⏳ Generuji…';
     try {
-      const canvas = await _vizitkaNaCanvas({ loginId, celJmeno, jmeno, prijmeni, telefon, email, foto, budkyText, qrSrc });
-      canvas.toBlob(async blob => {
-        const soubor = `${[jmeno, prijmeni].filter(Boolean).join('_') || 'vizitka'}_MojeBudky.png`;
-        const pngFile = new File([blob], soubor, { type: 'image/png' });
-        if (navigator.share && navigator.canShare && navigator.canShare({ files: [pngFile] })) {
-          navigator.share({ files: [pngFile], title: celJmeno }).catch(() => {});
-        } else {
-          const url = URL.createObjectURL(blob);
-          const a = document.createElement('a');
-          a.href = url; a.download = soubor; a.click();
-          setTimeout(() => URL.revokeObjectURL(url), 2000);
-        }
-        btn.disabled = false; btn.textContent = '🖼 Obrázek';
-      }, 'image/png');
-    } catch(e) {
+      const canvas = await _vizitkaNaCanvas({ loginId, celJmeno, jmeno, prijmeni, telefon, email, foto, budkyText, budkyLabel, qrSrc });
+      const blob = await new Promise(res => canvas.toBlob(res, 'image/png'));
+      if (!blob) throw new Error('toBlob selhalo');
+      const soubor = `${[jmeno, prijmeni].filter(Boolean).join('_') || 'vizitka'}_MojeBudky.png`;
+      const pngFile = new File([blob], soubor, { type: 'image/png' });
+      if (navigator.share && navigator.canShare && navigator.canShare({ files: [pngFile] })) {
+        await navigator.share({ files: [pngFile], title: celJmeno });
+      } else {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url; a.download = soubor; a.click();
+        setTimeout(() => URL.revokeObjectURL(url), 2000);
+      }
+    } catch {
+      // uživatel zrušil sdílení nebo selhal canvas
+    } finally {
       btn.disabled = false; btn.textContent = '🖼 Obrázek';
     }
   });
