@@ -78,7 +78,7 @@ html, body {
 .splash-overlay.fade-out .splash-box { transform: scale(0.92); opacity: 0; }
 @keyframes splashIn { from { transform: scale(0.85); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 .splash-logo { width: 150px; height: auto; margin-bottom: 6px; filter: drop-shadow(0 4px 12px rgba(0,0,0,0.2)); }
-.splash-autor { color: #c96420; font-size: 0.78rem; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 22px; opacity: 0.85; }
+.splash-autor { color: #1a1a1a; font-size: 0.78rem; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 22px; opacity: 0.85; }
 .splash-nadpis { color: #1a5a1a; font-size: 2.6rem; font-weight: 800; margin-bottom: 12px; letter-spacing: 0.3px; }
 .splash-podnadpis { color: #2d7a2d; font-size: 1.25rem; font-weight: 500; margin-bottom: 24px; line-height: 1.5; }
 .splash-ikony { font-size: 2.2rem; margin-bottom: 20px; letter-spacing: 8px; }
@@ -1126,6 +1126,7 @@ html, body {
 .vizitka-budky { font-size: 0.88rem; color: rgba(238,244,232,0.8); }
 .vizitka-kontakt { display: flex; flex-wrap: wrap; gap: 8px 20px; font-size: 0.88rem; color: rgba(238,244,232,0.75); border-top: 1px solid rgba(212,160,64,0.25); padding-top: 14px; align-items: center; }
 .vizitka-web { margin-left: auto; color: var(--accent-gold); font-weight: 700; font-size: 0.82rem; }
+.vizitka-qr { width: 64px; height: 64px; border-radius: 6px; flex-shrink: 0; }
 .vizitka-akce { display: flex; justify-content: center; margin-top: 18px; }
 
 /* ── TISK VIZITKY ── */

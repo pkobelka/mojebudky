@@ -1925,6 +1925,9 @@ function _zobrazVizitku(loginId, spravceInfo, profil) {
     ? `<img src="${foto}" class="vizitka-foto" alt="Foto správce">`
     : `<div class="vizitka-foto vizitka-foto--placeholder">👤</div>`;
 
+  const qrUrl = 'https://pkobelka.github.io/mojebudky/';
+  const qrSrc = `https://api.qrserver.com/v1/create-qr-code/?size=88x88&color=eef4e8&bgcolor=1c4210&data=${encodeURIComponent(qrUrl)}`;
+
   const modal = document.createElement('div');
   modal.id = 'modalVizitka';
   modal.className = 'modal-overlay';
@@ -1949,6 +1952,7 @@ function _zobrazVizitku(loginId, spravceInfo, profil) {
               <div class="vizitka-role">Správce ptačích budek</div>
               <div class="vizitka-budky">🏠 Budka ${budkyText}</div>
             </div>
+            <img src="${qrSrc}" class="vizitka-qr" alt="QR mojebudky.cz">
           </div>
           <div class="vizitka-kontakt">
             ${telefon ? `<span>📞 ${telefon}</span>` : ''}
