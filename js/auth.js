@@ -1099,7 +1099,7 @@ function _zobrazNapisAdminovi(loginId, jmeno) {
   modal.id = 'modalNapisAdmin';
   modal.className = 'modal-overlay';
   modal.innerHTML = `
-    <div class="modal-box" style="max-width:480px;width:94%">
+    <div class="modal-box" style="max-width:640px;width:96%">
       <button class="modal-zavrit" id="napisAdminZavrit">×</button>
       <div class="profil-header"><div class="profil-header-text">
         <div class="profil-nadpis">✉️ Napsat adminovi</div>
@@ -1108,7 +1108,7 @@ function _zobrazNapisAdminovi(loginId, jmeno) {
       <div class="profil-form">
         <div class="profil-field profil-field--wide">
           <label>Zpráva</label>
-          <textarea id="napisAdminText" rows="5" placeholder="Sem napiš svůj dotaz nebo připomínku…" style="width:100%;box-sizing:border-box;background:var(--panel-bg);color:var(--text-light);border:1px solid var(--panel-border);border-radius:8px;padding:10px;font-size:1rem;resize:vertical"></textarea>
+          <textarea id="napisAdminText" rows="8" placeholder="Sem napiš svůj dotaz nebo připomínku…" style="width:100%;box-sizing:border-box;background:var(--panel-bg);color:var(--text-light);border:1px solid var(--panel-border);border-radius:8px;padding:10px;font-size:1rem;resize:vertical"></textarea>
         </div>
       </div>
       <div class="profil-actions">
