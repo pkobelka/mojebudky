@@ -245,11 +245,11 @@ async function _zobrazAdminPanel(loginId) {
     <button class="admin-dropdown-item" data-akce="karta">🪪 Karta správce / Editovat</button>
     <button class="admin-dropdown-item" data-akce="resetUvitani" title="Karta se při příštím přihlášení ukáže automaticky">🔄 Zobrazit kartu při příštím přihlášení</button>
     ${budkyMenuHTML}
-    <button class="admin-dropdown-item pripravujeme" data-akce="clanek">📝 Vložit článek</button>
+
     <button class="admin-dropdown-item" data-akce="zmenitHeslo">🔑 Změnit heslo</button>
     <button class="admin-dropdown-item" data-akce="napisAdminovi">✉️ Napsat adminovi</button>
     <button class="admin-dropdown-item" data-akce="zpravyOdAdmina">📨 Zprávy od admina <span class="admin-badge" id="zpravyOdAdminaBadge" hidden>0</span></button>
-    ${jeAdmin ? `<div class="admin-dropdown-oddelovac"></div><button class="admin-dropdown-item admin-item-zadosti" data-akce="zadosti">📬 Žádosti správců <span class="admin-badge" id="adminBadge" hidden>0</span></button><button class="admin-dropdown-item" data-akce="prehledSpravcu">👥 Přehled správců</button><button class="admin-dropdown-item" data-akce="aktivitaSpravcu">🏆 Aktivita správců</button><button class="admin-dropdown-item" data-akce="pushHistorie">📩 Push notifikace</button><button class="admin-dropdown-item" data-akce="resetSlib" style="font-size:0.85rem;color:var(--text-muted)">🧪 Reset slibu (test)</button>` : ''}
+    ${jeAdmin ? `<div class="admin-dropdown-oddelovac"></div><button class="admin-dropdown-item admin-item-zadosti" data-akce="zadosti">📬 Žádosti správců <span class="admin-badge" id="adminBadge" hidden>0</span></button><button class="admin-dropdown-item" data-akce="prehledSpravcu">👥 Přehled správců</button><button class="admin-dropdown-item" data-akce="aktivitaSpravcu">🏆 Aktivita správců</button><button class="admin-dropdown-item" data-akce="pushHistorie">📩 Push notifikace</button>` : ''}
     <div class="admin-dropdown-oddelovac"></div>
     <button class="admin-dropdown-item odhlasit" data-akce="odhlasit">🚪 Odhlásit se</button>
   `;
