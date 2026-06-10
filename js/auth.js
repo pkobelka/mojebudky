@@ -449,9 +449,10 @@ function _sledujZadosti() {
   db.ref('admin_requests').on('value', snap => {
     const data = snap.val() || {};
     let pocet = 0;
-    Object.values(data).forEach(kategorie => {
-      if (typeof kategorie === 'object') {
-        Object.values(kategorie).forEach(z => { if (!z.vyrizeno) pocet++; });
+    ['zmeny', 'zpravy', 'gps', 'druhy'].forEach(typ => {
+      const kat = data[typ];
+      if (kat && typeof kat === 'object') {
+        Object.values(kat).forEach(z => { if (z && !z.vyrizeno) pocet++; });
       }
     });
     const badge = document.getElementById('adminBadge');
