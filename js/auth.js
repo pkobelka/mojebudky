@@ -438,8 +438,6 @@ function _sledujZadosti() {
     });
     const badge = document.getElementById('adminBadge');
     if (badge) { if (pocet > 0) { badge.textContent = pocet; badge.hidden = false; } else badge.hidden = true; }
-    const navBadge = document.getElementById('zpravyNavBadge');
-    if (navBadge) { if (pocet > 0) { navBadge.textContent = pocet; navBadge.hidden = false; } else navBadge.hidden = true; }
     _nastavFaviconBadge(pocet);
   });
 }
