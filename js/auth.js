@@ -1034,7 +1034,7 @@ async function _zobrazPushHistorie() {
       <div class="profil-header"><div class="profil-header-text">
         <div class="profil-nadpis">📩 Push notifikace</div>
       </div></div>
-      <div id="pushHistorieObsah" style="padding:0 4px">
+      <div id="pushHistorieObsah" class="prehled-seznam" style="padding:0 12px">
         <div style="text-align:center;color:var(--text-muted);padding:32px 0">Načítám…</div>
       </div>
     </div>`;
@@ -1051,42 +1051,44 @@ async function _zobrazPushHistorie() {
   const info = await _nactiSpravciInfo().catch(() => ({})) || {};
   const jmenoSpravce = id => (info[id] && (info[id].jmeno || id)) || id;
 
-  const snap = await db.ref('push_history').orderByKey().limitToLast(20).once('value');
-  const data = snap.val();
+  const renderHistorie = (data) => {
+    if (!data) {
+      document.getElementById('pushHistorieObsah').innerHTML = '<p style="text-align:center;color:var(--text-muted);padding:32px 0">Žádné odeslané push notifikace.</p>';
+      return;
+    }
+    const zaznamy = Object.entries(data).sort(([a], [b]) => b.localeCompare(a)).slice(0, 15);
+    const html = zaznamy.map(([pushId, z]) => {
+      const cas = new Date(z.ts).toLocaleString('cs-CZ', { day: 'numeric', month: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+      const sentIds  = z.sent ? Object.keys(z.sent) : [];
+      const readIds  = z.read ? Object.keys(z.read) : [];
+      const prijemciIds = z.target ? [z.target] : sentIds;
+      const prijemciText = prijemciIds.length ? prijemciIds.map(jmenoSpravce).join(', ') : (sentIds.length ? sentIds.map(jmenoSpravce).join(', ') : '— všichni');
+      const readText = readIds.length ? readIds.map(jmenoSpravce).join(', ') : '—';
+      const sentBy = z.sent_by ? `<span style="font-size:0.78rem;color:var(--text-muted)"> · odesílatel: ${z.sent_by}</span>` : '';
+      return `<div style="border-bottom:1px solid rgba(255,255,255,0.07);padding:12px 0">
+        <div style="font-weight:600;margin-bottom:3px">${z.title || ''}</div>
+        <div style="font-size:0.9rem;color:var(--text-muted);margin-bottom:4px">${z.body || ''}</div>
+        <div style="font-size:0.8rem;color:var(--text-muted);margin-bottom:6px">🕐 ${cas}${sentBy}</div>
+        <div style="font-size:0.9rem;margin-bottom:2px">
+          <span style="font-size:1.1rem;font-weight:700;color:#e0e0e0">✓</span>
+          <span style="color:var(--text-muted)"> Příjemce: </span><span style="color:var(--text-light)">${prijemciText}</span>
+        </div>
+        <div style="font-size:0.9rem">
+          <span style="font-size:1.1rem;font-weight:700;color:${readIds.length ? '#7ed957' : '#555'}">✓✓</span>
+          <span style="color:var(--text-muted)"> Zobrazeno: </span><span style="color:${readIds.length ? '#7ed957' : 'var(--text-muted)'}">${readText}</span>
+        </div>
+      </div>`;
+    }).join('');
+    const obsah = document.getElementById('pushHistorieObsah');
+    if (obsah) obsah.innerHTML = html || '<p style="color:var(--text-muted);text-align:center">Žádné záznamy.</p>';
+  };
 
-  if (!data) {
-    document.getElementById('pushHistorieObsah').innerHTML = '<p style="text-align:center;color:var(--text-muted);padding:32px 0">Žádné odeslané push notifikace.</p>';
-    return;
-  }
-
-  const zaznamy = Object.entries(data)
-    .sort(([a], [b]) => b.localeCompare(a))
-    .slice(0, 15);
-
-  const html = zaznamy.map(([pushId, z]) => {
-    const cas = new Date(z.ts).toLocaleString('cs-CZ', { day: 'numeric', month: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' });
-    const sentIds  = z.sent ? Object.keys(z.sent) : [];
-    const readIds  = z.read ? Object.keys(z.read) : [];
-    const prijemciIds = z.target ? [z.target] : sentIds;
-    const prijemciText = prijemciIds.length ? prijemciIds.map(jmenoSpravce).join(', ') : (sentIds.length ? sentIds.map(jmenoSpravce).join(', ') : '— všichni');
-    const readText = readIds.length ? readIds.map(jmenoSpravce).join(', ') : '—';
-    const sentBy = z.sent_by ? `<span style="font-size:0.78rem;color:var(--text-muted)"> · odesílatel: ${z.sent_by}</span>` : '';
-    return `<div style="border-bottom:1px solid rgba(255,255,255,0.07);padding:12px 0">
-      <div style="font-weight:600;margin-bottom:3px">${z.title || ''}</div>
-      <div style="font-size:0.9rem;color:var(--text-muted);margin-bottom:4px">${z.body || ''}</div>
-      <div style="font-size:0.8rem;color:var(--text-muted);margin-bottom:6px">🕐 ${cas}${sentBy}</div>
-      <div style="font-size:0.9rem;margin-bottom:2px">
-        <span style="font-size:1.1rem;font-weight:700;color:#e0e0e0">✓</span>
-        <span style="color:var(--text-muted)"> Příjemce: </span><span style="color:var(--text-light)">${prijemciText}</span>
-      </div>
-      <div style="font-size:0.9rem">
-        <span style="font-size:1.1rem;font-weight:700;color:${readIds.length ? '#7ed957' : '#555'}">✓✓</span>
-        <span style="color:var(--text-muted)"> Zobrazeno: </span><span style="color:${readIds.length ? '#7ed957' : 'var(--text-muted)'}">${readText}</span>
-      </div>
-    </div>`;
-  }).join('');
-
-  document.getElementById('pushHistorieObsah').innerHTML = html || '<p style="color:var(--text-muted);text-align:center">Žádné záznamy.</p>';
+  const phRef = db.ref('push_history').orderByKey().limitToLast(20);
+  phRef.on('value', snap => renderHistorie(snap.val()));
+  // Zastavit listener při zavření modalu
+  const zavritBtn = document.getElementById('pushHistorieZavrit');
+  if (zavritBtn) zavritBtn.addEventListener('click', () => phRef.off(), { once: true });
+  modal.addEventListener('click', e => { if (e.target === modal) phRef.off(); }, { once: true });
 }
 
 function _zobrazNapisAdminovi(loginId, jmeno) {

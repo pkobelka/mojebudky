@@ -20,7 +20,7 @@ from firebase_admin import credentials, messaging, db
 SERVICE_ACCOUNT = 'service-account-key.json'
 DATABASE_URL    = 'https://moje-budky-default-rtdb.firebaseio.com'
 ICON_URL        = 'https://pkobelka.github.io/mojebudky/img/icon-192.png'
-CLICK_URL       = 'https://pkobelka.github.io/mojebudky/'
+BASE_URL        = 'https://pkobelka.github.io/mojebudky/'
 
 def main():
     if len(sys.argv) < 3:
@@ -80,7 +80,9 @@ def main():
                     icon=ICON_URL,
                     badge=ICON_URL,
                 ),
-                fcm_options=messaging.WebpushFCMOptions(link=CLICK_URL),
+                fcm_options=messaging.WebpushFCMOptions(
+                    link=f'{BASE_URL}?pr={push_id}&u={key}'
+                ),
             ),
             data={'push_id': push_id, 'login_id': key},
             token=token,
