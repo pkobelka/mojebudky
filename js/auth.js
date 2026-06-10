@@ -195,9 +195,9 @@ async function _zobrazAdminPanel(loginId) {
     setTimeout(() => _zobrazSlibSpravce(loginId, spravceInfo, budkaText, osloveni), 1500);
   } else {
     const posledniText = posledniLoginTs
-      ? ` · naposledy přihlášen ${new Date(posledniLoginTs).toLocaleDateString('cs-CZ', { day: 'numeric', month: 'long', year: 'numeric' })}`
+      ? `<small class="toast-posledni">Poslední přihlášení: ${new Date(posledniLoginTs).toLocaleString('cs-CZ', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</small>`
       : '';
-    _zobrazToast(`Ahoj ${osloveni}! 🌿${posledniText}`);
+    _zobrazToast(`Ahoj ${osloveni}! 🌿${posledniText}`, 6000, true);
     if (jePoprve) {
       setTimeout(() => _zobrazProfilSpravce(loginId, spravceInfo, budkaText), 7000);
     }
@@ -245,11 +245,11 @@ async function _zobrazAdminPanel(loginId) {
     <button class="admin-dropdown-item" data-akce="karta">🪪 Karta správce / Editovat</button>
     <button class="admin-dropdown-item" data-akce="resetUvitani" title="Karta se při příštím přihlášení ukáže automaticky">🔄 Zobrazit kartu při příštím přihlášení</button>
     ${budkyMenuHTML}
-    <button class="admin-dropdown-item pripravujeme" data-akce="clanek">📝 Vložit článek</button>
+
     <button class="admin-dropdown-item" data-akce="zmenitHeslo">🔑 Změnit heslo</button>
     <button class="admin-dropdown-item" data-akce="napisAdminovi">✉️ Napsat adminovi</button>
     <button class="admin-dropdown-item" data-akce="zpravyOdAdmina">📨 Zprávy od admina <span class="admin-badge" id="zpravyOdAdminaBadge" hidden>0</span></button>
-    ${jeAdmin ? `<div class="admin-dropdown-oddelovac"></div><button class="admin-dropdown-item admin-item-zadosti" data-akce="zadosti">📬 Žádosti správců <span class="admin-badge" id="adminBadge" hidden>0</span></button><button class="admin-dropdown-item" data-akce="prehledSpravcu">👥 Přehled správců</button><button class="admin-dropdown-item" data-akce="aktivitaSpravcu">🏆 Aktivita správců</button><button class="admin-dropdown-item" data-akce="pushHistorie">📩 Push notifikace</button><button class="admin-dropdown-item" data-akce="resetSlib" style="font-size:0.85rem;color:var(--text-muted)">🧪 Reset slibu (test)</button>` : ''}
+    ${jeAdmin ? `<div class="admin-dropdown-oddelovac"></div><button class="admin-dropdown-item admin-item-zadosti" data-akce="zadosti">📬 Žádosti správců <span class="admin-badge" id="adminBadge" hidden>0</span></button><button class="admin-dropdown-item" data-akce="prehledSpravcu">👥 Přehled správců</button><button class="admin-dropdown-item" data-akce="aktivitaSpravcu">🏆 Aktivita správců</button><button class="admin-dropdown-item" data-akce="pushHistorie">📩 Push notifikace</button>` : ''}
     <div class="admin-dropdown-oddelovac"></div>
     <button class="admin-dropdown-item odhlasit" data-akce="odhlasit">🚪 Odhlásit se</button>
   `;
@@ -1479,6 +1479,28 @@ function _zobrazProfilSpravce(loginId, info, budkaText) {
       if (nova !== stara) zmeny[k] = { stara, nova, label: CITLIVA_LABELY[k] };
     });
 
+    // Validace
+    const emailInput = document.getElementById('pEmail');
+    const emailVal = emailInput.value.trim();
+    if (emailVal && !emailInput.validity.valid) {
+      const errEl = document.getElementById('profilUlozeno');
+      errEl.textContent = '⚠ Neplatný formát e-mailu (příklad: jmeno@domena.cz)';
+      errEl.style.color = '#e07070';
+      errEl.hidden = false;
+      emailInput.focus();
+      setTimeout(() => { errEl.hidden = true; errEl.style.color = ''; }, 5000);
+      return;
+    }
+    if (!noveCitlive.jmeno || !noveCitlive.prijmeni) {
+      const errEl = document.getElementById('profilUlozeno');
+      errEl.textContent = '⚠ Jméno a příjmení jsou povinná pole';
+      errEl.style.color = '#e07070';
+      errEl.hidden = false;
+      document.getElementById(!noveCitlive.jmeno ? 'pJmeno' : 'pPrijmeni').focus();
+      setTimeout(() => { errEl.hidden = true; errEl.style.color = ''; }, 5000);
+      return;
+    }
+
     // Ulož volná pole + beze-změny citlivá pole přímo
     const dataKUlozeni = { ...volnaData };
     CITLIVA.forEach(k => { if (!zmeny[k]) dataKUlozeni[k] = noveCitlive[k]; });
@@ -1615,7 +1637,7 @@ async function _zobrazEditBudky(loginId, spravceInfo, budkaText, budkaCislo, bud
           <div class="profil-field">
             <label>Foto budky</label>
             <div class="eb-foto-wrap">
-              ${ulozeno.foto ? `<img src="${ulozeno.foto}" class="eb-foto-nahled" id="ebFotoNahled" alt="Foto budky">` : `<div class="eb-foto-placeholder" id="ebFotoNahled">📷</div>`}
+              ${ulozeno.foto ? `<img src="${ulozeno.foto}" class="eb-foto-nahled" id="ebFotoNahled" alt="Foto budky">` : `<div class="eb-foto-placeholder" id="ebFotoNahled">📷<span>Bez fotky</span></div>`}
               <label class="eb-foto-btn" for="ebFotoInput">📷 ${ulozeno.foto ? 'Změnit foto' : 'Přidat foto'}</label>
               <input type="file" id="ebFotoInput" accept="image/*" capture="environment" style="display:none">
             </div>
@@ -1856,14 +1878,14 @@ function _vokativ(jmeno) {
   return normalized + 'e';
 }
 
-function _zobrazToast(text, ms) {
+function _zobrazToast(text, ms, isHtml) {
   const existujici = document.getElementById('adminToast');
   if (existujici) existujici.remove();
 
   const toast = document.createElement('div');
   toast.id = 'adminToast';
   toast.className = 'admin-toast';
-  toast.textContent = text;
+  if (isHtml) toast.innerHTML = text; else toast.textContent = text;
   document.body.appendChild(toast);
 
   const doba = ms || 6000;

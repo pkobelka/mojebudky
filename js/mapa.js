@@ -541,8 +541,8 @@ async function hledejBudku(dotaz) {
   }
 
   try {
-    const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(dotaz)}&format=json&limit=1&countrycodes=cz,nl`;
-    const res = await fetch(url, { headers: { 'Accept-Language': 'cs' } });
+    const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(dotaz)}&format=json&limit=1&countrycodes=cz,sk`;
+    const res = await fetch(url, { headers: { 'Accept-Language': 'cs', 'User-Agent': 'MojeBudky/1.0 (https://mojebudky.cz)' } });
     const data = await res.json();
     if (data && data.length > 0) {
       const { lat, lon, display_name } = data[0];
