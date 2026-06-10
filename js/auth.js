@@ -259,6 +259,7 @@ async function _zobrazAdminPanel(loginId) {
   dropdown.innerHTML = `
     <div class="admin-dropdown-hlavicka">👤 ${jmeno} &nbsp;·&nbsp; ${hlavickaText}</div>
     <button class="admin-dropdown-item" data-akce="karta">🪪 Karta správce / Editovat</button>
+    <button class="admin-dropdown-item" data-akce="vizitka">🎴 Vizitka správce</button>
     <button class="admin-dropdown-item" data-akce="resetUvitani" title="Karta se při příštím přihlášení ukáže automaticky">🔄 Zobrazit kartu při příštím přihlášení</button>
     ${budkyMenuHTML}
 
@@ -313,6 +314,12 @@ async function _zobrazAdminPanel(loginId) {
 
     if (akce === 'karta' || akce === 'editSpravce') {
       _zobrazProfilSpravce(loginId, spravceInfo, budkaText);
+      dropdown.classList.remove('open');
+      return;
+    }
+
+    if (akce === 'vizitka') {
+      _zobrazVizitku(loginId, spravceInfo, profil);
       dropdown.classList.remove('open');
       return;
     }
@@ -1892,6 +1899,73 @@ function _vokativ(jmeno) {
   if (normalized.endsWith('ek')) return normalized.slice(0, -2) + 'ku';
   if (normalized.endsWith('a')) return normalized.slice(0, -1) + 'o';
   return normalized + 'e';
+}
+
+function _zobrazVizitku(loginId, spravceInfo, profil) {
+  const existujici = document.getElementById('modalVizitka');
+  if (existujici) existujici.remove();
+
+  const d = profil || {};
+  const si = spravceInfo || {};
+  const titulPred  = (d.titul_pred  || '').trim();
+  const titulZa    = (d.titul_za    || '').trim();
+  const jmeno      = (d.jmeno      || si.jmeno      || '').trim();
+  const prijmeni   = (d.prijmeni   || si.prijmeni   || '').trim();
+  const telefon    = (d.telefon    || si.telefon    || '').trim();
+  const email      = (d.email      || si.email      || '').trim();
+  const foto       = d.foto || null;
+
+  const budkyList  = (si.budky && si.budky.length)
+    ? si.budky
+    : [{ cislo: si.budka_cislo, nazev: si.budka_nazev || '' }];
+  const budkyText  = budkyList.map(b => `č. ${b.cislo}${b.nazev ? ' – ' + b.nazev : ''}`).join(', ');
+
+  const celJmeno = [titulPred, jmeno, prijmeni].filter(Boolean).join(' ') + (titulZa ? `, ${titulZa}` : '');
+  const fotoHtml = foto
+    ? `<img src="${foto}" class="vizitka-foto" alt="Foto správce">`
+    : `<div class="vizitka-foto vizitka-foto--placeholder">👤</div>`;
+
+  const modal = document.createElement('div');
+  modal.id = 'modalVizitka';
+  modal.className = 'modal-overlay';
+  modal.innerHTML = `
+    <div class="modal-box profil-box vizitka-modal">
+      <button class="modal-zavrit" id="vizitkaZavrit">×</button>
+      <div class="profil-header" style="padding:20px 56px 20px 28px">
+        <div class="profil-header-text">
+          <div class="profil-nadpis">🎴 Vizitka správce</div>
+        </div>
+      </div>
+      <div class="vizitka-wrap">
+        <div class="vizitka-karta" id="vizitkaTisk">
+          <div class="vizitka-top">
+            <img src="img/logo.svg" class="vizitka-logo" alt="MojeBudky">
+            <span class="vizitka-brand">MojeBudky<span class="vizitka-brand-cz">.cz</span></span>
+          </div>
+          <div class="vizitka-telo">
+            ${fotoHtml}
+            <div class="vizitka-info">
+              <div class="vizitka-jmeno">${celJmeno || loginId}</div>
+              <div class="vizitka-role">Správce ptačích budek</div>
+              <div class="vizitka-budky">🏠 Budka ${budkyText}</div>
+            </div>
+          </div>
+          <div class="vizitka-kontakt">
+            ${telefon ? `<span>📞 ${telefon}</span>` : ''}
+            ${email    ? `<span>✉ ${email}</span>`    : ''}
+            <span class="vizitka-web">mojebudky.cz</span>
+          </div>
+        </div>
+        <div class="vizitka-akce">
+          <button class="profil-btn-ulozit" id="vizitkaTisknout">🖨 Vytisknout</button>
+        </div>
+      </div>
+    </div>`;
+  document.body.appendChild(modal);
+
+  document.getElementById('vizitkaZavrit').addEventListener('click', () => modal.remove());
+  modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
+  document.getElementById('vizitkaTisknout').addEventListener('click', () => window.print());
 }
 
 function _zobrazPrani(typ, osloveni) {

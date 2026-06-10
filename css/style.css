@@ -1108,4 +1108,37 @@ html, body {
 .popup-edit-napis-btn { background: rgba(212,160,64,0.12); color: var(--accent-gold); border: 1px solid rgba(212,160,64,0.35); }
 .popup-edit-napis-btn:hover { background: rgba(212,160,64,0.25); }
 .popup-edit-push-btn { background: rgba(80,160,80,0.12); color: #7ed957; border: 1px solid rgba(80,180,80,0.35); }
+
+/* ── VIZITKA SPRÁVCE ── */
+.vizitka-modal { max-width: 520px; }
+.vizitka-wrap { padding: 24px 28px 28px; }
+.vizitka-karta { background: linear-gradient(150deg, #0e2706 0%, #1c4210 60%, #2a6018 100%); border-radius: 16px; padding: 20px 24px 18px; color: #eef4e8; box-shadow: 0 8px 32px rgba(0,0,0,0.5); border: 1px solid rgba(212,160,64,0.35); }
+.vizitka-top { display: flex; align-items: center; gap: 10px; margin-bottom: 18px; border-bottom: 1px solid rgba(212,160,64,0.25); padding-bottom: 14px; }
+.vizitka-logo { width: 32px; height: auto; }
+.vizitka-brand { font-size: 1.15rem; font-weight: 800; color: #eef4e8; letter-spacing: 0.3px; }
+.vizitka-brand-cz { color: var(--accent-gold); }
+.vizitka-telo { display: flex; align-items: center; gap: 18px; margin-bottom: 18px; }
+.vizitka-foto { width: 72px; height: 72px; border-radius: 50%; object-fit: cover; border: 2px solid var(--accent-gold); flex-shrink: 0; }
+.vizitka-foto--placeholder { background: rgba(255,255,255,0.08); display: flex; align-items: center; justify-content: center; font-size: 2rem; }
+.vizitka-info { flex: 1; }
+.vizitka-jmeno { font-size: 1.25rem; font-weight: 800; color: #fff; line-height: 1.2; margin-bottom: 4px; }
+.vizitka-role { font-size: 0.78rem; color: var(--accent-gold); text-transform: uppercase; letter-spacing: 1px; font-weight: 600; margin-bottom: 8px; }
+.vizitka-budky { font-size: 0.88rem; color: rgba(238,244,232,0.8); }
+.vizitka-kontakt { display: flex; flex-wrap: wrap; gap: 8px 20px; font-size: 0.88rem; color: rgba(238,244,232,0.75); border-top: 1px solid rgba(212,160,64,0.25); padding-top: 14px; align-items: center; }
+.vizitka-web { margin-left: auto; color: var(--accent-gold); font-weight: 700; font-size: 0.82rem; }
+.vizitka-akce { display: flex; justify-content: center; margin-top: 18px; }
+
+/* ── TISK VIZITKY ── */
+@media print {
+  body > *:not(#modalVizitka) { display: none !important; }
+  #modalVizitka { position: static !important; background: none !important; backdrop-filter: none !important; padding: 0 !important; display: block !important; }
+  .vizitka-modal { box-shadow: none !important; border: none !important; max-width: none !important; width: auto !important; }
+  .modal-zavrit, .profil-header, .vizitka-akce { display: none !important; }
+  .vizitka-wrap { padding: 0 !important; }
+  .vizitka-karta { box-shadow: none !important; border: 1px solid #aaa !important; width: 85mm; min-height: 50mm; page-break-inside: avoid; }
+  .vizitka-brand { color: #000 !important; }
+  .vizitka-brand-cz { color: #4a7a1a !important; }
+  .vizitka-jmeno { color: #fff !important; }
+  .vizitka-kontakt, .vizitka-budky, .vizitka-role { color: rgba(238,244,232,0.9) !important; }
+}
 .popup-edit-push-btn:hover { background: rgba(80,160,80,0.25); }
