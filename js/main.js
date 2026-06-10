@@ -793,11 +793,11 @@ function inicializujSplash() {
 
   splash.addEventListener('click', () => {
     splash.classList.add('fade-out');
-    setTimeout(() => splash.remove(), 800);
+    setTimeout(() => splash.remove(), 1400);
   });
   setTimeout(() => {
     splash.classList.add('fade-out');
-    setTimeout(() => splash.remove(), 800);
+    setTimeout(() => splash.remove(), 1400);
   }, 4000);
 }
 
