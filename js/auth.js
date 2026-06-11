@@ -806,10 +806,15 @@ async function _zobrazPrehledSpravcu() {
   const existujici = document.getElementById('modalPrehled');
   if (existujici) existujici.remove();
 
-  const info = await _nactiSpravciInfo() || {};
+  const db = _getFirebaseDB();
+  const [info, tokensSnap] = await Promise.all([
+    _nactiSpravciInfo(),
+    db ? db.ref('push_tokens').once('value').catch(() => null) : Promise.resolve(null),
+  ]);
+  const pushTokeny = tokensSnap ? (tokensSnap.val() || {}) : {};
 
   // Sestavit seznam pouze ze spravci_info.json (bez Firebase — fotky by způsobily zaseknutí)
-  const vsichniSpravci = Object.entries(info).map(([id, s]) => {
+  const vsichniSpravci = Object.entries(info || {}).map(([id, s]) => {
     const budkyList = s.budky ? s.budky : [{ cislo: s.budka_cislo, nazev: s.budka_nazev || '' }];
     return {
       id,
@@ -817,6 +822,7 @@ async function _zobrazPrehledSpravcu() {
       prijmeni: s.prijmeni || '',
       telefon:  s.telefon  || '',
       email:    s.email    || '',
+      maNotif:  !!(pushTokeny[id] && pushTokeny[id].token),
       budkaCisla: budkyList.map(b => String(b.cislo)),
       budkaNazvy: budkyList.map(b => (b.nazev || '').toLowerCase()),
       budkyText:  budkyList.map(b => b.cislo + (b.nazev ? ' – ' + b.nazev : '')).join(', '),
@@ -839,6 +845,7 @@ async function _zobrazPrehledSpravcu() {
         <button class="prehled-filtr prehled-filtr--aktivni" data-filtr="vse">Všichni (${vsichniSpravci.length})</button>
         <button class="prehled-filtr" data-filtr="telefon">📞 S telefonem</button>
         <button class="prehled-filtr" data-filtr="email">📧 S e-mailem</button>
+        <button class="prehled-filtr" data-filtr="notif">🔔 S notifikacemi (${vsichniSpravci.filter(s=>s.maNotif).length})</button>
       </div>
       <div class="prehled-kopirovat">
         <button class="prehled-kopir-btn" id="prehledKopirTel">📋 Kopírovat telefony</button>
@@ -856,8 +863,9 @@ async function _zobrazPrehledSpravcu() {
   function renderSeznam() {
     const q = hledany.trim().toLowerCase();
     const filtered = vsichniSpravci.filter(s => {
-      if (aktFiltr === 'telefon' && !s.telefon) return false;
-      if (aktFiltr === 'email'   && !s.email)   return false;
+      if (aktFiltr === 'telefon' && !s.telefon)  return false;
+      if (aktFiltr === 'email'   && !s.email)    return false;
+      if (aktFiltr === 'notif'   && !s.maNotif)  return false;
       if (!q) return true;
       return (s.jmeno + ' ' + s.prijmeni).toLowerCase().includes(q)
         || s.budkaCisla.some(c => c.startsWith(q))
@@ -870,7 +878,7 @@ async function _zobrazPrehledSpravcu() {
     if (!filtered.length) { container.innerHTML = '<div style="color:var(--text-muted);padding:16px">Žádný výsledek</div>'; return; }
     container.innerHTML = filtered.map(s => `
       <div class="prehled-radek">
-        <div class="prehled-jmeno">${s.jmeno} ${s.prijmeni} <span class="prehled-id">· ID ${s.id} · 🏠 ${s.budkyText}</span></div>
+        <div class="prehled-jmeno">${s.jmeno} ${s.prijmeni} <span class="prehled-id">· ID ${s.id} · 🏠 ${s.budkyText}</span> <span title="${s.maNotif ? 'Notifikace povoleny' : 'Notifikace nepovoleny'}" style="font-size:0.9rem">${s.maNotif ? '🔔' : '🔕'}</span></div>
         ${s.telefon ? `<a class="prehled-kontakt" href="tel:${s.telefon}">📞 ${s.telefon}</a>` : '<span class="prehled-prazdny">bez telefonu</span>'}
         ${s.email   ? `<a class="prehled-kontakt" href="mailto:${s.email}">📧 ${s.email}</a>` : '<span class="prehled-prazdny">bez e-mailu</span>'}
       </div>`).join('');
