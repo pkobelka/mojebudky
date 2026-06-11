@@ -210,6 +210,7 @@ async function _zobrazAdminPanel(loginId) {
       : '';
     _zobrazToast(`Ahoj ${osloveni}! 🌿${posledniText}`, 6000, true);
     if (jePoprve) {
+      localStorage.setItem('mb_firstlogin_' + loginId, '1');
       setTimeout(() => _zobrazProfilSpravce(loginId, spravceInfo, budkaText), 7000);
     }
   }
@@ -1370,8 +1371,6 @@ function _zobrazSlibSpravce(loginId, spravceInfo, budkaText, osloveni) {
 }
 
 function _zobrazProfilSpravce(loginId, info, budkaText) {
-  // Nastavit hned — karta se auto-ukáže jen jednou, pak jen ručně přes menu
-  localStorage.setItem('mb_firstlogin_' + loginId, '1');
   const ulozeny = _nacistProfilLocal(loginId);
   const d = Object.assign({}, info, ulozeny);
 
