@@ -1488,6 +1488,19 @@ function _zobrazProfilSpravce(loginId, info, budkaText) {
   document.getElementById('profilZavrit').addEventListener('click', () => modal.remove());
   modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
 
+  const vzdy = document.getElementById('profilVzdy');
+  if (vzdy) {
+    vzdy.addEventListener('change', () => {
+      if (vzdy.checked) {
+        localStorage.setItem('mb_firstlogin_' + loginId, '1');
+      } else {
+        localStorage.removeItem('mb_firstlogin_' + loginId);
+      }
+      const msg = document.getElementById('profilUlozeno');
+      if (msg) { msg.textContent = '✓ Nastavení uloženo'; msg.hidden = false; setTimeout(() => { msg.hidden = true; }, 2000); }
+    });
+  }
+
   const pushBtn = document.getElementById('profilPovolPush');
   if (pushBtn) {
     if (Notification.permission === 'denied') {
@@ -1628,13 +1641,6 @@ function _zobrazProfilSpravce(loginId, info, budkaText) {
           vyrizeno: false
         });
       } catch {}
-    }
-
-    const vzdy = document.getElementById('profilVzdy');
-    if (vzdy && vzdy.checked) {
-      localStorage.setItem('mb_firstlogin_' + loginId, '1');
-    } else {
-      localStorage.removeItem('mb_firstlogin_' + loginId);
     }
 
     const msg = document.getElementById('profilUlozeno');
