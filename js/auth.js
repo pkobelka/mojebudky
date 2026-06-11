@@ -1364,6 +1364,7 @@ function _zobrazSlibSpravce(loginId, spravceInfo, budkaText, osloveni) {
       return;
     }
     localStorage.setItem('mb_slib_' + loginId, '1');
+    localStorage.setItem('mb_firstlogin_' + loginId, '1');
     modal.remove();
     _zobrazToast(`🙏 Děkujeme za složení slibu, ${osloveni}! Vítej mezi správci MojeBudky! 🌿`);
     setTimeout(() => _zobrazProfilSpravce(loginId, spravceInfo, budkaText), 6000);
@@ -1443,7 +1444,7 @@ function _zobrazProfilSpravce(loginId, info, budkaText) {
 
       <div class="profil-actions">
         <label class="profil-vzdy-label">
-          <input type="checkbox" id="profilVzdy" ${!localStorage.getItem('mb_firstlogin_' + loginId) ? 'checked' : ''}> Zobrazovat kartu při každém přihlášení
+          <input type="checkbox" id="profilVzdy" ${localStorage.getItem('mb_firstlogin_' + loginId) ? 'checked' : ''}> Nezobrazovat kartu automaticky po přihlášení
         </label>
         <button class="profil-btn-ulozit" id="profilUlozit">💾 Uložit změny</button>
         <span class="profil-ulozeno" id="profilUlozeno" hidden>✓ Uloženo!</span>
@@ -1597,9 +1598,9 @@ function _zobrazProfilSpravce(loginId, info, budkaText) {
 
     const vzdy = document.getElementById('profilVzdy');
     if (vzdy && vzdy.checked) {
-      localStorage.removeItem('mb_firstlogin_' + loginId);
-    } else {
       localStorage.setItem('mb_firstlogin_' + loginId, '1');
+    } else {
+      localStorage.removeItem('mb_firstlogin_' + loginId);
     }
 
     const msg = document.getElementById('profilUlozeno');
