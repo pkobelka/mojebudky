@@ -8,7 +8,7 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=20260610q">
+  <link rel="stylesheet" href="css/style.css?v=20260611a">
   <link rel="icon" type="image/svg+xml" href="img/favicon.svg">
   <link rel="icon" type="image/png" sizes="512x512" href="img/icon-512.png">
   <link rel="icon" type="image/png" sizes="192x192" href="img/icon-192.png">
@@ -60,6 +60,7 @@
       </ul>
 
       <div class="nav-actions">
+        <button class="nav-search-mobile-btn" id="navSearchMobileBtn" aria-label="Hledat">🔍</button>
         <div class="search-box">
           <input type="text" placeholder="Hledej budku nebo město" aria-label="Hledat">
           <button aria-label="Hledat">🔍</button>
@@ -76,6 +77,15 @@
         </button>
       </div>
     </nav>
+
+    <!-- Mobilní vyhledávací overlay -->
+    <div id="mobileSearchOverlay" style="display:none;position:fixed;inset:0;z-index:2100;background:rgba(10,30,10,0.97);padding:20px 16px;flex-direction:column;gap:12px">
+      <div style="display:flex;align-items:center;gap:10px">
+        <input type="text" id="mobileSearchInput" placeholder="Hledej budku nebo město…" autocomplete="off" style="flex:1;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:10px;padding:14px 16px;color:#eef4e8;font-size:1.1rem;outline:none">
+        <button id="mobileSearchZavrit" style="background:none;border:none;color:#eef4e8;font-size:1.6rem;cursor:pointer;padding:8px;min-width:44px;min-height:44px">✕</button>
+      </div>
+      <div id="mobileSearchVysledky" style="color:rgba(238,244,232,0.6);font-size:0.95rem;padding:8px 4px">Zadej název budky, číslo nebo město…</div>
+    </div>
 
     <!-- Informační lišta: datum, svátek, čas -->
     <div class="info-bar" id="infoBar" role="status" aria-live="polite">
@@ -333,6 +343,58 @@
       .then(reg => { window._swReg = reg; })
       .catch(() => {});
   }
+
+  // Mobilní vyhledávání
+  document.addEventListener('DOMContentLoaded', () => {
+    const overlay  = document.getElementById('mobileSearchOverlay');
+    const input    = document.getElementById('mobileSearchInput');
+    const zavrit   = document.getElementById('mobileSearchZavrit');
+    const vysledky = document.getElementById('mobileSearchVysledky');
+    const openBtn  = document.getElementById('navSearchMobileBtn');
+
+    openBtn.addEventListener('click', () => {
+      overlay.classList.add('open');
+      setTimeout(() => input.focus(), 100);
+    });
+    zavrit.addEventListener('click', () => overlay.classList.remove('open'));
+
+    async function spustHledani() {
+      const q = input.value.trim();
+      if (!q) return;
+      vysledky.textContent = '🔍 Hledám…';
+      if (typeof hledejBudku === 'function') await hledejBudku(q);
+      overlay.classList.remove('open');
+      vysledky.textContent = 'Zadej název budky, číslo nebo město…';
+      input.value = '';
+    }
+
+    input.addEventListener('keydown', e => { if (e.key === 'Enter') spustHledani(); });
+    input.addEventListener('input', () => {
+      const q = input.value.trim().toLowerCase();
+      if (!q) { vysledky.textContent = 'Zadej název budky, číslo nebo město…'; return; }
+      if (window._budkyData) {
+        const shody = window._budkyData.filter(b =>
+          String(b.cislo).includes(q) || (b.nazev && b.nazev.toLowerCase().includes(q))
+        ).slice(0, 5);
+        if (shody.length) {
+          vysledky.innerHTML = shody.map(b =>
+            `<div style="padding:10px 4px;border-bottom:1px solid rgba(255,255,255,0.08);cursor:pointer;color:#eef4e8" data-cislo="${b.cislo}">
+              🏠 <strong>Budka č. ${b.cislo}</strong>${b.nazev ? ' – ' + b.nazev : ''}
+            </div>`
+          ).join('');
+          vysledky.querySelectorAll('[data-cislo]').forEach(el => {
+            el.addEventListener('click', () => {
+              hledejBudku(el.dataset.cislo);
+              overlay.classList.remove('open');
+              input.value = '';
+            });
+          });
+          return;
+        }
+      }
+      vysledky.textContent = 'Zadej Enter pro hledání města…';
+    });
+  });
 </script>
 </body>
 </html>

@@ -550,7 +550,11 @@ html, body {
   .btn-login { font-size: 1rem; padding: 9px 16px; }
   .search-box { display: none; }
   .admin-dropdown { min-width: unset; }
+  .nav-search-mobile-btn { display: flex; }
 }
+.nav-search-mobile-btn { display: none; background: none; border: none; color: var(--text-muted); font-size: 1.4rem; cursor: pointer; padding: 8px; min-width: 44px; min-height: 44px; align-items: center; justify-content: center; touch-action: manipulation; }
+.nav-search-mobile-btn:hover { color: var(--text-light); }
+#mobileSearchOverlay.open { display: flex !important; }
 
 /* ── TABLET 900px ── */
 @media (max-width: 900px) {
