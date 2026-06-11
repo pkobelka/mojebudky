@@ -1443,6 +1443,10 @@ function _zobrazProfilSpravce(loginId, info, budkaText) {
       </div>
 
       <div class="profil-actions">
+        ${'Notification' in window && Notification.permission !== 'granted' ? `
+        <button class="profil-btn-push" id="profilPovolPush" style="width:100%;margin-bottom:10px;padding:13px;background:linear-gradient(135deg,#1c5c10,#2a8018);color:#eef4e8;border:none;border-radius:10px;font-size:1rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;touch-action:manipulation">
+          🔔 Povolit notifikace${Notification.permission === 'denied' ? ' (zakázáno v nastavení)' : ''}
+        </button>` : ''}
         <label class="profil-vzdy-label">
           <input type="checkbox" id="profilVzdy" ${localStorage.getItem('mb_firstlogin_' + loginId) ? 'checked' : ''}> Nezobrazovat kartu automaticky po přihlášení
         </label>
@@ -1475,6 +1479,28 @@ function _zobrazProfilSpravce(loginId, info, budkaText) {
 
   document.getElementById('profilZavrit').addEventListener('click', () => modal.remove());
   modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
+
+  const pushBtn = document.getElementById('profilPovolPush');
+  if (pushBtn) {
+    if (Notification.permission === 'denied') {
+      pushBtn.style.opacity = '0.55';
+      pushBtn.title = 'Notifikace jsou zakázány — povol je v Nastavení → Oznámení';
+    } else {
+      pushBtn.addEventListener('click', async () => {
+        pushBtn.disabled = true;
+        pushBtn.textContent = '⏳ Čekám na povolení…';
+        await _prihlasitPush(loginId);
+        if (Notification.permission === 'granted') {
+          pushBtn.textContent = '✅ Notifikace povoleny!';
+          pushBtn.style.background = 'linear-gradient(135deg,#1a5c10,#3aaa3a)';
+          setTimeout(() => pushBtn.remove(), 3000);
+        } else {
+          pushBtn.textContent = '🔔 Notifikace nebyly povoleny';
+          pushBtn.disabled = false;
+        }
+      });
+    }
+  }
 
   function _otevritFotoSheet() {
     const existSheet = document.getElementById('fotoSheet');
