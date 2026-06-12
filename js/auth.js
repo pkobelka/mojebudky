@@ -1661,6 +1661,7 @@ const _EB_DRUHY_DALSI = [
   { id: 'spavek',    nazev: 'Špaček obecný' },
   { id: 'sycek',     nazev: 'Sýček obecný' },
   { id: 'strizlik',  nazev: 'Střízlík obecný' },
+  { id: 'slavik',    nazev: 'Slavík obecný' },
   { id: 'vosy',      nazev: '🐝 Vosy / Sršni' },
   { id: 'plch',      nazev: 'Plch lesní' },
   { id: 'mys',       nazev: 'Myš domácí' },
