@@ -2240,17 +2240,44 @@ function _zobrazVizitku(loginId, spravceInfo, profil) {
       const blob = await new Promise(res => canvas.toBlob(res, 'image/png'));
       if (!blob) throw new Error('toBlob selhalo');
       const soubor = `${[jmeno, prijmeni].filter(Boolean).join('_') || 'vizitka'}_MojeBudky.png`;
-      const pngFile = new File([blob], soubor, { type: 'image/png' });
-      if (navigator.share && navigator.canShare && navigator.canShare({ files: [pngFile] })) {
-        await navigator.share({ files: [pngFile], title: celJmeno });
-      } else {
+      const dataUrl = canvas.toDataURL('image/png');
+
+      // Náhled vizitky v modalu
+      const nahledModal = document.createElement('div');
+      nahledModal.style.cssText = 'position:fixed;inset:0;z-index:4000;background:rgba(0,0,0,0.85);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;gap:16px';
+      nahledModal.innerHTML = `
+        <img src="${dataUrl}" style="max-width:min(700px,95vw);max-height:65vh;border-radius:12px;box-shadow:0 8px 40px rgba(0,0,0,0.6);object-fit:contain" alt="Náhled vizitky">
+        <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center">
+          <button id="vizNahledSdilet" style="background:linear-gradient(135deg,#1c5c10,#2a8018);color:#eef4e8;border:none;border-radius:10px;padding:13px 24px;font-size:1rem;font-weight:700;cursor:pointer;touch-action:manipulation">📤 Sdílet</button>
+          <button id="vizNahledStahnout" style="background:linear-gradient(135deg,#1c5c10,#2a8018);color:#eef4e8;border:none;border-radius:10px;padding:13px 24px;font-size:1rem;font-weight:700;cursor:pointer;touch-action:manipulation">⬇ Stáhnout PNG</button>
+          <button id="vizNahledZavrit" style="background:rgba(255,255,255,0.1);color:#eef4e8;border:1px solid rgba(255,255,255,0.2);border-radius:10px;padding:13px 24px;font-size:1rem;cursor:pointer;touch-action:manipulation">✕ Zavřít</button>
+        </div>`;
+      document.body.appendChild(nahledModal);
+
+      const _zavritNahled = () => nahledModal.remove();
+      nahledModal.addEventListener('click', e => { if (e.target === nahledModal) _zavritNahled(); });
+      document.getElementById('vizNahledZavrit').addEventListener('click', _zavritNahled);
+
+      document.getElementById('vizNahledSdilet').addEventListener('click', async () => {
+        const pngFile = new File([blob], soubor, { type: 'image/png' });
+        if (navigator.share && navigator.canShare && navigator.canShare({ files: [pngFile] })) {
+          await navigator.share({ files: [pngFile], title: celJmeno }).catch(() => {});
+        } else {
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url; a.download = soubor; a.click();
+          setTimeout(() => URL.revokeObjectURL(url), 2000);
+        }
+      });
+
+      document.getElementById('vizNahledStahnout').addEventListener('click', () => {
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url; a.download = soubor; a.click();
         setTimeout(() => URL.revokeObjectURL(url), 2000);
-      }
+      });
     } catch {
-      // uživatel zrušil sdílení nebo selhal canvas
+      // canvas selhal
     } finally {
       btn.disabled = false; btn.textContent = '🖼 Obrázek';
     }
