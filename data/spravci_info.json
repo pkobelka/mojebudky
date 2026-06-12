@@ -784,12 +784,22 @@
     "jmeno": "Jana",
     "prijmeni": "DÍTĚTOVÁ",
     "spravce": "Jana",
-    "budka_cislo": 59,
+    "budka_cislo": null,
     "budka_nazev": "",
     "telefon": "605 100 159",
     "email": "j.ditetova@vhos.cz",
     "osloveni": "Jani",
     "datum_narozeni": "1959-01-30"
+  },
+  "059220": {
+    "jmeno": "Věra",
+    "prijmeni": "ABERLOVÁ",
+    "spravce": "Věra",
+    "budka_cislo": 59,
+    "budka_nazev": "",
+    "telefon": "732 657 220",
+    "email": "",
+    "osloveni": "Věro"
   },
   "060986": {
     "jmeno": "Martin",
