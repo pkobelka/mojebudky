@@ -261,7 +261,6 @@ async function _zobrazAdminPanel(loginId) {
     <div class="admin-dropdown-hlavicka">👤 ${jmeno} &nbsp;·&nbsp; ${hlavickaText}</div>
     <button class="admin-dropdown-item" data-akce="karta">🪪 Karta správce / Editovat</button>
     <button class="admin-dropdown-item" data-akce="vizitka">🎴 Vizitka správce</button>
-    <button class="admin-dropdown-item" data-akce="resetUvitani" title="Karta se při příštím přihlášení ukáže automaticky">🔄 Zobrazit kartu při příštím přihlášení</button>
     ${budkyMenuHTML}
 
     <button class="admin-dropdown-item" data-akce="zmenitHeslo">🔑 Změnit heslo</button>
@@ -328,12 +327,6 @@ async function _zobrazAdminPanel(loginId) {
       return;
     }
 
-    if (akce === 'resetUvitani') {
-      localStorage.removeItem('mb_firstlogin_' + loginId);
-      dropdown.classList.remove('open');
-      _zobrazToast('✅ Při příštím přihlášení se karta ukáže automaticky');
-      return;
-    }
 
     if (akce === 'resetSlib') {
       localStorage.removeItem('mb_slib_' + loginId);
