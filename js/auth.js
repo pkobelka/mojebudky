@@ -1455,9 +1455,6 @@ function _zobrazProfilSpravce(loginId, info, budkaText) {
         <button class="profil-btn-push" id="profilPovolPush" style="width:100%;margin-bottom:10px;padding:13px;background:linear-gradient(135deg,#1c5c10,#2a8018);color:#eef4e8;border:none;border-radius:10px;font-size:1rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;touch-action:manipulation">
           🔔 Povolit notifikace${Notification.permission === 'denied' ? ' (zakázáno v nastavení)' : ''}
         </button>` : ''}
-        <label class="profil-vzdy-label">
-          <input type="checkbox" id="profilVzdy" ${localStorage.getItem('mb_firstlogin_' + loginId) ? 'checked' : ''}> Nezobrazovat kartu automaticky po přihlášení
-        </label>
         <button class="profil-btn-ulozit" id="profilUlozit">💾 Uložit změny</button>
         <span class="profil-ulozeno" id="profilUlozeno" hidden>✓ Uloženo!</span>
       </div>
@@ -1488,17 +1485,16 @@ function _zobrazProfilSpravce(loginId, info, budkaText) {
   document.getElementById('profilZavrit').addEventListener('click', () => modal.remove());
   modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
 
-  const vzdy = document.getElementById('profilVzdy');
-  if (vzdy) {
-    vzdy.addEventListener('change', () => {
-      if (vzdy.checked) {
-        localStorage.setItem('mb_firstlogin_' + loginId, '1');
-      } else {
-        localStorage.removeItem('mb_firstlogin_' + loginId);
-      }
-      const msg = document.getElementById('profilUlozeno');
-      if (msg) { msg.textContent = '✓ Nastavení uloženo'; msg.hidden = false; setTimeout(() => { msg.hidden = true; }, 2000); }
-    });
+  // Varování na prázdný email (non-blocking)
+  const emailInput = document.getElementById('pEmail');
+  if (emailInput) {
+    const _emailHint = document.createElement('div');
+    _emailHint.style.cssText = 'color:#d4a030;font-size:0.82rem;margin-top:4px;display:none';
+    _emailHint.textContent = '💡 Bez e-mailu nelze obnovit zapomenuté heslo';
+    emailInput.parentNode.appendChild(_emailHint);
+    const _checkEmail = () => { _emailHint.style.display = emailInput.value.trim() ? 'none' : 'block'; };
+    _checkEmail();
+    emailInput.addEventListener('input', _checkEmail);
   }
 
   const pushBtn = document.getElementById('profilPovolPush');
