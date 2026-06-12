@@ -978,6 +978,10 @@ html, body {
 .eb-jiny-wrap { margin-top: 10px; }
 .eb-jiny-wrap input { background: rgba(255,255,255,0.07); border: 1px solid var(--panel-border); border-radius: 8px; color: var(--text-light); font-size: 1.1rem; padding: 10px 14px; outline: none; width: 100%; }
 .eb-jiny-wrap input:focus { border-color: var(--accent-gold); }
+.eb-dalsi-wrap { width: 100%; margin-top: 6px; }
+.eb-dalsi-toggle { background: none; border: none; color: var(--text-muted); font-size: 0.85rem; cursor: pointer; padding: 4px 0; text-align: left; }
+.eb-dalsi-toggle:hover { color: var(--accent-gold); }
+.eb-dalsi-chipy { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
 
 /* ── ADMIN BANNER ── */
 .admin-banner { position: fixed; bottom: 0; left: 0; right: 0; z-index: 900; background: var(--nav-bg); border-top: 2px solid var(--accent-gold); color: var(--text-light); display: flex; align-items: center; justify-content: space-between; padding: 0.6rem 1.5rem; font-size: 0.9rem; }

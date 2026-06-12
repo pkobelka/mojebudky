@@ -1650,8 +1650,20 @@ const _EB_DRUHY = [
   { id: 'babka',     nazev: 'Sýk. babka' },
   { id: 'parukarka', nazev: 'Sýk. parukářka' },
   { id: 'vrabec',    nazev: 'Vrabec domácí' },
-  { id: 'slavik',    nazev: 'Slavík obecný' },
   { id: 'neznam',    nazev: 'Osídlena – nevím kdo' },
+];
+
+const _EB_DRUHY_DALSI = [
+  { id: 'rehek',     nazev: 'Rehek domácí' },
+  { id: 'lejsek_b',  nazev: 'Lejsek bělokrký' },
+  { id: 'lejsek_s',  nazev: 'Lejsek šedý' },
+  { id: 'brhlik',    nazev: 'Brhlík lesní' },
+  { id: 'spavek',    nazev: 'Špaček obecný' },
+  { id: 'sycek',     nazev: 'Sýček obecný' },
+  { id: 'strizlik',  nazev: 'Střízlík obecný' },
+  { id: 'vosy',      nazev: '🐝 Vosy / Sršni' },
+  { id: 'plch',      nazev: 'Plch lesní' },
+  { id: 'mys',       nazev: 'Myš domácí' },
 ];
 
 async function _zobrazEditBudky(loginId, spravceInfo, budkaText, budkaCislo, budkaNazev) {
@@ -1677,10 +1689,20 @@ async function _zobrazEditBudky(loginId, spravceInfo, budkaText, budkaCislo, bud
   const naposledy = ulozeno.ts
     ? `<div class="eb-naposledy">Naposledy editováno: ${new Date(ulozeno.ts).toLocaleString('cs-CZ')}</div>` : '';
 
-  const chipyHTML = _EB_DRUHY.map(d =>
-    `<button type="button" class="eb-chip${vybranyDruh === d.nazev ? ' eb-chip--sel' : ''}" data-druh="${d.nazev}">${d.nazev}</button>`
-  ).join('') +
-  `<button type="button" class="eb-chip eb-chip--jiny" data-druh="__jiny">+ Jiný druh</button>`;
+  const jeVybranyDalsi = _EB_DRUHY_DALSI.some(d => d.nazev === vybranyDruh);
+  const chipyHTML =
+    _EB_DRUHY.map(d =>
+      `<button type="button" class="eb-chip${vybranyDruh === d.nazev ? ' eb-chip--sel' : ''}" data-druh="${d.nazev}">${d.nazev}</button>`
+    ).join('') +
+    `<div class="eb-dalsi-wrap">
+      <button type="button" class="eb-dalsi-toggle" id="ebDalsiToggle">▸ Další možní nájemníci${jeVybranyDalsi ? ` · <strong>${vybranyDruh}</strong>` : ''}</button>
+      <div class="eb-dalsi-chipy" id="ebDalsiChipy" style="display:${jeVybranyDalsi ? 'flex' : 'none'}">
+        ${_EB_DRUHY_DALSI.map(d =>
+          `<button type="button" class="eb-chip${vybranyDruh === d.nazev ? ' eb-chip--sel' : ''}" data-druh="${d.nazev}">${d.nazev}</button>`
+        ).join('')}
+      </div>
+    </div>` +
+    `<button type="button" class="eb-chip eb-chip--jiny" data-druh="__jiny">+ Jiný druh</button>`;
 
   const modal = document.createElement('div');
   modal.id = 'modalEditBudky';
@@ -1848,6 +1870,15 @@ async function _zobrazEditBudky(loginId, spravceInfo, budkaText, budkaCislo, bud
   });
 
   let aktualniDruh = vybranyDruh;
+
+  document.getElementById('ebDalsiToggle').addEventListener('click', () => {
+    const chipy = document.getElementById('ebDalsiChipy');
+    const toggle = document.getElementById('ebDalsiToggle');
+    const otevreno = chipy.style.display !== 'none';
+    chipy.style.display = otevreno ? 'none' : 'flex';
+    toggle.textContent = (otevreno ? '▸' : '▾') + ' Další možní nájemníci' + (jeVybranyDalsi ? ` · ${aktualniDruh}` : '');
+  });
+
   document.getElementById('ebChipy').addEventListener('click', e => {
     const chip = e.target.closest('.eb-chip');
     if (!chip) return;
