@@ -1160,12 +1160,12 @@ body { background: linear-gradient(180deg, #f3f9ec 0%, #e9f3df 100%); }
 #app { height: auto; min-height: 100vh; overflow: visible; display: block; background: transparent; }
 
 /* ── NAVBAR (světlý) ── */
-.navbar { background: #ffffff; box-shadow: 0 1px 12px rgba(40,70,30,0.08); height: 78px; }
+.navbar { background: #ffffff; box-shadow: 0 1px 12px rgba(40,70,30,0.08); height: 88px; }
 .nav-logo { border-color: rgba(28,92,16,0.25); background: rgba(28,92,16,0.04); }
 .nav-logo:hover { border-color: rgba(28,92,16,0.5); background: rgba(28,92,16,0.09); }
 .logo-text { color: #1c5c10; }
 .logo-autor { color: #2a8018; }
-.nav-links a { color: #2e4a22; border-color: transparent; font-weight: 600; }
+.nav-links a { color: #2e4a22; border-color: transparent; font-weight: 700; font-size: 1.1rem; padding: 10px 20px; }
 .nav-links a:hover, .nav-links a.active { background: #eaf4e2; color: #1c5c10; border-color: transparent; }
 .search-box { background: #eef4e8; }
 .search-box input { color: #2e3d24; }
@@ -1180,7 +1180,7 @@ body { background: linear-gradient(180deg, #f3f9ec 0%, #e9f3df 100%); }
 
 /* Mobilní menu světlé */
 @media (max-width: 1100px) {
-  .nav-links { background: #ffffff; box-shadow: 0 8px 24px rgba(40,70,30,0.18); top: 78px; }
+  .nav-links { background: #ffffff; box-shadow: 0 8px 24px rgba(40,70,30,0.18); top: 88px; }
   .nav-links a { color: #2e4a22; border-bottom: 1px solid #eef4e8; }
 }
 
