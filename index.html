@@ -8,7 +8,7 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=20260613a">
+  <link rel="stylesheet" href="css/style.css?v=20260613b">
   <link rel="icon" type="image/svg+xml" href="img/favicon.svg">
   <link rel="icon" type="image/png" sizes="512x512" href="img/icon-512.png">
   <link rel="icon" type="image/png" sizes="192x192" href="img/icon-192.png">
@@ -95,67 +95,54 @@
     <div class="online-mobile-bar" id="onlineMobile">🟢 Online: <strong>…</strong></div>
   </header>
 
-  <!-- Hlavní obsah: 3 sloupce -->
+  <!-- HERO: Mapa budek -->
   <main class="main-content" id="mapa">
-
-    <!-- Levý panel: Aktuality z komunity -->
-    <aside class="panel panel-left" id="aktuality" aria-label="Z deníku správců...">
-      <h2 class="panel-title">Z deníku správců...</h2>
-      <div class="pribehy-list" id="aktualityList">
-        <div style="padding:20px; color:#c8a878; font-size:0.83rem;">Načítám aktuality…</div>
-      </div>
-    </aside>
-
-    <!-- Mapa -->
     <div class="map-wrapper" role="application" aria-label="Interaktivní mapa budek">
       <div id="map"></div>
       <button id="btn-zpet-mapa" class="btn-zpet-mapa" style="display:none;" aria-label="Zpět na přehled">← Zpět</button>
       <button id="btn-zpet-mapa-tr" class="btn-zpet-mapa btn-zpet-mapa--tr" style="display:none;" aria-label="Zpět na přehled">← Zpět</button>
     </div>
+  </main>
 
-    <!-- Pravý panel: Statistiky -->
-    <aside class="panel panel-right" aria-label="Statistiky projektu">
-      <h2 class="panel-title">Statistiky</h2>
-      <div class="panel-scroll">
+  <!-- Sekce: Statistiky -->
+  <section class="sekce sekce-stats" aria-label="Statistiky projektu">
+    <div class="sekce-inner">
+      <h2 class="sekce-nadpis">Projekt v číslech</h2>
+      <p class="sekce-podnadpis">Společně sledujeme ptačí budky po celé České republice.</p>
 
-        <!-- 4 statistiky 2×2 -->
-        <div class="stats-grid" id="statsGrid">
-
-          <div class="stat-item">
-            <div class="stat-icon"><img src="img/logo.svg" alt="Budka" class="stat-svg-icon" loading="lazy"></div>
-            <div>
-              <div class="stat-value" id="stat-celkem">…</div>
-              <div class="stat-label">Celkem budek</div>
-            </div>
-          </div>
-          <div class="stat-item">
-            <div class="stat-icon"><img src="img/obydleno.svg" alt="Osídlená budka" class="stat-svg-icon" loading="lazy"></div>
-            <div>
-              <div class="stat-value" id="stat-osidlenych">…</div>
-              <div class="stat-label">Osídlených budek</div>
-            </div>
-          </div>
-          <div class="stat-item">
-            <div class="stat-icon">👤</div>
-            <div>
-              <div class="stat-value" id="stat-spravcu">…</div>
-              <div class="stat-label">Registrovaných správců</div>
-            </div>
-          </div>
-          <div class="stat-item">
-            <div class="stat-icon">👍</div>
-            <div>
-              <div class="stat-value" id="stat-aktivnich">…</div>
-              <div class="stat-label">Aktivních budek</div>
-            </div>
+      <!-- 4 statistiky -->
+      <div class="stats-grid" id="statsGrid">
+        <div class="stat-item">
+          <div class="stat-icon"><img src="img/logo.svg" alt="Budka" class="stat-svg-icon" loading="lazy"></div>
+          <div>
+            <div class="stat-value" id="stat-celkem">…</div>
+            <div class="stat-label">Celkem budek</div>
           </div>
         </div>
-
-        <!-- Aktualizace -->
-        <div class="stat-box stat-aktualizace">
-          📅 Poslední aktualizace: <span id="stat-aktualizace">…</span>
+        <div class="stat-item">
+          <div class="stat-icon"><img src="img/obydleno.svg" alt="Osídlená budka" class="stat-svg-icon" loading="lazy"></div>
+          <div>
+            <div class="stat-value" id="stat-osidlenych">…</div>
+            <div class="stat-label">Osídlených budek</div>
+          </div>
         </div>
+        <div class="stat-item">
+          <div class="stat-icon">👤</div>
+          <div>
+            <div class="stat-value" id="stat-spravcu">…</div>
+            <div class="stat-label">Registrovaných správců</div>
+          </div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-icon">👍</div>
+          <div>
+            <div class="stat-value" id="stat-aktivnich">…</div>
+            <div class="stat-label">Aktivních budek</div>
+          </div>
+        </div>
+      </div>
 
+      <div class="sekce-dvojsloupec">
         <!-- Druhy ptáků -->
         <div class="stat-box druhy-panel" id="druhyPanel"></div>
 
@@ -179,28 +166,42 @@
           <div id="onlinePocet" class="online-pocet-panel">🟢 Online: <strong>…</strong></div>
           <button id="btnAktivitaSpravcu" class="btn-aktivita-spravcu" hidden title="Aktivita správců">🏆</button>
         </div>
+      </div>
 
-        <div class="pridat-na-plochu">
-          <div class="pridat-title">📲 Přidej na plochu mobilu</div>
-          <div class="pridat-body">
-            <img src="img/Favikon.png" alt="MojeBudky ikona" class="pridat-ikona" loading="lazy">
-            <div class="pridat-text">
-              <p>Mějte MojeBudky vždy po ruce jako aplikaci.</p>
-              <div class="pridat-navod"><span class="pridat-os">🍎 iOS:</span> Sdílet → <em>Přidat na plochu</em></div>
-              <div class="pridat-navod"><span class="pridat-os">🤖 Android:</span> Menu → <em>Přidat na plochu</em></div>
-              <div id="pushNotifArea"></div>
-            </div>
+      <div class="stat-box stat-aktualizace">
+        📅 Poslední aktualizace: <span id="stat-aktualizace">…</span>
+      </div>
+
+      <div class="pridat-na-plochu">
+        <div class="pridat-title">📲 Přidej na plochu mobilu</div>
+        <div class="pridat-body">
+          <img src="img/Favikon.png" alt="MojeBudky ikona" class="pridat-ikona" loading="lazy">
+          <div class="pridat-text">
+            <p>Mějte MojeBudky vždy po ruce jako aplikaci.</p>
+            <div class="pridat-navod"><span class="pridat-os">🍎 iOS:</span> Sdílet → <em>Přidat na plochu</em></div>
+            <div class="pridat-navod"><span class="pridat-os">🤖 Android:</span> Menu → <em>Přidat na plochu</em></div>
+            <div id="pushNotifArea"></div>
           </div>
         </div>
-        <div class="oblibene-pc">
-          <strong>☆ Uložit do oblíbených</strong>
-          <span>Windows / Linux: <kbd>Ctrl + D</kbd></span>
-          <span>Mac: <kbd>Cmd + D</kbd></span>
-        </div>
       </div>
-    </aside>
+      <div class="oblibene-pc">
+        <strong>☆ Uložit do oblíbených</strong>
+        <span>Windows / Linux: <kbd>Ctrl + D</kbd></span>
+        <span>Mac: <kbd>Cmd + D</kbd></span>
+      </div>
+    </div>
+  </section>
 
-  </main>
+  <!-- Sekce: Z deníku správců -->
+  <section class="sekce sekce-denik" id="aktuality" aria-label="Z deníku správců">
+    <div class="sekce-inner">
+      <h2 class="sekce-nadpis">Z deníku správců</h2>
+      <p class="sekce-podnadpis">Co se právě děje v našich budkách po celé zemi.</p>
+      <div class="pribehy-list" id="aktualityList">
+        <div style="padding:20px; color:#6b7d5a; font-size:0.95rem;">Načítám aktuality…</div>
+      </div>
+    </div>
+  </section>
 
   <!-- Desatero správce (modal) -->
   <div id="modalDesatero" class="modal-overlay desatero-overlay" hidden role="dialog" aria-modal="true" aria-label="Desatero odpovědného správce budky">
