@@ -539,28 +539,9 @@ html, body {
   .search-box input { width: 180px; }
 }
 
-/* ── LAPTOP 1024px ── */
-@media (max-width: 1024px) {
-  .panel { width: clamp(200px, 18vw, 280px); }
-  .navbar { height: 72px; padding: 0 16px; }
-  .nav-logo-img { width: 44px; height: 58px; }
-  .logo-text { font-size: 1.6rem; }
-  .logo-autor { font-size: 0.7rem; }
-  .nav-links a { padding: 7px 12px; font-size: 1.05rem; }
-  .btn-login { font-size: 1rem; padding: 9px 16px; }
-  .search-box { display: none; }
-  .admin-dropdown { min-width: unset; }
-  .nav-search-mobile-btn { display: flex; }
-}
-.nav-search-mobile-btn { display: none; background: none; border: none; color: var(--text-muted); font-size: 1.4rem; cursor: pointer; padding: 8px; min-width: 44px; min-height: 44px; align-items: center; justify-content: center; touch-action: manipulation; }
-.nav-search-mobile-btn:hover { color: var(--text-light); }
-#mobileSearchOverlay.open { display: flex !important; }
-
-/* ── TABLET 900px ── */
-@media (max-width: 900px) {
+/* ── LAPTOP 1100px – stack layout, hamburger nav ── */
+@media (max-width: 1100px) {
   #app { height: auto; min-height: 100vh; overflow: visible; }
-  .pridat-na-plochu { display: block; }
-  .oblibene-pc { display: none; }
   .main-content { flex-direction: column; }
   .panel { width: 100%; max-height: none; }
   .panel-scroll { overflow-y: visible; }
@@ -575,6 +556,7 @@ html, body {
   .nav-links a { display: block; padding: 14px 20px; font-size: 1.1rem; border: none; border-bottom: 1px solid rgba(255,255,255,0.07); border-radius: 0 !important; }
   .nav-napsat-mobile { display: block; }
   .nav-podpora-mobile { display: block; }
+  .nav-search-mobile-btn { display: flex; }
   .info-bar { flex-wrap: wrap; gap: 2px; font-size: 0.9rem; }
   .info-bar .bar-right { width: 100%; padding-top: 2px; }
   .partners-section { padding: 14px 20px; }
@@ -585,10 +567,17 @@ html, body {
   .nav-logo-img { width: 42px; height: 56px; }
   .logo-text { font-size: 1.5rem; }
   .logo-autor { font-size: 0.68rem; }
-  .nav-podpora-btn { font-size: 1.1rem; padding: 7px 12px; }
   .btn-login { font-size: 1rem; padding: 9px 16px; }
   .budka-popup { min-width: 300px; }
   .admin-dropdown { min-width: unset; }
+  .pridat-na-plochu { display: block; }
+  .oblibene-pc { display: none; }
+}
+
+/* ── TABLET 900px ── */
+@media (max-width: 900px) {
+  .partners-section { padding: 14px 20px; }
+  .nav-podpora-btn { font-size: 1.1rem; padding: 7px 12px; }
 }
 
 @media (max-width: 600px) {
@@ -978,6 +967,10 @@ html, body {
 .eb-jiny-wrap { margin-top: 10px; }
 .eb-jiny-wrap input { background: rgba(255,255,255,0.07); border: 1px solid var(--panel-border); border-radius: 8px; color: var(--text-light); font-size: 1.1rem; padding: 10px 14px; outline: none; width: 100%; }
 .eb-jiny-wrap input:focus { border-color: var(--accent-gold); }
+.eb-dalsi-wrap { width: 100%; margin-top: 6px; }
+.eb-dalsi-toggle { background: none; border: none; color: var(--text-muted); font-size: 0.85rem; cursor: pointer; padding: 4px 0; text-align: left; }
+.eb-dalsi-toggle:hover { color: var(--accent-gold); }
+.eb-dalsi-chipy { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
 
 /* ── ADMIN BANNER ── */
 .admin-banner { position: fixed; bottom: 0; left: 0; right: 0; z-index: 900; background: var(--nav-bg); border-top: 2px solid var(--accent-gold); color: var(--text-light); display: flex; align-items: center; justify-content: space-between; padding: 0.6rem 1.5rem; font-size: 0.9rem; }
@@ -1152,3 +1145,125 @@ html, body {
   .vizitka-kontakt, .vizitka-budky, .vizitka-role { color: rgba(238,244,232,0.9) !important; }
 }
 .popup-edit-push-btn:hover { background: rgba(80,160,80,0.25); }
+
+/* ════════════════════════════════════════════════════════════════
+   REDESIGN 2026 — SVĚTLÝ SCROLL LAYOUT
+   Mapa nahoře jako hero, obsah ve stohovaných sekcích pod sebou.
+   Modaly (login, desatero, vizitka, edit budky) zůstávají tmavé.
+   ════════════════════════════════════════════════════════════════ */
+
+/* Světlé pozadí celé stránky, vypnout tmavou scénu */
+body { background: linear-gradient(180deg, #f3f9ec 0%, #e9f3df 100%); }
+.bg-scene { display: none; }
+
+/* Scrollovací layout místo fixního dashboardu */
+#app { height: auto; min-height: 100vh; overflow: visible; display: block; background: transparent; }
+
+/* ── NAVBAR (světlý) ── */
+.navbar { background: #ffffff; box-shadow: 0 1px 12px rgba(40,70,30,0.08); height: 78px; }
+.nav-logo { border-color: rgba(28,92,16,0.25); background: rgba(28,92,16,0.04); }
+.nav-logo:hover { border-color: rgba(28,92,16,0.5); background: rgba(28,92,16,0.09); }
+.logo-text { color: #1c5c10; }
+.logo-autor { color: #2a8018; }
+.nav-links a { color: #2e4a22; border-color: transparent; font-weight: 600; }
+.nav-links a:hover, .nav-links a.active { background: #eaf4e2; color: #1c5c10; border-color: transparent; }
+.search-box { background: #eef4e8; }
+.search-box input { color: #2e3d24; }
+.search-box input::placeholder { color: #8aa078; }
+.search-box button { color: #6b7d5a; }
+.search-box button:hover { color: #1c5c10; }
+.nav-search-mobile-btn { color: #3a5a2a; }
+.nav-search-mobile-btn:hover { color: #1c5c10; }
+.nav-hamburger span { background: #2e4a22; }
+.btn-napsat { background: #eef4e8; color: #2e4a22; border-color: #d6e6c8; }
+.btn-napsat:hover { background: #e0eed4; color: #1c5c10; }
+
+/* Mobilní menu světlé */
+@media (max-width: 1100px) {
+  .nav-links { background: #ffffff; box-shadow: 0 8px 24px rgba(40,70,30,0.18); top: 78px; }
+  .nav-links a { color: #2e4a22; border-bottom: 1px solid #eef4e8; }
+}
+
+/* ── INFO BAR (světlý) ── */
+.info-bar { background: #eaf4e2; color: #3a4a30; border-bottom: 1px solid #d6e6c8; }
+.info-bar .bar-right { color: #4a7a2a; }
+
+/* ── HERO: mapa na celou šířku ── */
+.main-content { display: block; min-height: 0; }
+.map-wrapper { width: 100%; height: 72vh; min-height: 440px; }
+#map { position: absolute; inset: 0; }
+
+/* Fullscreen mapa skryje i nové sekce */
+.main-content.mapa-fullscreen ~ .sekce { display: none; }
+.main-content.mapa-fullscreen .map-wrapper { height: 100%; }
+
+/* ── SEKCE (společné) ──
+   Předefinováním proměnných se přebarví všechny vnitřní komponenty na světlé. */
+.sekce {
+  --text-light: #2b3a22;
+  --text-muted: #6b7d5a;
+  --panel-bg: #ffffff;
+  --panel-border: #e0ead4;
+  --panel-header: #eef6e8;
+  --accent-gold: #b07d10;
+  padding: 56px 24px;
+  color: #2b3a22;
+}
+.sekce-denik { background: #ffffff; }
+.sekce-inner { max-width: 1120px; margin: 0 auto; }
+.sekce-nadpis { text-align: center; color: #1c5c10; font-size: 2.1rem; font-weight: 800; margin-bottom: 8px; letter-spacing: 0.2px; }
+.sekce-podnadpis { text-align: center; color: #5a6e48; font-size: 1.12rem; margin-bottom: 34px; line-height: 1.5; }
+
+/* ── STATISTIKY ── */
+.sekce-stats .stats-grid { grid-template-columns: repeat(4, 1fr); max-width: 980px; margin: 0 auto 22px; gap: 18px; padding: 0; }
+.sekce-stats .stat-item { background: #ffffff; border: 1px solid #e0ead4; border-top: 4px solid var(--orange); border-radius: 14px; box-shadow: 0 4px 16px rgba(60,90,40,0.07); padding: 20px 14px; }
+.sekce-stats .stat-value { color: #1c3d10; }
+.sekce-stats .stat-label { color: #6b7d5a; }
+.sekce-stats .stat-item:nth-child(1) { background: #fffbe8; }
+.sekce-stats .stat-item:nth-child(1) .stat-value { color: #b89400; }
+.sekce-stats .stat-box { background: #ffffff; border: 1px solid #e0ead4; box-shadow: 0 4px 16px rgba(60,90,40,0.06); border-radius: 12px; }
+.sekce-stats .navst-item { background: #f1f7ea; }
+.sekce-stats .navst-cislo { color: #2a8018; }
+.sekce-stats .online-pocet-panel { border-top-color: #e0ead4; }
+.sekce-stats .online-pocet-panel strong { color: #2a8018; }
+.sekce-stats .druh-item { background: #f4f9ef; }
+.sekce-stats .druh-item:hover { background: #e9f3df; }
+.sekce-stats .druhy-filter-reset { background: #fdeceb; color: #d04540; border-color: #f3c9c7; }
+.sekce-dvojsloupec { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; align-items: start; margin-bottom: 18px; }
+.sekce-stats .stat-aktualizace { text-align: center; }
+.sekce-stats .pridat-na-plochu { display: block; background: #f1f7ea; border: 1px solid #e0ead4; border-radius: 12px; margin-top: 18px; }
+.sekce-stats .oblibene-pc { background: #f1f7ea; border-color: #e0ead4; }
+
+/* ── Z DENÍKU SPRÁVCŮ ── */
+.sekce-denik .pribehy-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 18px; overflow: visible; padding: 0; }
+.sekce-denik .pribeh-item { background: #ffffff; border: 1px solid #e0ead4; border-radius: 14px; box-shadow: 0 4px 16px rgba(60,90,40,0.07); padding: 16px 18px; }
+.sekce-denik .pribeh-item:hover { background: #fafdf6; box-shadow: 0 6px 22px rgba(60,90,40,0.12); }
+.sekce-denik .pribeh-druh { color: #1c5c10; }
+.sekce-denik .pribeh-popis { color: #3a4a30; opacity: 1; }
+.sekce-denik .pribeh-datum { color: #7d8e6a; }
+.sekce-denik .aktualita-link { color: #2a8018; }
+.sekce-denik .aktualita-link:hover { color: #b07d10; }
+
+/* ── PODPOROVATELÉ (světlé) ── */
+.partners-section {
+  --text-light: #2b3a22;
+  --text-muted: #6b7d5a;
+  --accent-gold: #b07d10;
+  background: #eef6e8;
+  border-top: 1px solid #d6e6c8;
+  padding: 48px 24px;
+}
+.partners-section h3 { color: #1c5c10; }
+.partners-section .partner-item { background: #ffffff; color: #2e4a22; border: 1px solid #d6e6c8; box-shadow: 0 2px 10px rgba(60,90,40,0.07); }
+.partners-section .partner-item:hover { background: #f6fbf0; box-shadow: 0 4px 16px rgba(60,90,40,0.12); }
+.partners-section .podekovani-wrap { border-top-color: #d6e6c8; }
+.partners-section .podekovani-item { background: #ffffff; color: #2e4a22; border: 1px solid #d6e6c8; box-shadow: 0 2px 8px rgba(60,90,40,0.06); }
+
+/* Responsivita redesignu */
+@media (max-width: 760px) {
+  .sekce { padding: 40px 16px; }
+  .sekce-nadpis { font-size: 1.7rem; }
+  .sekce-stats .stats-grid { grid-template-columns: 1fr 1fr; }
+  .sekce-dvojsloupec { grid-template-columns: 1fr; }
+  .map-wrapper { height: 60vh; min-height: 360px; }
+}

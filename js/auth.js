@@ -261,7 +261,6 @@ async function _zobrazAdminPanel(loginId) {
     <div class="admin-dropdown-hlavicka">👤 ${jmeno} &nbsp;·&nbsp; ${hlavickaText}</div>
     <button class="admin-dropdown-item" data-akce="karta">🪪 Karta správce / Editovat</button>
     <button class="admin-dropdown-item" data-akce="vizitka">🎴 Vizitka správce</button>
-    <button class="admin-dropdown-item" data-akce="resetUvitani" title="Karta se při příštím přihlášení ukáže automaticky">🔄 Zobrazit kartu při příštím přihlášení</button>
     ${budkyMenuHTML}
 
     <button class="admin-dropdown-item" data-akce="zmenitHeslo">🔑 Změnit heslo</button>
@@ -328,12 +327,6 @@ async function _zobrazAdminPanel(loginId) {
       return;
     }
 
-    if (akce === 'resetUvitani') {
-      localStorage.removeItem('mb_firstlogin_' + loginId);
-      dropdown.classList.remove('open');
-      _zobrazToast('✅ Při příštím přihlášení se karta ukáže automaticky');
-      return;
-    }
 
     if (akce === 'resetSlib') {
       localStorage.removeItem('mb_slib_' + loginId);
@@ -1455,9 +1448,6 @@ function _zobrazProfilSpravce(loginId, info, budkaText) {
         <button class="profil-btn-push" id="profilPovolPush" style="width:100%;margin-bottom:10px;padding:13px;background:linear-gradient(135deg,#1c5c10,#2a8018);color:#eef4e8;border:none;border-radius:10px;font-size:1rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;touch-action:manipulation">
           🔔 Povolit notifikace${Notification.permission === 'denied' ? ' (zakázáno v nastavení)' : ''}
         </button>` : ''}
-        <label class="profil-vzdy-label">
-          <input type="checkbox" id="profilVzdy" ${localStorage.getItem('mb_firstlogin_' + loginId) ? 'checked' : ''}> Nezobrazovat kartu automaticky po přihlášení
-        </label>
         <button class="profil-btn-ulozit" id="profilUlozit">💾 Uložit změny</button>
         <span class="profil-ulozeno" id="profilUlozeno" hidden>✓ Uloženo!</span>
       </div>
@@ -1488,17 +1478,16 @@ function _zobrazProfilSpravce(loginId, info, budkaText) {
   document.getElementById('profilZavrit').addEventListener('click', () => modal.remove());
   modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
 
-  const vzdy = document.getElementById('profilVzdy');
-  if (vzdy) {
-    vzdy.addEventListener('change', () => {
-      if (vzdy.checked) {
-        localStorage.setItem('mb_firstlogin_' + loginId, '1');
-      } else {
-        localStorage.removeItem('mb_firstlogin_' + loginId);
-      }
-      const msg = document.getElementById('profilUlozeno');
-      if (msg) { msg.textContent = '✓ Nastavení uloženo'; msg.hidden = false; setTimeout(() => { msg.hidden = true; }, 2000); }
-    });
+  // Varování na prázdný email (non-blocking)
+  const emailInput = document.getElementById('pEmail');
+  if (emailInput) {
+    const _emailHint = document.createElement('div');
+    _emailHint.style.cssText = 'color:#d4a030;font-size:0.82rem;margin-top:4px;display:none';
+    _emailHint.textContent = '💡 Bez e-mailu nelze obnovit zapomenuté heslo';
+    emailInput.parentNode.appendChild(_emailHint);
+    const _checkEmail = () => { _emailHint.style.display = emailInput.value.trim() ? 'none' : 'block'; };
+    _checkEmail();
+    emailInput.addEventListener('input', _checkEmail);
   }
 
   const pushBtn = document.getElementById('profilPovolPush');
@@ -1661,8 +1650,21 @@ const _EB_DRUHY = [
   { id: 'babka',     nazev: 'Sýk. babka' },
   { id: 'parukarka', nazev: 'Sýk. parukářka' },
   { id: 'vrabec',    nazev: 'Vrabec domácí' },
-  { id: 'slavik',    nazev: 'Slavík obecný' },
   { id: 'neznam',    nazev: 'Osídlena – nevím kdo' },
+];
+
+const _EB_DRUHY_DALSI = [
+  { id: 'rehek',     nazev: 'Rehek domácí' },
+  { id: 'lejsek_b',  nazev: 'Lejsek bělokrký' },
+  { id: 'lejsek_s',  nazev: 'Lejsek šedý' },
+  { id: 'brhlik',    nazev: 'Brhlík lesní' },
+  { id: 'spavek',    nazev: 'Špaček obecný' },
+  { id: 'sycek',     nazev: 'Sýček obecný' },
+  { id: 'strizlik',  nazev: 'Střízlík obecný' },
+  { id: 'slavik',    nazev: 'Slavík obecný' },
+  { id: 'vosy',      nazev: '🐝 Vosy / Sršni' },
+  { id: 'plch',      nazev: 'Plch lesní' },
+  { id: 'mys',       nazev: 'Myš domácí' },
 ];
 
 async function _zobrazEditBudky(loginId, spravceInfo, budkaText, budkaCislo, budkaNazev) {
@@ -1688,10 +1690,20 @@ async function _zobrazEditBudky(loginId, spravceInfo, budkaText, budkaCislo, bud
   const naposledy = ulozeno.ts
     ? `<div class="eb-naposledy">Naposledy editováno: ${new Date(ulozeno.ts).toLocaleString('cs-CZ')}</div>` : '';
 
-  const chipyHTML = _EB_DRUHY.map(d =>
-    `<button type="button" class="eb-chip${vybranyDruh === d.nazev ? ' eb-chip--sel' : ''}" data-druh="${d.nazev}">${d.nazev}</button>`
-  ).join('') +
-  `<button type="button" class="eb-chip eb-chip--jiny" data-druh="__jiny">+ Jiný druh</button>`;
+  const jeVybranyDalsi = _EB_DRUHY_DALSI.some(d => d.nazev === vybranyDruh);
+  const chipyHTML =
+    _EB_DRUHY.map(d =>
+      `<button type="button" class="eb-chip${vybranyDruh === d.nazev ? ' eb-chip--sel' : ''}" data-druh="${d.nazev}">${d.nazev}</button>`
+    ).join('') +
+    `<div class="eb-dalsi-wrap">
+      <button type="button" class="eb-dalsi-toggle" id="ebDalsiToggle">▸ Další možní nájemníci${jeVybranyDalsi ? ` · <strong>${vybranyDruh}</strong>` : ''}</button>
+      <div class="eb-dalsi-chipy" id="ebDalsiChipy" style="display:${jeVybranyDalsi ? 'flex' : 'none'}">
+        ${_EB_DRUHY_DALSI.map(d =>
+          `<button type="button" class="eb-chip${vybranyDruh === d.nazev ? ' eb-chip--sel' : ''}" data-druh="${d.nazev}">${d.nazev}</button>`
+        ).join('')}
+      </div>
+    </div>` +
+    `<button type="button" class="eb-chip eb-chip--jiny" data-druh="__jiny">+ Jiný druh</button>`;
 
   const modal = document.createElement('div');
   modal.id = 'modalEditBudky';
@@ -1859,6 +1871,15 @@ async function _zobrazEditBudky(loginId, spravceInfo, budkaText, budkaCislo, bud
   });
 
   let aktualniDruh = vybranyDruh;
+
+  document.getElementById('ebDalsiToggle').addEventListener('click', () => {
+    const chipy = document.getElementById('ebDalsiChipy');
+    const toggle = document.getElementById('ebDalsiToggle');
+    const otevreno = chipy.style.display !== 'none';
+    chipy.style.display = otevreno ? 'none' : 'flex';
+    toggle.textContent = (otevreno ? '▸' : '▾') + ' Další možní nájemníci' + (jeVybranyDalsi ? ` · ${aktualniDruh}` : '');
+  });
+
   document.getElementById('ebChipy').addEventListener('click', e => {
     const chip = e.target.closest('.eb-chip');
     if (!chip) return;
