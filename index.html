@@ -8,7 +8,7 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=20260613c">
+  <link rel="stylesheet" href="css/style.css?v=20260613d">
   <link rel="icon" type="image/svg+xml" href="img/favicon.svg">
   <link rel="icon" type="image/png" sizes="512x512" href="img/icon-512.png">
   <link rel="icon" type="image/png" sizes="192x192" href="img/icon-192.png">
@@ -172,18 +172,7 @@
         📅 Poslední aktualizace: <span id="stat-aktualizace">…</span>
       </div>
 
-      <div class="pridat-na-plochu">
-        <div class="pridat-title">📲 Přidej na plochu mobilu</div>
-        <div class="pridat-body">
-          <img src="img/Favikon.png" alt="MojeBudky ikona" class="pridat-ikona" loading="lazy">
-          <div class="pridat-text">
-            <p>Mějte MojeBudky vždy po ruce jako aplikaci.</p>
-            <div class="pridat-navod"><span class="pridat-os">🍎 iOS:</span> Sdílet → <em>Přidat na plochu</em></div>
-            <div class="pridat-navod"><span class="pridat-os">🤖 Android:</span> Menu → <em>Přidat na plochu</em></div>
-            <div id="pushNotifArea"></div>
-          </div>
-        </div>
-      </div>
+      <div id="pushNotifArea"></div>
       <div class="oblibene-pc">
         <strong>☆ Uložit do oblíbených</strong>
         <span>Windows / Linux: <kbd>Ctrl + D</kbd></span>
@@ -335,7 +324,7 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging-compat.js"></script>
 <script src="js/svatky.js"></script>
 <script src="js/mapa.js?v=20260610b"></script>
-<script src="js/main.js?v=20260610j"></script>
+<script src="js/main.js?v=20260613d"></script>
 <script src="js/auth.js?v=20260612e"></script>
 <script src="js/presence.js?v=20260606d"></script>
 <script>
@@ -345,47 +334,8 @@
       .catch(() => {});
   }
 
-  // PWA install prompt
-  let _pwaInstallEvent = null;
-  window.addEventListener('beforeinstallprompt', e => {
-    e.preventDefault();
-    _pwaInstallEvent = e;
-    if (localStorage.getItem('mb_pwa_dismissed')) return;
-    setTimeout(() => {
-      const toast = document.createElement('div');
-      toast.id = 'pwaInstallToast';
-      toast.innerHTML = `
-        <div style="display:flex;align-items:center;gap:12px">
-          <img src="img/icon-192.png" style="width:40px;height:40px;border-radius:10px;flex-shrink:0" alt="">
-          <div style="flex:1;min-width:0">
-            <div style="font-weight:700;color:#eef4e8;font-size:0.97rem">Nainstaluj MojeBudky</div>
-            <div style="color:#9ab880;font-size:0.82rem;margin-top:2px">Přidej na plochu pro rychlý přístup</div>
-          </div>
-          <button id="pwaInstallBtn" style="background:linear-gradient(135deg,#1c5c10,#2a8018);color:#eef4e8;border:none;border-radius:9px;padding:9px 14px;font-size:0.9rem;font-weight:700;cursor:pointer;white-space:nowrap;touch-action:manipulation">📲 Instalovat</button>
-          <button id="pwaInstallZavrit" style="background:none;border:none;color:#9ab880;font-size:1.4rem;cursor:pointer;padding:4px;line-height:1;flex-shrink:0;touch-action:manipulation">✕</button>
-        </div>`;
-      toast.style.cssText = 'position:fixed;bottom:80px;left:50%;transform:translateX(-50%);width:min(460px,calc(100vw - 32px));background:#152e0a;border:1px solid rgba(120,190,80,0.25);border-radius:14px;padding:14px 16px;z-index:3100;box-shadow:0 4px 24px rgba(0,0,0,0.5);animation:pwaSlideUp 0.35s ease';
-      if (!document.getElementById('pwaSlideUpStyle')) {
-        const s = document.createElement('style');
-        s.id = 'pwaSlideUpStyle';
-        s.textContent = '@keyframes pwaSlideUp{from{opacity:0;transform:translateX(-50%) translateY(20px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}';
-        document.head.appendChild(s);
-      }
-      document.body.appendChild(toast);
-      document.getElementById('pwaInstallBtn').addEventListener('click', async () => {
-        if (!_pwaInstallEvent) return;
-        _pwaInstallEvent.prompt();
-        const { outcome } = await _pwaInstallEvent.userChoice;
-        _pwaInstallEvent = null;
-        toast.remove();
-        if (outcome === 'accepted') localStorage.setItem('mb_pwa_dismissed', '1');
-      });
-      document.getElementById('pwaInstallZavrit').addEventListener('click', () => {
-        localStorage.setItem('mb_pwa_dismissed', '1');
-        toast.remove();
-      });
-    }, 4000);
-  });
+  // PWA install prompt vypnut - na webu nenabízíme "Přidat na plochu"
+  window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); });
 
   // Mobilní vyhledávání
   document.addEventListener('DOMContentLoaded', () => {

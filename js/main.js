@@ -373,8 +373,30 @@ function nactiDruhyPtaku(druhy) {
     }).join('');
   }
 
-  const aktivnich = druhy.filter(d => d.pocet > 0).length;
+  const obsazene = druhy.filter(d => d.pocet > 0);
+  const prazdne = druhy.filter(d => d.pocet === 0);
+  const aktivnich = obsazene.length;
   const druhSlovo = aktivnich === 1 ? 'druh' : aktivnich <= 4 ? 'druhy' : 'druhů';
+
+  const renderItem = d => {
+    const key = BIRD_KEY_MAP[d.nazev] || 'konadra';
+    const icon = BIRD_ICONS[key].replace(/width="38" height="38"/, 'width="28" height="28"');
+    const mapBtn = d.pocet > 0
+      ? `<button class="druh-mapa-btn" data-nazev="${d.nazev.replace(/"/g,'&quot;')}" title="Zobrazit na mapě" tabindex="-1">🗺</button>`
+      : '';
+    return `<div class="druh-item${d.pocet === 0 ? ' druh-item--prazdny' : ''}" data-id="${d.id}" data-nazev="${d.nazev.replace(/"/g,'&quot;')}">
+      <div class="druh-svg">${icon}</div>
+      <span class="druh-nazev">${d.nazev}</span>
+      <span class="druh-pocet${d.pocet > 0 ? ' druh-pocet--klik' : ''}" data-nazev="${d.nazev.replace(/"/g,'&quot;')}" title="${d.pocet > 0 ? 'Zobrazit na mapě' : ''}">${d.pocet}</span><span class="druh-pocet-label">${d.pocet === 1 ? 'budka' : d.pocet <= 4 ? 'budky' : 'budek'}</span>${mapBtn}
+    </div>`;
+  };
+
+  const prazdneHTML = prazdne.length ? `
+    <button type="button" class="druhy-dalsi-toggle" id="druhyDalsiToggle">▸ Další druhy, které u nás zatím nehnízdí (${prazdne.length})</button>
+    <div class="druhy-list druhy-list--prazdne" id="druhyListPrazdne" hidden>
+      ${prazdne.map(renderItem).join('')}
+    </div>` : '';
+
   el.innerHTML = `
     <div class="druhy-title-row">
       <span class="druhy-title">🐦 Druhy ptáků v budkách</span>
@@ -382,19 +404,19 @@ function nactiDruhyPtaku(druhy) {
     </div>
     <div class="druhy-intro">Aktuálně evidujeme v budkách tyto <strong>${aktivnich} ${druhSlovo}</strong>:</div>
     <div class="druhy-list" id="druhyList">
-      ${druhy.map(d => {
-        const key = BIRD_KEY_MAP[d.nazev] || 'konadra';
-        const icon = BIRD_ICONS[key].replace(/width="38" height="38"/, 'width="28" height="28"');
-        const mapBtn = d.pocet > 0
-          ? `<button class="druh-mapa-btn" data-nazev="${d.nazev.replace(/"/g,'&quot;')}" title="Zobrazit na mapě" tabindex="-1">🗺</button>`
-          : '';
-        return `<div class="druh-item" data-id="${d.id}" data-nazev="${d.nazev.replace(/"/g,'&quot;')}">
-          <div class="druh-svg">${icon}</div>
-          <span class="druh-nazev">${d.nazev}</span>
-          <span class="druh-pocet${d.pocet > 0 ? ' druh-pocet--klik' : ''}" data-nazev="${d.nazev.replace(/"/g,'&quot;')}" title="${d.pocet > 0 ? 'Zobrazit na mapě' : ''}">${d.pocet}</span><span class="druh-pocet-label">${d.pocet === 1 ? 'budka' : d.pocet <= 4 ? 'budky' : 'budek'}</span>${mapBtn}
-        </div>`;
-      }).join('')}
-    </div>`;
+      ${obsazene.map(renderItem).join('')}
+    </div>${prazdneHTML}`;
+
+  const dalsiToggle = document.getElementById('druhyDalsiToggle');
+  if (dalsiToggle) {
+    dalsiToggle.addEventListener('click', () => {
+      const box = document.getElementById('druhyListPrazdne');
+      const otevreno = !box.hidden;
+      box.hidden = otevreno;
+      dalsiToggle.classList.toggle('druhy-dalsi-toggle--open', !otevreno);
+      dalsiToggle.textContent = `${otevreno ? '▸' : '▾'} Další druhy, které u nás zatím nehnízdí (${prazdne.length})`;
+    });
+  }
 
   window._aktualizujFilterBtn = function(nazev) {
     const btn = document.getElementById('druhyFilterReset');
@@ -408,7 +430,7 @@ function nactiDruhyPtaku(druhy) {
     if (typeof window._zrusitFilterMapy === 'function') window._zrusitFilterMapy();
   });
 
-  document.getElementById('druhyList').addEventListener('click', e => {
+  el.addEventListener('click', e => {
     const pocetBtn = e.target.closest('.druh-pocet--klik, .druh-mapa-btn');
     if (pocetBtn) {
       e.stopPropagation();

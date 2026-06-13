@@ -471,6 +471,12 @@ html, body {
 .druh-mapa-btn { background: none; border: none; color: var(--text-muted); font-size: 1rem; cursor: pointer; padding: 2px 4px; margin-left: 4px; border-radius: 4px; transition: color 0.15s, background 0.15s; touch-action: manipulation; }
 .druh-mapa-btn:hover { color: var(--accent-gold); background: rgba(255,255,255,0.1); }
 .druh-item--aktivni-filter { background: rgba(212,160,64,0.15) !important; border: 1px solid rgba(212,160,64,0.4); }
+.druhy-dalsi-toggle { background: none; border: none; color: var(--text-muted); font-size: 0.98rem; font-weight: 600; cursor: pointer; padding: 8px 2px; margin-top: 4px; text-align: left; width: 100%; transition: color 0.15s; }
+.druhy-dalsi-toggle:hover { color: var(--text-light); }
+.druhy-list--prazdne { margin-top: 6px; }
+.druh-item--prazdny { opacity: 0.62; cursor: pointer; }
+.druh-item--prazdny:hover { opacity: 0.85; }
+.druh-item--prazdny .druh-pocet { color: var(--text-muted); }
 
 /* ── PŘIDAT NA PLOCHU ── */
 .pridat-na-plochu { border-top: 1px solid var(--panel-border); padding: 8px 10px; background: rgba(0,0,0,0.1); flex-shrink: 0; display: none; }
