@@ -43,12 +43,40 @@ window._zrusitFilterMapy = function() {
   if (el) el.classList.remove('stat-value--klik-aktivni');
 };
 
+// Normalizace zkrácených názvů chipů na plné názvy ze statistiky.json
+const _DRUH_NORMALIZE = {
+  'Sýk. koňadra':   'Sýkora koňadra',
+  'Sýk. modřinka':  'Sýkora modřinka',
+  'Sýk. úhelníček': 'Sýkora úhelníček',
+  'Sýk. babka':     'Sýkora babka',
+  'Sýk. parukářka': 'Sýkora parukářka',
+  'Rehek domácí':   'Rehek domácí',
+  'Lejsek bělokrký':'Lejsek bělokrký',
+  'Lejsek šedý':    'Lejsek šedý',
+  'Brhlík lesní':   'Brhlík lesní',
+  'Špaček obecný':  'Špaček obecný',
+  'Sýček obecný':   'Sýček obecný',
+  'Střízlík obecný':'Střízlík obecný',
+  'Slavík obecný':  'Slavík obecný',
+  '🐝 Vosy / Sršni':'Vosy / Sršni',
+  'Plch lesní':     'Plch lesní',
+  'Myš domácí':     'Myš domácí',
+  'Vrabec domácí':  'Vrabec domácí',
+  'Osídlena – nevím kdo': 'Osídlena – nevím kdo',
+};
+
+function _normDruh(ptak) {
+  return _DRUH_NORMALIZE[ptak] || ptak;
+}
+
 function _prepocitejDruhy() {
   if (!window._nactiDruhyPtaku || !window._druhy_ptaku_base) return;
   const pocty = {};
   Object.values(window._budkyDataMap || {}).forEach(b => {
-    if (b.stav === 'osidlena' && b.ptak && b.ptak !== 'nezjisteno')
-      pocty[b.ptak] = (pocty[b.ptak] || 0) + 1;
+    if (b.stav === 'osidlena' && b.ptak && b.ptak !== 'nezjisteno') {
+      const ptak = _normDruh(b.ptak);
+      pocty[ptak] = (pocty[ptak] || 0) + 1;
+    }
   });
   const updated = window._druhy_ptaku_base.map(d => ({ ...d, pocet: pocty[d.nazev] || 0 }));
   window._nactiDruhyPtaku(updated);
@@ -59,29 +87,23 @@ function _aktualizujMarkerZFirebase(cisloNum, kdoHnizdi) {
   if (!marker) return;
   const bData = (window._budkyDataMap || {})[cisloNum];
   if (!bData) return;
-  // Přepočítat counter i když budka je už osídlená (mohla být aktualizována z Firebase)
-  if (bData.stav !== 'osidlena') {
-    const bUp = { ...bData, stav: 'osidlena', ptak: kdoHnizdi };
-    marker.setIcon(vytvorIkonu(bUp));
-    marker.unbindTooltip();
-    marker.bindTooltip(formatTooltip(bUp), {
-      direction: 'top', offset: [0, -46], className: 'budka-tooltip-wrap', sticky: false
-    });
-    const isMobile = window.innerWidth < 600;
-    marker.unbindPopup();
-    marker.bindPopup(formatPopup(bUp), {
-      minWidth: isMobile ? Math.min(window.innerWidth - 80, 300) : 420,
-      maxWidth: isMobile ? Math.min(window.innerWidth - 80, 300) : 520,
-      className: 'budka-popup-wrap',
-      autoPanPaddingTopLeft: L.point(38, 100),
-      autoPanPaddingBottomRight: L.point(38, 20)
-    });
-    if (window._budkyDataMap) window._budkyDataMap[cisloNum] = bUp;
-  }
-  // Přepočítat počet osídlených + druhy ptáků v UI (vždy)
-  const pocetOsidl = Object.values(window._budkyDataMap || {}).filter(b => b.stav === 'osidlena').length;
-  const elOsidl = document.getElementById('stat-osidlenych');
-  if (elOsidl) elOsidl.textContent = pocetOsidl;
+
+  const bUp = { ...bData, stav: 'osidlena', ptak: kdoHnizdi };
+  marker.setIcon(vytvorIkonu(bUp));
+  marker.unbindTooltip();
+  marker.bindTooltip(formatTooltip(bUp), {
+    direction: 'top', offset: [0, -46], className: 'budka-tooltip-wrap', sticky: false
+  });
+  const isMobile = window.innerWidth < 600;
+  marker.unbindPopup();
+  marker.bindPopup(formatPopup(bUp), {
+    minWidth: isMobile ? Math.min(window.innerWidth - 80, 300) : 420,
+    maxWidth: isMobile ? Math.min(window.innerWidth - 80, 300) : 520,
+    className: 'budka-popup-wrap',
+    autoPanPaddingTopLeft: L.point(38, 100),
+    autoPanPaddingBottomRight: L.point(38, 20)
+  });
+  if (window._budkyDataMap) window._budkyDataMap[cisloNum] = bUp;
   _prepocitejDruhy();
 }
 window._aktualizujMarkerZFirebase = _aktualizujMarkerZFirebase;
