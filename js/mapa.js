@@ -82,7 +82,7 @@ function _prepocitejDruhy() {
   window._nactiDruhyPtaku(updated);
 }
 
-function _aktualizujMarkerZFirebase(cisloNum, kdoHnizdi, datumOsidleni) {
+function _aktualizujMarkerZFirebase(cisloNum, kdoHnizdi, datumOsidleni, edit) {
   const marker = markersByCislo[cisloNum];
   if (!marker) return;
   const bData = (window._budkyDataMap || {})[cisloNum];
@@ -90,6 +90,7 @@ function _aktualizujMarkerZFirebase(cisloNum, kdoHnizdi, datumOsidleni) {
 
   const bUp = { ...bData, stav: 'osidlena', ptak: kdoHnizdi };
   if (datumOsidleni) bUp.datum_osidleni = datumOsidleni;
+  if (edit) bUp.fb_edit = edit;
   marker.setIcon(vytvorIkonu(bUp));
   marker.unbindTooltip();
   marker.bindTooltip(formatTooltip(bUp), {
@@ -429,21 +430,31 @@ function formatGps(lat, lng) {
   return `<span class="gps-icon">📍</span><span class="gps-vals"><span>${latStr}</span><span>${lngStr}</span></span>`;
 }
 
-function formatHistorie(historie) {
-  if (!historie || !historie.length) return '';
-  const radky = historie.map(r => {
+function formatHistorie(b) {
+  const base = (b.historie || []).map(r => ({ ...r }));
+  const fb = b.fb_edit;
+  if (fb && fb.rok) {
+    const fbRok = parseInt(fb.rok);
+    const idx = base.findIndex(r => r.rok === fbRok);
+    const fbRadek = {
+      rok: fbRok,
+      cisteno: !!fb.cisteni,
+      kontrolovano: !!fb.kontrola,
+      obsazeno: fb.kdo_hnizdi || null,
+      poznamka: fb.poznamka || null,
+    };
+    if (idx >= 0) { base[idx] = { ...base[idx], ...fbRadek }; }
+    else { base.push(fbRadek); }
+    base.sort((a, bx) => bx.rok - a.rok);
+  }
+  if (!base.length) return '';
+  const radky = base.map(r => {
     const cisteno = r.cisteno ? '✅' : '—';
     const kontrola = r.kontrolovano ? '✅' : '—';
     const obsazeno = r.obsazeno || '—';
     const poznamkaRow = r.poznamka
-      ? `<tr><td colspan="4" class="popup-poznamka">📝 ${r.poznamka}</td></tr>`
-      : '';
-    return `<tr>
-      <td>${r.rok}</td>
-      <td>${cisteno}</td>
-      <td>${kontrola}</td>
-      <td>${obsazeno}</td>
-    </tr>${poznamkaRow}`;
+      ? `<tr><td colspan="4" class="popup-poznamka">📝 ${r.poznamka}</td></tr>` : '';
+    return `<tr><td>${r.rok}</td><td>${cisteno}</td><td>${kontrola}</td><td>${obsazeno}</td></tr>${poznamkaRow}`;
   }).join('');
   return `<div class="popup-sekce-title">📋 Historie</div>
     <table class="popup-historie">
@@ -510,7 +521,7 @@ function formatPopup(b) {
     ? `<div class="popup-radek">🔵 Otvor: <strong>${b.typ}</strong></div>`
     : '';
 
-  const historieBlock = formatHistorie(b.historie);
+  const historieBlock = formatHistorie(b);
 
   return `<div class="budka-popup">
     <div class="popup-header" style="border-left:4px solid ${stavColor}">
@@ -672,7 +683,7 @@ async function inicializujMapu() {
           const aktivita = window._spravceAktivita || {};
 
           Object.entries(edits).forEach(([cislo, edit]) => {
-            if (edit.kdo_hnizdi) _aktualizujMarkerZFirebase(Number(cislo), edit.kdo_hnizdi, edit.datum_osidleni || null);
+            if (edit.kdo_hnizdi) _aktualizujMarkerZFirebase(Number(cislo), edit.kdo_hnizdi, edit.datum_osidleni || null, edit);
           });
 
           // Aktualizuj tooltipy a popupy s aktivitou správce
