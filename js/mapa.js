@@ -632,16 +632,16 @@ async function inicializujMapu() {
       });
     }
 
-    // Po načtení markerů překryj daty z Firebase (osídlení + aktivita správce)
+    // Po načtení markerů překryj daty z Firebase (osídlení + aktivita správce) — live listener
     if (typeof firebase !== 'undefined') {
       try {
-        Promise.all([
-          firebase.database().ref('budky_edit').once('value'),
-          firebase.database().ref('spravce_aktivita').once('value')
-        ]).then(([editSnap, aktSnap]) => {
-          const edits   = editSnap.val() || {};
-          const aktivita = aktSnap.val() || {};
-          window._spravceAktivita = aktivita;
+        firebase.database().ref('spravce_aktivita').once('value').then(aktSnap => {
+          window._spravceAktivita = aktSnap.val() || {};
+        }).catch(() => {});
+
+        firebase.database().ref('budky_edit').on('value', editSnap => {
+          const edits = editSnap.val() || {};
+          const aktivita = window._spravceAktivita || {};
 
           Object.entries(edits).forEach(([cislo, edit]) => {
             if (edit.kdo_hnizdi) _aktualizujMarkerZFirebase(Number(cislo), edit.kdo_hnizdi);
@@ -662,23 +662,27 @@ async function inicializujMapu() {
             }
           });
 
-          const pocet = Object.values(window._budkyDataMap || {}).filter(b => b.stav === 'osidlena').length;
+          // Osídlených = z JSON NEBO má kdo_hnizdi ve Firebase
+          const osidleneCisla = new Set([
+            ...Object.entries(window._budkyDataMap || {})
+              .filter(([, b]) => b.stav === 'osidlena')
+              .map(([c]) => String(c)),
+            ...Object.entries(edits)
+              .filter(([, e]) => e.kdo_hnizdi)
+              .map(([c]) => String(c))
+          ]);
           const elS = document.getElementById('stat-osidlenych');
-          if (elS) elS.textContent = pocet;
+          if (elS) elS.textContent = osidleneCisla.size;
           _prepocitejDruhy();
 
-          // Aktivních budek = Firebase aktivita NEBO osídlená v JSON
-          // (aktivních vždy ≥ osídlených — osídlení = někdo to nahlásil = aktivita)
           const aktivnichCisla = new Set([
             ...Object.keys(edits),
             ...Object.keys(aktivita),
-            ...Object.entries(window._budkyDataMap || {})
-              .filter(([, b]) => b.stav === 'osidlena')
-              .map(([c]) => String(c))
+            ...osidleneCisla
           ]);
           const elA = document.getElementById('stat-aktivnich');
           if (elA) elA.textContent = aktivnichCisla.size;
-        }).catch(() => {});
+        });
       } catch(e) {}
     }
   } catch(e) {

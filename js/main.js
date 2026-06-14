@@ -410,9 +410,12 @@ function nactiDruhyPtaku(druhy) {
     </div>`;
   };
 
+  const TOGGLE_TEXT = (n, otevreno) =>
+    `${otevreno ? '▾' : '▸'} Další druhy, které v našich budkách zatím nesídlí (${n})`;
+
   const prazdneHTML = prazdne.length ? `
-    <button type="button" class="druhy-dalsi-toggle" id="druhyDalsiToggle">▸ Další druhy, které u nás zatím nehnízdí (${prazdne.length})</button>
-    <div class="druhy-list druhy-list--prazdne" id="druhyListPrazdne" hidden>
+    <button type="button" class="druhy-dalsi-toggle" id="druhyDalsiToggle">${TOGGLE_TEXT(prazdne.length, false)}</button>
+    <div class="druhy-list druhy-list--prazdne" id="druhyListPrazdne" style="display:none">
       ${prazdne.map(renderItem).join('')}
     </div>` : '';
 
@@ -430,10 +433,10 @@ function nactiDruhyPtaku(druhy) {
   if (dalsiToggle) {
     dalsiToggle.addEventListener('click', () => {
       const box = document.getElementById('druhyListPrazdne');
-      const otevreno = !box.hidden;
-      box.hidden = otevreno;
-      dalsiToggle.classList.toggle('druhy-dalsi-toggle--open', !otevreno);
-      dalsiToggle.textContent = `${otevreno ? '▸' : '▾'} Další druhy, které u nás zatím nehnízdí (${prazdne.length})`;
+      const otevreno = box.style.display !== 'none';
+      box.style.display = otevreno ? 'none' : 'flex';
+      box.style.flexDirection = 'column';
+      dalsiToggle.textContent = TOGGLE_TEXT(prazdne.length, !otevreno);
     });
   }
 
