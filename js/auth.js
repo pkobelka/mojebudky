@@ -1760,6 +1760,12 @@ async function _zobrazEditBudky(loginId, spravceInfo, budkaText, budkaCislo, bud
         </div>
         <div class="profil-row">
           <div class="profil-field">
+            <label>Datum osídlení</label>
+            <input type="date" id="ebDatumOsidleni" value="${_czToIso(ulozeno.datum_osidleni) || ''}">
+          </div>
+        </div>
+        <div class="profil-row">
+          <div class="profil-field">
             <label>Foto budky</label>
             <div class="eb-foto-wrap">
               ${ulozeno.foto ? `<img src="${ulozeno.foto}" class="eb-foto-nahled" id="ebFotoNahled" alt="Foto budky">` : `<div class="eb-foto-placeholder" id="ebFotoNahled">📷<span>Bez fotky</span></div>`}
@@ -1901,8 +1907,9 @@ async function _zobrazEditBudky(loginId, spravceInfo, budkaText, budkaCislo, bud
     const nazev     = document.getElementById('ebNazev').value.trim();
     const instalace = document.getElementById('ebInstalace').value.trim();
     const rok       = document.getElementById('ebRok').value.trim();
-    const kontrola  = _isoToCz(document.getElementById('ebKontrola').value.trim());
-    const cisteni   = _isoToCz(document.getElementById('ebCisteni').value.trim());
+    const kontrola        = _isoToCz(document.getElementById('ebKontrola').value.trim());
+    const cisteni         = _isoToCz(document.getElementById('ebCisteni').value.trim());
+    const datumOsidleni   = _isoToCz(document.getElementById('ebDatumOsidleni').value.trim());
     const poznamka  = document.getElementById('ebPoznamka').value.trim();
     let kdoHnizdi   = aktualniDruh === '__jiny'
       ? (document.getElementById('ebJinyText').value.trim() || '')
@@ -1919,7 +1926,7 @@ async function _zobrazEditBudky(loginId, spravceInfo, budkaText, budkaCislo, bud
       try {
         const data = {
           nazev, instalace, rok, kontrola, cisteni,
-          kdo_hnizdi: kdoHnizdi, poznamka,
+          kdo_hnizdi: kdoHnizdi, datum_osidleni: datumOsidleni, poznamka,
           ts: firebase.database.ServerValue.TIMESTAMP,
           spravce_id: loginId, jmeno
         };
