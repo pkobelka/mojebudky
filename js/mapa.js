@@ -82,13 +82,14 @@ function _prepocitejDruhy() {
   window._nactiDruhyPtaku(updated);
 }
 
-function _aktualizujMarkerZFirebase(cisloNum, kdoHnizdi) {
+function _aktualizujMarkerZFirebase(cisloNum, kdoHnizdi, datumOsidleni) {
   const marker = markersByCislo[cisloNum];
   if (!marker) return;
   const bData = (window._budkyDataMap || {})[cisloNum];
   if (!bData) return;
 
   const bUp = { ...bData, stav: 'osidlena', ptak: kdoHnizdi };
+  if (datumOsidleni) bUp.datum_osidleni = datumOsidleni;
   marker.setIcon(vytvorIkonu(bUp));
   marker.unbindTooltip();
   marker.bindTooltip(formatTooltip(bUp), {
@@ -500,6 +501,10 @@ function formatPopup(b) {
     ? `<div class="popup-radek">📅 Instalace: <strong>${b.instalace}</strong></div>`
     : '';
 
+  const osidleniBlock = b.datum_osidleni
+    ? `<div class="popup-radek">🐦 Osídleno: <strong>${b.datum_osidleni}</strong></div>`
+    : '';
+
   const gpsBlock = `<div class="popup-radek popup-gps">${formatGps(b.lat, b.lng)}</div>`;
   const otvorBlock = b.typ
     ? `<div class="popup-radek">🔵 Otvor: <strong>${b.typ}</strong></div>`
@@ -517,6 +522,7 @@ function formatPopup(b) {
     <div class="popup-detail">
       ${spravceBlock}
       ${instBlock}
+      ${osidleniBlock}
       ${gpsBlock}
       ${otvorBlock}
     </div>
@@ -666,7 +672,7 @@ async function inicializujMapu() {
           const aktivita = window._spravceAktivita || {};
 
           Object.entries(edits).forEach(([cislo, edit]) => {
-            if (edit.kdo_hnizdi) _aktualizujMarkerZFirebase(Number(cislo), edit.kdo_hnizdi);
+            if (edit.kdo_hnizdi) _aktualizujMarkerZFirebase(Number(cislo), edit.kdo_hnizdi, edit.datum_osidleni || null);
           });
 
           // Aktualizuj tooltipy a popupy s aktivitou správce
