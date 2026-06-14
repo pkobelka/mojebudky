@@ -186,11 +186,23 @@ const BIRD_ICONS = {
 };
 
 const BIRD_KEY_MAP = {
-  'Sýkora koňadra': 'konadra',
-  'Sýkora modřinka': 'modrinka',
-  'Sýkora parukářka': 'parukarka',
+  'Sýkora koňadra': 'konadra',   'Sýk. koňadra': 'konadra',
+  'Sýkora modřinka': 'modrinka', 'Sýk. modřinka': 'modrinka',
+  'Sýkora parukářka': 'parukarka','Sýk. parukářka': 'parukarka',
+  'Sýkora babka': 'konadra',     'Sýk. babka': 'konadra',
+  'Sýkora úhelníček': 'modrinka','Sýk. úhelníček': 'modrinka',
   'Vrabec domácí': 'vrabec',
-  'Sojka obecná': 'sojka'
+  'Slavík obecný': 'konadra',
+  'Rehek domácí': 'konadra',
+  'Lejsek bělokrký': 'konadra',
+  'Lejsek šedý': 'konadra',
+  'Brhlík lesní': 'konadra',
+  'Špaček obecný': 'konadra',
+  'Sýček obecný': 'konadra',
+  'Střízlík obecný': 'konadra',
+  'Plch lesní': 'konadra',
+  'Myš domácí': 'konadra',
+  'Sojka obecná': 'sojka',
 };
 
 function _renderAktualityPanel(staticke, liveEntries) {
