@@ -562,7 +562,8 @@ html, body {
   .nav-links a { display: block; padding: 14px 20px; font-size: 1.1rem; border: none; border-bottom: 1px solid rgba(255,255,255,0.07); border-radius: 0 !important; }
   .nav-napsat-mobile { display: block; }
   .nav-podpora-mobile { display: block; }
-  .nav-search-mobile-btn { display: flex; }
+  .nav-search-mobile-btn { display: flex; font-size: 1.5rem; padding: 6px 10px; min-width: 44px; min-height: 44px; align-items: center; justify-content: center; }
+  #mobileSearchOverlay.open { display: flex !important; }
   .info-bar { flex-wrap: wrap; gap: 2px; font-size: 0.9rem; }
   .info-bar .bar-right { width: 100%; padding-top: 2px; }
   .partners-section { padding: 14px 20px; }
@@ -1244,6 +1245,8 @@ body { background: linear-gradient(180deg, #f3f9ec 0%, #e9f3df 100%); }
 .sekce-denik .pribehy-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 18px; overflow: visible; padding: 0; }
 .sekce-denik .pribeh-item { background: #ffffff; border: 1px solid #e0ead4; border-radius: 14px; box-shadow: 0 4px 16px rgba(60,90,40,0.07); padding: 16px 18px; }
 .sekce-denik .pribeh-item:hover { background: #fafdf6; box-shadow: 0 6px 22px rgba(60,90,40,0.12); }
+.aktuality-dalsi-btn { grid-column: 1 / -1; display: block; width: 100%; margin-top: 8px; padding: 14px 20px; background: #f4faf0; border: 1.5px dashed #b0d090; border-radius: 12px; color: #2e6b1a; font-size: 1.05rem; font-weight: 700; cursor: pointer; text-align: center; transition: background 0.15s, border-color 0.15s; font-family: inherit; }
+.aktuality-dalsi-btn:hover { background: #e6f4de; border-color: #7ab85a; }
 .sekce-denik .pribeh-druh { color: #1c5c10; }
 .sekce-denik .pribeh-popis { color: #3a4a30; opacity: 1; }
 .sekce-denik .pribeh-datum { color: #7d8e6a; }

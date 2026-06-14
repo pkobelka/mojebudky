@@ -223,7 +223,26 @@ function _renderAktualityPanel(staticke, liveEntries) {
       </div>
     </div>`).join('');
 
-  el.innerHTML = liveHTML + staticHTML;
+  const vsechny = (liveHTML + staticHTML);
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(`<div>${vsechny}</div>`, 'text/html');
+  const polozky = Array.from(doc.body.firstChild.children);
+  const LIMIT = 5;
+
+  el.innerHTML = polozky.slice(0, LIMIT).map(n => n.outerHTML).join('');
+
+  const skryte = polozky.slice(LIMIT);
+  if (skryte.length > 0) {
+    const btnDalsi = document.createElement('button');
+    btnDalsi.type = 'button';
+    btnDalsi.className = 'aktuality-dalsi-btn';
+    btnDalsi.textContent = `▸ Další aktivity… (${skryte.length})`;
+    el.appendChild(btnDalsi);
+    btnDalsi.addEventListener('click', () => {
+      skryte.forEach(n => el.insertBefore(n, btnDalsi));
+      btnDalsi.remove();
+    });
+  }
 }
 
 function _poslechniAktualityFirebase() {
