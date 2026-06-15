@@ -1461,17 +1461,16 @@ function _zobrazProfilSpravce(loginId, info, budkaText) {
             <input type="email" id="pEmail" value="${d.email || ''}" placeholder="váš@email.cz">
           </div>
         </div>
-        <div class="profil-row" id="emailVerifRow" style="display:none">
-          <div class="profil-field profil-field--wide">
-            <label>Ověřovací kód <span id="emailVerifHint" class="profil-hint"></span></label>
-            <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-              <input type="text" id="emailVerifKod" maxlength="6" placeholder="123456" inputmode="numeric"
-                style="width:130px;letter-spacing:5px;font-size:1.4rem;text-align:center;padding:8px 12px;border:2px solid #1c5c10;border-radius:8px;background:#fff">
-              <button id="emailVerifBtn" style="padding:10px 18px;background:#1c5c10;color:#fff;border:none;border-radius:8px;font-size:1rem;font-weight:700;cursor:pointer">✓ Ověřit kód</button>
-              <button id="emailVerifZnovu" style="padding:10px 14px;background:transparent;color:#1c5c10;border:1.5px solid #1c5c10;border-radius:8px;font-size:0.9rem;cursor:pointer">↻ Znovu</button>
-            </div>
-            <div id="emailVerifMsg" style="margin-top:6px;font-size:0.88rem"></div>
+        <div id="emailVerifRow" style="display:none;width:100%;margin-top:12px;padding:18px 20px;background:#e8f5e0;border:2px solid #1c5c10;border-radius:12px;box-sizing:border-box">
+          <div style="font-size:1.1rem;font-weight:700;color:#1c5c10;margin-bottom:4px">📧 Ověř svůj email</div>
+          <div id="emailVerifHint" style="font-size:0.95rem;color:#3a6030;margin-bottom:14px"></div>
+          <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:10px">
+            <input type="tel" id="emailVerifKod" maxlength="6" placeholder="123456" autocomplete="one-time-code"
+              style="width:160px;letter-spacing:8px;font-size:2rem;font-weight:700;text-align:center;padding:12px 16px;border:2.5px solid #1c5c10;border-radius:10px;background:#fff;color:#1c3a10;box-sizing:border-box;-webkit-appearance:none">
+            <button id="emailVerifBtn" style="padding:14px 24px;background:#1c5c10;color:#fff;border:none;border-radius:10px;font-size:1.1rem;font-weight:700;cursor:pointer;touch-action:manipulation">✓ Ověřit kód</button>
+            <button id="emailVerifZnovu" style="padding:14px 18px;background:transparent;color:#1c5c10;border:2px solid #1c5c10;border-radius:10px;font-size:1rem;cursor:pointer;touch-action:manipulation">↻ Poslat znovu</button>
           </div>
+          <div id="emailVerifMsg" style="font-size:1rem;font-weight:600;min-height:1.4em"></div>
         </div>
       </div>
 
@@ -1534,13 +1533,20 @@ function _zobrazProfilSpravce(loginId, info, budkaText) {
   // Ověření kódu z emailu
   async function _spustitEmailVerif(email, jmeno) {
     const row = document.getElementById('emailVerifRow');
+    // Pokud je sekce už viditelná, jen na ni scrolluj – neodesílej kód znovu
+    if (row.style.display !== 'none' && row.style.display !== '') {
+      row.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      document.getElementById('emailVerifKod').focus();
+      return;
+    }
     const hint = document.getElementById('emailVerifHint');
     hint.textContent = '⏳ Odesílám kód…';
     row.style.display = '';
-    row.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    setTimeout(() => row.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 100);
     try {
       await _poslatVerifikacniKod(loginId, email, jmeno);
-      hint.textContent = `— kód byl odeslán na ${email}`;
+      hint.textContent = `— kód odeslán na ${email}`;
+      setTimeout(() => document.getElementById('emailVerifKod').focus(), 200);
     } catch {
       hint.textContent = '⚠ Email se nepodařilo odeslat';
       row.style.display = 'none';
