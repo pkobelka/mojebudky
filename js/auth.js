@@ -17,8 +17,8 @@ async function _poslatVerifikacniKod(loginId, email, jmeno) {
   _initEmailJS();
   const kod = Math.floor(100000 + Math.random() * 900000).toString();
   const expiry = Date.now() + 15 * 60 * 1000;
-  const db = _getFirebaseDB();
-  if (db) await db.ref(`email_verifikace/${loginId}`).set({ email, kod, expiry });
+  // Ulož kód do sessionStorage (Firebase pravidla nemusí povolovat zápis)
+  sessionStorage.setItem(`mb_verif_${loginId}`, JSON.stringify({ email, kod, expiry }));
   await emailjs.send(_EJS_SERVICE, _EJS_TEMPLATE, { email_prijemce: email, jmeno: jmeno || 'správce', kod });
   return kod;
 }
@@ -1548,22 +1548,21 @@ function _zobrazProfilSpravce(loginId, info, budkaText) {
     }
   }
 
-  document.getElementById('emailVerifBtn').addEventListener('click', async () => {
+  document.getElementById('emailVerifBtn').addEventListener('click', () => {
     const zadanyKod = (document.getElementById('emailVerifKod').value || '').trim();
     const msgEl = document.getElementById('emailVerifMsg');
     const email = document.getElementById('pEmail').value.trim();
     if (zadanyKod.length !== 6) { msgEl.style.color = '#c0392b'; msgEl.textContent = '⚠ Zadej 6-místný kód'; return; }
-    const db = _getFirebaseDB();
     msgEl.style.color = '#555'; msgEl.textContent = '⏳ Ověřuji…';
     try {
-      const snap = await db.ref(`email_verifikace/${loginId}`).once('value');
-      const data = snap.val();
-      if (!data) { msgEl.style.color = '#c0392b'; msgEl.textContent = '⚠ Kód nenalezen, požádej o nový'; return; }
+      const raw = sessionStorage.getItem(`mb_verif_${loginId}`);
+      const data = raw ? JSON.parse(raw) : null;
+      if (!data) { msgEl.style.color = '#c0392b'; msgEl.textContent = '⚠ Kód nenalezen, klikni na ↻ Znovu'; return; }
       if (Date.now() > data.expiry) { msgEl.style.color = '#c0392b'; msgEl.textContent = '⚠ Kód vypršel, klikni na ↻ Znovu'; return; }
       if (data.email !== email) { msgEl.style.color = '#c0392b'; msgEl.textContent = '⚠ Email byl změněn, klikni na ↻ Znovu'; return; }
       if (data.kod !== zadanyKod) { msgEl.style.color = '#c0392b'; msgEl.textContent = '⚠ Nesprávný kód, zkus to znovu'; return; }
       // Úspěch
-      await db.ref(`email_verifikace/${loginId}`).remove();
+      sessionStorage.removeItem(`mb_verif_${loginId}`);
       _sesVerifEmail = email;
       msgEl.style.color = '#1c5c10'; msgEl.textContent = '✓ Email ověřen! Klikni znovu na Uložit změny.';
       document.getElementById('emailVerifRow').style.display = 'none';
