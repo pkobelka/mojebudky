@@ -600,10 +600,37 @@ async function inicializujMapu() {
     maxBoundsViscosity: 1.0,
     wheelPxPerZoomLevel: 120,
     zoomSnap: 0.5,
-    zoomDelta: 0.5
+    zoomDelta: 0.5,
+    scrollWheelZoom: false
   });
   // Zabrán zoom pod minZoom i kolečkem myši
   mapInstance.setMinZoom(5);
+
+  // Scroll zoom jen po kliknutí na mapu; Ctrl+kolečko funguje vždy
+  const mapEl = document.getElementById('map');
+  mapEl.addEventListener('click', () => mapInstance.scrollWheelZoom.enable(), { once: false });
+  mapEl.addEventListener('mouseleave', () => mapInstance.scrollWheelZoom.disable());
+  mapEl.addEventListener('wheel', e => {
+    if (e.ctrlKey) { e.preventDefault(); mapInstance.scrollWheelZoom.enable(); }
+  }, { passive: false });
+
+  // Hint overlay při prvním pokusu o scroll bez kliknutí
+  (function() {
+    let hintTimeout;
+    const hint = document.createElement('div');
+    hint.id = 'mapScrollHint';
+    hint.textContent = '🖱 Klikni na mapu pro zoom kolečkem  ·  nebo použij Ctrl+kolečko';
+    hint.style.cssText = 'position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.38);color:#fff;font-size:1.05rem;font-weight:600;pointer-events:none;z-index:900;opacity:0;transition:opacity 0.25s;border-radius:0;padding:12px 20px;text-align:center';
+    mapEl.style.position = 'relative';
+    mapEl.appendChild(hint);
+    mapEl.addEventListener('wheel', e => {
+      if (e.ctrlKey || mapInstance.scrollWheelZoom._enabled) return;
+      hint.style.opacity = '1';
+      clearTimeout(hintTimeout);
+      hintTimeout = setTimeout(() => { hint.style.opacity = '0'; }, 1800);
+    }, { passive: true });
+    mapEl.addEventListener('click', () => { hint.style.opacity = '0'; clearTimeout(hintTimeout); });
+  })();
 
   L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}@2x.png', {
     attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> © <a href="https://carto.com/">CARTO</a>',
