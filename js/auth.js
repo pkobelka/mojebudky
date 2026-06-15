@@ -1459,6 +1459,7 @@ function _zobrazProfilSpravce(loginId, info, budkaText) {
           <div class="profil-field profil-field--wide">
             <label>E-mail <span class="profil-hint">— potřebný pro reset hesla</span></label>
             <input type="email" id="pEmail" value="${d.email || ''}" placeholder="váš@email.cz">
+            <div style="margin-top:5px;font-size:0.85rem;color:#a0b890">📧 Po zadání e-mailu Vám přijde ověřovací kód — bez něj se email neuloží</div>
           </div>
         </div>
         <div id="emailVerifRow" style="display:none;width:100%;margin-top:12px;padding:18px 20px;background:#e8f5e0;border:2px solid #1c5c10;border-radius:12px;box-sizing:border-box">
