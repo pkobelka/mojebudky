@@ -608,21 +608,22 @@ async function inicializujMapu() {
 
   // Scroll zoom jen po kliknutí na mapu; Ctrl+kolečko funguje vždy
   const mapEl = document.getElementById('map');
+  const mapWrapper = mapEl.parentElement; // .map-wrapper má position:relative
   mapEl.addEventListener('click', () => mapInstance.scrollWheelZoom.enable(), { once: false });
   mapEl.addEventListener('mouseleave', () => mapInstance.scrollWheelZoom.disable());
   mapEl.addEventListener('wheel', e => {
     if (e.ctrlKey) { e.preventDefault(); mapInstance.scrollWheelZoom.enable(); }
   }, { passive: false });
 
-  // Hint overlay při prvním pokusu o scroll bez kliknutí
+  // Hint overlay při pokusu o scroll bez kliknutí (připojen na wrapper, ne na #map)
   (function() {
     let hintTimeout;
     const hint = document.createElement('div');
     hint.id = 'mapScrollHint';
     hint.textContent = '🖱 Klikni na mapu pro zoom kolečkem  ·  nebo použij Ctrl+kolečko';
-    hint.style.cssText = 'position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.38);color:#fff;font-size:1.05rem;font-weight:600;pointer-events:none;z-index:900;opacity:0;transition:opacity 0.25s;border-radius:0;padding:12px 20px;text-align:center';
-    mapEl.style.position = 'relative';
-    mapEl.appendChild(hint);
+    hint.style.cssText = 'position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.38);color:#fff;font-size:1.05rem;font-weight:600;pointer-events:none;z-index:1200;opacity:0;transition:opacity 0.25s;padding:12px 20px;text-align:center';
+    mapWrapper.style.position = 'relative';
+    mapWrapper.appendChild(hint);
     mapEl.addEventListener('wheel', e => {
       if (e.ctrlKey || mapInstance.scrollWheelZoom._enabled) return;
       hint.style.opacity = '1';
