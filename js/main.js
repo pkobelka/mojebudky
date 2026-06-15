@@ -506,7 +506,7 @@ function zobrazModalDruhu(druh, iconSvg) {
   const bigIcon = iconSvg.replace(/width="38" height="38"/, 'width="110" height="110"');
   const placeholderFoto = `img/ptaci/${druh.id}_placeholder.svg`;
   const fotoHTML = druh.foto
-    ? `<div class="druh-modal-foto druh-modal-foto--klikatelna" title="Klikněte pro zvětšení">
+    ? `<div class="druh-modal-foto druh-modal-foto--klikatelna" title="Klikni pro zvětšení">
         <img src="${druh.foto}" alt="${druh.nazev}" class="druh-modal-foto-img"
              onerror="this.src='${placeholderFoto}';this.closest('.druh-modal-foto').classList.remove('druh-modal-foto--klikatelna');this.closest('.druh-modal-foto').title=''">
         <div class="druh-foto-zoom-hint">🔍 Zvětšit</div>
@@ -678,7 +678,7 @@ function inicializujFullscreenMapu() {
     const isMobile = window.innerWidth < 600;
     hint.textContent = isMobile
       ? '⛶ Klepněte 2× na mapu pro zobrazení na celé obrazovce'
-      : '⛶ Klikněte 2× kdekoliv do mapy pro zobrazení na celé ploše';
+      : '⛶ Klikni 2× kdekoliv do mapy pro zobrazení na celé ploše';
     mapWrapper.appendChild(hint);
 
     // Při první návštěvě zobraz hint automaticky na 4 sekundy

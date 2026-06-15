@@ -1458,7 +1458,7 @@ function _zobrazProfilSpravce(loginId, info, budkaText) {
           </div>
           <div class="profil-field profil-field--wide">
             <label>E-mail <span class="profil-hint">— potřebný pro reset hesla</span></label>
-            <input type="email" id="pEmail" value="${d.email || ''}" placeholder="váš@email.cz">
+            <input type="email" id="pEmail" value="${d.email || ''}" placeholder="tvůj@email.cz">
             <div style="margin-top:5px;font-size:0.85rem;color:#a0b890">📧 Po zadání e-mailu Vám přijde ověřovací kód — bez něj se email neuloží</div>
           </div>
         </div>
@@ -1956,7 +1956,7 @@ async function _zobrazEditBudky(loginId, spravceInfo, budkaText, budkaCislo, bud
         <input class="eb-gps-input" id="ebGpsLat" placeholder="Zeměpisná šířka (lat)" type="number" step="0.00001" value="${budkaObj.lat || ''}">
         <input class="eb-gps-input" id="ebGpsLng" placeholder="Zeměpisná délka (lng)" type="number" step="0.00001" value="${budkaObj.lng || ''}">
       </div>
-      <div class="eb-gps-hint">Souřadnice najdete v Google Maps – klikněte pravým tlačítkem na místo → zkopírujte první číslo (lat) a druhé (lng).</div>
+      <div class="eb-gps-hint">Souřadnice najdeš v Google Maps – klikni pravým tlačítkem na místo → zkopíruj první číslo (lat) a druhé (lng).</div>
       <div class="eb-gps-radek">
         <button class="profil-btn-ulozit eb-gps-odeslat" id="ebGpsOdeslat">📨 Odeslat žádost adminovi</button>
         <span id="ebGpsMsg" class="profil-ulozeno" hidden></span>
