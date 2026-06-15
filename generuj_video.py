@@ -50,22 +50,31 @@ async def main():
         page = await browser.new_page()
         await page.set_viewport_size({'width': WIDTH, 'height': HEIGHT})
 
+        IS_TILE = lambda u: any(d in u for d in [
+            'basemaps.cartocdn.com', 'openstreetmap.org',
+            'tile.', '.tile.', '/tiles/'
+        ])
+
         async def handle_route(route):
             url = route.request.url
-            if 'leaflet.js' in url:
+            if 'leaflet.js' in url and leaflet_js:
                 await route.fulfill(body=leaflet_js, content_type='application/javascript')
-            elif 'leaflet.css' in url:
+            elif 'leaflet.css' in url and leaflet_css:
                 await route.fulfill(body=leaflet_css, content_type='text/css')
-            elif any(d in url for d in [
-                'basemaps.cartocdn.com', 'openstreetmap.org',
-                'tile.', '.tile.', '/tiles/'
-            ]):
-                await route.fulfill(body=tile_data, content_type='image/png')
             else:
+                # Zkus načíst ze sítě (lokální spuštění = normální mapa).
+                # Pokud síť selže (sandbox/offline), použij fallback dlaždici.
                 try:
-                    await route.continue_()
+                    response = await route.fetch(timeout=6000)
+                    await route.fulfill(response=response)
                 except Exception:
-                    pass
+                    if IS_TILE(url):
+                        await route.fulfill(body=tile_data, content_type='image/png')
+                    else:
+                        try:
+                            await route.abort()
+                        except Exception:
+                            pass
 
         await page.route('**/*', handle_route)
 
