@@ -23,3 +23,8 @@ nastavit_heslo.html
 nastavit_heslo.py
 sms_log.txt
 hesla.csv
+
+# Generovaná videa
+*.mp4
+*.avi
+*.mov
