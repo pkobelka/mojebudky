@@ -1213,10 +1213,12 @@ body { background: linear-gradient(180deg, #f3f9ec 0%, #e9f3df 100%); }
 a.uvod-cta-text { display: inline-block; color: #ffe84a !important; text-decoration: none; font-size: 1.2rem !important; font-weight: 800 !important; background: rgba(255,255,255,0.12); padding: 13px 32px; border-radius: 40px; border: 2px solid rgba(255,255,255,0.35); transition: background 0.2s, transform 0.15s; margin-top: 4px; }
 a.uvod-cta-text:hover { background: rgba(255,255,255,0.22); transform: translateY(-2px); }
 .uvod-teaser { background: #fff; border-radius: 16px; box-shadow: 0 2px 16px rgba(28,92,16,0.08); border-top: 4px solid #1c5c10; overflow: hidden; margin-bottom: 28px; }
-.uvod-teaser-player { background: linear-gradient(135deg, #0a1f04 0%, #1a4a08 55%, #0c2804 100%); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px; padding: 44px 36px; text-align: center; }
-.uvod-teaser-play-icon { width: 76px; height: 76px; background: rgba(255,255,255,0.1); border: 3px solid rgba(255,255,255,0.28); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2.2rem; color: rgba(255,255,255,0.65); padding-left: 7px; flex-shrink: 0; }
-.uvod-teaser-title { color: #eef4e8; font-size: 1.45rem; font-weight: 700; margin-bottom: 8px; line-height: 1.35; }
-.uvod-teaser-subtitle { color: rgba(255,255,255,0.5); font-size: 1rem; font-style: italic; }
+.uvod-teaser-player { background: linear-gradient(135deg, #0a1f04 0%, #1a4a08 55%, #0c2804 100%); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 56px 36px 52px; text-align: center; position: relative; min-height: 240px; }
+/* Kinematický text (filmové titulky) */
+.uvod-teaser-kino { font-size: 1.65rem; font-weight: 700; color: #fff; max-width: 740px; line-height: 1.65; padding: 0 16px; opacity: 0; letter-spacing: 0.01em; text-shadow: 0 2px 20px rgba(0,0,0,0.7); }
+.uvod-teaser-kino-title { position: absolute; bottom: 14px; left: 0; right: 0; text-align: center; color: rgba(255,255,255,0.38); font-size: 0.88rem; font-style: italic; padding: 0 20px; line-height: 1.5; }
+@keyframes kinoCard { 0% { opacity:0; transform:scale(1.38); } 14% { opacity:1; transform:scale(1.18); } 100% { opacity:0; transform:scale(0.70) translateY(16px); } }
+@media (max-width:600px) { .uvod-teaser-kino { font-size:1.2rem; } }
 .uvod-teaser-text { padding: 28px 32px; }
 .uvod-teaser-text p { color: #3a4a30; line-height: 1.8; margin: 0 0 14px; font-size: 1rem; }
 .uvod-teaser-text p:last-child { margin: 0; }
