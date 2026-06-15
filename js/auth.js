@@ -3,6 +3,26 @@
 //             → Web Push certificates → Generate key pair → zkopírovat klíč
 const _PUSH_VAPID_KEY = 'BCn3YD9DqB2ejEGoqAxpnUpKuo6oG3TPBrGhjgXtLuQl4kbEee_hghSKE6nJ8ttffH-RIMjtyPNY-PPflKiCSho';
 
+// ── EMAIL VERIFIKACE (EmailJS) ────────────────────────────────────────────────
+const _EJS_SERVICE  = 'service_l3mx8ge';
+const _EJS_TEMPLATE = 'template_8txg3o8';
+const _EJS_KEY      = 'Q-gHk3QhGXdwY2PTk';
+let _ejsInit = false;
+function _initEmailJS() {
+  if (_ejsInit || !window.emailjs) return;
+  emailjs.init(_EJS_KEY);
+  _ejsInit = true;
+}
+async function _poslatVerifikacniKod(loginId, email, jmeno) {
+  _initEmailJS();
+  const kod = Math.floor(100000 + Math.random() * 900000).toString();
+  const expiry = Date.now() + 15 * 60 * 1000;
+  const db = _getFirebaseDB();
+  if (db) await db.ref(`email_verifikace/${loginId}`).set({ email, kod, expiry });
+  await emailjs.send(_EJS_SERVICE, _EJS_TEMPLATE, { email_prijemce: email, jmeno: jmeno || 'správce', kod });
+  return kod;
+}
+
 let _pushForegroundNastazen = false;
 
 function _nastavPushForeground() {
@@ -1441,6 +1461,18 @@ function _zobrazProfilSpravce(loginId, info, budkaText) {
             <input type="email" id="pEmail" value="${d.email || ''}" placeholder="váš@email.cz">
           </div>
         </div>
+        <div class="profil-row" id="emailVerifRow" style="display:none">
+          <div class="profil-field profil-field--wide">
+            <label>Ověřovací kód <span id="emailVerifHint" class="profil-hint"></span></label>
+            <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+              <input type="text" id="emailVerifKod" maxlength="6" placeholder="123456" inputmode="numeric"
+                style="width:130px;letter-spacing:5px;font-size:1.4rem;text-align:center;padding:8px 12px;border:2px solid #1c5c10;border-radius:8px;background:#fff">
+              <button id="emailVerifBtn" style="padding:10px 18px;background:#1c5c10;color:#fff;border:none;border-radius:8px;font-size:1rem;font-weight:700;cursor:pointer">✓ Ověřit kód</button>
+              <button id="emailVerifZnovu" style="padding:10px 14px;background:transparent;color:#1c5c10;border:1.5px solid #1c5c10;border-radius:8px;font-size:0.9rem;cursor:pointer">↻ Znovu</button>
+            </div>
+            <div id="emailVerifMsg" style="margin-top:6px;font-size:0.88rem"></div>
+          </div>
+        </div>
       </div>
 
       <div class="profil-actions">
@@ -1478,6 +1510,9 @@ function _zobrazProfilSpravce(loginId, info, budkaText) {
   document.getElementById('profilZavrit').addEventListener('click', () => modal.remove());
   modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
 
+  // Stav verifikace emailu v této relaci
+  let _sesVerifEmail = null;
+
   // Varování na prázdný email (non-blocking)
   const emailInput = document.getElementById('pEmail');
   if (emailInput) {
@@ -1488,7 +1523,61 @@ function _zobrazProfilSpravce(loginId, info, budkaText) {
     const _checkEmail = () => { _emailHint.style.display = emailInput.value.trim() ? 'none' : 'block'; };
     _checkEmail();
     emailInput.addEventListener('input', _checkEmail);
+    // Když správce změní email, skryj ověřovací sekci (nová verifikace bude potřeba)
+    emailInput.addEventListener('input', () => {
+      const row = document.getElementById('emailVerifRow');
+      if (row) row.style.display = 'none';
+      _sesVerifEmail = null;
+    });
   }
+
+  // Ověření kódu z emailu
+  async function _spustitEmailVerif(email, jmeno) {
+    const row = document.getElementById('emailVerifRow');
+    const hint = document.getElementById('emailVerifHint');
+    hint.textContent = '⏳ Odesílám kód…';
+    row.style.display = '';
+    row.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    try {
+      await _poslatVerifikacniKod(loginId, email, jmeno);
+      hint.textContent = `— kód byl odeslán na ${email}`;
+    } catch {
+      hint.textContent = '⚠ Email se nepodařilo odeslat';
+      row.style.display = 'none';
+      throw new Error('email_send_fail');
+    }
+  }
+
+  document.getElementById('emailVerifBtn').addEventListener('click', async () => {
+    const zadanyKod = (document.getElementById('emailVerifKod').value || '').trim();
+    const msgEl = document.getElementById('emailVerifMsg');
+    const email = document.getElementById('pEmail').value.trim();
+    if (zadanyKod.length !== 6) { msgEl.style.color = '#c0392b'; msgEl.textContent = '⚠ Zadej 6-místný kód'; return; }
+    const db = _getFirebaseDB();
+    msgEl.style.color = '#555'; msgEl.textContent = '⏳ Ověřuji…';
+    try {
+      const snap = await db.ref(`email_verifikace/${loginId}`).once('value');
+      const data = snap.val();
+      if (!data) { msgEl.style.color = '#c0392b'; msgEl.textContent = '⚠ Kód nenalezen, požádej o nový'; return; }
+      if (Date.now() > data.expiry) { msgEl.style.color = '#c0392b'; msgEl.textContent = '⚠ Kód vypršel, klikni na ↻ Znovu'; return; }
+      if (data.email !== email) { msgEl.style.color = '#c0392b'; msgEl.textContent = '⚠ Email byl změněn, klikni na ↻ Znovu'; return; }
+      if (data.kod !== zadanyKod) { msgEl.style.color = '#c0392b'; msgEl.textContent = '⚠ Nesprávný kód, zkus to znovu'; return; }
+      // Úspěch
+      await db.ref(`email_verifikace/${loginId}`).remove();
+      _sesVerifEmail = email;
+      msgEl.style.color = '#1c5c10'; msgEl.textContent = '✓ Email ověřen! Klikni znovu na Uložit změny.';
+      document.getElementById('emailVerifRow').style.display = 'none';
+    } catch { msgEl.style.color = '#c0392b'; msgEl.textContent = '⚠ Chyba ověření, zkus to znovu'; }
+  });
+
+  document.getElementById('emailVerifZnovu').addEventListener('click', async () => {
+    const email = document.getElementById('pEmail').value.trim();
+    const jmeno = document.getElementById('pJmeno').value.trim();
+    if (!email) return;
+    document.getElementById('emailVerifKod').value = '';
+    document.getElementById('emailVerifMsg').textContent = '';
+    await _spustitEmailVerif(email, jmeno);
+  });
 
   const pushBtn = document.getElementById('profilPovolPush');
   if (pushBtn) {
@@ -1591,6 +1680,25 @@ function _zobrazProfilSpravce(loginId, info, budkaText) {
     // Validace
     const emailInput = document.getElementById('pEmail');
     const emailVal = emailInput.value.trim();
+    const emailPuvodniVal = (d.email || '').trim();
+
+    // Pokud byl email změněn, vyžaduj verifikaci
+    if (emailVal && emailVal !== emailPuvodniVal && _sesVerifEmail !== emailVal) {
+      const errEl = document.getElementById('profilUlozeno');
+      try {
+        await _spustitEmailVerif(emailVal, document.getElementById('pJmeno').value.trim());
+        errEl.textContent = `📧 Zadej 6-místný kód z emailu ${emailVal}`;
+        errEl.style.color = '#2a6018';
+        errEl.hidden = false;
+        setTimeout(() => { errEl.hidden = true; errEl.style.color = ''; }, 6000);
+      } catch {
+        errEl.textContent = '⚠ Nepodařilo se odeslat ověřovací email';
+        errEl.style.color = '#c0392b';
+        errEl.hidden = false;
+        setTimeout(() => { errEl.hidden = true; errEl.style.color = ''; }, 5000);
+      }
+      return;
+    }
     if (emailVal && !emailInput.validity.valid) {
       const errEl = document.getElementById('profilUlozeno');
       errEl.textContent = '⚠ Neplatný formát e-mailu (příklad: jmeno@domena.cz)';
