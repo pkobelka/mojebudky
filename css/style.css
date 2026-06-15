@@ -1201,8 +1201,8 @@ body { background: linear-gradient(180deg, #f3f9ec 0%, #e9f3df 100%); }
 .sekce-uvod { background: #f7faf3; padding: 56px 0 48px; }
 .uvod-logo-wrap { text-align: center; margin-bottom: 48px; }
 .uvod-logo { width: 220px; height: auto; filter: drop-shadow(0 4px 20px rgba(28,92,16,0.13)); }
-.uvod-blok { background: #fff; border-radius: 16px; padding: 28px 32px; box-shadow: 0 2px 16px rgba(28,92,16,0.08); border-top: 4px solid #c06000; margin-bottom: 28px; }
-.uvod-blok-nadpis { color: #1c5c10; font-size: 1.55rem; font-weight: 700; margin: 0 0 14px; }
+.uvod-blok { background: #fff; border-radius: 16px; padding: 28px 32px; box-shadow: 0 2px 16px rgba(28,92,16,0.08); border-top: 4px solid #c06000; margin-bottom: 28px; text-align: center; }
+.uvod-blok-nadpis { color: #1c5c10; font-size: 1.55rem; font-weight: 700; margin: 0 0 14px; text-align: center; }
 .uvod-blok p { color: #3a4a30; line-height: 1.75; margin: 0 0 10px; font-size: 1rem; }
 .uvod-blok p:last-child { margin: 0; }
 .uvod-mapa-cta { background: linear-gradient(135deg, #1c5c10 0%, #2a8018 100%); color: #fff; border-radius: 16px; padding: 36px 40px; margin-bottom: 28px; text-align: center; }
@@ -1217,12 +1217,17 @@ a.uvod-cta-text:hover { background: rgba(255,255,255,0.22); transform: translate
 /* Kinematický text (filmové titulky) */
 .uvod-teaser-kino { font-size: 1.65rem; font-weight: 700; color: #fff; max-width: 740px; line-height: 1.65; padding: 0 16px; opacity: 0; letter-spacing: 0.01em; text-shadow: 0 2px 20px rgba(0,0,0,0.7); }
 .uvod-teaser-kino-title { position: absolute; bottom: 14px; left: 0; right: 0; text-align: center; color: rgba(255,255,255,0.38); font-size: 0.88rem; font-style: italic; padding: 0 20px; line-height: 1.5; }
-@keyframes kinoCard { 0% { opacity:0; transform:scale(1.38); } 14% { opacity:1; transform:scale(1.18); } 100% { opacity:0; transform:scale(0.70) translateY(16px); } }
+@keyframes kinoCard {
+  0%  { opacity:0; transform:translateY(70px) scale(0.62); filter:blur(6px); }
+  18% { opacity:1; transform:translateY(0)    scale(1.0);  filter:blur(0);   }
+  70% { opacity:1; transform:translateY(-10px) scale(1.10); filter:blur(0);  }
+  100%{ opacity:0; transform:translateY(-30px) scale(1.45); filter:blur(10px);}
+}
 @media (max-width:600px) { .uvod-teaser-kino { font-size:1.2rem; } }
-.uvod-teaser-text { padding: 28px 32px; }
+.uvod-teaser-text { padding: 28px 32px; text-align: center; }
 .uvod-teaser-text p { color: #3a4a30; line-height: 1.8; margin: 0 0 14px; font-size: 1rem; }
 .uvod-teaser-text p:last-child { margin: 0; }
-.uvod-teaser-cta { font-weight: 700 !important; color: #1c5c10 !important; font-size: 1.08rem !important; border-top: 1px solid #e0ead4; padding-top: 14px !important; margin-top: 4px; }
+.uvod-teaser-cta { font-weight: 700 !important; color: #1c5c10 !important; font-size: 1.08rem !important; border-top: 1px solid #e0ead4; padding-top: 14px !important; margin-top: 4px; text-align: center; }
 @media (max-width: 600px) {
   .sekce-uvod { padding: 36px 0 28px; }
   .uvod-logo { width: 160px; }
