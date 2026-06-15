@@ -1466,7 +1466,7 @@ function _zobrazProfilSpravce(loginId, info, budkaText) {
           <div id="emailVerifHint" style="font-size:0.95rem;color:#3a6030;margin-bottom:14px"></div>
           <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:10px">
             <input type="tel" id="emailVerifKod" maxlength="6" placeholder="123456" autocomplete="one-time-code"
-              style="width:160px;letter-spacing:8px;font-size:2rem;font-weight:700;text-align:center;padding:12px 16px;border:2.5px solid #1c5c10;border-radius:10px;background:#ffffff !important;color:#111111 !important;box-sizing:border-box;-webkit-appearance:none;outline:none">
+              style="width:230px;letter-spacing:6px;font-size:2rem;font-weight:700;text-align:center;padding:12px 16px;border:2.5px solid #1c5c10;border-radius:10px;background:#ffffff !important;color:#111111 !important;box-sizing:border-box;-webkit-appearance:none;outline:none">
             <button id="emailVerifBtn" style="padding:14px 24px;background:#1c5c10;color:#fff;border:none;border-radius:10px;font-size:1.1rem;font-weight:700;cursor:pointer;touch-action:manipulation">✓ Ověřit kód</button>
             <button id="emailVerifZnovu" style="padding:14px 18px;background:transparent;color:#1c5c10;border:2px solid #1c5c10;border-radius:10px;font-size:1rem;cursor:pointer;touch-action:manipulation">↻ Poslat znovu</button>
           </div>
