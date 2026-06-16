@@ -1,0 +1,9 @@
+# Generovaná SQLite databáze (vzniká spuštěním inicializace_databaze.py)
+data/*.db
+data/*.db-journal
+data/*.sqlite3
+
+# Python
+__pycache__/
+*.pyc
+.venv/
