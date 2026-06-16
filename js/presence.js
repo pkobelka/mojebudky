@@ -13,6 +13,7 @@
   if (!firebase.apps.length) firebase.initializeApp(cfg);
   const db = firebase.database();
   let myRef = null;
+  let logRef = null;
   let _presenceVals = [];
 
   db.ref('.info/connected').on('value', snap => {
@@ -21,6 +22,11 @@
     myRef = db.ref('presence').push();
     myRef.onDisconnect().remove();
     myRef.set({ ts: firebase.database.ServerValue.TIMESTAMP, admin: false });
+
+    // Zaloguj návštěvu do historie (anonymně; správce se doplní přihlášením)
+    logRef = db.ref('navstevnost_log').push();
+    logRef.set({ ts: firebase.database.ServerValue.TIMESTAMP, jmeno: 'Anonym', admin: false });
+    logRef.onDisconnect().update({ ts_end: firebase.database.ServerValue.TIMESTAMP });
   });
 
   db.ref('presence').on('value', snap => {
@@ -96,12 +102,35 @@
       admin: !!jeAdmin,
       prihlaseniTs: firebase.database.ServerValue.TIMESTAMP
     });
-    // Zaloguj přihlášení do historie
+    // Zaloguj přihlášení do starší historie správců
     db.ref('prihlaseni').push({
       ts: firebase.database.ServerValue.TIMESTAMP,
       loginId,
       jmeno: jmeno || loginId,
       budky
     });
+    // Aktualizuj záznam v navstevnost_log – doplň jméno a admin příznak
+    if (logRef) {
+      logRef.update({ loginId, jmeno: jmeno || loginId, admin: !!jeAdmin, budky });
+    }
+  };
+
+  // Načte historii návštěv (posledních 30 dní) – volá se z auth.js pro admin panel
+  window._nactiHistoriiNavstev = async function () {
+    const limitTs = Date.now() - 30 * 24 * 60 * 60 * 1000;
+    const snap = await db.ref('navstevnost_log')
+      .orderByChild('ts')
+      .startAt(limitTs)
+      .limitToLast(500)
+      .once('value');
+    const zaznamy = [];
+    snap.forEach(child => {
+      const v = child.val();
+      if (v && v.ts) zaznamy.push(v);
+    });
+    // Smaž záznamy starší než 30 dní (lazy cleanup)
+    const snapAll = await db.ref('navstevnost_log').orderByChild('ts').endAt(limitTs - 1).limitToLast(200).once('value');
+    snapAll.forEach(child => child.ref.remove());
+    return zaznamy.reverse(); // nejnovější první
   };
 })();

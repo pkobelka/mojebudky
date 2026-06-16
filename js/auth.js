@@ -286,7 +286,7 @@ async function _zobrazAdminPanel(loginId) {
     <button class="admin-dropdown-item" data-akce="zmenitHeslo">🔑 Změnit heslo</button>
     ${!jeAdmin ? `<button class="admin-dropdown-item" data-akce="napisAdminovi">✉️ Napsat adminovi</button>
     <button class="admin-dropdown-item" data-akce="zpravyOdAdmina">📨 Zprávy od admina <span class="admin-badge" id="zpravyOdAdminaBadge" hidden>0</span></button>` : ''}
-    ${jeAdmin ? `<div class="admin-dropdown-oddelovac"></div><button class="admin-dropdown-item admin-item-zadosti" data-akce="zadosti">📬 Žádosti správců <span class="admin-badge" id="adminBadge" hidden>0</span></button><button class="admin-dropdown-item" data-akce="prehledSpravcu">👥 Přehled správců</button><button class="admin-dropdown-item" data-akce="aktivitaSpravcu">🏆 Aktivita správců</button><button class="admin-dropdown-item" data-akce="pushHistorie">📩 Push notifikace</button>` : ''}
+    ${jeAdmin ? `<div class="admin-dropdown-oddelovac"></div><button class="admin-dropdown-item admin-item-zadosti" data-akce="zadosti">📬 Žádosti správců <span class="admin-badge" id="adminBadge" hidden>0</span></button><button class="admin-dropdown-item" data-akce="prehledSpravcu">👥 Přehled správců</button><button class="admin-dropdown-item" data-akce="aktivitaSpravcu">🏆 Aktivita správců</button><button class="admin-dropdown-item" data-akce="pushHistorie">📩 Push notifikace</button><button class="admin-dropdown-item" data-akce="historieNavstev">📊 Online historie</button>` : ''}
     <div class="admin-dropdown-oddelovac"></div>
     <button class="admin-dropdown-item odhlasit" data-akce="odhlasit">🚪 Odhlásit se</button>
   `;
@@ -399,6 +399,12 @@ async function _zobrazAdminPanel(loginId) {
 
     if (akce === 'pushHistorie') {
       _zobrazPushHistorie();
+      dropdown.classList.remove('open');
+      return;
+    }
+
+    if (akce === 'historieNavstev') {
+      _zobrazHistoriiNavstev();
       dropdown.classList.remove('open');
       return;
     }
@@ -1121,6 +1127,80 @@ async function _zobrazPushHistorie() {
 
   _pushHistorieRef = db.ref('push_history').orderByKey().limitToLast(20);
   _pushHistorieRef.on('value', snap => renderHistorie(snap.val()));
+}
+
+async function _zobrazHistoriiNavstev() {
+  const existujici = document.getElementById('modalHistorieNavstev');
+  if (existujici) { existujici.remove(); return; }
+
+  const modal = document.createElement('div');
+  modal.id = 'modalHistorieNavstev';
+  modal.className = 'modal-overlay';
+  modal.innerHTML = `
+    <div class="modal-box" style="max-width:640px;max-height:80vh;overflow-y:auto">
+      <div class="modal-hlavicka">
+        <span>📊 Online historie (posledních 30 dní)</span>
+        <button class="modal-close" onclick="document.getElementById('modalHistorieNavstev').remove()">✕</button>
+      </div>
+      <div id="historieNavstevObsah" style="padding:12px 16px;color:var(--text-muted);font-style:italic">Načítám…</div>
+    </div>`;
+  document.body.appendChild(modal);
+  modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
+
+  let zaznamy = [];
+  try {
+    zaznamy = await window._nactiHistoriiNavstev();
+  } catch {
+    document.getElementById('historieNavstevObsah').textContent = 'Nepodařilo se načíst data.';
+    return;
+  }
+
+  function _fmtCas(ts) {
+    if (!ts) return '–';
+    const d = new Date(ts);
+    const dnes = new Date(); dnes.setHours(0,0,0,0);
+    const vcera = new Date(dnes); vcera.setDate(vcera.getDate() - 1);
+    const prefix = d >= dnes ? 'dnes' : d >= vcera ? 'včera' : `${d.getDate()}. ${d.getMonth()+1}. ${d.getFullYear()}`;
+    return `${prefix} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+  }
+
+  function _fmtDoba(ts, ts_end) {
+    if (!ts || !ts_end) return '';
+    const s = Math.round((ts_end - ts) / 1000);
+    if (s < 60) return `${s}s`;
+    const m = Math.floor(s / 60); const ss = s % 60;
+    if (m < 60) return `${m}m ${ss}s`;
+    return `${Math.floor(m/60)}h ${m%60}m`;
+  }
+
+  const obsah = document.getElementById('historieNavstevObsah');
+  if (!zaznamy.length) { obsah.textContent = 'Zatím žádné záznamy.'; return; }
+
+  obsah.innerHTML = `
+    <table style="width:100%;border-collapse:collapse;font-size:0.9rem">
+      <thead>
+        <tr style="border-bottom:2px solid var(--panel-border);color:var(--text-muted);font-size:0.78rem;text-transform:uppercase">
+          <th style="text-align:left;padding:6px 8px">Čas příchodu</th>
+          <th style="text-align:left;padding:6px 8px">Kdo</th>
+          <th style="text-align:right;padding:6px 8px">Délka návštěvy</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${zaznamy.map(z => {
+          const isAdmin = z.admin;
+          const jmeno = z.jmeno === 'Anonym'
+            ? '<span style="color:var(--text-muted);font-style:italic">🌐 Anonym</span>'
+            : `👤 <strong>${z.jmeno}</strong>${isAdmin ? ' <span style="color:#7dd444;font-size:0.78rem">(správce)</span>' : ''}`;
+          const doba = _fmtDoba(z.ts, z.ts_end);
+          return `<tr style="border-bottom:1px solid var(--panel-border)">
+            <td style="padding:7px 8px;white-space:nowrap">${_fmtCas(z.ts)}</td>
+            <td style="padding:7px 8px">${jmeno}</td>
+            <td style="padding:7px 8px;text-align:right;color:var(--text-muted)">${doba}</td>
+          </tr>`;
+        }).join('')}
+      </tbody>
+    </table>
+    <div style="font-size:0.78rem;color:var(--text-muted);padding:10px 8px 0">${zaznamy.length} záznamů · záznamy se uchovávají 30 dní</div>`;
 }
 
 function _zobrazNapisAdminovi(loginId, jmeno) {
