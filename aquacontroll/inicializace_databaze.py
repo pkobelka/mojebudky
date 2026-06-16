@@ -35,6 +35,7 @@ CESTA_DB = os.path.join(ADRESAR_DAT, "aquacontroll.db")
 ADRESAR_SEED = os.path.join(ZAKLADNI_ADRESAR, "seed")
 SEED_UZIVATELE = os.path.join(ADRESAR_SEED, "uzivatele.csv")
 SEED_LOKALITY = os.path.join(ADRESAR_SEED, "lokality.csv")
+SEED_UDALOSTI = os.path.join(ADRESAR_SEED, "udalosti.csv")
 
 # Středisko, které je centrálou společnosti (dostane příznak je_centrala=1)
 CENTRALA = "VHOS"
@@ -108,10 +109,13 @@ CREATE TABLE IF NOT EXISTS udalosti (
     stredisko_id  INTEGER REFERENCES strediska(id) ON DELETE SET NULL,
     lokalita_id   INTEGER REFERENCES lokality(id) ON DELETE SET NULL,  -- konkrétní vodovod
     lokalita      TEXT,                            -- volný text (pokud není v evidenci)
+    adresa        TEXT,                            -- adresa místa (např. "Boršov 86")
     -- Souřadnice jsou VOLITELNÉ (hl. u bodových incidentů a stížností)
     gps_lat       REAL,
     gps_lng       REAL,
-    nahlasil      TEXT,                            -- kdo nahlásil (např. jméno občana)
+    nahlasil      TEXT,                            -- kdo nahlásil (jméno občana)
+    nahlasil_tel  TEXT,                            -- telefon nahlašovatele
+    nahlaseno     TEXT,                            -- kdy bylo nahlášeno
     vytvoril_id   INTEGER REFERENCES uzivatele(id) ON DELETE SET NULL,
     prirazeno_id  INTEGER REFERENCES uzivatele(id) ON DELETE SET NULL,  -- odpovědný řešitel
     vytvoreno     TEXT    NOT NULL,
@@ -183,6 +187,26 @@ def nacti_seed_lokality() -> list[dict]:
                 continue
             lokality.append(zaznam)
     return lokality
+
+
+def nacti_seed_udalosti() -> list[dict]:
+    """Načte události ze seed CSV.
+
+    Očekávané sloupce (volitelné nechej prázdné):
+        typ; titul; popis; zavaznost; stav; stredisko; lokalita; adresa;
+        gps_lat; gps_lng; nahlasil; nahlasil_tel; nahlaseno
+    """
+    udalosti = []
+    if not os.path.exists(SEED_UDALOSTI):
+        return udalosti
+    with open(SEED_UDALOSTI, encoding="utf-8-sig", newline="") as f:
+        for radek in csv.DictReader(f, delimiter=";"):
+            zaznam = {k.strip(): (v.strip() if v and v.strip() else None)
+                      for k, v in radek.items()}
+            if not zaznam.get("titul"):
+                continue
+            udalosti.append(zaznam)
+    return udalosti
 
 
 def nyni() -> str:
@@ -295,6 +319,51 @@ def vloz_lokality(conn: sqlite3.Connection, lokality: list[dict]) -> None:
               f"{sorted(chybna_strediska)}")
 
 
+def vloz_udalosti(conn: sqlite3.Connection, udalosti: list[dict]) -> None:
+    """Vloží události ze seedu (jen nové – párováno podle titulu + nahlaseno)."""
+    cur = conn.cursor()
+    for u in udalosti:
+        cas = u.get("nahlaseno") or nyni()
+        existuje = cur.execute(
+            "SELECT 1 FROM udalosti WHERE titul = ? AND IFNULL(nahlaseno,'') = IFNULL(?, '')",
+            (u["titul"], u.get("nahlaseno")),
+        ).fetchone()
+        if existuje:
+            print(f"  • událost již existuje: {u['titul']}")
+            continue
+
+        # napárovat středisko a vodovod podle názvu
+        stredisko_id = None
+        if u.get("stredisko"):
+            r = cur.execute("SELECT id FROM strediska WHERE nazev = ?",
+                            (u["stredisko"],)).fetchone()
+            stredisko_id = r[0] if r else None
+        lokalita_id = None
+        if u.get("lokalita") and stredisko_id:
+            r = cur.execute(
+                "SELECT id FROM lokality WHERE nazev = ? AND stredisko_id = ?",
+                (u["lokalita"], stredisko_id)).fetchone()
+            lokalita_id = r[0] if r else None
+
+        cur.execute(
+            """INSERT INTO udalosti
+                   (titul, popis, typ, zavaznost, stav, stredisko_id, lokalita_id,
+                    lokalita, adresa, gps_lat, gps_lng, nahlasil, nahlasil_tel,
+                    nahlaseno, vytvoreno, aktualizovano)
+               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+            (u["titul"], u.get("popis"), u.get("typ") or "jine",
+             u.get("zavaznost") or "stredni", u.get("stav") or "novy",
+             stredisko_id, lokalita_id,
+             None if lokalita_id else u.get("lokalita"),
+             u.get("adresa"), u.get("gps_lat"), u.get("gps_lng"),
+             u.get("nahlasil"), u.get("nahlasil_tel"), u.get("nahlaseno"),
+             cas, cas),
+        )
+        print(f"  + vložena událost: {u['titul']} "
+              f"({u.get('typ')}, {u.get('stredisko')}/{u.get('lokalita') or '—'})")
+    conn.commit()
+
+
 def vypis_prehled(conn: sqlite3.Connection) -> None:
     """Vypíše krátkou rekapitulaci obsahu databáze."""
     cur = conn.cursor()
@@ -329,6 +398,11 @@ def main() -> None:
         lokality = nacti_seed_lokality()
         print(f"\nVkládám vodovody/lokality ({len(lokality)} v seedu)...")
         vloz_lokality(conn, lokality)
+
+        udalosti = nacti_seed_udalosti()
+        if udalosti:
+            print(f"\nVkládám události ({len(udalosti)} v seedu)...")
+            vloz_udalosti(conn, udalosti)
 
         vypis_prehled(conn)
         print("\nHotovo ✓")
