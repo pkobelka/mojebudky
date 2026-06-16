@@ -36,6 +36,8 @@ ADRESAR_SEED = os.path.join(ZAKLADNI_ADRESAR, "seed")
 SEED_UZIVATELE = os.path.join(ADRESAR_SEED, "uzivatele.csv")
 SEED_LOKALITY = os.path.join(ADRESAR_SEED, "lokality.csv")
 SEED_UDALOSTI = os.path.join(ADRESAR_SEED, "udalosti.csv")
+SEED_UKOLY = os.path.join(ADRESAR_SEED, "ukoly.csv")
+SEED_INFORMOVANI = os.path.join(ADRESAR_SEED, "informovani.csv")
 
 # Středisko, které je centrálou společnosti (dostane příznak je_centrala=1)
 CENTRALA = "VHOS"
@@ -130,6 +132,7 @@ CREATE TABLE IF NOT EXISTS ukoly (
                   REFERENCES udalosti(id) ON DELETE CASCADE,
     nazev         TEXT    NOT NULL,
     popis         TEXT,
+    zalozil_id    INTEGER REFERENCES uzivatele(id) ON DELETE SET NULL,  -- kdo úkol zadal
     prirazeno_id  INTEGER REFERENCES uzivatele(id) ON DELETE SET NULL,  -- odpovědný pracovník
     stav          TEXT    NOT NULL DEFAULT 'novy'
                   CHECK (stav IN ('novy', 'probiha', 'hotovo', 'zruseno')),
@@ -139,6 +142,15 @@ CREATE TABLE IF NOT EXISTS ukoly (
     dokonceno     TEXT                              -- čas dokončení (NULL = nedokončeno)
 );
 
+-- Informovaní k události (CC / „watchers"; zároveň budoucí příjemci notifikací)
+CREATE TABLE IF NOT EXISTS udalost_informovani (
+    id            INTEGER PRIMARY KEY AUTOINCREMENT,
+    udalost_id    INTEGER NOT NULL REFERENCES udalosti(id) ON DELETE CASCADE,
+    uzivatel_id   INTEGER NOT NULL REFERENCES uzivatele(id) ON DELETE CASCADE,
+    vytvoreno     TEXT    NOT NULL,
+    UNIQUE (udalost_id, uzivatel_id)
+);
+
 -- Indexy pro častější dotazy (dashboard, notifikace)
 CREATE INDEX IF NOT EXISTS idx_udalosti_stredisko ON udalosti(stredisko_id);
 CREATE INDEX IF NOT EXISTS idx_udalosti_stav      ON udalosti(stav);
@@ -146,6 +158,7 @@ CREATE INDEX IF NOT EXISTS idx_ukoly_udalost      ON ukoly(udalost_id);
 CREATE INDEX IF NOT EXISTS idx_ukoly_prirazeno    ON ukoly(prirazeno_id);
 CREATE INDEX IF NOT EXISTS idx_lokality_stredisko ON lokality(stredisko_id);
 CREATE INDEX IF NOT EXISTS idx_udalosti_lokalita  ON udalosti(lokalita_id);
+CREATE INDEX IF NOT EXISTS idx_inform_udalost     ON udalost_informovani(udalost_id);
 """
 
 
@@ -209,9 +222,41 @@ def nacti_seed_udalosti() -> list[dict]:
     return udalosti
 
 
+def _nacti_csv(cesta: str, povinny_sloupec: str) -> list[dict]:
+    """Obecné načtení seed CSV (UTF-8 s BOM, ';') do seznamu slovníků."""
+    zaznamy = []
+    if not os.path.exists(cesta):
+        return zaznamy
+    with open(cesta, encoding="utf-8-sig", newline="") as f:
+        for radek in csv.DictReader(f, delimiter=";"):
+            zaznam = {k.strip(): (v.strip() if v and v.strip() else None)
+                      for k, v in radek.items()}
+            if zaznam.get(povinny_sloupec):
+                zaznamy.append(zaznam)
+    return zaznamy
+
+
 def nyni() -> str:
     """Aktuální čas jako ISO řetězec (ukládáme jako TEXT)."""
     return datetime.now().isoformat(timespec="seconds")
+
+
+def id_uzivatele(cur: sqlite3.Cursor, zkratka: str | None) -> int | None:
+    """Vrátí id uživatele podle zkratky (např. 'AB'), jinak None."""
+    if not zkratka:
+        return None
+    r = cur.execute("SELECT id FROM uzivatele WHERE zkratka = ?",
+                    (zkratka,)).fetchone()
+    return r[0] if r else None
+
+
+def id_udalosti(cur: sqlite3.Cursor, titul: str | None) -> int | None:
+    """Vrátí id události podle titulu, jinak None."""
+    if not titul:
+        return None
+    r = cur.execute("SELECT id FROM udalosti WHERE titul = ?",
+                    (titul,)).fetchone()
+    return r[0] if r else None
 
 
 def zaloz_schema(conn: sqlite3.Connection) -> None:
@@ -345,22 +390,75 @@ def vloz_udalosti(conn: sqlite3.Connection, udalosti: list[dict]) -> None:
                 (u["lokalita"], stredisko_id)).fetchone()
             lokalita_id = r[0] if r else None
 
+        vytvoril_id = id_uzivatele(cur, u.get("vytvoril"))
+        prirazeno_id = id_uzivatele(cur, u.get("prirazeno"))
+
         cur.execute(
             """INSERT INTO udalosti
                    (titul, popis, typ, zavaznost, stav, stredisko_id, lokalita_id,
                     lokalita, adresa, gps_lat, gps_lng, nahlasil, nahlasil_tel,
-                    nahlaseno, vytvoreno, aktualizovano)
-               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                    nahlaseno, vytvoril_id, prirazeno_id, vytvoreno, aktualizovano)
+               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
             (u["titul"], u.get("popis"), u.get("typ") or "jine",
              u.get("zavaznost") or "stredni", u.get("stav") or "novy",
              stredisko_id, lokalita_id,
              None if lokalita_id else u.get("lokalita"),
              u.get("adresa"), u.get("gps_lat"), u.get("gps_lng"),
              u.get("nahlasil"), u.get("nahlasil_tel"), u.get("nahlaseno"),
-             cas, cas),
+             vytvoril_id, prirazeno_id, cas, cas),
         )
         print(f"  + vložena událost: {u['titul']} "
               f"({u.get('typ')}, {u.get('stredisko')}/{u.get('lokalita') or '—'})")
+    conn.commit()
+
+
+def vloz_ukoly(conn: sqlite3.Connection, ukoly: list[dict]) -> None:
+    """Vloží úkoly ze seedu (párováno na událost podle titulu)."""
+    cur = conn.cursor()
+    for t in ukoly:
+        udalost_id = id_udalosti(cur, t.get("udalost"))
+        if udalost_id is None:
+            print(f"  ! úkol '{t.get('nazev')}' – událost '{t.get('udalost')}' "
+                  f"nenalezena, přeskakuji")
+            continue
+        existuje = cur.execute(
+            "SELECT 1 FROM ukoly WHERE udalost_id = ? AND nazev = ?",
+            (udalost_id, t["nazev"]),
+        ).fetchone()
+        if existuje:
+            print(f"  • úkol již existuje: {t['nazev']}")
+            continue
+        cur.execute(
+            """INSERT INTO ukoly
+                   (udalost_id, nazev, popis, zalozil_id, prirazeno_id,
+                    stav, termin, vytvoreno, aktualizovano)
+               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+            (udalost_id, t["nazev"], t.get("popis"),
+             id_uzivatele(cur, t.get("zalozil")),
+             id_uzivatele(cur, t.get("prirazeno")),
+             t.get("stav") or "novy", t.get("termin"), nyni(), nyni()),
+        )
+        print(f"  + vložen úkol: {t['nazev']} "
+              f"(zadal {t.get('zalozil')} → řeší {t.get('prirazeno')})")
+    conn.commit()
+
+
+def vloz_informovani(conn: sqlite3.Connection, zaznamy: list[dict]) -> None:
+    """Doplní k událostem informované osoby (CC) – párováno podle titulu a zkratky."""
+    cur = conn.cursor()
+    for z in zaznamy:
+        udalost_id = id_udalosti(cur, z.get("udalost"))
+        uzivatel_id = id_uzivatele(cur, z.get("zkratka"))
+        if udalost_id is None or uzivatel_id is None:
+            print(f"  ! informovaný '{z.get('zkratka')}' u '{z.get('udalost')}' "
+                  f"– nenalezeno, přeskakuji")
+            continue
+        cur.execute(
+            """INSERT OR IGNORE INTO udalost_informovani
+                   (udalost_id, uzivatel_id, vytvoreno) VALUES (?, ?, ?)""",
+            (udalost_id, uzivatel_id, nyni()),
+        )
+        print(f"  + informován: {z.get('zkratka')} u '{z.get('udalost')}'")
     conn.commit()
 
 
@@ -368,7 +466,8 @@ def vypis_prehled(conn: sqlite3.Connection) -> None:
     """Vypíše krátkou rekapitulaci obsahu databáze."""
     cur = conn.cursor()
     print("\nPřehled databáze:")
-    for tabulka in ("strediska", "lokality", "uzivatele", "udalosti", "ukoly"):
+    for tabulka in ("strediska", "lokality", "uzivatele", "udalosti", "ukoly",
+                    "udalost_informovani"):
         pocet = cur.execute(f"SELECT COUNT(*) FROM {tabulka}").fetchone()[0]
         print(f"  - {tabulka:<10} {pocet} záznamů")
 
@@ -403,6 +502,16 @@ def main() -> None:
         if udalosti:
             print(f"\nVkládám události ({len(udalosti)} v seedu)...")
             vloz_udalosti(conn, udalosti)
+
+        ukoly = _nacti_csv(SEED_UKOLY, "nazev")
+        if ukoly:
+            print(f"\nVkládám úkoly ({len(ukoly)} v seedu)...")
+            vloz_ukoly(conn, ukoly)
+
+        informovani = _nacti_csv(SEED_INFORMOVANI, "zkratka")
+        if informovani:
+            print(f"\nVkládám informované ({len(informovani)} v seedu)...")
+            vloz_informovani(conn, informovani)
 
         vypis_prehled(conn)
         print("\nHotovo ✓")

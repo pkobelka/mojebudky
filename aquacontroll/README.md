@@ -58,6 +58,9 @@ ze seed souboru `seed/uzivatele.csv`.
   `jmeno; prijmeni; zkratka; telefon; email; funkce; role; stredisko`
 - `seed/lokality.csv` – vodovody/lokality:
   `stredisko; nazev; kod` (kód VF nemusí být unikátní)
+- `seed/udalosti.csv` – události (vč. `vytvoril`/`prirazeno` = zkratka)
+- `seed/ukoly.csv` – úkoly k událostem (`zalozil`/`prirazeno` = zkratka)
+- `seed/informovani.csv` – informované osoby (CC) k události
 - Střediska se zakládají automaticky podle sloupce `stredisko`
   (středisko `VHOS` = centrála).
 - Role: `Mistr`, `Technolog`, `Vedoucí`, `Director`, `Dispečer`, `Informace`.
