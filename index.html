@@ -8,7 +8,7 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=20260616b">
+  <link rel="stylesheet" href="css/style.css?v=20260616c">
   <link rel="icon" type="image/svg+xml" href="img/favicon.svg">
   <link rel="icon" type="image/png" sizes="512x512" href="img/icon-512.png">
   <link rel="icon" type="image/png" sizes="192x192" href="img/icon-192.png">
@@ -395,10 +395,9 @@
       'Všechno to začalo úplně nenápadně,\nv tichu jedné obyčejné garáže…',
       'Na počátku stál prostý rodinný podnět\na chuť tvořit něco smysluplného vlastníma rukama.',
       'Chtěli jsme jen dát bezpečný domov\npár ptáčkům v našem nejbližším okolí.',
-      'V té době by nás ani ve snu nenapadlo,\njak obrovskou lavinu zájmu\ntento malý rodinný nápad spustí…'
     ];
-    const DOBA   = 5500;  // ms – délka animace jedné věty
-    const MEZERA = 500;   // ms – pauza mezi větami
+    const DOBA   = 5500;
+    const MEZERA = 500;
 
     const el = document.getElementById('uvodKinoText');
     if (!el) return;
@@ -406,11 +405,25 @@
     let idx = 0;
     function dalsiVeta() {
       el.style.animation = 'none';
-      el.offsetHeight;                                      // vynutit reflow
-      el.innerHTML = VETY[idx].replace(/\n/g, '<br>');
-      el.style.animation = 'kinoCard ' + DOBA + 'ms forwards ease-in-out';
-      idx = (idx + 1) % VETY.length;
-      setTimeout(dalsiVeta, DOBA + MEZERA);
+      el.offsetHeight;
+
+      if (idx < VETY.length) {
+        // Jedna věta – klasická animace
+        el.style.fontSize = '';
+        el.style.lineHeight = '';
+        el.innerHTML = VETY[idx].replace(/\n/g, '<br>');
+        el.style.animation = 'kinoCard ' + DOBA + 'ms forwards ease-in-out';
+        idx++;
+        setTimeout(dalsiVeta, DOBA + MEZERA);
+      } else {
+        // Všechny věty najednou – zobraz a nech je
+        el.style.fontSize = '1.15rem';
+        el.style.lineHeight = '1.7';
+        el.innerHTML = VETY.map(v =>
+          '<span style="display:block;margin:0 0 16px">' + v.replace(/\n/g, ' ') + '</span>'
+        ).join('');
+        el.style.animation = 'kinoFadeIn 1.4s forwards ease-out';
+      }
     }
     dalsiVeta();
   })();
