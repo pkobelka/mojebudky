@@ -29,7 +29,7 @@ def main() -> None:
 
     # --- střediska s počítadly pro odznaky ---
     # pořadí závažnosti (pro určení nejvyššího stupně otevřených událostí)
-    RANK = {"drobnost": 1, "nizka": 2, "stredni": 3, "vysoka": 4, "kriticka": 5}
+    RANK = {"provereni": 1, "nizka": 2, "stredni": 3, "vysoka": 4, "kriticka": 5}
 
     strediska = []
     reditelstvi = None

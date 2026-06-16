@@ -103,8 +103,9 @@ CREATE TABLE IF NOT EXISTS udalosti (
                       'jine'
                   )),
     -- Závažnost / priorita (5 stupňů; 'kriticka' jen pro mimořádné události)
+    -- 'provereni' = neověřené hlášení, které je teprve třeba prověřit
     zavaznost     TEXT    NOT NULL DEFAULT 'stredni'
-                  CHECK (zavaznost IN ('drobnost', 'nizka', 'stredni',
+                  CHECK (zavaznost IN ('provereni', 'nizka', 'stredni',
                                        'vysoka', 'kriticka')),
     -- Stav řešení
     stav          TEXT    NOT NULL DEFAULT 'novy'
