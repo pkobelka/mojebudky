@@ -170,10 +170,10 @@ def main():
     # ── HUD (aktualizován každý snímek) ─────────────────────────────────────
     rok_label = ax.text(
         0.012, 0.97, '—',
-        transform=ax.transAxes, fontsize=24, fontweight='bold',
+        transform=ax.transAxes, fontsize=16, fontweight='bold',
         color='white', va='top', ha='left', zorder=20,
-        bbox=dict(boxstyle='round,pad=0.45', facecolor='#555555',
-                  edgecolor='white', linewidth=1.5, alpha=0.92)
+        bbox=dict(boxstyle='round,pad=0.35', facecolor='#555555',
+                  edgecolor='white', linewidth=1.2, alpha=0.92)
     )
     cnt_label = ax.text(
         0.988, 0.97, f'0 / {total}',
@@ -187,17 +187,23 @@ def main():
         alpha=0.55, va='bottom', ha='right', zorder=20
     )
 
-    # ── Legenda ─────────────────────────────────────────────────────────────
-    legend_handles = [
-        mpatches.Patch(color=barva, label=rok)
-        for rok, barva in ROK_BARVY.items()
-    ]
-    ax.legend(
-        handles=legend_handles,
-        loc='lower left', fontsize=8, framealpha=0.82,
-        facecolor='#1a2a0a', edgecolor='#8abe60',
-        labelcolor='white', handlelength=1.0
-    )
+    # ── Legenda (dynamická – aktualizuje se při přechodu roku) ──────────────
+    rok_pocty = {}   # {rok: počet budek}
+
+    def aktualizuj_legendu():
+        handles = []
+        for yr, clr in ROK_BARVY.items():
+            cnt = rok_pocty.get(yr, 0)
+            lbl = f'{yr}:  {cnt} budek' if cnt > 0 else yr
+            handles.append(mpatches.Patch(color=clr, label=lbl))
+        ax.legend(
+            handles=handles,
+            loc='lower left', fontsize=8, framealpha=0.82,
+            facecolor='#1a2a0a', edgecolor='#8abe60',
+            labelcolor='white', handlelength=1.0
+        )
+
+    aktualizuj_legendu()
 
     # ── VideoWriter ─────────────────────────────────────────────────────────
     fourcc = cv2.VideoWriter_fourcc(*'mp4v')
@@ -234,16 +240,18 @@ def main():
                 path_effects=[patheff.withStroke(linewidth=2.5, foreground='#1a2a0a')]
             )
 
-        # Aktualizuj HUD
+        # Aktualizuj počty a HUD
+        rok_pocty[rok] = rok_pocty.get(rok, 0) + 1
         rok_label.set_text(rok)
         rok_label.get_bbox_patch().set_facecolor(barva)
         cnt_label.set_text(f'{i + 1} / {total}')
 
         write()
 
-        # Pauza 1 s na přechodu roku
+        # Pauza 1 s na přechodu roku + aktualizuj legendu s počtem
         if rok != prev_rok and prev_rok:
             print(f'  📅  {prev_rok} → {rok}')
+            aktualizuj_legendu()
             write(FPS)
         prev_rok = rok
 
@@ -251,7 +259,8 @@ def main():
             pct = (i + 1) / total * 100
             print(f'  ⏳ {i + 1}/{total}  ({pct:.0f} %)')
 
-    # Závěrečný záběr (3 s)
+    # Závěrečný záběr (3 s) – legenda s úplnými počty
+    aktualizuj_legendu()
     write(FPS * 3)
     vout.release()
     plt.close(fig)
