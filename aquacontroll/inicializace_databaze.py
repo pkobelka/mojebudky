@@ -50,6 +50,7 @@ CREATE TABLE IF NOT EXISTS strediska (
 CREATE TABLE IF NOT EXISTS uzivatele (
     id            INTEGER PRIMARY KEY AUTOINCREMENT,
     jmeno         TEXT    NOT NULL,
+    zkratka       TEXT,                            -- iniciály, např. "TŘ", "AB"
     email         TEXT    UNIQUE,                  -- pro e-mailové notifikace
     telefon       TEXT,
     -- Systémová role; řídí oprávnění a notifikace
@@ -130,14 +131,17 @@ TESTOVACI_STREDISKA = [
     ("Moravská Třebová", "MT",   "Provozní středisko Moravská Třebová",   0),
 ]
 
-# Uživatelé. Sloupce: jmeno, email, role, funkce, nazev_strediska
-# POZN.: E-maily kromě Petra Kobelky jsou prozatím zástupné (@vhos.cz) –
-#        uprav je podle skutečnosti, slouží k e-mailovým notifikacím.
+# Uživatelé. Sloupce: jmeno, zkratka, email, role, funkce, nazev_strediska
+# POZN.: Ředitelské funkce (Provozní/Generální/Technický ředitel) mají
+#        systémovou roli 'Director'; konkrétní titul je ve sloupci funkce.
+#        E-maily a telefony zatím chybí (NULL) – doplníme dle skutečnosti.
 TESTOVACI_UZIVATELE = [
-    ("Aleš Bubák",               "ales.bubak@vhos.cz",      "Mistr",     "Mistr střediska",     "Moravská Třebová"),
-    ("Ing. Blažena Kolaříková",  "blazena.kolarikova@vhos.cz", "Technolog", "Technolog",         "VHOS (centrála)"),
-    ("Ing. Vykydal",             "vykydal@vhos.cz",         "Vedoucí",   "Vedoucí střediska",   "Moravská Třebová"),
-    ("Petr Kobelka",             "p.kobelka@gmail.com",     "Director",  "Technický ředitel",   "VHOS (centrála)"),
+    ("Tomáš Zvejška",       "PŘ", None,                 "Director",  "Provozní ředitel",    "VHOS (centrála)"),
+    ("Jana Drábková",       "GŘ", None,                 "Director",  "Generální ředitelka", "VHOS (centrála)"),
+    ("Aleš Bubák",          "AB", None,                 "Mistr",     "Mistr střediska",     "Moravská Třebová"),
+    ("Blažena Kolaříková",  "BK", None,                 "Technolog", "Technolog",           "VHOS (centrála)"),
+    ("Lukáš Vykydal",       "LV", None,                 "Vedoucí",   "Vedoucí střediska",   "Moravská Třebová"),
+    ("Petr Kobelka",        "TŘ", "p.kobelka@gmail.com", "Director",  "Technický ředitel",   "VHOS (centrála)"),
 ]
 
 
@@ -174,9 +178,9 @@ def vloz_strediska(conn: sqlite3.Connection) -> None:
 def vloz_uzivatele(conn: sqlite3.Connection) -> None:
     """Vloží testovací uživatele (jen pokud ještě neexistují)."""
     cur = conn.cursor()
-    for jmeno, email, role, funkce, nazev_strediska in TESTOVACI_UZIVATELE:
+    for jmeno, zkratka, email, role, funkce, nazev_strediska in TESTOVACI_UZIVATELE:
         existuje = cur.execute(
-            "SELECT 1 FROM uzivatele WHERE jmeno = ? OR email = ?",
+            "SELECT 1 FROM uzivatele WHERE jmeno = ? OR (email IS NOT NULL AND email = ?)",
             (jmeno, email),
         ).fetchone()
         if existuje:
@@ -193,11 +197,11 @@ def vloz_uzivatele(conn: sqlite3.Connection) -> None:
 
         cur.execute(
             """INSERT INTO uzivatele
-                   (jmeno, email, role, funkce, stredisko_id, aktivni, vytvoreno)
-               VALUES (?, ?, ?, ?, ?, 1, ?)""",
-            (jmeno, email, role, funkce, stredisko_id, nyni()),
+                   (jmeno, zkratka, email, role, funkce, stredisko_id, aktivni, vytvoreno)
+               VALUES (?, ?, ?, ?, ?, ?, 1, ?)""",
+            (jmeno, zkratka, email, role, funkce, stredisko_id, nyni()),
         )
-        print(f"  + vložen uživatel: {jmeno} ({role}, {nazev_strediska})")
+        print(f"  + vložen uživatel: {jmeno} ({role} / {funkce}, {nazev_strediska})")
     conn.commit()
 
 
