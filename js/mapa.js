@@ -633,31 +633,41 @@ async function inicializujMapu() {
     mapEl.addEventListener('click', () => { hint.style.opacity = '0'; clearTimeout(hintTimeout); });
   })();
 
-  // Mobil: dotyk mapy standardně scrolluje stránku; klepnutí aktivuje interakci s mapou
+  // Mobil: dotyk mapy scrolluje stránku; klepnutím se aktivuje interakce s mapou
   if (L.Browser.touch) {
     mapInstance.dragging.disable();
-    const touchOverlay = document.createElement('div');
-    touchOverlay.id = 'mapTouchOverlay';
-    touchOverlay.innerHTML = '👆 Klepněte pro interakci s mapou';
-    touchOverlay.style.cssText = 'position:absolute;inset:0;display:flex;align-items:flex-end;justify-content:center;padding-bottom:18px;z-index:1100;pointer-events:auto;cursor:pointer';
-    const badge = document.createElement('div');
-    badge.style.cssText = 'background:rgba(28,92,16,0.88);color:#fff;font-size:0.9rem;font-weight:600;padding:8px 20px;border-radius:30px;border:2px solid rgba(255,255,255,0.4);pointer-events:none';
-    badge.textContent = '👆 Klepněte pro interakci s mapou';
-    touchOverlay.innerHTML = '';
-    touchOverlay.appendChild(badge);
-    mapWrapper.appendChild(touchOverlay);
+    mapInstance.touchZoom.disable();
+    if (mapInstance.tap) mapInstance.tap.disable();
 
-    touchOverlay.addEventListener('click', () => {
+    // Badge – pointer-events:none → gesta procházejí na mapu a stránka se scrolluje
+    const touchBadge = document.createElement('div');
+    touchBadge.id = 'mapTouchBadge';
+    touchBadge.textContent = '👆 Klepněte pro interakci s mapou';
+    touchBadge.style.cssText = [
+      'position:absolute', 'bottom:18px', 'left:50%', 'transform:translateX(-50%)',
+      'background:rgba(28,92,16,0.88)', 'color:#fff', 'font-size:0.9rem',
+      'font-weight:600', 'padding:8px 20px', 'border-radius:30px',
+      'border:2px solid rgba(255,255,255,0.4)', 'pointer-events:none',
+      'z-index:1100', 'white-space:nowrap', 'box-shadow:0 2px 12px rgba(0,0,0,0.4)'
+    ].join(';');
+    mapWrapper.appendChild(touchBadge);
+
+    function aktivujMapu() {
       mapInstance.dragging.enable();
-      touchOverlay.style.display = 'none';
-    });
+      mapInstance.touchZoom.enable();
+      touchBadge.style.display = 'none';
+    }
+    function deaktivujMapu() {
+      mapInstance.dragging.disable();
+      mapInstance.touchZoom.disable();
+      touchBadge.style.display = '';
+      mapEl.addEventListener('click', aktivujMapu, { once: true });
+    }
 
-    // Při dotyku mimo mapu vrátit do scroll módu
+    mapEl.addEventListener('click', aktivujMapu, { once: true });
+
     document.addEventListener('touchstart', e => {
-      if (!mapEl.contains(e.target)) {
-        mapInstance.dragging.disable();
-        touchOverlay.style.display = 'flex';
-      }
+      if (!mapWrapper.contains(e.target)) deaktivujMapu();
     }, { passive: true });
   }
 
