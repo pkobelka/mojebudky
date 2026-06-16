@@ -34,6 +34,7 @@ CESTA_DB = os.path.join(ADRESAR_DAT, "aquacontroll.db")
 # Seed data (verzovaná v gitu) – zdroj uživatelů a středisek
 ADRESAR_SEED = os.path.join(ZAKLADNI_ADRESAR, "seed")
 SEED_UZIVATELE = os.path.join(ADRESAR_SEED, "uzivatele.csv")
+SEED_LOKALITY = os.path.join(ADRESAR_SEED, "lokality.csv")
 
 # Středisko, které je centrálou společnosti (dostane příznak je_centrala=1)
 CENTRALA = "VHOS"
@@ -71,6 +72,18 @@ CREATE TABLE IF NOT EXISTS uzivatele (
     vytvoreno     TEXT    NOT NULL
 );
 
+-- Lokality / vodovody spadající pod středisko
+CREATE TABLE IF NOT EXISTS lokality (
+    id            INTEGER PRIMARY KEY AUTOINCREMENT,
+    nazev         TEXT    NOT NULL,                  -- název vodovodu
+    kod           TEXT,                              -- VF kód (nemusí být unikátní)
+    stredisko_id  INTEGER NOT NULL
+                  REFERENCES strediska(id) ON DELETE CASCADE,
+    poznamka      TEXT,
+    vytvoreno     TEXT    NOT NULL,
+    UNIQUE (stredisko_id, nazev)                     -- v rámci střediska unikátní název
+);
+
 -- Události / incidenty
 CREATE TABLE IF NOT EXISTS udalosti (
     id            INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -93,7 +106,8 @@ CREATE TABLE IF NOT EXISTS udalosti (
     stav          TEXT    NOT NULL DEFAULT 'novy'
                   CHECK (stav IN ('novy', 'v_reseni', 'vyreseno', 'uzavreno')),
     stredisko_id  INTEGER REFERENCES strediska(id) ON DELETE SET NULL,
-    lokalita      TEXT,                            -- konkrétní lokalita / vodovod
+    lokalita_id   INTEGER REFERENCES lokality(id) ON DELETE SET NULL,  -- konkrétní vodovod
+    lokalita      TEXT,                            -- volný text (pokud není v evidenci)
     -- Souřadnice jsou VOLITELNÉ (hl. u bodových incidentů a stížností)
     gps_lat       REAL,
     gps_lng       REAL,
@@ -126,6 +140,8 @@ CREATE INDEX IF NOT EXISTS idx_udalosti_stredisko ON udalosti(stredisko_id);
 CREATE INDEX IF NOT EXISTS idx_udalosti_stav      ON udalosti(stav);
 CREATE INDEX IF NOT EXISTS idx_ukoly_udalost      ON ukoly(udalost_id);
 CREATE INDEX IF NOT EXISTS idx_ukoly_prirazeno    ON ukoly(prirazeno_id);
+CREATE INDEX IF NOT EXISTS idx_lokality_stredisko ON lokality(stredisko_id);
+CREATE INDEX IF NOT EXISTS idx_udalosti_lokalita  ON udalosti(lokalita_id);
 """
 
 
@@ -149,6 +165,24 @@ def nacti_seed_uzivatele() -> list[dict]:
                 continue
             lide.append(zaznam)
     return lide
+
+
+def nacti_seed_lokality() -> list[dict]:
+    """Načte vodovody/lokality ze seed CSV.
+
+    Očekávané sloupce:  stredisko; nazev; kod
+    """
+    lokality = []
+    if not os.path.exists(SEED_LOKALITY):
+        return lokality
+    with open(SEED_LOKALITY, encoding="utf-8-sig", newline="") as f:
+        for radek in csv.DictReader(f, delimiter=";"):
+            zaznam = {k.strip(): (v.strip() if v and v.strip() else None)
+                      for k, v in radek.items()}
+            if not zaznam.get("nazev"):
+                continue
+            lokality.append(zaznam)
+    return lokality
 
 
 def nyni() -> str:
@@ -227,11 +261,45 @@ def vloz_uzivatele(conn: sqlite3.Connection, lide: list[dict]) -> None:
     conn.commit()
 
 
+def vloz_lokality(conn: sqlite3.Connection, lokality: list[dict]) -> None:
+    """Vloží vodovody/lokality ze seedu (jen nové), párováno na středisko."""
+    cur = conn.cursor()
+    vlozeno = preskoceno = 0
+    chybna_strediska = set()
+    for l in lokality:
+        nazev_strediska = l.get("stredisko")
+        radek = cur.execute(
+            "SELECT id FROM strediska WHERE nazev = ?", (nazev_strediska,)
+        ).fetchone()
+        if radek is None:
+            chybna_strediska.add(nazev_strediska)
+            continue
+        stredisko_id = radek[0]
+        existuje = cur.execute(
+            "SELECT 1 FROM lokality WHERE stredisko_id = ? AND nazev = ?",
+            (stredisko_id, l["nazev"]),
+        ).fetchone()
+        if existuje:
+            preskoceno += 1
+            continue
+        cur.execute(
+            """INSERT INTO lokality (nazev, kod, stredisko_id, vytvoreno)
+               VALUES (?, ?, ?, ?)""",
+            (l["nazev"], l.get("kod"), stredisko_id, nyni()),
+        )
+        vlozeno += 1
+    conn.commit()
+    print(f"  + vloženo {vlozeno} vodovodů, přeskočeno {preskoceno} (již existují)")
+    if chybna_strediska:
+        print(f"  ! střediska nenalezena (vodovody přeskočeny): "
+              f"{sorted(chybna_strediska)}")
+
+
 def vypis_prehled(conn: sqlite3.Connection) -> None:
     """Vypíše krátkou rekapitulaci obsahu databáze."""
     cur = conn.cursor()
     print("\nPřehled databáze:")
-    for tabulka in ("strediska", "uzivatele", "udalosti", "ukoly"):
+    for tabulka in ("strediska", "lokality", "uzivatele", "udalosti", "ukoly"):
         pocet = cur.execute(f"SELECT COUNT(*) FROM {tabulka}").fetchone()[0]
         print(f"  - {tabulka:<10} {pocet} záznamů")
 
@@ -257,6 +325,10 @@ def main() -> None:
 
         print("\nVkládám uživatele...")
         vloz_uzivatele(conn, lide)
+
+        lokality = nacti_seed_lokality()
+        print(f"\nVkládám vodovody/lokality ({len(lokality)} v seedu)...")
+        vloz_lokality(conn, lokality)
 
         vypis_prehled(conn)
         print("\nHotovo ✓")

@@ -42,15 +42,17 @@ ze seed souboru `seed/uzivatele.csv`.
 
 - `seed/uzivatele.csv` – seznam pracovníků (UTF-8 s BOM, oddělovač `;`):
   `jmeno; prijmeni; zkratka; telefon; email; funkce; role; stredisko`
+- `seed/lokality.csv` – vodovody/lokality:
+  `stredisko; nazev; kod` (kód VF nemusí být unikátní)
 - Střediska se zakládají automaticky podle sloupce `stredisko`
   (středisko `VHOS` = centrála).
 - Role: `Mistr`, `Technolog`, `Vedoucí`, `Director`, `Dispečer`, `Informace`.
 
 ## Další kroky
 
-- [ ] Doplnit další uživatele a střediska
-- [ ] Import dat z CSV
-- [ ] Tabulka lokalit / vodovodů (zatím jako textové pole v událostech)
+- [x] Doplnit uživatele a střediska (15 lidí, 6 středisek)
+- [x] Import dat z CSV (uživatelé)
+- [x] Tabulka lokalit / vodovodů (124 vodovodů, seed `lokality.csv`)
 - [ ] REST API / backend
 - [ ] PWA frontend + dashboard
 - [ ] Notifikace (e-mail, Web Push)
