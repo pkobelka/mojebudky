@@ -42,6 +42,17 @@ SEED_INFORMOVANI = os.path.join(ADRESAR_SEED, "informovani.csv")
 # Středisko, které je centrálou společnosti (dostane příznak je_centrala=1)
 CENTRALA = "VHOS"
 
+# Pořadí dlaždic středisek na dashboardu (organizační uspořádání).
+# Horní řada: Moravská Třebová, Polička, Jevíčko; spodní: Svitavy, Litomyšl.
+PORADI_STREDISEK = {
+    "Moravská Třebová": 1,
+    "Polička": 2,
+    "Jevíčko": 3,
+    "Svitavy": 4,
+    "Litomyšl": 5,
+    "VHOS": 0,
+}
+
 
 # --------------------------------------------------------------------------
 # Definice schématu
@@ -55,6 +66,7 @@ CREATE TABLE IF NOT EXISTS strediska (
     kod          TEXT,                             -- krátký kód střediska, např. "MT"
     popis        TEXT,
     je_centrala  INTEGER NOT NULL DEFAULT 0,       -- 1 = centrála VHOS (nadřazená)
+    poradi       INTEGER NOT NULL DEFAULT 100,      -- pořadí dlaždic na dashboardu
     vytvoreno    TEXT    NOT NULL
 );
 
@@ -282,10 +294,11 @@ def vloz_strediska(conn: sqlite3.Connection, lide: list[dict]) -> None:
             print(f"  • středisko již existuje: {nazev}")
             continue
         je_centrala = 1 if nazev == CENTRALA else 0
+        poradi = PORADI_STREDISEK.get(nazev, 100)
         cur.execute(
-            """INSERT INTO strediska (nazev, je_centrala, vytvoreno)
-               VALUES (?, ?, ?)""",
-            (nazev, je_centrala, nyni()),
+            """INSERT INTO strediska (nazev, je_centrala, poradi, vytvoreno)
+               VALUES (?, ?, ?, ?)""",
+            (nazev, je_centrala, poradi, nyni()),
         )
         print(f"  + vloženo středisko: {nazev}"
               + (" (centrála)" if je_centrala else ""))

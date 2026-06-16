@@ -33,7 +33,7 @@ def main() -> None:
 
     strediska = []
     reditelstvi = None
-    for s in cur.execute("SELECT * FROM strediska ORDER BY je_centrala DESC, nazev").fetchall():
+    for s in cur.execute("SELECT * FROM strediska ORDER BY je_centrala DESC, poradi, nazev").fetchall():
         sid = s["id"]
         otevrene = cur.execute(
             f"""SELECT COUNT(*) FROM udalosti
