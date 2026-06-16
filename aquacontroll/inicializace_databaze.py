@@ -22,6 +22,7 @@ Spuštění:
 """
 
 import os
+import csv
 import sqlite3
 from datetime import datetime
 
@@ -29,6 +30,13 @@ from datetime import datetime
 ZAKLADNI_ADRESAR = os.path.dirname(os.path.abspath(__file__))
 ADRESAR_DAT = os.path.join(ZAKLADNI_ADRESAR, "data")
 CESTA_DB = os.path.join(ADRESAR_DAT, "aquacontroll.db")
+
+# Seed data (verzovaná v gitu) – zdroj uživatelů a středisek
+ADRESAR_SEED = os.path.join(ZAKLADNI_ADRESAR, "seed")
+SEED_UZIVATELE = os.path.join(ADRESAR_SEED, "uzivatele.csv")
+
+# Středisko, které je centrálou společnosti (dostane příznak je_centrala=1)
+CENTRALA = "VHOS"
 
 
 # --------------------------------------------------------------------------
@@ -125,25 +133,22 @@ CREATE INDEX IF NOT EXISTS idx_ukoly_prirazeno    ON ukoly(prirazeno_id);
 # Testovací data
 # --------------------------------------------------------------------------
 
-# Střediska (centrála + provozní střediska).
-# Sloupce: nazev, kod, popis, je_centrala
-TESTOVACI_STREDISKA = [
-    ("VHOS (centrála)",  "VHOS", "Centrála společnosti VHOS a.s.",        1),
-    ("Moravská Třebová", "MT",   "Provozní středisko Moravská Třebová",   0),
-]
+def nacti_seed_uzivatele() -> list[dict]:
+    """Načte uživatele ze seed CSV (UTF-8 s BOM, oddělovač ';').
 
-# Uživatelé. Sloupce: jmeno, zkratka, email, role, funkce, nazev_strediska
-# POZN.: Ředitelské funkce (Provozní/Generální/Technický ředitel) mají
-#        systémovou roli 'Director'; konkrétní titul je ve sloupci funkce.
-#        E-maily a telefony zatím chybí (NULL) – doplníme dle skutečnosti.
-TESTOVACI_UZIVATELE = [
-    ("Tomáš Zvejška",       "PŘ", None,                 "Director",  "Provozní ředitel",    "VHOS (centrála)"),
-    ("Jana Drábková",       "GŘ", None,                 "Director",  "Generální ředitelka", "VHOS (centrála)"),
-    ("Aleš Bubák",          "AB", None,                 "Mistr",     "Mistr střediska",     "Moravská Třebová"),
-    ("Blažena Kolaříková",  "BK", None,                 "Technolog", "Technolog",           "VHOS (centrála)"),
-    ("Lukáš Vykydal",       "LV", None,                 "Vedoucí",   "Vedoucí střediska",   "Moravská Třebová"),
-    ("Petr Kobelka",        "TŘ", "p.kobelka@gmail.com", "Director",  "Technický ředitel",   "VHOS (centrála)"),
-]
+    Očekávané sloupce:
+        jmeno; prijmeni; zkratka; telefon; email; funkce; role; stredisko
+    """
+    lide = []
+    with open(SEED_UZIVATELE, encoding="utf-8-sig", newline="") as f:
+        for radek in csv.DictReader(f, delimiter=";"):
+            # vyčistit bílé znaky a prázdné hodnoty převést na None
+            zaznam = {k.strip(): (v.strip() if v and v.strip() else None)
+                      for k, v in radek.items()}
+            if not zaznam.get("jmeno"):
+                continue
+            lide.append(zaznam)
+    return lide
 
 
 def nyni() -> str:
@@ -157,52 +162,68 @@ def zaloz_schema(conn: sqlite3.Connection) -> None:
     conn.commit()
 
 
-def vloz_strediska(conn: sqlite3.Connection) -> None:
-    """Vloží testovací střediska (jen pokud ještě neexistují)."""
+def vloz_strediska(conn: sqlite3.Connection, lide: list[dict]) -> None:
+    """Založí střediska odvozená ze seznamu uživatelů (jen nová).
+
+    Centrála (název == CENTRALA) dostane příznak je_centrala=1.
+    """
     cur = conn.cursor()
-    for nazev, kod, popis, je_centrala in TESTOVACI_STREDISKA:
+    nazvy = sorted({u["stredisko"] for u in lide if u.get("stredisko")})
+    for nazev in nazvy:
         existuje = cur.execute(
             "SELECT 1 FROM strediska WHERE nazev = ?", (nazev,)
         ).fetchone()
         if existuje:
             print(f"  • středisko již existuje: {nazev}")
             continue
+        je_centrala = 1 if nazev == CENTRALA else 0
         cur.execute(
-            """INSERT INTO strediska (nazev, kod, popis, je_centrala, vytvoreno)
-               VALUES (?, ?, ?, ?, ?)""",
-            (nazev, kod, popis, je_centrala, nyni()),
+            """INSERT INTO strediska (nazev, je_centrala, vytvoreno)
+               VALUES (?, ?, ?)""",
+            (nazev, je_centrala, nyni()),
         )
-        print(f"  + vloženo středisko: {nazev}")
+        print(f"  + vloženo středisko: {nazev}"
+              + (" (centrála)" if je_centrala else ""))
     conn.commit()
 
 
-def vloz_uzivatele(conn: sqlite3.Connection) -> None:
-    """Vloží testovací uživatele (jen pokud ještě neexistují)."""
+def vloz_uzivatele(conn: sqlite3.Connection, lide: list[dict]) -> None:
+    """Vloží uživatele ze seedu (jen pokud ještě neexistují).
+
+    Jméno skládá z 'jmeno' + 'prijmeni'. Středisko páruje podle názvu.
+    """
     cur = conn.cursor()
-    for jmeno, zkratka, email, role, funkce, nazev_strediska in TESTOVACI_UZIVATELE:
+    for u in lide:
+        cele_jmeno = " ".join(p for p in (u.get("jmeno"), u.get("prijmeni")) if p)
+        email = u.get("email")
+
         existuje = cur.execute(
             "SELECT 1 FROM uzivatele WHERE jmeno = ? OR (email IS NOT NULL AND email = ?)",
-            (jmeno, email),
+            (cele_jmeno, email),
         ).fetchone()
         if existuje:
-            print(f"  • uživatel již existuje: {jmeno}")
+            print(f"  • uživatel již existuje: {cele_jmeno}")
             continue
 
+        nazev_strediska = u.get("stredisko")
         radek = cur.execute(
             "SELECT id FROM strediska WHERE nazev = ?", (nazev_strediska,)
         ).fetchone()
         stredisko_id = radek[0] if radek else None
-        if stredisko_id is None:
+        if stredisko_id is None and nazev_strediska:
             print(f"  ! upozornění: středisko '{nazev_strediska}' nenalezeno "
-                  f"(uživatel {jmeno} bude bez střediska)")
+                  f"(uživatel {cele_jmeno} bude bez střediska)")
 
         cur.execute(
             """INSERT INTO uzivatele
-                   (jmeno, zkratka, email, role, funkce, stredisko_id, aktivni, vytvoreno)
-               VALUES (?, ?, ?, ?, ?, ?, 1, ?)""",
-            (jmeno, zkratka, email, role, funkce, stredisko_id, nyni()),
+                   (jmeno, zkratka, email, telefon, role, funkce,
+                    stredisko_id, aktivni, vytvoreno)
+               VALUES (?, ?, ?, ?, ?, ?, ?, 1, ?)""",
+            (cele_jmeno, u.get("zkratka"), email, u.get("telefon"),
+             u.get("role"), u.get("funkce"), stredisko_id, nyni()),
         )
-        print(f"  + vložen uživatel: {jmeno} ({role} / {funkce}, {nazev_strediska})")
+        print(f"  + vložen uživatel: {cele_jmeno} "
+              f"({u.get('role')} / {u.get('funkce')}, {nazev_strediska})")
     conn.commit()
 
 
@@ -227,11 +248,15 @@ def main() -> None:
         print("Zakládám schéma (tabulky a indexy)...")
         zaloz_schema(conn)
 
-        print("\nVkládám testovací střediska...")
-        vloz_strediska(conn)
+        print(f"\nNačítám seed: {SEED_UZIVATELE}")
+        lide = nacti_seed_uzivatele()
+        print(f"  načteno {len(lide)} uživatelů")
 
-        print("\nVkládám testovací uživatele...")
-        vloz_uzivatele(conn)
+        print("\nVkládám střediska...")
+        vloz_strediska(conn, lide)
+
+        print("\nVkládám uživatele...")
+        vloz_uzivatele(conn, lide)
 
         vypis_prehled(conn)
         print("\nHotovo ✓")

@@ -3,6 +3,13 @@ data/*.db
 data/*.db-journal
 data/*.sqlite3
 
+# Pracovní / scratch exporty (zdroj pravdy je ve složce seed/)
+data/*.xlsx
+data/*.csv
+
+# Seed data verzujeme (přebíjí globální *.csv z kořenového .gitignore)
+!seed/*.csv
+
 # Python
 __pycache__/
 *.pyc

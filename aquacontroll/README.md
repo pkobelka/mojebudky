@@ -35,7 +35,16 @@ python3 inicializace_databaze.py
 ```
 
 Skript je idempotentní – lze ho spustit opakovaně. Založí tabulky
-`strediska`, `uzivatele`, `udalosti`, `ukoly` a vloží testovací data.
+`strediska`, `uzivatele`, `udalosti`, `ukoly` a naplní uživatele a střediska
+ze seed souboru `seed/uzivatele.csv`.
+
+### Seed data
+
+- `seed/uzivatele.csv` – seznam pracovníků (UTF-8 s BOM, oddělovač `;`):
+  `jmeno; prijmeni; zkratka; telefon; email; funkce; role; stredisko`
+- Střediska se zakládají automaticky podle sloupce `stredisko`
+  (středisko `VHOS` = centrála).
+- Role: `Mistr`, `Technolog`, `Vedoucí`, `Director`, `Dispečer`, `Informace`.
 
 ## Další kroky
 
