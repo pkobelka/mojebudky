@@ -13,6 +13,20 @@ Centrální nástroj pro vedení společnosti i jednotlivá provozní střediska
 - přehledný **dashboard** s notifikačními odznaky podle středisek,
 - automatické **notifikace** (e-mail a Web Push) při založení nebo změně stavu.
 
+## ⚠️ Testovací provoz – žádné notifikace
+
+Aplikace je ve vývoji a testuje ji zatím jen autor. **Nikomu nesmí chodit
+žádné oficiální avízo** (e-mail, Web Push, SMS). Brání tomu centrální
+vypínač v `config.py`:
+
+- `TESTOVACI_REZIM = True` a `NOTIFIKACE_AKTIVNI = False` (výchozí stav)
+- Veškerý budoucí notifikační kód musí volat `config.notifikace_povoleny()`,
+  které v testovacím režimu vrací `False` → nic se reálně neodešle.
+
+Aktuálně navíc žádný odesílací kód neexistuje – projekt je jen lokální
+SQLite databáze. (Skripty `send_push.py`, `rozeslat_sms.py` v kořeni repa
+patří k jinému projektu a s AquaControll nesouvisí.)
+
 ## Architektura (aktuální fáze)
 
 - **Backend / data:** Python + SQLite (`data/aquacontroll.db`)
