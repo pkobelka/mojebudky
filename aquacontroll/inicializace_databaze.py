@@ -102,9 +102,10 @@ CREATE TABLE IF NOT EXISTS udalosti (
                       'stiznost',                  -- individuální stížnost občana
                       'jine'
                   )),
-    -- Závažnost / priorita
+    -- Závažnost / priorita (5 stupňů; 'kriticka' jen pro mimořádné události)
     zavaznost     TEXT    NOT NULL DEFAULT 'stredni'
-                  CHECK (zavaznost IN ('nizka', 'stredni', 'vysoka', 'kriticka')),
+                  CHECK (zavaznost IN ('drobnost', 'nizka', 'stredni',
+                                       'vysoka', 'kriticka')),
     -- Stav řešení
     stav          TEXT    NOT NULL DEFAULT 'novy'
                   CHECK (stav IN ('novy', 'v_reseni', 'vyreseno', 'uzavreno')),
