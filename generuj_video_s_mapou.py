@@ -32,7 +32,7 @@ YMIN, YMAX = 47.5, 51.8
 
 # Barvy podle roku přidání budky
 ROK_BARVY = {
-    '2022/2023': '#e06820',   # oranžová
+    '2022': '#e06820',   # oranžová
     '2023':      '#2a9a20',   # zelená
     '2024':      '#1a72c0',   # modrá
     '2025':      '#9b2d9b',   # fialová
@@ -46,7 +46,7 @@ NE_SHP = '/usr/local/lib/python3.11/dist-packages/pyogrio/tests/fixtures/natural
 # ── Pomocné funkce ────────────────────────────────────────────────────────────
 
 def get_rok(c: int) -> str:
-    if c <= 32:  return '2022/2023'
+    if c <= 32:  return '2022'
     if c <= 82:  return '2023'
     if c <= 142: return '2024'
     if c <= 203: return '2025'
