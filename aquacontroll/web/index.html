@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AquaControll – přehled</title>
+  <meta name="theme-color" content="#0b63b8">
+  <link rel="icon" href="img/logo.svg" type="image/svg+xml">
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- Testovací provoz – upozornění -->
+  <div class="testbar" id="testbar">
+    🔒 TESTOVACÍ PROVOZ – notifikace jsou vypnuté, žádné avízo se neodesílá.
+  </div>
+
+  <header class="hlavicka">
+    <div class="znacky">
+      <img class="logo-app" src="img/logo-wordmark.svg" alt="AquaControll">
+    </div>
+    <div class="znacky">
+      <span class="oddelovac"></span>
+      <img class="logo-vhos" src="img/vhos-placeholder.svg" alt="VHOS a.s.">
+    </div>
+  </header>
+
+  <main class="obsah">
+    <!-- Souhrn -->
+    <section class="souhrn" id="souhrn"></section>
+
+    <!-- Střediska -->
+    <h2 class="nadpis">Střediska</h2>
+    <section class="dlazdice" id="strediska"></section>
+
+    <!-- Události -->
+    <h2 class="nadpis">Události <span class="pocitadlo" id="pocet-udalosti"></span></h2>
+    <section class="udalosti" id="udalosti"></section>
+  </main>
+
+  <footer class="paticka">
+    AquaControll · interní systém VHOS a.s. ·
+    <span id="vygenerovano"></span>
+  </footer>
+
+  <script src="js/app.js"></script>
+</body>
+</html>

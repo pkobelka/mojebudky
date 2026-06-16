@@ -27,6 +27,28 @@ Aktuálně navíc žádný odesílací kód neexistuje – projekt je jen lokál
 SQLite databáze. (Skripty `send_push.py`, `rozeslat_sms.py` v kořeni repa
 patří k jinému projektu a s AquaControll nesouvisí.)
 
+## Dashboard
+
+Vizuální přehled (dlaždice středisek s notifikačními odznaky + seznam událostí
+s úkoly a informovanými). Statické HTML ve složce `web/`, čte `web/data.json`.
+
+```bash
+cd aquacontroll
+python3 inicializace_databaze.py      # 1) založí/naplní databázi
+python3 export_dashboard_data.py      # 2) vyexportuje web/data.json
+python3 spustit_web.py                # 3) http://localhost:8000
+```
+
+> Dashboard se musí spouštět přes server (krok 3), ne přes `file://` –
+> prohlížeč jinak zablokuje načtení `data.json`.
+
+### Logo
+
+- `web/img/logo.svg` – ikona aplikace (kapka vody + monitorovací křivka)
+- `web/img/logo-wordmark.svg` – ikona s názvem
+- `web/img/vhos-placeholder.svg` – **dočasný** placeholder, nahraď oficiálním
+  logem VHOS a.s.
+
 ## Architektura (aktuální fáze)
 
 - **Backend / data:** Python + SQLite (`data/aquacontroll.db`)
@@ -70,6 +92,9 @@ ze seed souboru `seed/uzivatele.csv`.
 - [x] Doplnit uživatele a střediska (15 lidí, 6 středisek)
 - [x] Import dat z CSV (uživatelé)
 - [x] Tabulka lokalit / vodovodů (124 vodovodů, seed `lokality.csv`)
-- [ ] REST API / backend
-- [ ] PWA frontend + dashboard
-- [ ] Notifikace (e-mail, Web Push)
+- [x] Dashboard (dlaždice středisek + odznaky, seznam událostí)
+- [x] Logo aplikace (návrh)
+- [ ] Oficiální logo VHOS (nahradit placeholder)
+- [ ] REST API / backend (živá data místo statického exportu)
+- [ ] PWA – service worker, instalovatelnost
+- [ ] Notifikace (e-mail, Web Push) – zatím vypnuté (`config.py`)

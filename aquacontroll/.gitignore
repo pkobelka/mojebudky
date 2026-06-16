@@ -10,6 +10,9 @@ data/*.csv
 # Seed data verzujeme (přebíjí globální *.csv z kořenového .gitignore)
 !seed/*.csv
 
+# Generovaný export pro dashboard (vzniká z databáze)
+web/data.json
+
 # Python
 __pycache__/
 *.pyc
