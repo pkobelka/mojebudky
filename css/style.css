@@ -1219,9 +1219,9 @@ a.uvod-cta-text:hover { background: rgba(255,255,255,0.22); transform: translate
 .uvod-teaser-kino-title { position: absolute; bottom: 14px; left: 0; right: 0; text-align: center; color: rgba(255,255,255,0.38); font-size: 0.88rem; font-style: italic; padding: 0 20px; line-height: 1.5; }
 @keyframes kinoCard {
   0%  { opacity:0; transform:translateY(70px) scale(0.62); filter:blur(6px); }
-  18% { opacity:1; transform:translateY(0)    scale(1.0);  filter:blur(0);   }
-  70% { opacity:1; transform:translateY(-10px) scale(1.10); filter:blur(0);  }
-  100%{ opacity:0; transform:translateY(-30px) scale(1.45); filter:blur(10px);}
+  13% { opacity:1; transform:translateY(0)    scale(1.0);  filter:blur(0);   }
+  82% { opacity:1; transform:translateY(-8px)  scale(1.07); filter:blur(0);  }
+  100%{ opacity:0; transform:translateY(-28px) scale(1.40); filter:blur(9px);}
 }
 @media (max-width:600px) { .uvod-teaser-kino { font-size:1.2rem; } }
 .uvod-teaser-text { padding: 28px 32px; text-align: center; }
