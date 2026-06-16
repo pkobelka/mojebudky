@@ -633,6 +633,34 @@ async function inicializujMapu() {
     mapEl.addEventListener('click', () => { hint.style.opacity = '0'; clearTimeout(hintTimeout); });
   })();
 
+  // Mobil: dotyk mapy standardně scrolluje stránku; klepnutí aktivuje interakci s mapou
+  if (L.Browser.touch) {
+    mapInstance.dragging.disable();
+    const touchOverlay = document.createElement('div');
+    touchOverlay.id = 'mapTouchOverlay';
+    touchOverlay.innerHTML = '👆 Klepněte pro interakci s mapou';
+    touchOverlay.style.cssText = 'position:absolute;inset:0;display:flex;align-items:flex-end;justify-content:center;padding-bottom:18px;z-index:1100;pointer-events:auto;cursor:pointer';
+    const badge = document.createElement('div');
+    badge.style.cssText = 'background:rgba(28,92,16,0.88);color:#fff;font-size:0.9rem;font-weight:600;padding:8px 20px;border-radius:30px;border:2px solid rgba(255,255,255,0.4);pointer-events:none';
+    badge.textContent = '👆 Klepněte pro interakci s mapou';
+    touchOverlay.innerHTML = '';
+    touchOverlay.appendChild(badge);
+    mapWrapper.appendChild(touchOverlay);
+
+    touchOverlay.addEventListener('click', () => {
+      mapInstance.dragging.enable();
+      touchOverlay.style.display = 'none';
+    });
+
+    // Při dotyku mimo mapu vrátit do scroll módu
+    document.addEventListener('touchstart', e => {
+      if (!mapEl.contains(e.target)) {
+        mapInstance.dragging.disable();
+        touchOverlay.style.display = 'flex';
+      }
+    }, { passive: true });
+  }
+
   L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}@2x.png', {
     attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> © <a href="https://carto.com/">CARTO</a>',
     maxZoom: 20,
