@@ -59,7 +59,9 @@ respektovat. Notifikace se zapnou až vědomě, po dokončení.
 - **3D vystouplé dlaždice** středisek (vrchní lesk, barevná „hrana" podle
   nejvyšší závažnosti otevřených událostí, jemný stín).
 - **Jemná tapeta** ze 7 piktogramů (`web/EAG_picto_1..7.png`) přes celou
-  plochu (~5–6 % krytí). Doladit hustotu/sílu. *(Co je `Pepsina.png`? – zjistit.)*
+  plochu (~5–6 % krytí). Doladit hustotu/sílu.
+- **Favikon = znak VHOS „pepsina"** (`web/Pepsina.png`). `web/img/favicon.svg`
+  (kapka+fajfka) je jen fallback/alternativa.
 - **Souhrn:** 3 kachličky – Otevřených událostí / Vysoká závažnost / Kritická.
   (Kachličku „Středisek" a počet lidí NEzobrazovat.)
 - **Legenda závažnosti** (Prověření → Kritická) u sekce středisek.
@@ -121,6 +123,7 @@ respektovat. Notifikace se zapnou až vědomě, po dokončení.
     činnost v ochranném pásmu
   - **Podněty veřejnosti:** stížnost občana; reklamace
   - **Plánované:** odstávka/oprava; odkalení/proplach; odběr kontrolního vzorku
+  - **Jiné** (volná položka pro případy mimo nabídku – uživatel dopíše popis)
 - 🎤📷📎 **Přílohy:** hlasová zpráva (nahrávání mikrofonem v PWA), fotka, soubor.
   → nová tabulka `prilohy` (typ audio/foto/soubor, kdo, kdy).
 - ⏰ **Úkoly s termínem (datum + hodina):** označení splnění fajfkou (kdo, kdy,
@@ -164,5 +167,5 @@ je potřeba pro: online přítomnost, přihlášení, notifikace, přílohy, aud
 ## Otevřené body k doladění
 - přesné **definice stupňů závažnosti** (s technologem),
 - detaily **auditu** (co logovat, jak dlouho držet, kdo vidí),
-- účel souboru **`Pepsina.png`**,
-- volba **konference** (Jitsi zdarma vs. Twilio placené).
+- volba **konference** (Jitsi zdarma vs. Twilio placené),
+- **název projektu**: AquaControl (1 L, dle loga) vs. AquaControll (2 L).
