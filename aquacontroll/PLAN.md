@@ -103,8 +103,14 @@ respektovat. Notifikace se zapnou až vědomě, po dokončení.
 - 📜 **Historie přihlášení** (admin) + volitelně **audit akcí** (kdo co udělal).
 
 ### Události a úkoly
-- 📝 **Formulář nové události:** typ, středisko, objekt, adresa/GPS, popis,
-  závažnost, kdo nahlásil; přílohy; označení lidí (řešitel + informovaní).
+- 📝 **Formulář nové události – tok ve 4 krocích:**
+  1. **Co se stalo?** – výběr z nabídky podmínek (viz níže); podle volby lze
+     přednastavit závažnost.
+  2. **Kde?** – středisko (předvyplněné dle přihlášeného) → typ objektu
+     (vodovod/zdroj/vrt/vodojem/chlorace) → konkrétní objekt.
+  3. **Podrobnosti** – popis, adresa/GPS, kdo nahlásil, přílohy (🎤 hlasovka / 📷 foto).
+  4. **Lidé** – řešitel + informovaní.
+  *(Pořadí kroků 1↔2 je k doladění dle provozu.)*
 - 📋 **Nabídka „nestandardní podmínky na vodovodu"** (návrh k úpravě – zdroj
   MP06/MP07, k doplnění přesných bodů z MP06):
   - **Kvalita vody:** mikrobiologický nález; chemický rozbor mimo limit; zákal/zabarvení;
