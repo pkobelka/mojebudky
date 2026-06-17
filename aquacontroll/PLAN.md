@@ -91,8 +91,18 @@ respektovat. Notifikace se zapnou až vědomě, po dokončení.
 - 📜 **Historie přihlášení** (admin) + volitelně **audit akcí** (kdo co udělal).
 
 ### Události a úkoly
-- 📝 **Formulář nové události:** typ, středisko, vodovod, adresa/GPS, popis,
+- 📝 **Formulář nové události:** typ, středisko, objekt, adresa/GPS, popis,
   závažnost, kdo nahlásil; přílohy; označení lidí (řešitel + informovaní).
+- 📋 **Nabídka „nestandardní podmínky na vodovodu"** (návrh k úpravě – zdroj
+  MP06/MP07, k doplnění přesných bodů z MP06):
+  - **Kvalita vody:** mikrobiologický nález; chemický rozbor mimo limit; zákal/zabarvení;
+    zápach/pachuť; volný chlor mimo rozsah
+  - **Provoz/havárie:** havárie na řadu; přerušení dodávky; pokles tlaku/výpadek;
+    porucha zařízení (čerpadlo/úpravna/chlorace); nízká hladina (vodojem/zdroj)
+  - **Riziko kontaminace:** podezření na kontaminaci; narušení zabezpečení objektu;
+    činnost v ochranném pásmu
+  - **Podněty veřejnosti:** stížnost občana; reklamace
+  - **Plánované:** odstávka/oprava; odkalení/proplach; odběr kontrolního vzorku
 - 🎤📷📎 **Přílohy:** hlasová zpráva (nahrávání mikrofonem v PWA), fotka, soubor.
   → nová tabulka `prilohy` (typ audio/foto/soubor, kdo, kdy).
 - ⏰ **Úkoly s termínem (datum + hodina):** označení splnění fajfkou (kdo, kdy,
@@ -111,10 +121,14 @@ respektovat. Notifikace se zapnou až vědomě, po dokončení.
 ### Organizace
 - 🧪 **Skupina „Laboratoř"** (jako ředitelství – ne provozní středisko) + její
   lidi (seznam dodá uživatel).
-- 🏗️ **Objekty střediska** mají typ: **vodovod / zdroj (prameniště) / vrt /
+- 🏗️ **Objekty střediska** mají typ: **vodovod / prameniště / vrt /
   vodojem / úpravna / čerpací stanice / chlorovací zařízení (chlorace) / jine**.
+  (Zdroje rozlišujeme zvlášť na `prameniste` a `vrt`, navíc `vodojem`.)
   Tabulka `lokality` má sloupec `typ` (volný text, výchozí `vodovod`), takže
   další typy lze přidat bez změny databáze. Událost se může týkat kteréhokoliv objektu.
+- 📄 **Sekce „Dokumenty"** (pracovní název) – úložiště tiskovin k nahlédnutí
+  (metodické pokyny MP01/04/06/07, formuláře, letáky…). PDF se ukládají a
+  otevírají v appce. Pozn.: MP01/04/06 jsou skeny (bez textové vrstvy).
   Seed formát: `stredisko; nazev; kod; typ`. Seznamy zdrojů a vrtů pro
   jednotlivá střediska dodá uživatel.
 
