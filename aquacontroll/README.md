@@ -1,4 +1,4 @@
-# AquaControll
+# AquaControl
 
 Interní webová aplikace (PWA) pro **VHOS a.s.** k evidenci a řízení
 provozních událostí, incidentů a stížností ve vodovodech a kanalizacích.
@@ -25,7 +25,7 @@ vypínač v `config.py`:
 
 Aktuálně navíc žádný odesílací kód neexistuje – projekt je jen lokální
 SQLite databáze. (Skripty `send_push.py`, `rozeslat_sms.py` v kořeni repa
-patří k jinému projektu a s AquaControll nesouvisí.)
+patří k jinému projektu a s AquaControl nesouvisí.)
 
 ## Dashboard
 

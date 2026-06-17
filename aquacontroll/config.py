@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-AquaControll – centrální konfigurace.
+AquaControl – centrální konfigurace.
 
 ⚠️ BEZPEČNOSTNÍ ZÁSADA – TESTOVACÍ PROVOZ
 =========================================

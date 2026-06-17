@@ -1,4 +1,4 @@
-// AquaControll – dashboard (čte web/data.json z export_dashboard_data.py)
+// AquaControl – dashboard (čte web/data.json z export_dashboard_data.py)
 
 const ZAV = {
   provereni: { label: "Prověření", barva: "#6b7a8d", chipBg: "#eef2f7", chipFg: "#6b7a8d" },

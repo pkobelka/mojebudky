@@ -1,6 +1,6 @@
 {
-  "name": "AquaControll – VHOS",
-  "short_name": "AquaControll",
+  "name": "AquaControl – VHOS",
+  "short_name": "AquaControl",
   "description": "Interní evidence provozních událostí, incidentů a stížností (VHOS a.s.)",
   "lang": "cs",
   "start_url": ".",

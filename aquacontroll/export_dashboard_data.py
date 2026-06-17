@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-AquaControll – export dat pro dashboard.
+AquaControl – export dat pro dashboard.
 
 Načte data ze SQLite databáze a uloží je jako web/data.json, ze kterého
 čte statický dashboard (web/index.html). Spouštět po každé změně dat:

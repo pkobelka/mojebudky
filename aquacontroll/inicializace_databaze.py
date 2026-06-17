@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-AquaControll – inicializace databáze
+AquaControl – inicializace databáze
 ====================================
 
 Tento skript založí (pokud ještě neexistují) tabulky SQLite databáze pro
-interní aplikaci AquaControll – evidenci provozních událostí, incidentů
+interní aplikaci AquaControl – evidenci provozních událostí, incidentů
 a stížností ve vodovodech a kanalizacích (VHOS a.s.).
 
 Tabulky:

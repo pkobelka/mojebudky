@@ -1,4 +1,4 @@
-# AquaControll — plán a předání projektu
+# AquaControl — plán a předání projektu
 
 Interní PWA pro **VHOS a.s.** k evidenci a řízení provozních událostí,
 incidentů a stížností ve vodovodech a kanalizacích.
@@ -6,7 +6,7 @@ incidentů a stížností ve vodovodech a kanalizacích.
 > **Tento soubor je „předávací dokument".** Shrnuje aktuální stav, všechna
 > dosavadní rozhodnutí o vzhledu a chování, a kompletní seznam funkcí k
 > realizaci. Slouží k tomu, aby se v práci dalo plynule pokračovat (i v novém
-> sezení nad repozitářem AquaControll).
+> sezení nad repozitářem AquaControl).
 
 ---
 
@@ -53,8 +53,8 @@ respektovat. Notifikace se zapnou až vědomě, po dokončení.
 ---
 
 ## 🎨 Vzhled (odsouhlasené návrhy – zatím jen jako mockupy, NUTNO zanést do web/)
-- **Hlavička:** vlevo **kapka AquaControll se znakem VHOS uvnitř** + název
-  „AquaControll" (bez podtitulu); vpravo **logo VHOS a.s.** (znak + text).
+- **Hlavička:** vlevo **kapka AquaControl se znakem VHOS uvnitř** + název
+  „AquaControl" (bez podtitulu); vpravo **logo VHOS a.s.** (znak + text).
   Skutečné soubory: `web/VHOS.png`. *(Můj kreslený znak je jen placeholder.)*
 - **3D vystouplé dlaždice** středisek (vrchní lesk, barevná „hrana" podle
   nejvyšší závažnosti otevřených událostí, jemný stín).
@@ -110,7 +110,8 @@ respektovat. Notifikace se zapnou až vědomě, po dokončení.
      přednastavit závažnost.
   2. **Kde?** – středisko (předvyplněné dle přihlášeného) → typ objektu
      (vodovod/zdroj/vrt/vodojem/chlorace) → konkrétní objekt.
-  3. **Podrobnosti** – popis, adresa/GPS, kdo nahlásil, přílohy (🎤 hlasovka / 📷 foto).
+  3. **Podrobnosti** – popis, adresa/GPS, kdo nahlásil, přílohy
+     (🎤 mluvený popis / 📷 foto / 📎 dokument).
   4. **Lidé** – řešitel + informovaní.
   *(Pořadí kroků 1↔2 je k doladění dle provozu.)*
 - 📋 **Nabídka „nestandardní podmínky na vodovodu"** (návrh k úpravě – zdroj
@@ -168,4 +169,5 @@ je potřeba pro: online přítomnost, přihlášení, notifikace, přílohy, aud
 - přesné **definice stupňů závažnosti** (s technologem),
 - detaily **auditu** (co logovat, jak dlouho držet, kdo vidí),
 - volba **konference** (Jitsi zdarma vs. Twilio placené),
-- **název projektu**: AquaControl (1 L, dle loga) vs. AquaControll (2 L).
+- ~~název projektu~~ → zvoleno **AquaControl** (jedno L, dle loga); zbývá
+  přejmenovat **GitHub repozitář** AquaControll → AquaControl (Settings → Rename).

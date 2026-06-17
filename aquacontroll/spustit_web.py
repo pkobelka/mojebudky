@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-AquaControll – spuštění dashboardu na lokálním serveru.
+AquaControl – spuštění dashboardu na lokálním serveru.
 
 Dashboard čte data.json přes fetch(), což prohlížeč u file:// blokuje.
 Tento skript proto naservíruje složku web/ na http://localhost:8000.
@@ -28,7 +28,7 @@ def main() -> None:
     os.chdir(ADRESAR_WEB)
     handler = http.server.SimpleHTTPRequestHandler
     with socketserver.TCPServer(("", PORT), handler) as httpd:
-        print(f"AquaControll dashboard běží na:  http://localhost:{PORT}")
+        print(f"AquaControl dashboard běží na:  http://localhost:{PORT}")
         print("Ukončení: Ctrl+C")
         try:
             httpd.serve_forever()
