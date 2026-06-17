@@ -87,16 +87,17 @@ CREATE TABLE IF NOT EXISTS uzivatele (
     vytvoreno     TEXT    NOT NULL
 );
 
--- Lokality / vodovody spadající pod středisko
+-- Objekty (vodovody, zdroje, vrty, …) spadající pod středisko
 CREATE TABLE IF NOT EXISTS lokality (
     id            INTEGER PRIMARY KEY AUTOINCREMENT,
-    nazev         TEXT    NOT NULL,                  -- název vodovodu
-    kod           TEXT,                              -- VF kód (nemusí být unikátní)
+    nazev         TEXT    NOT NULL,                  -- název objektu
+    kod           TEXT,                              -- kód (např. VF; nemusí být unikátní)
+    typ           TEXT    NOT NULL DEFAULT 'vodovod', -- vodovod / zdroj / vrt / vodojem / upravna / cerpaci_stanice / jine
     stredisko_id  INTEGER NOT NULL
                   REFERENCES strediska(id) ON DELETE CASCADE,
     poznamka      TEXT,
     vytvoreno     TEXT    NOT NULL,
-    UNIQUE (stredisko_id, nazev)                     -- v rámci střediska unikátní název
+    UNIQUE (stredisko_id, typ, nazev)                -- v rámci střediska unikátní (typ+název)
 );
 
 -- Události / incidenty
@@ -359,21 +360,22 @@ def vloz_lokality(conn: sqlite3.Connection, lokality: list[dict]) -> None:
             chybna_strediska.add(nazev_strediska)
             continue
         stredisko_id = radek[0]
+        typ = l.get("typ") or "vodovod"
         existuje = cur.execute(
-            "SELECT 1 FROM lokality WHERE stredisko_id = ? AND nazev = ?",
-            (stredisko_id, l["nazev"]),
+            "SELECT 1 FROM lokality WHERE stredisko_id = ? AND typ = ? AND nazev = ?",
+            (stredisko_id, typ, l["nazev"]),
         ).fetchone()
         if existuje:
             preskoceno += 1
             continue
         cur.execute(
-            """INSERT INTO lokality (nazev, kod, stredisko_id, vytvoreno)
-               VALUES (?, ?, ?, ?)""",
-            (l["nazev"], l.get("kod"), stredisko_id, nyni()),
+            """INSERT INTO lokality (nazev, kod, typ, stredisko_id, vytvoreno)
+               VALUES (?, ?, ?, ?, ?)""",
+            (l["nazev"], l.get("kod"), typ, stredisko_id, nyni()),
         )
         vlozeno += 1
     conn.commit()
-    print(f"  + vloženo {vlozeno} vodovodů, přeskočeno {preskoceno} (již existují)")
+    print(f"  + vloženo {vlozeno} objektů, přeskočeno {preskoceno} (již existují)")
     if chybna_strediska:
         print(f"  ! střediska nenalezena (vodovody přeskočeny): "
               f"{sorted(chybna_strediska)}")
