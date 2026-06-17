@@ -112,8 +112,9 @@ respektovat. Notifikace se zapnou až vědomě, po dokončení.
 - 🧪 **Skupina „Laboratoř"** (jako ředitelství – ne provozní středisko) + její
   lidi (seznam dodá uživatel).
 - 🏗️ **Objekty střediska** mají typ: **vodovod / zdroj (prameniště) / vrt /
-  vodojem / úpravna / čerpací stanice / jine**. Tabulka `lokality` má sloupec
-  `typ` (výchozí `vodovod`). Událost se může týkat kteréhokoliv objektu.
+  vodojem / úpravna / čerpací stanice / chlorovací zařízení (chlorace) / jine**.
+  Tabulka `lokality` má sloupec `typ` (volný text, výchozí `vodovod`), takže
+  další typy lze přidat bez změny databáze. Událost se může týkat kteréhokoliv objektu.
   Seed formát: `stredisko; nazev; kod; typ`. Seznamy zdrojů a vrtů pro
   jednotlivá střediska dodá uživatel.
 
