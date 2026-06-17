@@ -78,8 +78,10 @@ respektovat. Notifikace se zapnou až vědomě, po dokončení.
 - ➕ **Tlačítko „Nová událost"** (+ plovoucí kulaté ＋ na mobilu).
 - 📋 **Dole jen OTEVŘENÉ události** (nové + v řešení), přejmenovat na
   „Aktuální události". Prázdný stav = zelené „✅ Vše vyřešeno".
-- 🖱️ **Aktivní dlaždice** (i s nulou) → detail střediska: **historie všech
-  událostí** + **seznam vodovodů**; u vodovodu s událostí **číslo (počet závad)**.
+- 🖱️ **Aktivní dlaždice** (i s nulou) → **detail střediska** = mřížka kategorií
+  objektů (Vodovody / Vodojemy / Prameniště / Vrty, příp. Úpravny / Chlorace),
+  každá s počtem. Klik na kategorii → seznam objektů; u objektu s událostí
+  **číslo (počet závad)**. Dole **historie událostí** střediska.
 - 💧 **Klikací jsou jen vodovody s číslem** → historie konkrétního vodovodu;
   vodovody bez události jen vypsané (neklikací).
 
