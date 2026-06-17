@@ -72,6 +72,12 @@ respektovat. Notifikace se zapnou až vědomě, po dokončení.
 ## 🗺️ Funkce k realizaci (roadmap)
 
 ### Dashboard / navigace
+- 🧩 **Hlavní plocha dashboardu = Přehled objektů** (5 středisek pod sebou,
+  každé s 5 dlaždicemi: Vodovody/Vodojemy/Prameniště/Vrty/Chlorace).
+  **Bez** souhrnového řádku (Otevřené/Vysoká/Kritická) – stav je vidět z dlaždic.
+- 🧭 **Menu nahoře vedle loga:** „Přehled objektů" · „Aktuální události" (s počtem)
+  · „Dokumenty". **Aktuální události se nevypisují na ploše** – jsou pod položkou
+  v menu, zobrazí se po kliknutí.
 - 🗓️ **Proužek nahoře:** den + datum + čas (živě, např. „Úterý 16. 6. 2026 · 18:39").
 - 👥 **Kdo je online** – monogramy (TŘ · BK · LV), zeleně. Detekce přes
   „heartbeat" (klient se každých pár s ozve, po ~1 min nečinnosti zhasne).
