@@ -1,132 +1,171 @@
-// AquaControll – dashboard (čte web/data.json vygenerovaný export skriptem)
+// AquaControll – dashboard (čte web/data.json z export_dashboard_data.py)
 
-const POPISKY_TYP = {
-  havarie: "Havárie",
-  rozbor_chemicky: "Chem. rozbor",
-  rozbor_mikrobiologicky: "Mikrobiol. rozbor",
-  reklamace: "Reklamace",
-  stiznost: "Stížnost",
-  jine: "Jiné",
+const ZAV = {
+  provereni: { label: "Prověření", barva: "#6b7a8d", chipBg: "#eef2f7", chipFg: "#6b7a8d" },
+  nizka:     { label: "Nízká",     barva: "#7e92a8", chipBg: "#eef2f7", chipFg: "#6b7a8d" },
+  stredni:   { label: "Střední",   barva: "#1e8fe0", chipBg: "#eaf4fc", chipFg: "#0b3a66" },
+  vysoka:    { label: "Vysoká",    barva: "#e8881b", chipBg: "#fde7d2", chipFg: "#9a5c00" },
+  kriticka:  { label: "Kritická",  barva: "#e23b3b", chipBg: "#e23b3b", chipFg: "#ffffff" },
 };
-const POPISKY_STAV = {
-  novy: "Nový", v_reseni: "V řešení", vyreseno: "Vyřešeno", uzavreno: "Uzavřeno",
+const HRANA = { kriticka: "#e8b6b6", vysoka: "#eccba0" };
+const TYP = {
+  havarie: ["Havárie", "H"], rozbor_chemicky: ["Chem. rozbor", "C"],
+  rozbor_mikrobiologicky: ["Mikrobiol. rozbor", "M"], reklamace: ["Reklamace", "R"],
+  stiznost: ["Stížnost", "S"], jine: ["Jiné", "?"],
 };
-const POPISKY_STAV_UKOL = {
-  novy: "Nový", probiha: "Probíhá", hotovo: "Hotovo", zruseno: "Zrušeno",
+const STAV = {
+  novy: ["Nový", "#fdecec", "#b62525"], v_reseni: ["V řešení", "#fff1dd", "#9a5c00"],
+  vyreseno: ["Vyřešeno", "#e5f6ec", "#1d7a42"], uzavreno: ["Uzavřeno", "#eef2f7", "#6b7a8d"],
 };
-const POPISKY_ZAV = {
-  nizka: "Nízká", stredni: "Střední", vysoka: "Vysoká", kriticka: "Kritická",
-};
+const OTEVRENE = ["novy", "v_reseni"];
 
 const esc = (s) => (s == null ? "" : String(s).replace(/[&<>"]/g,
   (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c])));
 
-function formatDatum(s) {
+// ---- živé hodiny ----
+function tikni() {
+  const d = new Date();
+  let s = d.toLocaleDateString("cs-CZ", { weekday: "long", day: "numeric", month: "numeric", year: "numeric" });
+  s = s.charAt(0).toUpperCase() + s.slice(1);
+  const cas = d.toLocaleTimeString("cs-CZ", { hour: "2-digit", minute: "2-digit" });
+  document.getElementById("datum").textContent = `${s} · ${cas}`;
+}
+
+function datumCas(s) {
   if (!s) return "—";
   const d = new Date(s.replace(" ", "T"));
   if (isNaN(d)) return s;
-  return d.toLocaleString("cs-CZ", { day: "numeric", month: "numeric",
-    year: "numeric", hour: "2-digit", minute: "2-digit" });
+  return d.toLocaleString("cs-CZ", { day: "numeric", month: "numeric", year: "numeric", hour: "2-digit", minute: "2-digit" });
 }
 
 async function nacti() {
+  tikni(); setInterval(tikni, 10000);
   try {
     const r = await fetch("data.json", { cache: "no-store" });
-    if (!r.ok) throw new Error(r.status);
+    if (!r.ok) throw new Error("HTTP " + r.status);
     vykresli(await r.json());
   } catch (e) {
     document.getElementById("souhrn").innerHTML =
-      `<div class="karta-souhrn"><div class="popis">Nepodařilo se načíst data.json
-       (${esc(e.message)}). Spusť dashboard přes lokální server – viz README.</div></div>`;
+      `<div class="karta-souhrn"><div class="popis">Nepodařilo se načíst data.json (${esc(e.message)}).
+       Spusť dashboard přes server: <code>python3 spustit_web.py</code></div></div>`;
   }
 }
 
-function vykresli(data) {
-  // souhrn
-  const s = data.souhrn;
-  document.getElementById("souhrn").innerHTML = `
-    <div class="karta-souhrn"><div class="cislo">${s.strediska}</div>
-      <div class="popis">Středisek</div></div>
-    <div class="karta-souhrn"><div class="cislo">${s.udalosti}</div>
-      <div class="popis">Událostí celkem</div></div>
-    <div class="karta-souhrn otevrene"><div class="cislo">${s.otevrene}</div>
-      <div class="popis">Otevřených</div></div>
-    <div class="karta-souhrn kriticke"><div class="cislo">${s.kriticke}</div>
-      <div class="popis">Kritických</div></div>`;
+function tapeta() {
+  const box = document.getElementById("tapeta");
+  const W = window.innerWidth, H = Math.max(window.innerHeight, document.body.scrollHeight);
+  let html = "";
+  let i = 0;
+  for (let y = 60; y < H; y += 120) {
+    const off = ((y - 60) / 120) % 2 ? 60 : 0;
+    for (let x = off; x < W; x += 120) {
+      const n = (i % 7) + 1; i++;
+      html += `<img src="EAG_picto_${n}.png" style="left:${x}px;top:${y}px" onerror="this.remove()">`;
+    }
+  }
+  box.innerHTML = html;
+}
 
-  // střediska
-  document.getElementById("strediska").innerHTML = data.strediska.map((st) => {
-    let badge = `<span class="odznak">${st.otevrene}</span>`;
-    let tridy = "dlazdice-stredisko";
-    if (st.kriticke > 0) { badge = `<span class="odznak kriticke">${st.otevrene}</span>`;
-      tridy += " ma-kriticke"; }
-    else if (st.otevrene > 0) { badge = `<span class="odznak otevrene">${st.otevrene}</span>`;
-      tridy += " ma-otevrene"; }
-    return `<div class="${tridy}">
-      ${badge}
-      <div class="stredisko-nazev">${esc(st.nazev)}</div>
-      ${st.je_centrala ? '<span class="stredisko-centrala">Centrála</span>' : ""}
-      <div class="stredisko-meta">
-        <span><b>${st.pocet_vodovodu}</b> vodovodů</span>
-        <span><b>${st.pocet_lidi}</b> lidí</span>
-      </div>
+function vykresli(data) {
+  const S = data.souhrn;
+
+  // souhrn (3 karty)
+  const karta = (n, lbl, barva) => `
+    <div class="karta-souhrn">
+      <div class="ikona" style="background:${barva}29"><i style="background:${barva}"></i></div>
+      <div><div class="cislo" style="color:${barva==='#7e92a8'?'#1f2a37':barva}">${n}</div>
+      <div class="popis">${lbl}</div></div>
+    </div>`;
+  document.getElementById("souhrn").innerHTML =
+    karta(S.otevrene, "Otevřených událostí", "#7e92a8") +
+    karta(S.vysoke, "Vysoká závažnost", "#e8881b") +
+    karta(S.kriticke, "Kritická", "#e23b3b");
+
+  // legenda
+  document.getElementById("legenda").innerHTML =
+    ["provereni","nizka","stredni","vysoka","kriticka"].map(k =>
+      `<span><i style="background:${ZAV[k].barva}"></i>${ZAV[k].label}</span>`).join("");
+
+  // dlaždice středisek (data jsou už seřazená dle pořadí, bez VHOS)
+  const ikDrop = '<svg viewBox="0 0 24 24" fill="#1e8fe0"><path d="M12 3 C12 3 5 11 5 16 a7 7 0 1 0 14 0 C19 11 12 3 12 3 Z"/></svg>';
+  document.getElementById("strediska").innerHTML = data.strediska.map(st => {
+    const mz = st.max_zavaznost;
+    const hrana = mz ? (HRANA[mz] || "#c6d4e4") : "#dfe7f0";
+    let odznak;
+    if (mz) {
+      const b = ZAV[mz].barva;
+      odznak = `<div class="odznak akt ${mz}" style="background:${b};--odznak-ring:${b}2e">${st.otevrene}</div>`;
+    } else {
+      odznak = `<div class="odznak">0</div>`;
+    }
+    return `<div class="dlazdice-stredisko klik" style="--hrana:${hrana}" onclick="detailStrediska('${esc(st.nazev)}')">
+      ${odznak}
+      <div class="nazev-s">${esc(st.nazev)}</div>
+      <div class="meta">${ikDrop}<b>${st.pocet_vodovodu}</b>&nbsp;vodovodů</div>
     </div>`;
   }).join("");
 
-  // události
-  document.getElementById("pocet-udalosti").textContent = `(${data.udalosti.length})`;
-  document.getElementById("udalosti").innerHTML = data.udalosti.map(kartaUdalosti).join("")
-    || '<p style="color:#6b7a8d">Žádné události.</p>';
+  // online (zatím ukázkově – napojí se na živou přítomnost přes backend)
+  const online = ["TŘ", "BK", "LV"];
+  document.getElementById("online").innerHTML =
+    `<span class="lbl">Online:</span>` + online.map(m => `<span class="mono">${esc(m)}</span>`).join("");
 
-  // rozbalování detailu
-  document.querySelectorAll(".udalost-hlava").forEach((h) => {
-    h.addEventListener("click", () => h.closest(".karta-udalost").classList.toggle("otevreno"));
-  });
+  // aktuální (otevřené) události
+  const otevrene = data.udalosti.filter(u => OTEVRENE.includes(u.stav));
+  document.getElementById("pocet-udalosti").textContent = `(${otevrene.length})`;
+  const cont = document.getElementById("udalosti");
+  if (!otevrene.length) {
+    cont.innerHTML = `<div class="prazdno">✅ Vše vyřešeno — žádné otevřené události.</div>`;
+  } else {
+    cont.innerHTML = otevrene.map(kartaUdalosti).join("");
+    cont.querySelectorAll(".karta-udalost").forEach(k =>
+      k.addEventListener("click", () => k.classList.toggle("open")));
+  }
 
-  document.getElementById("vygenerovano").textContent =
-    "aktualizováno " + formatDatum(data.vygenerovano);
+  document.getElementById("vygenerovano").textContent = "aktualizováno " + datumCas(data.vygenerovano);
+  tapeta();
 }
 
 function kartaUdalosti(u) {
-  const ukoly = (u.ukoly || []).map((t) => `
-    <div class="ukol">
-      <span class="ukol-nazev">${esc(t.nazev)}</span>
-      <span class="chip stav-${esc(t.stav)}">${esc(POPISKY_STAV_UKOL[t.stav] || t.stav)}</span>
-      <span class="ukol-osoby">řeší <b>${esc(t.prirazeno || "—")}</b>${
-        t.termin ? " · termín " + esc(t.termin) : ""}</span>
-    </div>`).join("") || '<p style="color:#6b7a8d;font-size:14px">Žádné úkoly.</p>';
-
-  const cc = (u.informovani || []).map((j) => `<span class="osoba">${esc(j)}</span>`).join("")
-    || '<span style="color:#6b7a8d;font-size:13px">nikdo</span>';
-
-  const misto = [u.vodovod, u.adresa].filter(Boolean).map(esc).join(" · ");
-
-  return `<article class="karta-udalost zav-${esc(u.zavaznost)}">
+  const z = ZAV[u.zavaznost] || ZAV.stredni;
+  const [tlabel, tletter] = TYP[u.typ] || TYP.jine;
+  const [slabel, sbg, sfg] = STAV[u.stav] || STAV.novy;
+  const misto = [u.stredisko, u.vodovod, u.adresa].filter(Boolean).map(esc).join(" · ");
+  const ukoly = (u.ukoly || []).map(t => {
+    const [tl, tb, tf] = STAV[t.stav] || STAV.novy;
+    return `<div class="ukol"><b>${esc(t.nazev)}</b>
+      <span class="chip" style="background:${tb};color:${tf}">${esc(tl)}</span>
+      &nbsp;řeší <b>${esc(t.prirazeno || "—")}</b>${t.termin ? " · termín " + esc(t.termin) : ""}</div>`;
+  }).join("") || `<div style="color:#6b7a8d;font-size:13px">Žádné úkoly.</div>`;
+  const cc = (u.informovani || []).map(j => `<span class="osoba">${esc(j)}</span>`).join("") ||
+    `<span style="color:#6b7a8d;font-size:13px">nikdo</span>`;
+  return `<article class="karta-udalost" style="border-left-color:${z.barva}">
     <div class="udalost-hlava">
+      <div class="typ-ikona" style="background:${z.barva}26;color:${z.barva}">${tletter}</div>
       <span class="udalost-titul">${esc(u.titul)}</span>
-      <span class="chip typ">${esc(POPISKY_TYP[u.typ] || u.typ)}</span>
-      <span class="chip zav-${esc(u.zavaznost)}">${esc(POPISKY_ZAV[u.zavaznost] || u.zavaznost)}</span>
-      <span class="chip stav-${esc(u.stav)}">${esc(POPISKY_STAV[u.stav] || u.stav)}</span>
-      <span class="udalost-misto">${esc(u.stredisko || "")}${misto ? " · " + misto : ""}</span>
+      <span class="chip" style="background:#eaf4fc;color:#0b3a66">${esc(tlabel)}</span>
+      <span class="chip" style="background:${z.chipBg};color:${z.chipFg}">${esc(z.label)}</span>
+      <span class="chip" style="background:${sbg};color:${sfg}">${esc(slabel)}</span>
+      <span class="udalost-misto">${misto}</span>
     </div>
     <div class="udalost-detail">
       ${u.popis ? `<div class="popis-box">${esc(u.popis)}</div>` : ""}
       <div class="detail-mrizka">
-        <div class="detail-radek"><span class="stitek">Vodovod (VF kód)</span>
-          ${esc(u.vodovod || "—")}${u.vf ? " (" + esc(u.vf) + ")" : ""}</div>
-        <div class="detail-radek"><span class="stitek">Adresa</span>${esc(u.adresa || "—")}</div>
-        <div class="detail-radek"><span class="stitek">Nahlásil</span>
-          ${esc(u.nahlasil || "—")}${u.nahlasil_tel ? " · " + esc(u.nahlasil_tel) : ""}</div>
-        <div class="detail-radek"><span class="stitek">Nahlášeno</span>${formatDatum(u.nahlaseno)}</div>
-        <div class="detail-radek"><span class="stitek">Založil</span>${esc(u.vytvoril || "—")}</div>
-        <div class="detail-radek"><span class="stitek">Řešitel</span>${esc(u.prirazeno || "—")}</div>
+        <div><span class="stitek">Nahlásil</span>${esc(u.nahlasil || "—")}${u.nahlasil_tel ? " · " + esc(u.nahlasil_tel) : ""}</div>
+        <div><span class="stitek">Nahlášeno</span>${datumCas(u.nahlaseno)}</div>
+        <div><span class="stitek">Založil</span>${esc(u.vytvoril || "—")}</div>
+        <div><span class="stitek">Řešitel</span>${esc(u.prirazeno || "—")}</div>
       </div>
-      <div class="podnadpis">Úkoly</div>
-      ${ukoly}
-      <div class="podnadpis">Informováni</div>
-      <div class="osoby-cc">${cc}</div>
+      <div class="podnadpis">Úkoly</div>${ukoly}
+      <div class="podnadpis">Informováni</div><div>${cc}</div>
     </div>
   </article>`;
 }
 
-nacti();
+function detailStrediska(nazev) {
+  // Detail střediska (historie + vodovody) – připravujeme dle PLAN.md
+  alert("Detail střediska „" + nazev + "“ — historie událostí a seznam vodovodů (připravujeme).");
+}
+
+window.addEventListener("resize", () => { if (window._d) tapeta(); });
+nacti().then(() => { window._d = true; });

@@ -26,8 +26,16 @@ respektovat. Notifikace se zapnou až vědomě, po dokončení.
 - **Seed data:** 15 lidí, 124 vodovodů, 5 provozních středisek + VHOS,
   2 vzorové události (stížnost Boršov 86; bakteriologický nález Lubná) s úkoly
   a informovanými.
-- **Statický dashboard** (`web/`), data přes `export_dashboard_data.py` → `web/data.json`,
-  spuštění `spustit_web.py`.
+- **Živý dashboard** (`web/index.html`, `css/style.css`, `js/app.js`) – už zanesený
+  nový vzhled: hlavička s kapkou + místem pro logo VHOS (`VHOS.png`), proužek
+  datum/čas (živé hodiny) + online monogramy (zatím ukázkové) + tlačítko
+  „＋ Nová událost" (+ plovoucí na mobilu), souhrn (3 karty), 3D dlaždice v
+  pořadí dle `poradi` (bez VHOS) s odznaky a legendou závažnosti, sekce
+  „Aktuální události" (jen otevřené, prázdný stav „Vše vyřešeno"), jemná tapeta
+  piktogramů (`EAG_picto_1..7.png`). Data přes `export_dashboard_data.py` →
+  `web/data.json`, spuštění `python3 spustit_web.py`.
+- **Hotovo dále:** klik na dlaždici/událost (rozbalení detailu události); detail
+  střediska (historie + vodovody) je zatím zástupný (`detailStrediska()`).
 - **config.py** – kill-switch notifikací.
 
 ### Datová rozhodnutí (už zapracovaná v seedu/kódu)
