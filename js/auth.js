@@ -240,7 +240,8 @@ async function _zobrazAdminPanel(loginId) {
     setTimeout(() => _zobrazPrani(jeNarozeniny ? 'narozeniny' : 'svatek', osloveni), 2500);
   }
 
-  if (typeof window._presenceSetAdmin === 'function') window._presenceSetAdmin(true);
+  const jeAdmin = !!(spravceInfo && spravceInfo.spravce === 'admin');
+  if (typeof window._presenceSetSpravce === 'function') window._presenceSetSpravce(loginId, jmeno, budkyList, jeAdmin);
   _nastavPushForeground();
   _prihlasitPush(loginId);
 
@@ -253,7 +254,6 @@ async function _zobrazAdminPanel(loginId) {
     });
   }
 
-  const jeAdmin = !!(spravceInfo && spravceInfo.spravce === 'admin');
   window._aktualniSpravce = { loginId, spravceInfo, budkyList, jeAdmin };
   window._editBudku = _zobrazEditBudky;
   if (!jeAdmin) _sledujZpravySpravce(loginId);
