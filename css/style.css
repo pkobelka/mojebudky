@@ -134,7 +134,7 @@ html, body {
 .info-bar .bar-right.bar-svatek { color: var(--orange); font-style: normal; font-weight: 600; }
 .bar-gratulace { color: var(--orange); font-weight: 700; }
 .bar-narozeniny { color: #e05cbf; font-weight: 700; }
-.bar-online { font-style: normal; color: var(--text-light); }
+.bar-online { font-style: normal; color: var(--bar-text); }
 .bar-online strong { color: #7dd444; }
 
 .main-content { display: flex; min-height: 260px; }
