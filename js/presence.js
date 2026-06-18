@@ -33,26 +33,24 @@
     _presenceVals = Object.values(snap.val() || {});
     const total  = _presenceVals.length;
     const admins = _presenceVals.filter(v => v.admin).length;
-    const el = document.getElementById('onlinePocet');
-    if (!el) return;
-
     let txt = `🟢 ${total} online`;
     if (admins > 0) {
       const aSlovo = admins === 1 ? 'správce' : admins <= 4 ? 'správci' : 'správců';
       txt += `, z toho <span class="online-admins">${admins} ${aSlovo}</span>`;
     }
+    // Uložit vždy – aktualizujListu() ho použije při překreslení info-baru
     window._lastOnlineText = txt;
-    el.innerHTML = txt;
 
+    const el  = document.getElementById('onlinePocet');
     const mob = document.getElementById('onlineMobile');
-    if (mob) mob.innerHTML = txt;
     const bar = document.getElementById('onlineBar');
+    if (el)  el.innerHTML  = txt;
+    if (mob) mob.innerHTML = txt;
     if (bar) bar.innerHTML = txt;
 
     const jeAdmin = window._aktualniSpravce && window._aktualniSpravce.jeAdmin;
     const titulek = jeAdmin ? 'Klikni pro seznam online uživatelů' : '';
-    el.style.cursor = jeAdmin ? 'pointer' : '';
-    el.title = titulek;
+    if (el)  { el.style.cursor  = jeAdmin ? 'pointer' : ''; el.title  = titulek; }
     if (mob) { mob.style.cursor = jeAdmin ? 'pointer' : ''; mob.title = titulek; }
     if (bar) { bar.style.cursor = jeAdmin ? 'pointer' : ''; bar.title = titulek; }
   });
