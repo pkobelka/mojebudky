@@ -286,7 +286,7 @@ async function _zobrazAdminPanel(loginId) {
     <button class="admin-dropdown-item" data-akce="zmenitHeslo">🔑 Změnit heslo</button>
     ${!jeAdmin ? `<button class="admin-dropdown-item" data-akce="napisAdminovi">✉️ Napsat adminovi</button>
     <button class="admin-dropdown-item" data-akce="zpravyOdAdmina">📨 Zprávy od admina <span class="admin-badge" id="zpravyOdAdminaBadge" hidden>0</span></button>` : ''}
-    ${jeAdmin ? `<div class="admin-dropdown-oddelovac"></div><button class="admin-dropdown-item admin-item-zadosti" data-akce="zadosti">📬 Žádosti správců <span class="admin-badge" id="adminBadge" hidden>0</span></button><button class="admin-dropdown-item" data-akce="prehledSpravcu">👥 Přehled správců</button><button class="admin-dropdown-item" data-akce="aktivitaSpravcu">🏆 Aktivita správců</button><button class="admin-dropdown-item" data-akce="pushHistorie">📩 Push notifikace</button><button class="admin-dropdown-item" data-akce="historieNavstev">📊 Online historie</button>` : ''}
+    ${jeAdmin ? `<div class="admin-dropdown-oddelovac"></div><button class="admin-dropdown-item admin-item-zadosti" data-akce="zadosti">📬 Žádosti správců <span class="admin-badge" id="adminBadge" hidden>0</span></button><button class="admin-dropdown-item" data-akce="prehledSpravcu">👥 Přehled správců</button><button class="admin-dropdown-item" data-akce="aktivitaSpravcu">🏆 Aktivita správců</button><button class="admin-dropdown-item" data-akce="pushHistorie">📩 Push notifikace</button><button class="admin-dropdown-item" data-akce="historieNavstev">📊 Online historie</button><button class="admin-dropdown-item" data-akce="resetBeta">🧹 Reset beta testu</button>` : ''}
     <div class="admin-dropdown-oddelovac"></div>
     <button class="admin-dropdown-item odhlasit" data-akce="odhlasit">🚪 Odhlásit se</button>
   `;
@@ -405,6 +405,12 @@ async function _zobrazAdminPanel(loginId) {
 
     if (akce === 'historieNavstev') {
       _zobrazHistoriiNavstev();
+      dropdown.classList.remove('open');
+      return;
+    }
+
+    if (akce === 'resetBeta') {
+      _zobrazResetBeta();
       dropdown.classList.remove('open');
       return;
     }
@@ -1201,6 +1207,74 @@ async function _zobrazHistoriiNavstev() {
       </tbody>
     </table>
     <div style="font-size:0.78rem;color:var(--text-muted);padding:10px 8px 0">${zaznamy.length} záznamů · záznamy se uchovávají 30 dní</div>`;
+}
+
+async function _zobrazResetBeta() {
+  const existujici = document.getElementById('modalResetBeta');
+  if (existujici) { existujici.remove(); return; }
+
+  const modal = document.createElement('div');
+  modal.id = 'modalResetBeta';
+  modal.className = 'modal-overlay';
+  modal.innerHTML = `
+    <div class="modal-box" style="max-width:480px">
+      <button class="modal-zavrit" id="resetBetaZavrit">×</button>
+      <div style="font-size:1.5rem;margin-bottom:8px">🧹 Reset beta testu</div>
+      <p style="color:var(--text-muted);font-size:0.9rem;margin-bottom:16px">
+        Vymaže testovací data z Firebase tak, aby správci zažili celý tok
+        (uvítání, slib, …) jako poprvé.<br><br>
+        <strong style="color:var(--text-light)">Co se smaže:</strong>
+      </p>
+      <ul style="color:var(--text-muted);font-size:0.88rem;margin:0 0 16px 18px;line-height:1.8">
+        <li><code>spravce_aktivita/</code> — timestampy přihlášení správců</li>
+        <li><code>budky_edit/</code> — testovací úpravy budek</li>
+        <li><code>prihlaseni/</code> — log přihlášení</li>
+      </ul>
+      <p style="color:#e0a040;font-size:0.85rem;margin-bottom:20px">
+        ⚠ Hesla, profily a data budek zůstanou nedotčeny.<br>
+        localStorage (slib, first-login) musí každý vymazat sám ve svém prohlížeči —
+        správci na svých čerstvých zařízeních ho ještě nemají, takže pro ně to není potřeba.
+      </p>
+      <div style="display:flex;gap:10px;justify-content:flex-end">
+        <button id="resetBetaZrusit" style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.2);color:var(--text-muted);border-radius:8px;padding:9px 18px;cursor:pointer">Zrušit</button>
+        <button id="resetBetaPotvrdit" style="background:#c0392b;border:none;color:#fff;border-radius:8px;padding:9px 18px;font-weight:700;cursor:pointer">🧹 Vymazat data</button>
+      </div>
+      <div id="resetBetaMsg" style="margin-top:12px;font-size:0.88rem" hidden></div>
+    </div>`;
+  document.body.appendChild(modal);
+
+  const zavrit = () => modal.remove();
+  document.getElementById('resetBetaZavrit').addEventListener('click', zavrit);
+  document.getElementById('resetBetaZrusit').addEventListener('click', zavrit);
+  modal.addEventListener('click', e => { if (e.target === modal) zavrit(); });
+
+  document.getElementById('resetBetaPotvrdit').addEventListener('click', async () => {
+    const btn = document.getElementById('resetBetaPotvrdit');
+    const msg = document.getElementById('resetBetaMsg');
+    btn.disabled = true;
+    btn.textContent = '⏳ Mažu…';
+    msg.hidden = true;
+    try {
+      const db = _getFirebaseDB();
+      if (!db) throw new Error('Firebase není dostupná');
+      await Promise.all([
+        db.ref('spravce_aktivita').remove(),
+        db.ref('budky_edit').remove(),
+        db.ref('prihlaseni').remove(),
+      ]);
+      msg.style.color = '#4caf50';
+      msg.textContent = '✓ Data vymazána. Správci zažijí celý tok znovu na svých zařízeních.';
+      msg.hidden = false;
+      btn.textContent = '✓ Hotovo';
+      setTimeout(zavrit, 3000);
+    } catch(e) {
+      msg.style.color = '#ff7070';
+      msg.textContent = '⚠ Chyba: ' + (e.message || 'Nelze vymazat data');
+      msg.hidden = false;
+      btn.disabled = false;
+      btn.textContent = '🧹 Vymazat data';
+    }
+  });
 }
 
 function _zobrazNapisAdminovi(loginId, jmeno) {
