@@ -45,6 +45,8 @@
 
     const mob = document.getElementById('onlineMobile');
     if (mob) mob.innerHTML = txt;
+    const bar = document.getElementById('onlineBar');
+    if (bar) bar.innerHTML = txt;
 
     const jeAdmin = window._aktualniSpravce && window._aktualniSpravce.jeAdmin;
     el.style.cursor = jeAdmin ? 'pointer' : '';

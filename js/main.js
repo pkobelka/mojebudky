@@ -85,7 +85,7 @@ function aktualizujListu() {
     : '';
 
   bar.innerHTML = `<span class="bar-left">${cal}${sva}${narozBar}</span>
-    <span class="bar-right">⏰ <span id="liveCas">${formatCas(d)}</span> &nbsp;|&nbsp; 🌿 Pomáháme ptactvu nejen po celé ČR</span>`;
+    <span class="bar-right">⏰ <span id="liveCas">${formatCas(d)}</span> &nbsp;|&nbsp; <span id="onlineBar" class="bar-online">🟢 …</span></span>`;
 }
 
 function tickCas() {
