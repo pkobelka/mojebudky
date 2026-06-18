@@ -16,6 +16,7 @@ const KANONICKY = {};
 for (const [k, arr] of Object.entries(PREZDIVKY)) arr.forEach(p => KANONICKY[p] = k);
 
 let spravciJmena = [];
+let _boxManagerKey = {};  // box_cislo → manažerský klíč (suffix), pro deduplikaci správců
 let _statickeAktuality = [];
 let _aktualityListenerSet = false;
 let _partneriData = [];
@@ -32,13 +33,41 @@ function najdiSvatekSpravce(svarekJmeno) {
   if (!svarekJmeno || !spravciJmena.length) return [];
   const kanon = KANONICKY[svarekJmeno] || svarekJmeno;
   const hledej = new Set([kanon, svarekJmeno, ...(PREZDIVKY[kanon] || [])]);
-  return spravciJmena.filter(s => hledej.has(s.jmeno));
+  const pasujici = spravciJmena.filter(s => hledej.has(s.jmeno));
+  // Deduplikuj – správce s více budkami má v 6místném loginId stejný 3místný suffix
+  if (Object.keys(_boxManagerKey).length > 0) {
+    const videniSpravci = new Set();
+    return pasujici.filter(s => {
+      const key = _boxManagerKey[s.cislo];
+      if (key === undefined) return true;  // budka není v spravci.json → počítej zvlášť
+      if (videniSpravci.has(key)) return false;
+      videniSpravci.add(key);
+      return true;
+    });
+  }
+  return pasujici;
 }
 
 async function nactiSpravce() {
   try {
-    const res = await fetch('data/spravci_jmena.json?v=20260527k');
-    spravciJmena = await res.json();
+    const [resJmena, resHesla] = await Promise.all([
+      fetch('data/spravci_jmena.json?v=20260527k'),
+      fetch('data/spravci.json?v=20260618')
+    ]);
+    spravciJmena = await resJmena.json();
+    const heslaData = await resHesla.json();
+    // Postav mapu box_cislo → manažerský klíč (suffix 6-místného loginId)
+    for (const loginId of Object.keys(heslaData)) {
+      let boxNum, managerKey;
+      if (loginId.length === 6) {
+        boxNum = parseInt(loginId.slice(0, 3), 10);
+        managerKey = loginId.slice(3);  // 3-místný suffix = identifikátor správce
+      } else {
+        boxNum = parseInt(loginId, 10);
+        managerKey = loginId;  // kratší loginId = unikátní účet
+      }
+      _boxManagerKey[boxNum] = managerKey;
+    }
   } catch(e) {
     console.error('Chyba načítání správce:', e);
   }
@@ -84,7 +113,8 @@ function aktualizujListu() {
     ? `&nbsp;| 🎂 <span class="bar-narozeniny">Narozeniny má: <strong>${_narozeniniceDnes.map(n => n.jmeno).join(', ')}</strong> – gratulujeme a děkujeme za péči o budky!</span>`
     : '';
 
-  bar.innerHTML = `<span class="bar-left">${cal}${sva}${narozBar}&nbsp;|&nbsp;<span id="onlineBar" class="bar-online">🟢 …</span></span>
+  const onlineText = window._lastOnlineText || '🟢 …';
+  bar.innerHTML = `<span class="bar-left">${cal}${sva}${narozBar}&nbsp;|&nbsp;<span id="onlineBar" class="bar-online">${onlineText}</span></span>
     <span class="bar-right">⏰ <span id="liveCas">${formatCas(d)}</span></span>`;
 }
 

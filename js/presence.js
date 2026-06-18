@@ -41,6 +41,7 @@
       const aSlovo = admins === 1 ? 'správce' : admins <= 4 ? 'správci' : 'správců';
       txt += `, z toho <span class="online-admins">${admins} ${aSlovo}</span>`;
     }
+    window._lastOnlineText = txt;
     el.innerHTML = txt;
 
     const mob = document.getElementById('onlineMobile');
