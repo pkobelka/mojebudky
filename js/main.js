@@ -84,8 +84,8 @@ function aktualizujListu() {
     ? `&nbsp;| 🎂 <span class="bar-narozeniny">Narozeniny má: <strong>${_narozeniniceDnes.map(n => n.jmeno).join(', ')}</strong> – gratulujeme a děkujeme za péči o budky!</span>`
     : '';
 
-  bar.innerHTML = `<span class="bar-left">${cal}${sva}${narozBar}</span>
-    <span class="bar-right">⏰ <span id="liveCas">${formatCas(d)}</span> &nbsp;|&nbsp; <span id="onlineBar" class="bar-online">🟢 …</span></span>`;
+  bar.innerHTML = `<span class="bar-left">${cal}${sva}${narozBar}&nbsp;|&nbsp;<span id="onlineBar" class="bar-online">🟢 …</span></span>
+    <span class="bar-right">⏰ <span id="liveCas">${formatCas(d)}</span></span>`;
 }
 
 function tickCas() {

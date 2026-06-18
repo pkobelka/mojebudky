@@ -49,17 +49,24 @@
     if (bar) bar.innerHTML = txt;
 
     const jeAdmin = window._aktualniSpravce && window._aktualniSpravce.jeAdmin;
+    const titulek = jeAdmin ? 'Klikni pro seznam online uživatelů' : '';
     el.style.cursor = jeAdmin ? 'pointer' : '';
-    el.title = jeAdmin ? 'Klikni pro seznam online uživatelů' : '';
-    if (mob) { mob.style.cursor = jeAdmin ? 'pointer' : ''; mob.title = el.title; }
+    el.title = titulek;
+    if (mob) { mob.style.cursor = jeAdmin ? 'pointer' : ''; mob.title = titulek; }
+    if (bar) { bar.style.cursor = jeAdmin ? 'pointer' : ''; bar.title = titulek; }
   });
 
   document.addEventListener('click', e => {
-    const el = document.getElementById('onlinePocet');
+    const el  = document.getElementById('onlinePocet');
+    const mob = document.getElementById('onlineMobile');
+    const bar = document.getElementById('onlineBar');
     const popup = document.getElementById('onlinePopup');
 
-    const mob = document.getElementById('onlineMobile');
-    if ((el && el.contains(e.target)) || (mob && mob.contains(e.target))) {
+    const kliknutoNaOnline = (el && el.contains(e.target))
+      || (mob && mob.contains(e.target))
+      || (bar && bar.contains(e.target));
+
+    if (kliknutoNaOnline) {
       const jeAdmin = window._aktualniSpravce && window._aktualniSpravce.jeAdmin;
       if (!jeAdmin) return;
 
@@ -77,11 +84,12 @@
       const div = document.createElement('div');
       div.id = 'onlinePopup';
       div.className = 'online-popup';
-      div.innerHTML = `<div class="op-nadpis">🟢 Právě online</div>${seznam}`;
+      div.innerHTML = `<div class="op-nadpis">🟢 Právě online</div>${seznam || '<div class="op-radek op-navstevnik">Nikdo jiný není online</div>'}`;
 
-      const rect = el.getBoundingClientRect();
+      const anchor = bar || el;
+      const rect = anchor.getBoundingClientRect();
       div.style.top  = (rect.bottom + 6) + 'px';
-      div.style.left = rect.left + 'px';
+      div.style.left = Math.min(rect.left, window.innerWidth - 240) + 'px';
       document.body.appendChild(div);
       return;
     }
