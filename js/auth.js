@@ -2160,6 +2160,8 @@ async function _zobrazEditBudky(loginId, spravceInfo, budkaText, budkaCislo, bud
     modal.remove();
     const marker = window._markersByCislo && window._markersByCislo[budkaCislo];
     if (marker) {
+      const mapEl = document.getElementById('map');
+      if (mapEl) mapEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
       const mc = document.querySelector('.main-content');
       if (mc && !mc.classList.contains('mapa-fullscreen')) {
         const navMapa = document.getElementById('nav-mapa');
@@ -2167,9 +2169,9 @@ async function _zobrazEditBudky(loginId, spravceInfo, budkaText, budkaCislo, bud
       }
       const map = window._getMapInstance && window._getMapInstance();
       setTimeout(() => {
-        if (map) map.setView(marker.getLatLng(), Math.max(map.getZoom(), 15));
-        marker.openPopup();
-      }, 300);
+        if (map) { map.invalidateSize(); map.setView(marker.getLatLng(), Math.max(map.getZoom(), 15)); }
+        setTimeout(() => marker.openPopup(), 150);
+      }, 700);
     }
   });
 }
