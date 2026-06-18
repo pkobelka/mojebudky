@@ -357,13 +357,120 @@
   <div class="splash-box">
     <img src="img/logo.svg" alt="MojeBudky logo" class="splash-logo">
     <div class="splash-autor">PETR KOBELKA</div>
-    <div class="splash-nadpis">Ahoj, naše budky jsou všude okolo!</div>
-    <div class="splash-podnadpis">Pojď s námi sledovat ptačí život</div>
-    <div class="splash-ikony">🤝 👏 👍</div>
+    <div class="splash-nadpis" id="splashNadpis">Vítej u ptačích domovů.</div>
+    <div class="splash-ikony">🐦 🏠 🌿</div>
 
     <div class="splash-bar"><div class="splash-bar-fill"></div></div>
   </div>
 </div>
+<script>
+(function () {
+  var SLOGANY = [
+    'Lítej si v MojeBudky.',
+    'Vítej zpátky mezi budkami.',
+    'Ptačí zprávy přistály.',
+    'Každá budka se počítá.',
+    'Dnes se podíváme, co je nového.',
+    'Dnes se díváme do budek.',
+    'Dnes se počítá každá budka.',
+    'Budky mají svůj příběh.',
+    'Ptačí novinky nezůstaly ve větvích.',
+    'Tvoje ptačí mise může začít.',
+    'Tvoje ptačí hlídka začíná.',
+    'Dnes máš ptačí terén na dlani.',
+    'Dnes budky nezůstanou bez pozornosti.',
+    'Budky vítají tvůj návrat.',
+    'Vítej u práce, která má smysl.',
+    'Díky za péči o budky.',
+    'Díky, že pomáháš budkám.',
+    'Díky, že držíš budky v kondici.',
+    'Dnes je čas dát budkám pozornost.',
+    'Budky jsou malé, ale důležité.',
+    'Tady se peří potkává s daty.',
+    'Vítej v terénu bez bláta.',
+    'Ptačí adresa není jen větev.',
+    'Dnes žádné létání naslepo.',
+    'Přehled je čistý jako ranní zpěv.',
+    'Přehled čeká bez zbytečného pípání.',
+    'Budky hlásí klid a pořádek.',
+    'Tady se budky neztrácí.',
+    'Vítej u budek bez chaosu.',
+    'Dnes kontrolujeme s nadhledem.',
+    'Vítej tam, kde mají budky pořádek.',
+    'Vítej v přehledu pro dobrou věc.',
+    'Vítej u ptačích domovů.',
+    'Vítej u mapy ptačích domovů.',
+    'Vítej v přátelském ptačím systému.',
+    'Tady začíná péče o ptačí domovy.',
+    'Ptačí svět je zase o kousek přehlednější.',
+    'Budky mají pozornost, kterou si zaslouží.',
+    'MojeBudky drží ptačí svět v obraze.',
+    'Budky si zaslouží dobrou evidenci.',
+    'Dnes mají budky hlavní slovo.',
+    'Vítej tam, kde ptáci nechávají stopy.',
+    'Ptačí sousedé už jsou vzhůru.',
+    'Budky čekají na tvé objevy.',
+    'Další kapitola ptačího života začíná.',
+    'Dnes se podíváme pod střechu.',
+    'Ptačí zpravodajství právě začíná.',
+    'V budkách se mezitím děly věci.',
+    'Vítej zpátky na ptačí hlídce.',
+    'Některé budky mají novinky.',
+    'Kdo dnes bydlí v budkách?',
+    'Vítej mezi opeřenými nájemníky.',
+    'Ptačí reality nikdy nespí.',
+    'Dnes se podíváme, kdo je doma.',
+    'Každá budka něco vypráví.',
+    'Ptačí příběhy čekají na doplnění.',
+    'Vítej na adrese, kde to cvrliká.',
+    'Dnes má příroda nové zprávy.',
+    'Budky jsou připravené na další příběh.',
+    'Ptačí kronika pokračuje.',
+    'Vítej mezi strážce ptačích domovů.',
+    'Dnes se bude zapisovat historie.',
+    'Některé budky mají co hlásit.',
+    'V terénu je všechno při starém. Nebo ne?',
+    'Ptačí svět nezahálel.',
+    'Vítej tam, kde každé hnízdo má význam.',
+    'Dnes můžeš objevit něco nového.',
+    'Budky mají otevřeno.',
+    'Ptačí domovy čekají na kontrolu.',
+    'Vítej zpátky do první řady ptačího dění.',
+    'Někdo přiletěl, někdo odletěl.',
+    'Dnes zjistíme, co se změnilo.',
+    'Ptačí sousedství je v plném provozu.',
+    'Každý zápis pomáhá.',
+    'Vítej mezi těmi, kterým budky nejsou lhostejné.',
+    'Dnes může být v některé budce překvapení.',
+    'Ptačí detektivka pokračuje.',
+    'Budky mají své tajemství.',
+    'Vítej tam, kde se počítají i malá křídla.',
+    'Ptačí pošta dorazila.',
+    'Dnes budeme trochu zvědaví.',
+    'V budkách je rušno i bez kalendáře.',
+    'Každá kontrola má svůj význam.',
+    'Ptačí nájemníci se spoléhají na tvou pozornost.',
+    'Vítej v krajině budek a příběhů.',
+    'Dnes nahlédneme do ptačího světa.',
+    'Budky drží pozice.',
+    'Ptačí sezóna píše další řádky.',
+    'Vítej tam, kde příroda zanechává stopy.',
+    'Dnes budky vyprávějí.',
+    'Ptačí inspekce je připravena.',
+    'Vítej na oddělení budkových záležitostí.',
+    'Dnes žádné zahálení na větvi.',
+    'Budky se samy nezkontrolují.',
+    'Ptačí nájemníci odmítli komentář.',
+    'V budkách panuje čilý ruch. Nebo podezřelé ticho.',
+    'Dnes prověříme ptačí realitní trh.',
+    'Některé budky mají lepší obsazenost než hotely.',
+    'Vítej v ptačím katastru.',
+    'Křídla připravena, přehled otevřen.'
+  ];
+  var el = document.getElementById('splashNadpis');
+  if (el) el.textContent = SLOGANY[Math.floor(Math.random() * SLOGANY.length)];
+})();
+</script>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
 
