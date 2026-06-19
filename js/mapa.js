@@ -571,11 +571,16 @@ function pridejLegend(map) {
   legend.addTo(map);
 }
 
+function _scrollNaMapu() {
+  document.querySelector('.map-wrapper')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
 function focusBudka(cislo) {
   const marker = markersByCislo[cislo];
   if (!marker || !mapInstance) return;
+  _scrollNaMapu();
   mapInstance.setView(marker.getLatLng(), 16);
-  setTimeout(() => marker.openPopup(), 150);
+  setTimeout(() => marker.openPopup(), 400);
 }
 
 async function hledejBudku(dotaz) {
@@ -599,7 +604,8 @@ async function hledejBudku(dotaz) {
     const res = await fetch(url, { headers: { 'Accept-Language': 'cs', 'User-Agent': 'MojeBudky/1.0 (https://mojebudky.cz)' } });
     const data = await res.json();
     if (data && data.length > 0) {
-      const { lat, lon, display_name } = data[0];
+      const { lat, lon } = data[0];
+      _scrollNaMapu();
       mapInstance.flyTo([parseFloat(lat), parseFloat(lon)], 14, { duration: 1.2 });
     }
   } catch {}
