@@ -127,19 +127,19 @@
   // Načte historii návštěv (posledních 30 dní) – volá se z auth.js pro admin panel
   window._nactiHistoriiNavstev = async function () {
     const limitTs = Date.now() - 30 * 24 * 60 * 60 * 1000;
-    const snap = await db.ref('navstevnost_log')
-      .orderByChild('ts')
-      .startAt(limitTs)
-      .limitToLast(500)
-      .once('value');
+    // Bez orderByChild – nepotřebuje Firebase index; řazení probíhá na klientovi
+    const snap = await db.ref('navstevnost_log').limitToLast(500).once('value');
     const zaznamy = [];
     snap.forEach(child => {
       const v = child.val();
-      if (v && v.ts) zaznamy.push(v);
+      if (v && v.ts && v.ts >= limitTs) zaznamy.push(v);
     });
     // Smaž záznamy starší než 30 dní (lazy cleanup)
-    const snapAll = await db.ref('navstevnost_log').orderByChild('ts').endAt(limitTs - 1).limitToLast(200).once('value');
-    snapAll.forEach(child => child.ref.remove());
+    const snapStare = await db.ref('navstevnost_log').limitToFirst(200).once('value');
+    snapStare.forEach(child => {
+      const v = child.val();
+      if (v && v.ts && v.ts < limitTs) child.ref.remove();
+    });
     return zaznamy.reverse(); // nejnovější první
   };
 })();
