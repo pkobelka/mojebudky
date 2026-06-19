@@ -780,21 +780,25 @@ async function inicializujMapu() {
               _aktualizujMarkerZFirebase(Number(cislo), latestEdit.kdo_hnizdi, latestEdit.datum_osidleni || null, allEditsDict);
             } else if (Object.keys(allEditsDict).length) {
               // Has edit history (cisteni/kontrola) but no kdo_hnizdi — update fb_edit for history display only
-              const cisloNum = Number(cislo);
-              const bData = (window._budkyDataMap || {})[cisloNum];
-              const marker = markersByCislo[cisloNum];
-              if (bData && marker) {
-                const bUp = { ...bData, fb_edit: allEditsDict };
-                window._budkyDataMap[cisloNum] = bUp;
-                const isMobile = window.innerWidth < 600;
-                marker.unbindPopup();
-                marker.bindPopup(formatPopup(bUp), {
-                  minWidth: isMobile ? Math.min(window.innerWidth - 80, 300) : 420,
-                  maxWidth: isMobile ? Math.min(window.innerWidth - 80, 300) : 520,
-                  className: 'budka-popup-wrap',
-                  autoPanPaddingTopLeft: L.point(38, 100),
-                  autoPanPaddingBottomRight: L.point(38, 20)
-                });
+              try {
+                const cisloNum = Number(cislo);
+                const bData = (window._budkyDataMap || {})[cisloNum];
+                const marker = markersByCislo[cisloNum];
+                if (bData && marker) {
+                  const bUp = { ...bData, fb_edit: allEditsDict };
+                  window._budkyDataMap[cisloNum] = bUp;
+                  const isMobile = window.innerWidth < 600;
+                  marker.unbindPopup();
+                  marker.bindPopup(formatPopup(bUp), {
+                    minWidth: isMobile ? Math.min(window.innerWidth - 80, 300) : 420,
+                    maxWidth: isMobile ? Math.min(window.innerWidth - 80, 300) : 520,
+                    className: 'budka-popup-wrap',
+                    autoPanPaddingTopLeft: L.point(38, 100),
+                    autoPanPaddingBottomRight: L.point(38, 20)
+                  });
+                }
+              } catch(e) {
+                console.error('Chyba při aktualizaci popupu budky', cislo, e);
               }
             }
           });
@@ -927,16 +931,15 @@ async function inicializujMapu() {
     // Zjisti číslo budky pro tento popup
     const cisloPopup = Object.keys(markersByCislo).map(Number).find(k => markersByCislo[k].getPopup() === popup);
 
-    // Načti Firebase edity (foto, nazev) pro tento popup
+    // Načti Firebase edity (foto, nazev, historie) pro tento popup
     if (cisloPopup && typeof firebase !== 'undefined') {
       try {
         firebase.database().ref(`budky_edit/${cisloPopup}`).once('value').then(snap => {
-          const { latestEdit: edit } = _parseEditNode(snap.val());
-          if (!edit) { _pridejEditTlacitka(popup); return; }
+          const { latestEdit: edit, allEditsDict } = _parseEditNode(snap.val());
           const el = popup.getElement();
-          if (!el) return;
+          if (!el) { _pridejEditTlacitka(popup); return; }
           // Fotka – nastavíme src přímo, bez popup.update() který by resetoval obsah
-          if (edit.foto) {
+          if (edit && edit.foto) {
             const fotoBlok = el.querySelector('.popup-foto--auto');
             const img = fotoBlok && fotoBlok.querySelector('img');
             if (img) {
@@ -946,10 +949,26 @@ async function inicializujMapu() {
             }
           }
           // Název
-          if (edit.nazev) {
+          if (edit && edit.nazev) {
             const cisloEl = el.querySelector('.popup-cislo');
             if (cisloEl) cisloEl.innerHTML =
               `<span class="popup-nazev-hlavni">${edit.nazev}</span><span class="popup-cislo-sub"> · č. ${cisloPopup}</span>`;
+          }
+          // Historie — inject do DOM pokud popup byl otevřen dřív než Firebase listener
+          if (Object.keys(allEditsDict).length) {
+            const bBase = (window._budkyDataMap || {})[cisloPopup] || {};
+            const histHtml = formatHistorie({ ...bBase, fb_edit: allEditsDict });
+            if (histHtml) {
+              let sekce = el.querySelector('.popup-sekce');
+              if (!sekce) {
+                sekce = document.createElement('div');
+                sekce.className = 'popup-sekce';
+                const closeBtn = el.querySelector('.popup-zavrit-btn');
+                if (closeBtn) closeBtn.parentNode.insertBefore(sekce, closeBtn);
+                else el.querySelector('.leaflet-popup-content').appendChild(sekce);
+              }
+              sekce.innerHTML = histHtml;
+            }
           }
           _pridejEditTlacitka(popup);
         }).catch(() => {});
