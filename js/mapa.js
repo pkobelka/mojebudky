@@ -4,6 +4,19 @@ let budkyData = [];
 window._markersByCislo = markersByCislo;
 window._getMapInstance = () => mapInstance;
 
+// Vrátí { latestEdit, allEditsDict } z raw Firebase uzlu budky_edit/{cislo}.
+// Podporuje starý plochý formát i nový formát {rok: {...}}.
+function _parseEditNode(raw) {
+  if (!raw) return { latestEdit: null, allEditsDict: {} };
+  const keys = Object.keys(raw);
+  if (keys.length > 0 && keys.every(k => /^\d{4}$/.test(k))) {
+    const latestRok = String(Math.max(...keys.map(Number)));
+    return { latestEdit: raw[latestRok] || null, allEditsDict: raw };
+  }
+  const rok = String(raw.rok || new Date().getFullYear());
+  return { latestEdit: raw, allEditsDict: { [rok]: raw } };
+}
+
 let _aktivniDruhFilter = null;
 
 window._filtrovatMapuPoDruhu = function(nazev) {
@@ -243,8 +256,9 @@ window._tryBudkaFoto = function(img, cislo, roky) {
     // Všechny statické cesty selhaly — zkus Firebase jako zálohu
     if (typeof firebase !== 'undefined') {
       try {
-        firebase.database().ref(`budky_edit/${cislo}/foto`).once('value').then(snap => {
-          const fotoBase64 = snap.val();
+        firebase.database().ref(`budky_edit/${cislo}`).once('value').then(snap => {
+          const { latestEdit } = _parseEditNode(snap.val());
+          const fotoBase64 = latestEdit && latestEdit.foto;
           const blok = img.closest('.popup-foto--auto');
           if (fotoBase64) {
             img.onerror = null;
@@ -432,21 +446,22 @@ function formatGps(lat, lng) {
 
 function formatHistorie(b) {
   const base = (b.historie || []).map(r => ({ ...r }));
-  const fb = b.fb_edit;
-  if (fb && fb.rok) {
-    const fbRok = parseInt(fb.rok);
-    const idx = base.findIndex(r => r.rok === fbRok);
+  const { allEditsDict } = _parseEditNode(b.fb_edit || null);
+  Object.entries(allEditsDict).forEach(([rokStr, edit]) => {
+    if (!edit || !/^\d{4}$/.test(rokStr)) return;
+    const fbRok = parseInt(rokStr);
     const fbRadek = {
       rok: fbRok,
-      cisteno: !!fb.cisteni,
-      kontrolovano: !!fb.kontrola,
-      obsazeno: fb.kdo_hnizdi || null,
-      poznamka: fb.poznamka || null,
+      cisteno: !!edit.cisteni,
+      kontrolovano: !!edit.kontrola,
+      obsazeno: edit.kdo_hnizdi || null,
+      poznamka: edit.poznamka || null,
     };
+    const idx = base.findIndex(r => r.rok === fbRok);
     if (idx >= 0) { base[idx] = { ...base[idx], ...fbRadek }; }
     else { base.push(fbRadek); }
-    base.sort((a, bx) => bx.rok - a.rok);
-  }
+  });
+  if (allEditsDict && Object.keys(allEditsDict).length) base.sort((a, bx) => bx.rok - a.rok);
   if (!base.length) return '';
   const radky = base.map(r => {
     const cisteno = r.cisteno ? '✅' : '—';
@@ -748,13 +763,17 @@ async function inicializujMapu() {
           const edits = editSnap.val() || {};
           const aktivita = window._spravceAktivita || {};
 
-          Object.entries(edits).forEach(([cislo, edit]) => {
-            if (edit.kdo_hnizdi) _aktualizujMarkerZFirebase(Number(cislo), edit.kdo_hnizdi, edit.datum_osidleni || null, edit);
+          Object.entries(edits).forEach(([cislo, editRaw]) => {
+            const { latestEdit, allEditsDict } = _parseEditNode(editRaw);
+            if (latestEdit && latestEdit.kdo_hnizdi) {
+              _aktualizujMarkerZFirebase(Number(cislo), latestEdit.kdo_hnizdi, latestEdit.datum_osidleni || null, allEditsDict);
+            }
           });
 
           // Aktualizuj tooltipy a popupy s aktivitou správce
           Object.entries(window._budkyDataMap || {}).forEach(([cislo, bData]) => {
-            const editTs = (edits[cislo] && edits[cislo].ts) || 0;
+            const { latestEdit } = _parseEditNode(edits[cislo] || null);
+            const editTs = (latestEdit && latestEdit.ts) || 0;
             const aktTs  = aktivita[cislo] || 0;
             const lastTs = Math.max(editTs, aktTs);
             if (lastTs) {
@@ -773,7 +792,7 @@ async function inicializujMapu() {
               .filter(([, b]) => b.stav === 'osidlena')
               .map(([c]) => String(c)),
             ...Object.entries(edits)
-              .filter(([, e]) => e.kdo_hnizdi)
+              .filter(([, editRaw]) => { const { latestEdit } = _parseEditNode(editRaw); return latestEdit && latestEdit.kdo_hnizdi; })
               .map(([c]) => String(c))
           ]);
           const elS = document.getElementById('stat-osidlenych');
@@ -883,7 +902,8 @@ async function inicializujMapu() {
     if (cisloPopup && typeof firebase !== 'undefined') {
       try {
         firebase.database().ref(`budky_edit/${cisloPopup}`).once('value').then(snap => {
-          const edit = snap.val() || {};
+          const { latestEdit: edit } = _parseEditNode(snap.val());
+          if (!edit) { _pridejEditTlacitka(popup); return; }
           const el = popup.getElement();
           if (!el) return;
           // Fotka – nastavíme src přímo, bez popup.update() který by resetoval obsah

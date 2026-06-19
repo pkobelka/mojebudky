@@ -1944,7 +1944,15 @@ async function _zobrazEditBudky(loginId, spravceInfo, budkaText, budkaCislo, bud
   if (db) {
     try {
       const snap = await db.ref(`budky_edit/${budkaCislo}`).once('value');
-      ulozeno = snap.val() || {};
+      const raw = snap.val() || {};
+      // Nový formát: klíče jsou 4místné roky; starý formát: plochý objekt
+      const keys = Object.keys(raw);
+      if (keys.length > 0 && keys.every(k => /^\d{4}$/.test(k))) {
+        const currentYear = String(new Date().getFullYear());
+        ulozeno = raw[currentYear] || raw[String(Math.max(...keys.map(Number)))] || {};
+      } else {
+        ulozeno = raw;
+      }
     } catch {}
   }
 
@@ -2199,7 +2207,7 @@ async function _zobrazEditBudky(loginId, spravceInfo, budkaText, budkaCislo, bud
           spravce_id: loginId, jmeno
         };
         if (_fotoBase64) data.foto = _fotoBase64;
-        await db.ref(`budky_edit/${budkaCislo}`).set(data);
+        await db.ref(`budky_edit/${budkaCislo}/${rok}`).set(data);
         ok = true;
       } catch {}
     }
