@@ -773,6 +773,24 @@ async function inicializujMapu() {
             const { latestEdit, allEditsDict } = _parseEditNode(editRaw);
             if (latestEdit && latestEdit.kdo_hnizdi) {
               _aktualizujMarkerZFirebase(Number(cislo), latestEdit.kdo_hnizdi, latestEdit.datum_osidleni || null, allEditsDict);
+            } else if (Object.keys(allEditsDict).length) {
+              // Has edit history (cisteni/kontrola) but no kdo_hnizdi — update fb_edit for history display only
+              const cisloNum = Number(cislo);
+              const bData = (window._budkyDataMap || {})[cisloNum];
+              const marker = markersByCislo[cisloNum];
+              if (bData && marker) {
+                const bUp = { ...bData, fb_edit: allEditsDict };
+                window._budkyDataMap[cisloNum] = bUp;
+                const isMobile = window.innerWidth < 600;
+                marker.unbindPopup();
+                marker.bindPopup(formatPopup(bUp), {
+                  minWidth: isMobile ? Math.min(window.innerWidth - 80, 300) : 420,
+                  maxWidth: isMobile ? Math.min(window.innerWidth - 80, 300) : 520,
+                  className: 'budka-popup-wrap',
+                  autoPanPaddingTopLeft: L.point(38, 100),
+                  autoPanPaddingBottomRight: L.point(38, 20)
+                });
+              }
             }
           });
 

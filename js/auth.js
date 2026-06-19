@@ -1153,11 +1153,15 @@ async function _zobrazHistoriiNavstev() {
   document.body.appendChild(modal);
   modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
 
+  if (typeof window._nactiHistoriiNavstev !== 'function') {
+    document.getElementById('historieNavstevObsah').textContent = 'Chyba: stránka je zastaralá — stiskni Ctrl+Shift+R pro tvrdý reload.';
+    return;
+  }
   let zaznamy = [];
   try {
     zaznamy = await window._nactiHistoriiNavstev();
-  } catch {
-    document.getElementById('historieNavstevObsah').textContent = 'Nepodařilo se načíst data.';
+  } catch(e) {
+    document.getElementById('historieNavstevObsah').textContent = 'Nepodařilo se načíst data: ' + (e && e.message || String(e));
     return;
   }
 
