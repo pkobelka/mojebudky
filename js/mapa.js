@@ -9,10 +9,15 @@ window._getMapInstance = () => mapInstance;
 function _parseEditNode(raw) {
   if (!raw) return { latestEdit: null, allEditsDict: {} };
   const keys = Object.keys(raw);
-  if (keys.length > 0 && keys.every(k => /^\d{4}$/.test(k))) {
-    const latestRok = String(Math.max(...keys.map(Number)));
-    return { latestEdit: raw[latestRok] || null, allEditsDict: raw };
+  const yearKeys = keys.filter(k => /^\d{4}$/.test(k));
+  if (yearKeys.length > 0) {
+    // Per-year format (or mixed — ignore non-year flat fields)
+    const allEditsDict = {};
+    yearKeys.forEach(k => { allEditsDict[k] = raw[k]; });
+    const latestRok = String(Math.max(...yearKeys.map(Number)));
+    return { latestEdit: allEditsDict[latestRok] || null, allEditsDict };
   }
+  // Old flat format
   const rok = String(raw.rok || new Date().getFullYear());
   return { latestEdit: raw, allEditsDict: { [rok]: raw } };
 }

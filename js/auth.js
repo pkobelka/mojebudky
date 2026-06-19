@@ -1945,15 +1945,18 @@ async function _zobrazEditBudky(loginId, spravceInfo, budkaText, budkaCislo, bud
 
   const db = _getFirebaseDB();
   let ulozeno = {};
+  let _existingRocniData = {}; // year-keyed entries from Firebase; used in save to replace whole node
   if (db) {
     try {
       const snap = await db.ref(`budky_edit/${budkaCislo}`).once('value');
       const raw = snap.val() || {};
-      // Nový formát: klíče jsou 4místné roky; starý formát: plochý objekt
+      // Preferuj roční záznamy (klíče jsou 4místné roky); starý formát: plochý objekt
       const keys = Object.keys(raw);
-      if (keys.length > 0 && keys.every(k => /^\d{4}$/.test(k))) {
+      const yearKeys = keys.filter(k => /^\d{4}$/.test(k));
+      if (yearKeys.length > 0) {
+        yearKeys.forEach(k => { _existingRocniData[k] = raw[k]; });
         const currentYear = String(new Date().getFullYear());
-        ulozeno = raw[currentYear] || raw[String(Math.max(...keys.map(Number)))] || {};
+        ulozeno = raw[currentYear] || raw[String(Math.max(...yearKeys.map(Number)))] || {};
       } else {
         ulozeno = raw;
       }
@@ -2211,7 +2214,10 @@ async function _zobrazEditBudky(loginId, spravceInfo, budkaText, budkaCislo, bud
           spravce_id: loginId, jmeno
         };
         if (_fotoBase64) data.foto = _fotoBase64;
-        await db.ref(`budky_edit/${budkaCislo}/${rok}`).set(data);
+        // Ulož jako roční záznam a zároveň vyčisti případná stará plochá pole
+        const nodeData = { ..._existingRocniData, [rok]: data };
+        await db.ref(`budky_edit/${budkaCislo}`).set(nodeData);
+        _existingRocniData = nodeData;
         ok = true;
       } catch {}
     }
