@@ -259,7 +259,7 @@ async function _zobrazAdminPanel(loginId) {
   if (!jeAdmin) _sledujZpravySpravce(loginId);
 
   const btn = document.getElementById('btnPrihlasit');
-  if (btn) { btn.innerHTML = `Přihlášen ${jmeno} ▾ <span class="zpravy-nav-badge" id="zpravyNavBadge" hidden>0</span>`; btn.classList.add('prihlaseny'); }
+  if (btn) { btn.innerHTML = `<span class="btn-login-prefix">Přihlášen </span><span class="btn-login-jmeno">${jmeno}</span> ▾ <span class="zpravy-nav-badge" id="zpravyNavBadge" hidden>0</span>`; btn.classList.add('prihlaseny'); }
 
   const existujiciDropdown = document.getElementById('adminDropdown');
   if (existujiciDropdown) existujiciDropdown.remove();

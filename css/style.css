@@ -121,7 +121,8 @@ html, body {
 .admin-banner button { background: none; border: 1px solid var(--panel-border); color: var(--text-muted); border-radius: 4px; padding: 0.3rem 0.8rem; cursor: pointer; font-size: 0.82rem; }
 .admin-banner button:hover { color: var(--text-light); border-color: var(--text-muted); }
 .admin-budka-link { color: var(--accent-gold); font-size: 0.85rem; font-style: italic; }
-.btn-login.prihlaseny { background: transparent !important; color: var(--accent-gold) !important; text-decoration: underline; border-color: transparent !important; position: relative; overflow: visible !important; }
+.btn-login.prihlaseny { background: transparent !important; color: var(--accent-gold) !important; text-decoration: underline; border-color: transparent !important; position: relative; overflow: visible !important; max-width: none; }
+.btn-login-jmeno { display: inline; }
 .zpravy-nav-badge { display: inline-block; background: #e53935; color: #fff; border-radius: 12px; font-size: 0.82rem; font-weight: 800; padding: 2px 8px; margin-left: 7px; vertical-align: middle; box-shadow: 0 0 0 0 rgba(229,57,53,0.7); animation: badgePulse 1.8s ease-in-out infinite; }
 @keyframes badgePulse { 0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(229,57,53,0.7); } 60% { transform: scale(1.25); box-shadow: 0 0 0 7px rgba(229,57,53,0); } 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(229,57,53,0); } }
 /* Na mobilu badge jako absolutní kolečko v rohu tlačítka, protože btn-login má overflow:hidden */
@@ -608,6 +609,8 @@ html, body {
   .logo-autor { font-size: 0.55rem; margin-top: 4px; }
   .nav-actions { gap: 6px; }
   .btn-login { font-size: 0.82rem; padding: 7px 10px; white-space: nowrap; }
+  .btn-login-prefix { display: none; }
+  .btn-login.prihlaseny { max-width: 130px; overflow: hidden !important; text-overflow: ellipsis; white-space: nowrap; }
   .splash-box { padding: 40px 28px 36px; }
   .splash-nadpis { font-size: 2rem; }
   .navbar { padding: 0 12px; height: 58px; }
