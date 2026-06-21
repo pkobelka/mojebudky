@@ -698,7 +698,8 @@ html, body {
   .profil-overlay { align-items: flex-start !important; overflow: hidden !important; padding: 4svh 0 0 !important; }
   .profil-box { width: 100% !important; height: 92svh !important; max-height: none !important; overflow-y: scroll !important; -webkit-overflow-scrolling: touch !important; overscroll-behavior: contain; border-radius: 16px 16px 0 0 !important; }
   .profil-header { padding: 16px 14px; gap: 12px; }
-  .profil-foto { width: 64px; height: 64px; }
+  .profil-foto { width: 72px; height: 72px; }
+  .profil-foto-pridej-btn { font-size: 0.75rem; padding: 4px 9px; }
   .profil-nadpis { font-size: 1.15rem; }
   .profil-budka { font-size: 0.9rem; }
   .profil-form { padding: 14px; gap: 12px; }
@@ -773,7 +774,10 @@ html, body {
 /* ── PROFIL SPRÁVCE ── */
 .profil-box { max-width: 760px; width: 96%; padding: 0; overflow: hidden; text-align: left; }
 .profil-header { display: flex; align-items: center; gap: 24px; background: linear-gradient(135deg, #0f2a04, #1e4a0a); padding: 28px 56px 28px 36px; border-bottom: 2px solid var(--accent-gold); }
-.profil-foto-wrap { position: relative; flex-shrink: 0; }
+.profil-foto-area { display: flex; flex-direction: column; align-items: center; flex-shrink: 0; gap: 8px; }
+.profil-foto-wrap { position: relative; }
+.profil-foto-pridej-btn { background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.28); color: #eef4e8; font-size: 0.82rem; font-weight: 600; border-radius: 8px; padding: 5px 12px; cursor: pointer; white-space: nowrap; font-family: inherit; transition: background 0.15s; touch-action: manipulation; }
+.profil-foto-pridej-btn:hover { background: rgba(255,255,255,0.22); }
 .profil-foto { width: 110px; height: 110px; border-radius: 50%; object-fit: cover; border: 3px solid var(--accent-gold); box-shadow: 0 4px 16px rgba(0,0,0,0.5); display: block; }
 .profil-foto-btn { position: absolute; bottom: 2px; right: 2px; background: var(--orange); color: #fff; border-radius: 50%; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; font-size: 1rem; cursor: pointer; border: 2px solid var(--panel-bg); transition: background 0.2s; }
 .profil-foto-btn:hover { background: var(--orange-light); }

@@ -1565,11 +1565,14 @@ function _zobrazProfilSpravce(loginId, info, budkaText) {
       <button class="modal-zavrit" id="profilZavrit">×</button>
 
       <div class="profil-header">
-        <div class="profil-foto-wrap">
-          <img id="profilFotoNahled" src="${d.foto || 'img/Favikon.png'}" class="profil-foto profil-foto--klikatelna" alt="Foto správce" title="Kliknout pro změnu fotky">
-          <button type="button" class="profil-foto-btn" id="profilFotoBtn" title="Nahrát nebo vyfotit">📷</button>
-          <input type="file" id="profilFotoInputGalerie" accept="image/*" style="position:absolute;opacity:0;pointer-events:none;width:0;height:0">
-          <input type="file" id="profilFotoInputKamera" accept="image/*" capture="environment" style="position:absolute;opacity:0;pointer-events:none;width:0;height:0">
+        <div class="profil-foto-area">
+          <div class="profil-foto-wrap">
+            <img id="profilFotoNahled" src="${d.foto || 'img/Favikon.png'}" class="profil-foto profil-foto--klikatelna" alt="Foto správce" title="Kliknout pro změnu fotky">
+            <button type="button" class="profil-foto-btn" id="profilFotoBtn" title="Nahrát nebo vyfotit">📷</button>
+            <input type="file" id="profilFotoInputGalerie" accept="image/*" style="position:absolute;opacity:0;pointer-events:none;width:0;height:0">
+            <input type="file" id="profilFotoInputKamera" accept="image/*" capture="environment" style="position:absolute;opacity:0;pointer-events:none;width:0;height:0">
+          </div>
+          <button type="button" class="profil-foto-pridej-btn" id="profilFotoPridejBtn">${d.foto ? '📷 Změnit foto' : '📷 Přidat foto'}</button>
         </div>
         <div class="profil-header-text">
           <div class="profil-nadpis">🪪 Karta správce</div>
@@ -1792,6 +1795,7 @@ function _zobrazProfilSpravce(loginId, info, budkaText) {
 
   document.getElementById('profilFotoBtn').addEventListener('click', _otevritFotoSheet);
   document.getElementById('profilFotoNahled').addEventListener('click', _otevritFotoSheet);
+  document.getElementById('profilFotoPridejBtn').addEventListener('click', _otevritFotoSheet);
 
   function _zpracujFoto(file) {
     if (!file) return;
@@ -1806,6 +1810,8 @@ function _zobrazProfilSpravce(loginId, info, budkaText) {
         canvas.height = Math.round(img.height * ratio);
         canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
         document.getElementById('profilFotoNahled').src = canvas.toDataURL('image/jpeg', 0.82);
+        const pridejBtn = document.getElementById('profilFotoPridejBtn');
+        if (pridejBtn) pridejBtn.textContent = '📷 Změnit foto';
       };
       img.src = ev.target.result;
     };
