@@ -2250,20 +2250,30 @@ async function _zobrazEditBudky(loginId, spravceInfo, budkaText, budkaCislo, bud
       return;
     }
     modal.remove();
-    const marker = window._markersByCislo && window._markersByCislo[budkaCislo];
-    if (marker) {
-      const mapEl = document.getElementById('map');
-      if (mapEl) mapEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    if (window.focusBudka) {
+      // focusBudka v mapa.js: scroll na mapu + setView + openPopup
       const mc = document.querySelector('.main-content');
       if (mc && !mc.classList.contains('mapa-fullscreen')) {
         const navMapa = document.getElementById('nav-mapa');
         if (navMapa) navMapa.click();
       }
-      const map = window._getMapInstance && window._getMapInstance();
-      setTimeout(() => {
-        if (map) { map.invalidateSize(); map.setView(marker.getLatLng(), Math.max(map.getZoom(), 15)); }
-        setTimeout(() => marker.openPopup(), 150);
-      }, 700);
+      // Scroll a otevření popupu až po layout change z navMapa.click()
+      setTimeout(() => window.focusBudka(budkaCislo), 400);
+    } else {
+      const marker = window._markersByCislo && window._markersByCislo[budkaCislo];
+      if (marker) {
+        const mc = document.querySelector('.main-content');
+        if (mc && !mc.classList.contains('mapa-fullscreen')) {
+          const navMapa = document.getElementById('nav-mapa');
+          if (navMapa) navMapa.click();
+        }
+        const map = window._getMapInstance && window._getMapInstance();
+        setTimeout(() => {
+          document.querySelector('.map-wrapper')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          if (map) { map.invalidateSize(); map.setView(marker.getLatLng(), Math.max(map.getZoom(), 15)); }
+          setTimeout(() => marker.openPopup(), 300);
+        }, 400);
+      }
     }
   });
 }
