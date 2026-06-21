@@ -610,6 +610,7 @@ html, body {
   .nav-actions { gap: 6px; }
   .btn-login { font-size: 0.82rem; padding: 7px 10px; white-space: nowrap; }
   .btn-login-prefix { display: none; }
+  .btn-login-suffix { display: none; }
   .btn-login.prihlaseny { max-width: 130px; overflow: hidden !important; text-overflow: ellipsis; white-space: nowrap; }
   .splash-box { padding: 40px 28px 36px; }
   .splash-nadpis { font-size: 2rem; }
