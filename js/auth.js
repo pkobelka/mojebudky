@@ -1771,19 +1771,21 @@ function _zobrazProfilSpravce(loginId, info, budkaText) {
   function _otevritFotoSheet() {
     const existSheet = document.getElementById('fotoSheet');
     if (existSheet) { existSheet.remove(); return; }
+    const jeMobil = navigator.maxTouchPoints > 0 || window.matchMedia('(pointer: coarse)').matches;
     const sheet = document.createElement('div');
     sheet.id = 'fotoSheet';
     sheet.className = 'foto-sheet-overlay';
     sheet.innerHTML = `
       <div class="foto-sheet">
-        <button class="foto-sheet-btn" id="fotoSheetKamera">📷 Vyfotit</button>
-        <button class="foto-sheet-btn" id="fotoSheetGalerie">🖼️ Vybrat z galerie</button>
+        ${jeMobil ? `<button class="foto-sheet-btn" id="fotoSheetKamera">📷 Vyfotit</button>` : ''}
+        <button class="foto-sheet-btn" id="fotoSheetGalerie">${jeMobil ? '🖼️ Vybrat z galerie' : '🖼️ Vybrat fotku ze souboru'}</button>
         <button class="foto-sheet-btn foto-sheet-zrusit" id="fotoSheetZrusit">Zrušit</button>
       </div>`;
     document.body.appendChild(sheet);
     sheet.addEventListener('click', e => { if (e.target === sheet) sheet.remove(); });
     document.getElementById('fotoSheetZrusit').addEventListener('click', () => sheet.remove());
-    document.getElementById('fotoSheetKamera').addEventListener('click', () => {
+    const kameraBtn = document.getElementById('fotoSheetKamera');
+    if (kameraBtn) kameraBtn.addEventListener('click', () => {
       sheet.remove();
       document.getElementById('profilFotoInputKamera').click();
     });
@@ -2526,6 +2528,7 @@ function _zobrazVizitku(loginId, spravceInfo, profil) {
           <button class="profil-btn-ulozit" id="vizitkaTisknout">🖨 Vytisknout</button>
           <button class="profil-btn-ulozit" id="vizitkaOdeslat" style="background:var(--accent-gold);color:#1a3a00">📤 Odeslat</button>
           <button class="profil-btn-ulozit" id="vizitkaObrazek" style="background:#2a6018;color:#eef4e8;border:1.5px solid var(--accent-gold)">🖼 Obrázek</button>
+          ${!foto ? `<p class="vizitka-foto-hint">💡 Fotku přidáš v <strong>Kartě správce</strong></p>` : ''}
         </div>
       </div>
     </div>`;

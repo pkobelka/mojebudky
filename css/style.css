@@ -1146,7 +1146,8 @@ html, body {
 .vizitka-kontakt { display: flex; flex-wrap: wrap; gap: 8px 20px; font-size: 0.88rem; color: rgba(238,244,232,0.75); border-top: 1px solid rgba(212,160,64,0.25); padding-top: 14px; align-items: center; }
 .vizitka-web { margin-left: auto; color: var(--accent-gold); font-weight: 700; font-size: 0.82rem; }
 .vizitka-qr { width: 64px; height: 64px; border-radius: 6px; flex-shrink: 0; }
-.vizitka-akce { display: flex; justify-content: center; margin-top: 18px; }
+.vizitka-akce { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 18px; }
+.vizitka-foto-hint { width: 100%; margin: 0; font-size: 0.85rem; color: var(--text-muted); text-align: center; }
 
 /* ── TISK VIZITKY ── */
 @media print {
