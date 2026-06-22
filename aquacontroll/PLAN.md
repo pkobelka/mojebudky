@@ -114,13 +114,14 @@ respektovat. Notifikace se zapnou až vědomě, po dokončení.
      (🎤 mluvený popis / 📷 foto / 📎 dokument).
   4. **Lidé** – řešitel + informovaní.
   *(Pořadí kroků 1↔2 je k doladění dle provozu.)*
-- 📋 **Nabídka pro novou událost** strukturovaná dle metodiky MP06
-  (MP06 je sken – přesné body doplní uživatel):
-  - **Nestandardní podmínky na vodovodu (bod 2):** porucha na vodovodu;
-    porucha zařízení (čerpadlo/úpravna/chlorace); čištění/proplach; přerušení
-    dodávky; pokles tlaku/výpadek; … (doplnit)
-  - **Zhoršení kvality vody – postupy po oznámení (bod 3):**
-    a) základní ukazatele (železo, barva, zákal, pach…);
+- 📋 **Nabídka pro novou událost** dle metodiky **MP01** (přepsáno ze skenu):
+  - **Hlášení nestandardních podmínek na vodovodu (bod 2):** porucha/havárie na
+    vodovodu (odstávka části); čištění vodojemu; porucha/odstávka/výměna
+    chlorovacího zařízení; přerušení odběru / odstavení zdroje; obnovení dodávky
+    ze zdroje do sítě; sezónní zásobování z jiného zdroje/vodovodu; nedostatky
+    (jímací zařízení / ochranné pásmo / vodojem); podezření na zhoršení kvality vody
+  - **Postupy po oznámení nevyhovujícího rozboru (bod 3):**
+    a) zhoršení v základních ukazatelích (železo, barva, zákal);
     b) nevyhovující mikrobiologický rozbor
   - **Podněty veřejnosti:** stížnost občana; reklamace
   - **Jiné** (volná položka – uživatel dopíše popis)
