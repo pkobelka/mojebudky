@@ -66,6 +66,8 @@ def main() -> None:
         # VHOS = ředitelství: vyčlenit zvlášť, nepočítat mezi střediska
         if s["je_centrala"]:
             reditelstvi = zaznam
+        elif s["nazev"] == "Laboratoř":
+            pass  # laboratoř není provozní středisko, nezobrazuje se na dashboardu
         else:
             strediska.append(zaznam)
 

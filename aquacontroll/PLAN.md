@@ -148,8 +148,11 @@ respektovat. Notifikace se zapnou až vědomě, po dokončení.
   WhatsApp skupina / **Twilio** (skutečné zvonění na mobily, placené per minuta).
 
 ### Organizace
-- 🧪 **Skupina „Laboratoř"** (jako ředitelství – ne provozní středisko) + její
-  lidi (seznam dodá uživatel).
+- 🧪 **Skupina „Laboratoř"** (jako ředitelství – ne provozní středisko,
+  na dashboardu se nezobrazuje). Lidé (externí, ČEVAK, @cevak.cz):
+  Stanislav Škeřík (SŠ, Vedoucí laboratoře – **ověřit roli**), Jiří Bombera (JB,
+  Vzorkař 1), Radovan Selinger (RS, Vzorkař 2). Nová role **Vzorkař**.
+  *(Telefony Bombera/Selinger a e-mail Selinger – doplnit.)*
 - 🏗️ **Objekty střediska** mají typ: **vodovod / prameniště / vrt /
   vodojem / úpravna / čerpací stanice / chlorovací zařízení (chlorace) / jine**.
   (Zdroje rozlišujeme zvlášť na `prameniste` a `vrt`, navíc `vodojem`.)

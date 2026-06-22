@@ -80,7 +80,7 @@ CREATE TABLE IF NOT EXISTS uzivatele (
     -- Systémová role; řídí oprávnění a notifikace
     role          TEXT    NOT NULL
                   CHECK (role IN ('Mistr', 'Technolog', 'Vedoucí', 'Director',
-                                  'Dispečer', 'Informace')),
+                                  'Dispečer', 'Informace', 'Vzorkař')),
     funkce        TEXT,                            -- konkrétní pracovní pozice (text)
     stredisko_id  INTEGER REFERENCES strediska(id) ON DELETE SET NULL,
     aktivni       INTEGER NOT NULL DEFAULT 1,      -- 1 = aktivní účet

@@ -264,7 +264,7 @@ function krok1(){
   h+=`</div></div>`;});
  return h;
 }
-function selPod(o,z){st.podminka=o;st.zavaznost=z;render();}
+function selPod(o,z){st.podminka=o;st.zavDef=z;render();}
 
 function krok2(){
  const objklic=(st.stredisko&&st.typ)?st.stredisko+"|"+st.typ:null;
@@ -311,7 +311,7 @@ function krok(d){
   if(st.krok===2){if(jeZmenaPlanu()){if(!st.odber)return alert("Vyber konkrétní odběr z plánu.");}else if(!st.stredisko||!st.typ)return alert("Vyber středisko a typ objektu.");}
   if(st.krok===4){st.hotovo=true;render();return;}
  }
- st.krok+=d;if(st.krok<1)st.krok=1;render();
+ st.krok+=d;if(st.krok<1)st.krok=1;if(st.krok===3&&!st.zavaznost)st.zavaznost=st.zavDef||"stredni";render();
 }
 function hotovoHTML(){
  const zl=st.zavaznost?ZAV[st.zavaznost][0]:"—";
