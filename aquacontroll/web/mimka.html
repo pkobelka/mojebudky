@@ -266,7 +266,17 @@ function krok1(){
 }
 function selPod(o,z){st.podminka=o;st.zavDef=z;render();}
 
+const PODM_TYP={"Čištění vodojemu":"vodojem"};
+const OBJTYP_DATA={"vodojem": {"Jevíčko": ["Akumulace Léčebna", "Akumulace pro ATS Flintour", "Akumulace pro ATS Kalvárie", "Akumulace pro ČS Lazy", "Březina akumulace Důl Prokop", "Mařín vodojem", "Vodojem Biskupice", "Vodojem Bohdalov", "Vodojem Bělá u Jevíčka", "Vodojem Březina-Anna", "Vodojem Březinky", "Vodojem Hartinkov", "Vodojem Hejk", "Vodojem Jaroměřice-Za dvory", "Vodojem Jevíčko-Červený Kopec", "Vodojem Lázy", "Vodojem Mezihoří", "Vodojem Městečko Trnávka", "Vodojem Nový Dvůr", "Vodojem Pacov", "Vodojem Petrůvka", "Vodojem Petrůvka-obec", "Vodojem Slatina", "Vodojem Unerázka", "Vodojem Vranová Lhota", "Vodojem Vrážné", "Vodojem Vysoká", "Vodojem Zadní Arnoštov", "Vodojem Zálesí-Flintour", "Zadní Arnoštov vodojem"], "Litomyšl": ["Janov vodojem", "Lubná vodojem u hájenky", "Nový vodojem Bohuňovice", "Starý vodojem Bohuňovice", "Strakov vodojem", "Vidlatá Seč vodojem", "Vodojem Budislav", "Vodojem Dolní Újezd", "Vodojem Horní Újezd", "Vodojem Hraničky", "Vodojem Mladočov", "Vodojem Morašice", "Vodojem Nová Ves", "Vodojem Pohodlí", "Vodojem Suchá Lhota + ATS", "Vodojem Trstěnice", "Vodojem s ČS Jarošov", "Čistá Vodojem"], "Moravská Třebová": ["Akumulace Západní", "Akumulace pod ČS Křenov", "Akumulace pro ČS Mladějov na Moravě", "Akumulace ÚV Kunčina", "Akumulace ČS Borušov", "Akumulace ČS Janůvky", "Akumulace ČS Nový Dvůr", "Vodojem Borušov", "Vodojem Boršov-Horní", "Vodojem Boršov-Mach", "Vodojem Bošov-spodní", "Vodojem Dlouhá Loučka", "Vodojem Huttbusch", "Vodojem Janůvky", "Vodojem Koruna", "Vodojem Kunčina", "Vodojem Křenov", "Vodojem Křížový Vrch", "Vodojem Křížový vrch II", "Vodojem Malíkov", "Vodojem Mladějov", "Vodojem Mladějov na Moravě-v sadu", "Vodojem Nová Ves", "Vodojem Prklišov", "Vodojem Ptáček", "Vodojem Přední Arnoštov", "Vodojem Rozstání", "Vodojem Rozstání-Horní", "Vodojem Rudná-Horní", "Vodojem Rudná-dolní", "Vodojem Staré Město", "Vodojem Staré Město-nový", "Vodojem Sušice", "Vodojem Třebařov", "Vodojem Závodiště", "Vodojem Útěchov"], "Polička": ["Akumulace Pomezí", "Akumulace Trkač", "Akumulace Vetešník", "Akumulace Šibeňák", "Jedlová vodojem", "Korouhev vodojem", "Květná Vodojem", "Manipulační vodojem", "Modřec vodojem", "Oldříš vodojem", "Polička nový vodojem letiště", "Polička starý vodojem letiště", "Pomezí nový vodojem", "Pustá Kamenice vodojem", "Sebranice akumulace", "Střitež vodojem", "Trpín vodojem", "Vodojem Na Stašov", "Vodojem pro poličské strojírny"], "Svitavy": ["Akumulace ATS Samoty", "Akumulace ČS Sklené", "Mikuleč vodojem", "Pohledy Vodojem Slezáček", "Provozní akumulace", "Provozní akumulace Dětřichov", "Provozní akumulace Dětřichov-mimo provoz", "Vodojem Banín", "Vodojem Brněnec", "Vodojem Bělá nad Svitavou", "Vodojem Dětřichov", "Vodojem Hradec nad Svitavou", "Vodojem Mladějov na Moravě", "Vodojem Na Sibiři", "Vodojem Opatov", "Vodojem Pohledy", "Vodojem Radiměř-Hájenka", "Vodojem Radiměř-nad školou", "Vodojem Radiměř-nový", "Vodojem Radiměř-starý", "Vodojem Sklené", "Študlov akumulace"]}};
+function setObjekt2(i){const tp=PODM_TYP[st.podminka];const objs=(OBJTYP_DATA[tp]&&st.stredisko)?(OBJTYP_DATA[tp][st.stredisko]||[]):[];st.objekt=objs[i];render();}
 function krok2(){
+ const tp=PODM_TYP[st.podminka]||null;
+ if(tp){st.typ=tp;const objs=(OBJTYP_DATA[tp]&&st.stredisko)?(OBJTYP_DATA[tp][st.stredisko]||[]):[];
+  let h=`<h4>Kde – ${tp}</h4><p class="hint">Vyber pracoviště a pak konkrétní ${tp}.</p>`;
+  h+=`<div class="fld"><label>Pracoviště</label><div class="str-btns">`+STR.map(([nm])=>`<div class="pill ${st.stredisko===nm?'sel':''}" style="${st.stredisko===nm?'background:#1577c8':''}" onclick="setStr('${esc(nm)}')">${nm}</div>`).join("")+`</div></div>`;
+  if(st.stredisko){h+=`<div class="fld"><label>Vyber ${tp} (${objs.length})</label>`+(objs.length?`<div class="people" style="max-height:240px;overflow:auto">`+objs.map((o,i)=>`<div class="person ${st.objekt===o?'sel':''}" onclick="setObjekt2(${i})">${esc(o)}</div>`).join("")+`</div>`:`<p class="hint">Seznam pro „${tp}" zatím není naimportovaný.</p>`)+`</div>`;}
+  return h;
+ }
  const objklic=(st.stredisko&&st.typ)?st.stredisko+"|"+st.typ:null;
  const objs=objklic&&OBJ[objklic]?OBJ[objklic]:[];
  return `<h4>Kde se to děje?</h4><p class="hint">Středisko → typ objektu → konkrétní objekt.</p>
@@ -308,7 +318,7 @@ function togInfo(z){const i=st.info.indexOf(z);if(i<0)st.info.push(z);else st.in
 function krok(d){
  if(d>0){ // validace
   if(st.krok===1&&!st.podminka)return alert("Vyber, co se stalo.");
-  if(st.krok===2){if(jeZmenaPlanu()){if(!st.odber)return alert("Vyber konkrétní odběr z plánu.");}else if(!st.stredisko||!st.typ)return alert("Vyber středisko a typ objektu.");}
+  if(st.krok===2){if(jeZmenaPlanu()){if(!st.odber)return alert("Vyber konkrétní odběr z plánu.");}else{const tp=PODM_TYP[st.podminka];if(tp){if(!st.stredisko||!st.objekt)return alert("Vyber pracoviště a konkrétní "+tp+".");}else if(!st.stredisko||!st.typ)return alert("Vyber středisko a typ objektu.");}}
   if(st.krok===4){st.hotovo=true;render();return;}
  }
  st.krok+=d;if(st.krok<1)st.krok=1;if(st.krok===3&&!st.zavaznost)st.zavaznost=st.zavDef||"stredni";render();
