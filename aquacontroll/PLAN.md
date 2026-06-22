@@ -164,6 +164,10 @@ respektovat. Notifikace se zapnou až vědomě, po dokončení.
   Seed formát: `stredisko; nazev; kod; typ`. Seznamy zdrojů a vrtů pro
   jednotlivá střediska dodá uživatel.
 
+- 🗺️ **Mapa objektů** – objekty mají GPS (`lokality.gps_lat/gps_lng`). Vodojemy
+  naimportovány se souřadnicemi (převod S-JTSK → WGS84 z Vodojemy.csv, sloupce
+  S_JTSK_X/Y). Prototyp `web/mapa_vodojemy.html` (Leaflet/OpenStreetMap, 126 bodů,
+  barevně dle pracoviště). Do budoucna: mapa i pro události s GPS, filtr dle typu.
 ### Nápady do budoucna
 - 🗺️ mapa událostí (GPS), 📊 statistiky, 📅 kalendář odběrů, 🔎 filtrování/hledání,
   lepší využití plochy na velkém monitoru vs. mobilu.

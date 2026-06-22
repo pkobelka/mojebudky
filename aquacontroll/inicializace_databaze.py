@@ -96,6 +96,8 @@ CREATE TABLE IF NOT EXISTS lokality (
     stredisko_id  INTEGER NOT NULL
                   REFERENCES strediska(id) ON DELETE CASCADE,
     poznamka      TEXT,
+    gps_lat       REAL,
+    gps_lng       REAL,
     vytvoreno     TEXT    NOT NULL,
     UNIQUE (stredisko_id, typ, nazev)                -- v rámci střediska unikátní (typ+název)
 );
@@ -369,9 +371,11 @@ def vloz_lokality(conn: sqlite3.Connection, lokality: list[dict]) -> None:
             preskoceno += 1
             continue
         cur.execute(
-            """INSERT INTO lokality (nazev, kod, typ, poznamka, stredisko_id, vytvoreno)
-               VALUES (?, ?, ?, ?, ?, ?)""",
-            (l["nazev"], l.get("kod"), typ, l.get("poznamka"), stredisko_id, nyni()),
+            """INSERT INTO lokality (nazev, kod, typ, poznamka, gps_lat, gps_lng, stredisko_id, vytvoreno)
+               VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",
+            (l["nazev"], l.get("kod"), typ, l.get("poznamka"),
+             float(l["gps_lat"]) if l.get("gps_lat") else None,
+             float(l["gps_lng"]) if l.get("gps_lng") else None, stredisko_id, nyni()),
         )
         vlozeno += 1
     conn.commit()
