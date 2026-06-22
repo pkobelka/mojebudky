@@ -246,8 +246,10 @@ function renderPlan(){const byd={};PLAN.forEach(p=>{(byd[p.datum]=byd[p.datum]||
   h+=`<div class="pl-den"><div class="pl-datum">${d.split("-").reverse().join(".")}</div><div class="pl-odbery">`+byd[d].map((p,i)=>`<div class="pl-odber" onclick="zPlanu('${d}',${i})"><b>${esc(p.misto)}</b>${p.rozsah?`<span> · ${esc(p.rozsah)}</span>`:""}</div>`).join("")+`</div></div>`;});
  document.getElementById("planBody").innerHTML=h||"<p class=hint>Plán je prázdný.</p>";}
 function zPlanu(d,i){const list=PLAN.filter(p=>p.datum===d);otevri();st.podminka="Změna v plánu kontroly jakosti PV";st.zavaznost="nizka";_datum=d;st.odber=list[i];st.krok=3;zavriPlan();render();}
+const UZIVATEL="Petr Kobelka";
+function jePodnet(){return st.podminka==="Stížnost občana"||st.podminka==="Reklamace";}
 function breadcrumb(){
- const t=[];
+ const t=[["Zadává",UZIVATEL]];
  if(st.podminka)t.push(["Co",st.podminka]);
  if(jeZmenaPlanu()){if(st.odber)t.push(["Odběr",st.odber.datum.split("-").reverse().join(".")+" · "+st.odber.misto]);}
  else{if(st.stredisko)t.push(["Středisko",st.stredisko]);if(st.typ)t.push(["Typ",st.typ]);if(st.objekt)t.push(["Objekt",st.objekt]);}
@@ -295,8 +297,7 @@ function krok3(){
  return `<h4>Podrobnosti</h4>
  <div class="fld"><label>Závažnost (přednastaveno, lze změnit)</label><div class="zav-btns">${zb}</div></div>
  <div class="fld"><label>Popis</label><textarea placeholder="Stručně co se stalo…" oninput="st.popis=this.value">${esc(st.popis)}</textarea></div>
- <div class="two"><div class="fld"><label>Kdo nahlásil</label><input value="${esc(st.nahlasil)}" oninput="st.nahlasil=this.value" placeholder="Jméno"></div>
- <div class="fld"><label>Telefon</label><input value="${esc(st.tel)}" oninput="st.tel=this.value" placeholder="+420…"></div></div>
+ ${jePodnet()?`<div class="two"><div class="fld"><label>Kdo nahlásil (občan)</label><input value="${esc(st.nahlasil)}" oninput="st.nahlasil=this.value" placeholder="Jméno"></div><div class="fld"><label>Telefon</label><input value="${esc(st.tel)}" oninput="st.tel=this.value" placeholder="+420…"></div></div>`:""}
  <div class="fld"><label>Přílohy</label><div class="attach">
    <button onclick="alert('🎤 Nahrávání mluveného popisu (mimka)')">🎤 Mluvený popis</button>
    <button onclick="alert('📷 Vyfotit / nahrát foto (mimka)')">📷 Foto</button>
@@ -331,7 +332,7 @@ function hotovoHTML(){
  <div class="sumline"><b>Co:</b> ${esc(st.podminka||"—")} · <b>závažnost:</b> ${zl}</div>
  ${jeZmenaPlanu()&&st.odber?`<div class="sumline"><b>Odběr z plánu:</b> ${esc(st.odber.datum)} · ${esc(st.odber.misto)}</div>`:`<div class="sumline"><b>Kde:</b> ${esc(st.stredisko||"—")} · ${esc(st.typ||"—")} · ${esc(st.objekt||"—")}</div>`}
  <div class="sumline"><b>Popis:</b> ${esc(st.popis||"—")}</div>
- <div class="sumline"><b>Nahlásil:</b> ${esc(st.nahlasil||"—")} ${st.tel?("· "+esc(st.tel)):""}</div>
+ <div class="sumline"><b>Zadal:</b> ${UZIVATEL}${(jePodnet()&&st.nahlasil)?` · nahlásil: ${esc(st.nahlasil)}${st.tel?(" · "+esc(st.tel)):""}`:""}</div>
  <div class="sumline"><b>Řešitel:</b> ${esc(st.resitel||"—")} · <b>Informováni:</b> ${st.info.join(", ")||"—"}</div>
  </div>
  <div style="margin-top:18px"><button class="b-save" style="border:0;border-radius:12px;padding:10px 22px;color:#fff;font-weight:800;cursor:pointer" onclick="zavri()">Hotovo</button></div></div>`;
