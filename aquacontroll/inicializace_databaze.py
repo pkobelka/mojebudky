@@ -369,9 +369,9 @@ def vloz_lokality(conn: sqlite3.Connection, lokality: list[dict]) -> None:
             preskoceno += 1
             continue
         cur.execute(
-            """INSERT INTO lokality (nazev, kod, typ, stredisko_id, vytvoreno)
-               VALUES (?, ?, ?, ?, ?)""",
-            (l["nazev"], l.get("kod"), typ, stredisko_id, nyni()),
+            """INSERT INTO lokality (nazev, kod, typ, poznamka, stredisko_id, vytvoreno)
+               VALUES (?, ?, ?, ?, ?, ?)""",
+            (l["nazev"], l.get("kod"), typ, l.get("poznamka"), stredisko_id, nyni()),
         )
         vlozeno += 1
     conn.commit()
