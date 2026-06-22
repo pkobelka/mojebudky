@@ -1,372 +1,388 @@
-﻿stredisko;nazev;kod;typ;poznamka;gps_lat;gps_lng
-Moravská Třebová;Boršov;VF1101019;vodovod;;;
-Moravská Třebová;Borušov;VF1101004;vodovod;;;
-Moravská Třebová;Dětřichov u M.Třebové;VF1101013;vodovod;;;
-Moravská Třebová;Dlouhá Loučka;VF1101007;vodovod;;;
-Moravská Třebová;Janůvky;VF1101017;vodovod;;;
-Moravská Třebová;Koruna;VF1101025;vodovod;;;
-Moravská Třebová;Křenov;VF1101016;vodovod;;;
-Moravská Třebová;Kunčina;VF1101009;vodovod;;;
-Moravská Třebová;Linhartice;VF1101006;vodovod;;;
-Moravská Třebová;Malíkov;VF1101130;vodovod;;;
-Moravská Třebová;Mladějov;VF1101021;vodovod;;;
-Moravská Třebová;Mor. Třebová - zahr. Kolonie na Stráni;VF1101142;vodovod;;;
-Moravská Třebová;Moravská Třebová;VF1101001;vodovod;;;
-Moravská Třebová;Nová Ves;VF1101010;vodovod;;;
-Moravská Třebová;Přední Arnoštov;VF1101128;vodovod;;;
-Moravská Třebová;Radišov;VF1101012;vodovod;;;
-Moravská Třebová;Radkov;VF1101015;vodovod;;;
-Moravská Třebová;Rozstání;VF1101014;vodovod;;;
-Moravská Třebová;Rudná;VF1101018;vodovod;;;
-Moravská Třebová;Rychnov na Moravě;VF1101020;vodovod;;;
-Moravská Třebová;Staré Město;VF1101011;vodovod;;;
-Moravská Třebová;Sušice;VF1101002;vodovod;;;
-Moravská Třebová;Třebářov;VF1101024;vodovod;;;
-Moravská Třebová;Udánky;VF1101003;vodovod;;;
-Moravská Třebová;Útěchov;VF1101008;vodovod;;;
-Jevíčko;Bělá u Jevíčka;VF1105026;vodovod;;;
-Jevíčko;Bezděčí u Trnávky;VF1111045;vodovod;;;
-Jevíčko;Biskupice;VF1108031;vodovod;;;
-Jevíčko;Bohdalov;VF1111116;vodovod;;;
-Jevíčko;Borová;VF1111049;vodovod;;;
-Jevíčko;Březina;VF1102022;vodovod;;;
-Jevíčko;Březinky, Nectava;VF1106027;vodovod;;;
-Jevíčko;Hartinkov;VF1108028;vodovod;;;
-Jevíčko;Hraničky;VF1111047;vodovod;;;
-Jevíčko;Chornice;VF1111040;vodovod;;;
-Jevíčko;Jaroměřice;VF1108032;vodovod;;;
-Jevíčko;Jevíčko;VF1108029;vodovod;;;
-Jevíčko;Lázy;VF1111042;vodovod;;;
-Jevíčko;Ludvíkov;VF1111129;vodovod;;;
-Jevíčko;Mařín;VF1108035;vodovod;;;
-Jevíčko;Městečko Trnávka;VF1111038;vodovod;;;
-Jevíčko;Mezihoří;VF1111041;vodovod;;;
-Jevíčko;Nectava;VF1106118;vodovod;;;
-Jevíčko;Nový Dvůr;VF1108033;vodovod;;;
-Jevíčko;Pacov;VF1111039;vodovod;;;
-Jevíčko;Pěčíkov;VF1111048;vodovod;;;
-Jevíčko;Petrůvka;VF1111043;vodovod;;;
-Jevíčko;Plechtinec;VF1111050;vodovod;;;
-Jevíčko;Slatina;VF1103023;vodovod;;;
-Jevíčko;Smolná;VF1105117;vodovod;;;
-Jevíčko;Šnekov;VF1102022;vodovod;;;
-Jevíčko;Unerázka;VF1111044;vodovod;;;
-Jevíčko;Víska u Jevíčka;VF1108030;vodovod;;;
-Jevíčko;Vranová Lhota;VF1111046;vodovod;;;
-Jevíčko;Vrážné;VF1111036;vodovod;;;
-Jevíčko;Vysoká;VF1108037;vodovod;;;
-Jevíčko;Zadní Arnoštov;VF1108034;vodovod;;;
-Polička;Borová u Poličky (předaná);VF3125089;vodovod;;;
-Polička;Jedlová;VF3126091;vodovod;;;
-Polička;Kamenec;VF3125076;vodovod;;;
-Polička;Korouhev;VF3125083;vodovod;;;
-Polička;Květná;VF3125085;vodovod;;;
-Polička;Lezník;VF3125077;vodovod;;;
-Polička;Lubná;VF3125079;vodovod;;;
-Polička;Modřec;VF3125087;vodovod;;;
-Polička;N. Ves u Lit. (předaná);VF3125078;vodovod;;;
-Polička;Oldřiš;VF3125088;vodovod;;;
-Polička;Olešnice (voda předaná);VF3128121;vodovod;;;
-Polička;Pohodlí (předaná);VF3125086;vodovod;;;
-Polička;Polička;VF3125074;vodovod;;;
-Polička;Pomezí;VF3125075;vodovod;;;
-Polička;Pustá Kamenice;VF3127092;vodovod;;;
-Polička;Sádek;VF3125084;vodovod;;;
-Polička;Sebranice;VF3125080;vodovod;;;
-Polička;Střítež;VF3125081;vodovod;;;
-Polička;Široký Důl;VF3125082;vodovod;;;
-Polička;Trpín;VF3128093;vodovod;;;
-Litomyšl;Benátky;VF3137111;vodovod;;;
-Litomyšl;Bohuňovice;VF3131096;vodovod;;;
-Litomyšl;Budislav;VF3125104;vodovod;;;
-Litomyšl;Budislavka;VF3125126;vodovod;;;
-Litomyšl;Desná;VF3125123;vodovod;;;
-Litomyšl;Dolní Újezd;VF3125090;vodovod;;;
-Litomyšl;Gajer;VF3132103;vodovod;;;
-Litomyšl;Horní Újezd;VF3125122;vodovod;;;
-Litomyšl;Chotěnov;VF3125144;vodovod;;;
-Litomyšl;Chotěnov (voda předaná) jen do 31.12.2021;VF3125127;vodovod;;;
-Litomyšl;Janov;VF3132100;vodovod;;;
-Litomyšl;Jarošov (předaná);VF3125132;vodovod;;;
-Litomyšl;Jiříkov;VF3125139;vodovod;;;
-Litomyšl;Lažany;VF3125138;vodovod;;;
-Litomyšl;Mikuleč;VF3132102;vodovod;;;
-Litomyšl;Mladočov;VF3125114;vodovod;;;
-Litomyšl;Morašice;VF3125105;vodovod;;;
-Litomyšl;Netřeby;VF3131099;vodovod;;;
-Litomyšl;Nová Sídla;VF3125107;vodovod;;;
-Litomyšl;Poříčí;VF3125113;vodovod;;;
-Litomyšl;Řídký;VF3131098;vodovod;;;
-Litomyšl;Říkovice;VF3125137;vodovod;;;
-Litomyšl;Sedliště;VF3131097;vodovod;;;
-Litomyšl;Sedlištka;VF3125106;vodovod;;;
-Litomyšl;Strakov;VF3132101;vodovod;;;
-Litomyšl;Suchá Lhota;VF3135109;vodovod;;;
-Litomyšl;Trstěnice;VF3136110;vodovod;;;
-Litomyšl;Tržek;VF3125108;vodovod;;;
-Litomyšl;Václavky;VF3125140;vodovod;;;
-Litomyšl;Vidlatá Seč;VF3125124;vodovod;;;
-Litomyšl;Zrnětín;VF3125115;vodovod;;;
-Svitavy;Banín;VF1117064;vodovod;;;
-Svitavy;Bělá n. Svitavou;VF1118065;vodovod;;;
-Svitavy;Brněnec;VF1154133;vodovod;;;
-Svitavy;Dětřichov;VF1152131;vodovod;;;
-Svitavy;Hradec n. Svitavou;VF1113060;vodovod;;;
-Svitavy;Chrastová Lhota;VF1154134;vodovod;;;
-Svitavy;Lavičné;VF1118066;vodovod;;;
-Svitavy;Moravská Chrastová;VF1154135;vodovod;;;
-Svitavy;Opatov;VF1114061;vodovod;;;
-Svitavy;Opatovec;VF1115062;vodovod;;;
-Svitavy;Pohledy;VF1120069;vodovod;;;
-Svitavy;Půlpecen;VF1154136;vodovod;;;
-Svitavy;Radiměř;VF1121070;vodovod;;;
-Svitavy;Sklené;VF1122071;vodovod;;;
-Svitavy;Študlov;VF1123072;vodovod;;;
-Svitavy;Vítějeves;VF1118067;vodovod;;;
-Litomyšl;Starý vodojem Bohuňovice;;vodojem;150 m³;49.900507;16.267592
-Litomyšl;Nový vodojem Bohuňovice;;vodojem;150 m³;49.900363;16.267732
-Polička;Pustá Kamenice vodojem;;vodojem;200 m³;49.750024;16.097667
-Litomyšl;Vodojem Suchá Lhota + ATS;;vodojem;0 m³;49.876151;16.171474
-Litomyšl;Vodojem Morašice;;vodojem;150 m³;49.862524;16.229505
-Litomyšl;Vodojem s ČS Jarošov;;vodojem;0 m³;49.818189;16.173480
-Litomyšl;Vidlatá Seč vodojem;;vodojem;250 m³;49.813212;16.192344
-Litomyšl;Vodojem Mladočov;;vodojem;0 m³;49.812466;16.195591
-Litomyšl;Vodojem Budislav;;vodojem;300 m³;49.806225;16.167350
-Litomyšl;Vodojem Nová Ves;;vodojem;400 m³;49.827879;16.307433
-Litomyšl;Vodojem Hraničky;;vodojem;420 m³;49.813289;16.235681
-Litomyšl;Vodojem Horní Újezd;;vodojem;420 m³;49.802084;16.243519
-Litomyšl;Strakov vodojem;;vodojem;100 m³;49.863236;16.371059
-Litomyšl;Čistá Vodojem;;vodojem;400 m³;49.833718;16.324705
-Litomyšl;Janov vodojem;;vodojem;420 m³;49.827838;16.392023
-Svitavy;Vodojem Opatov;;vodojem;420 m³;49.822203;16.512516
-Litomyšl;Lubná vodojem u hájenky;;vodojem;160 m³;49.772843;16.189082
-Litomyšl;Vodojem Pohodlí;;vodojem;0 m³;49.800152;16.286672
-Litomyšl;Vodojem Dolní Újezd;;vodojem;250 m³;49.789376;16.270710
-Polička;Sebranice akumulace;;vodojem;800 m³;49.760774;16.235570
-Polička;Oldříš vodojem;;vodojem;500 m³;49.728079;16.175616
-Polička;Střitež vodojem;;vodojem;150 m³;49.743084;16.248453
-Polička;Polička nový vodojem letiště;;vodojem;1500 m³;49.736808;16.256355
-Polička;Polička starý vodojem letiště;;vodojem;1300 m³;49.736427;16.256404
-Svitavy;Mikuleč vodojem;;vodojem;0 m³;49.803552;16.405470
-Litomyšl;Vodojem Trstěnice;;vodojem;150 m³;49.783692;16.341970
-Polička;Květná Vodojem;;vodojem;80 m³;49.738536;16.346876
-Polička;Akumulace Šibeňák;;vodojem;200 m³;49.704964;16.253926
-Polička;Pomezí nový vodojem;;vodojem;420 m³;49.716712;16.324646
-Polička;Korouhev vodojem;;vodojem;500 m³;49.687420;16.245145
-Polička;Vodojem pro poličské strojírny;;vodojem;100 m³;49.680077;16.281985
-Polička;Modřec vodojem;;vodojem;30 m³;49.680874;16.290624
-Polička;Jedlová vodojem;;vodojem;420 m³;49.668351;16.305305
-Polička;Akumulace Trkač;;vodojem;75 m³;49.704913;16.344492
-Svitavy;Vodojem Radiměř-Hájenka;;vodojem;40 m³;49.705454;16.379705
-Svitavy;Vodojem Radiměř-starý;;vodojem;70 m³;49.700855;16.398250
-Svitavy;Vodojem Radiměř-nový;;vodojem;420 m³;49.700703;16.398366
-Svitavy;Vodojem Radiměř-nad školou;;vodojem;70 m³;49.698401;16.430563
-Svitavy;Vodojem Hradec nad Svitavou;;vodojem;400 m³;49.711110;16.497024
-Svitavy;Vodojem Sklené;;vodojem;50 m³;49.706202;16.542623
-Svitavy;Vodojem Banín;;vodojem;100 m³;49.660084;16.471672
-Svitavy;Pohledy Vodojem Slezáček;;vodojem;10 m³;49.670491;16.546249
-Svitavy;Vodojem Bělá nad Svitavou;;vodojem;250 m³;49.636049;16.473631
-Svitavy;Vodojem Brněnec;;vodojem;420 m³;49.624595;16.532880
-Polička;Trpín vodojem;;vodojem;250 m³;49.589555;16.396463
-Moravská Třebová;Akumulace pro ČS Mladějov na Moravě;;vodojem;30 m³;49.832150;16.591813
-Moravská Třebová;Vodojem Třebařov;;vodojem;420 m³;49.843941;16.719535
-Moravská Třebová;Vodojem Koruna;;vodojem;70 m³;49.840125;16.726236
-Moravská Třebová;Vodojem Mladějov na Moravě-v sadu;;vodojem;50 m³;49.817166;16.580318
-Moravská Třebová;Vodojem Mladějov;;vodojem;6 m³;49.817312;16.576814
-Svitavy;Vodojem Mladějov na Moravě;;vodojem;500 m³;49.816661;16.582849
-Svitavy;Vodojem Dětřichov;;vodojem;250 m³;49.807323;16.556261
-Moravská Třebová;Vodojem Nová Ves;;vodojem;250 m³;49.799867;16.587944
-Moravská Třebová;Vodojem Kunčina;;vodojem;420 m³;49.790567;16.604051
-Moravská Třebová;Vodojem Staré Město;;vodojem;150 m³;49.794220;16.661389
-Moravská Třebová;Vodojem Staré Město-nový;;vodojem;250 m³;49.794114;16.661427
-Moravská Třebová;Akumulace ÚV Kunčina;;vodojem;100 m³;49.782496;16.658046
-Moravská Třebová;Vodojem Sušice;;vodojem;1300 m³;49.775788;16.668414
-Moravská Třebová;Vodojem Prklišov;;vodojem;150 m³;49.782452;16.746515
-Moravská Třebová;Vodojem Borušov;;vodojem;50 m³;49.776645;16.737586
-Moravská Třebová;Akumulace ČS Borušov;;vodojem;8,15 m³;49.775563;16.740175
-Moravská Třebová;Vodojem Závodiště;;vodojem;2000 m³;49.765040;16.677651
-Moravská Třebová;Vodojem Křížový Vrch;;vodojem;300 m³;49.759190;16.673304
-Moravská Třebová;Vodojem Křížový vrch II;;vodojem;500 m³;49.757553;16.674718
-Moravská Třebová;Vodojem Huttbusch;;vodojem;400 m³;49.748223;16.658277
-Moravská Třebová;Vodojem Ptáček;;vodojem;7 m³;49.772851;16.751297
-Moravská Třebová;Vodojem Boršov-Horní;;vodojem;80 m³;49.740259;16.591945
-Moravská Třebová;Vodojem Boršov-Mach;;vodojem;150 m³;49.743122;16.600592
-Moravská Třebová;Vodojem Bošov-spodní;;vodojem;65 m³;49.741744;16.622189
-Moravská Třebová;Vodojem Útěchov;;vodojem;100 m³;49.723849;16.641224
-Moravská Třebová;Vodojem Malíkov;;vodojem;50 m³;49.728751;16.686886
-Moravská Třebová;Vodojem Rozstání-Horní;;vodojem;100 m³;49.739243;16.711160
-Moravská Třebová;Vodojem Rozstání;;vodojem;50 m³;49.738895;16.716594
-Jevíčko;Vodojem Pacov;;vodojem;100 m³;49.707539;16.676173
-Jevíčko;Vodojem Petrůvka;;vodojem;420 m³;49.717664;16.754637
-Jevíčko;Vodojem Petrůvka-obec;;vodojem;50 m³;49.714900;16.749867
-Svitavy;Vodojem Pohledy;;vodojem;100 m³;49.693842;16.556004
-Moravská Třebová;Vodojem Dlouhá Loučka;;vodojem;250 m³;49.695387;16.640646
-Moravská Třebová;Akumulace pod ČS Křenov;;vodojem;65 m³;49.684908;16.656502
-Moravská Třebová;Vodojem Přední Arnoštov;;vodojem;40 m³;49.684970;16.656577
-Moravská Třebová;Akumulace ČS Janůvky;;vodojem;50 m³;49.672545;16.595239
-Moravská Třebová;Vodojem Janůvky;;vodojem;30 m³;49.670714;16.587912
-Moravská Třebová;Vodojem Křenov;;vodojem;500 m³;49.676955;16.649854
-Jevíčko;Mařín vodojem;;vodojem;10 m³;49.673218;16.648245
-Jevíčko;Vodojem Městečko Trnávka;;vodojem;120 m³;49.707682;16.732452
-Jevíčko;Vodojem Mezihoří;;vodojem;21 m³;49.703500;16.738480
-Jevíčko;Vodojem Lázy;;vodojem;250 m³;49.694861;16.722428
-Jevíčko;Akumulace pro ČS Lazy;;vodojem;42 m³;49.699048;16.734043
-Jevíčko;Vodojem Unerázka;;vodojem;25 m³;49.698715;16.755743
-Jevíčko;Vodojem Bohdalov;;vodojem;100 m³;49.752503;16.779958
-Jevíčko;Vodojem Vranová Lhota;;vodojem;250 m³;49.720934;16.821619
-Jevíčko;Vodojem Vrážné;;vodojem;24 m³;49.682315;16.792150
-Jevíčko;Vodojem Hartinkov;;vodojem;30 m³;49.682216;16.815369
-Moravská Třebová;Vodojem Rudná-dolní;;vodojem;50 m³;49.654126;16.566240
-Moravská Třebová;Vodojem Rudná-Horní;;vodojem;65 m³;49.657715;16.582060
-Jevíčko;Vodojem Březina-Anna;;vodojem;150 m³;49.656998;16.608839
-Jevíčko;Březina akumulace Důl Prokop;;vodojem;50 m³;49.649190;16.607463
-Jevíčko;Zadní Arnoštov vodojem;;vodojem;50 m³;49.659317;16.658326
-Jevíčko;Vodojem Bělá u Jevíčka;;vodojem;50 m³;49.644482;16.645320
-Jevíčko;Vodojem Slatina;;vodojem;140 m³;49.627860;16.599170
-Jevíčko;Vodojem Zadní Arnoštov;;vodojem;240 m³;49.639631;16.685702
-Jevíčko;Vodojem Jevíčko-Červený Kopec;;vodojem;500 m³;49.632659;16.692641
-Jevíčko;Vodojem Biskupice;;vodojem;150 m³;49.643486;16.748634
-Jevíčko;Akumulace pro ATS Flintour;;vodojem;59 m³;49.643656;16.763995
-Jevíčko;Vodojem Zálesí-Flintour;;vodojem;65 m³;49.643330;16.769231
-Jevíčko;Vodojem Hejk;;vodojem;420 m³;49.637330;16.739747
-Jevíčko;Akumulace pro ATS Kalvárie;;vodojem;63 m³;49.624102;16.745516
-Jevíčko;Vodojem Jaroměřice-Za dvory;;vodojem;250 m³;49.626789;16.756765
-Jevíčko;Vodojem Nový Dvůr;;vodojem;63,5 m³;49.610186;16.769818
-Jevíčko;Vodojem Vysoká;;vodojem;25 m³;49.664142;16.812489
-Jevíčko;Vodojem Březinky;;vodojem;40 m³;49.661590;16.792632
-Moravská Třebová;Akumulace Západní;;vodojem;360 m³;49.758303;16.647373
-Svitavy;Akumulace ČS Sklené;;vodojem;50 m³;49.709044;16.514922
-Svitavy;Študlov akumulace;;vodojem;58 m³;49.602061;16.507062
-Jevíčko;Akumulace Léčebna;;vodojem;0 m³;49.631639;16.663098
-Svitavy;Akumulace ATS Samoty;;vodojem;60 m³;49.706232;16.542494
-Polička;Manipulační vodojem;;vodojem;20 m³;49.736258;16.099833
-Polička;Akumulace Pomezí;;vodojem;50 m³;49.713406;16.307642
-Polička;Akumulace Vetešník;;vodojem;20 m³;49.709894;16.332676
-Polička;Modřec vodojem;;vodojem;10 m³;49.680874;16.290624
-Polička;Vodojem Na Stašov;;vodojem;0 m³;49.703340;16.351315
-Svitavy;Provozní akumulace Dětřichov;;vodojem;15 m³;49.801461;16.526180
-Svitavy;Vodojem Na Sibiři;;vodojem;50 m³;49.629162;16.538898
-Svitavy;Provozní akumulace;;vodojem;11 m³;49.802724;16.471621
-Svitavy;Provozní akumulace Dětřichov-mimo provoz;;vodojem;0 m³;49.801477;16.526206
-Moravská Třebová;Akumulace ČS Nový Dvůr;;vodojem;23 m³;49.613994;16.767455
-Litomyšl;Bohuňovice studna;;studna;studna;49.907393;16.249002
-Polička;Pustá Kamenice vrt PKV-1;;vrt;vrt;49.750101;16.097662
-Polička;Pustá Kamenice studna S1;;studna;studna;49.734999;16.100817
-Polička;Pustá Kamenice studna S2;;studna;studna;49.736000;16.102127
-Polička;Pustá Kamenice studna S3;;studna;studna;49.732806;16.102667
-Litomyšl;Suchá Lhota vrt SL-2;;vrt;vrt;49.879118;16.167833
-Litomyšl;Suchá Lhota studna S-1;;studna;studna;49.879271;16.168199
-Litomyšl;Morašice vrt V-2;;vrt;vrt;49.862423;16.229208
-Litomyšl;Morašice vrt V-1;;vrt;vrt;49.862497;16.229436
-Litomyšl;Studna Budislav Borek S4;;studna;studna;49.809501;16.155001
-Litomyšl;Studna Budislav Borek S5;;studna;studna;49.809749;16.155787
-Litomyšl;Studna Budislav Borek S1;;studna;sběrná studna;49.809429;16.155794
-Litomyšl;Studna Budislav Borek S3;;studna;studna;49.809497;16.156856
-Litomyšl;Čistá vrt CL-1;;vrt;vrt;49.833827;16.324962
-Litomyšl;Janov vrt JH-1;;vrt;vrt;49.828488;16.364773
-Svitavy;Opatov Vrt HV-2;;vrt;vrt;49.822363;16.512595
-Polička;Sebranice vrt V-1;;vrt;vrt;49.759298;16.232299
-Polička;Sebranice vrt V-5A;;vrt;vrt;49.760854;16.234381
-Litomyšl;Trstěnice vrt TC-1;;vrt;vrt;49.783434;16.340275
-Svitavy;Opatovec Vrt HV-1;;vrt;vrt;49.802735;16.471516
-Svitavy;Opatov Vrt OV-1;;vrt;vrt;49.819605;16.490890
-Svitavy;Dětřichov Vrt HG-1;;vrt;vrt;49.793891;16.509981
-Polička;Polička Vrt V-9;;vrt;vrt;49.714871;16.271807
-Polička;Polička Vrt V-6;;vrt;vrt;49.713269;16.276467
-Polička;Jedlová Vrt HV-5;;vrt;vrt;49.670003;16.300413
-Polička;Jedlová Vrt HV-3;;vrt;vrt;49.668900;16.301354
-Svitavy;Radiměř štola Cikánka;;prameniste;sběrná jímka;49.702628;16.391831
-Svitavy;Vrt Hradec nad Svitavou V-3;;vrt;vrt;49.710925;16.496594
-Svitavy;Vrt Hradec nad Svitavou V-2;;vrt;vrt;49.711165;16.496897
-Svitavy;Vrt Sklené SN-2;;vrt;vrt;49.713815;16.513507
-Svitavy;Vrt Banín BN-1;;vrt;vrt;49.662478;16.469031
-Svitavy;Vrt Banín BN-2;;vrt;vrt;49.662408;16.468958
-Svitavy;Bělá nad Svitavou Studna BS-1;;studna;studna;49.639672;16.479274
-Svitavy;Brněnec Studna S 1;;studna;studna;49.625673;16.529898
-Polička;Olešnice vrt S-1;;vrt;vrt;49.580896;16.391293
-Polička;Trpín vrt S-2;;vrt;vrt;49.581025;16.396284
-Polička;Olešnice studna;;studna;studna;49.578280;16.395776
-Svitavy;Študlov zářez (prameniště I);;prameniste;pramenní jímka;49.601536;16.506467
-Svitavy;Študlov prameniště Květiny (K1);;studna;studna;49.595995;16.504982
-Svitavy;Študlov prameniště Květiny (K2);;studna;studna;49.595991;16.505040
-Svitavy;Študlov prameniště Květiny (K3);;studna;studna;49.596008;16.505192
-Svitavy;Študlov prameniště Květiny (K4);;studna;studna;49.596273;16.505482
-Svitavy;Študlov prameniště Květiny (K5);;studna;studna;49.596336;16.505225
-Moravská Třebová;Mladějov na Moravě Vrt HM-3 (vrt Trpík);;vrt;vrt;49.838192;16.586089
-Moravská Třebová;Vrt Třebařov TK-2;;vrt;vrt;49.848536;16.702730
-Moravská Třebová;Vrt Koruna KO-1;;vrt;vrt;49.843858;16.719751
-Moravská Třebová;Kunčina Vrt HK-1;;vrt;vrt;49.780080;16.646719
-Moravská Třebová;Kunčina Vrt M-1;;vrt;vrt;49.782762;16.657879
-Moravská Třebová;Sušice Studna S-1;;studna;studna;49.779970;16.657224
-Moravská Třebová;Vrt Červená hospoda-MTČH 1;;vrt;vrt;49.768777;16.712081
-Moravská Třebová;Vrt Červená hospoda-MTČH 4;;vrt;vrt;49.766174;16.723428
-Moravská Třebová;Boršov Vrt HB-1;;vrt;vrt;49.741346;16.592568
-Moravská Třebová;Vrt Malíkov HV-1;;vrt;vrt;49.731313;16.687057
-Jevíčko;Petrůvka Vrt HV-1;;vrt;vrt;49.717604;16.764457
-Svitavy;Vrt Pohledy P1;;vrt;vrt;49.693906;16.557347
-Moravská Třebová;Studna Dlouhá Loučka Queck;;studna;studna;49.694647;16.632664
-Moravská Třebová;Jímka Dlouhá Loučka Wőlfel;;prameniste;sběrná jímka;49.697485;16.644251
-Moravská Třebová;Prameniště Křenov Kraví hora;;prameniste;sběrná jímka;49.684740;16.656442
-Jevíčko;Sběrná jímka T Městečko Trnávka;;prameniste;sběrná jímka;49.695009;16.689877
-Jevíčko;Sběrná jímka Pacov P;;prameniste;pramenní jímka;49.695024;16.689736
-Jevíčko;Studna Bohdalov-BH-2;;studna;studna;49.754542;16.780927
-Jevíčko;Studna Bohdalov-BH-1;;studna;studna;49.754510;16.782774
-Jevíčko;Studna Bohdalov-ST-1;;studna;studna;49.752843;16.780194
-Jevíčko;Studna Bohdalov-ZD;;studna;studna;49.752509;16.780209
-Jevíčko;Studna Hartinkov-S3;;studna;studna;49.684216;16.814531
-Jevíčko;Studna Hartinkov-S4;;studna;studna;49.682082;16.820004
-Jevíčko;Březina Pekelná Zmola;;prameniste;sběrná jímka;49.649685;16.593209
-Jevíčko;Jímka Bělá u Jevíčka-PJ1;;prameniste;pramenní jímka;49.644800;16.645290
-Jevíčko;Jímka Bělá u Jevíčka-PJ2;;prameniste;pramenní jímka;49.644616;16.645404
-Jevíčko;Vrt Bělá u Jevíčka-HV 502;;vrt;vrt;49.642705;16.651984
-Jevíčko;Zadní Arnoštov studna;;studna;studna;49.657861;16.676447
-Jevíčko;Studna Biskupice;;studna;studna;49.650196;16.744527
-Jevíčko;Studna Jevíčko sv. Bartoloměj;;studna;studna;49.640426;16.686894
-Jevíčko;Pramen Jevíčko sv. Bartoloměj;;prameniste;pramenní jímka;49.639716;16.685688
-Jevíčko;Studna Jevíčko-Reifova pila;;studna;studna;49.638289;16.729208
-Jevíčko;Prameniště se zářezem Jaroměřice Č. Skala;;prameniste;pramenní jímka;49.614578;16.768012
-Jevíčko;Sběrná jímka Březinky 2;;prameniste;sběrná jímka;49.660778;16.803080
-Jevíčko;Sběrná jímka Březinky 1;;prameniste;sběrná jímka;49.660809;16.803277
-Jevíčko;Vrt Vysoká-VT-1;;vrt;vrt;49.661329;16.811842
-Jevíčko;Studna Jaroměřice-Klučanina 1;;studna;studna;49.613869;16.785566
-Jevíčko;Studna Jaroměřice Klučanina 2;;studna;studna;49.613368;16.786441
-Moravská Třebová;Mladějov-zářezy prameniště II (socialistické);;prameniste;pramenní jímka;49.820271;16.575260
-Moravská Třebová;"Mladějov-zářezy prameniště I ""Quelle C""";;prameniste;pramenní jímka;49.815443;16.574100
-Moravská Třebová;"Mladějov-zářezy prameniště I ""Quelle B""";;prameniste;pramenní jímka;49.813781;16.573662
-Moravská Třebová;"Mladějov-zářezy prameniště I ""Quelle A""";;prameniste;pramenní jímka;49.813414;16.573720
-Moravská Třebová;"Mladějov-zářezy prameniště I ""Hauptquelle""";;prameniste;pramenní jímka;49.813117;16.573851
-Moravská Třebová;"Mladějov-zářezy prameniště I  (německé) ""přerušovací jímka""";;prameniste;sběrná jímka;49.815619;16.575766
-Litomyšl;Vrt HG-2 Horní Újezd;;vrt;vrt;49.802875;16.242695
-Jevíčko;Vrt Březinky B-1;;vrt;vrt;49.662217;16.791933
-Svitavy;Študlov prameniště Květiny (KS1);;prameniste;sběrná jímka;49.596337;16.505331
-Svitavy;Študlov prameniště Květiny (KS2);;prameniste;sběrná jímka;49.596042;16.505078
-Moravská Třebová;Š5;;prameniste;sběrná jímka;49.735701;16.580445
-Moravská Třebová;Š4a;;prameniste;sběrná jímka;49.732190;16.578120
-Moravská Třebová;Š4b;;prameniste;sběrná jímka;49.731741;16.578522
-Moravská Třebová;Š3;;prameniste;sběrná jímka;49.731240;16.577334
-Moravská Třebová;Š4c;;prameniste;sběrná jímka;49.730740;16.577375
-Moravská Třebová;Š2;;prameniste;sběrná jímka;49.728680;16.577819
-Moravská Třebová;Š1;;prameniste;sběrná jímka;49.728037;16.578357
-Moravská Třebová;Rudná sběrná jímka;;prameniste;sběrná jímka;49.648806;16.574402
-Moravská Třebová;Rudná pramenní jímka 2;;prameniste;pramenní jímka;49.649051;16.574819
-Moravská Třebová;Rudná pramenní jímka 1;;prameniste;pramenní jímka;49.648612;16.574632
-Svitavy;Radiměř Hájenka sběrná jímka š4;;prameniste;sběrná jímka;49.706589;16.375928
-Svitavy;Radiměř Hájenka pramenní jímka š3;;prameniste;pramenní jímka;49.706385;16.375774
-Svitavy;Radiměř Hájenka pramenní jímka š2;;prameniste;pramenní jímka;49.706773;16.374623
-Svitavy;Radiměř Hájenka pramenní jímka š1;;prameniste;pramenní jímka;49.707601;16.374306
-Svitavy;Radiměř Kuliny;;prameniste;pramenní jímka;49.690101;16.395908
-Polička;Pustá Kamenice sběrná jímka;;prameniste;sběrná jímka;49.736004;16.102311
-Jevíčko;Hartinkov vrt HV-3;;vrt;vrt;49.684692;16.815168
-Svitavy;Dětřichov Vrt HG-2;;vrt;vrt;49.793719;16.509879
-Moravská Třebová;Borušov zářezy - Quellsammelschacht;;prameniste;sběrná jímka;49.775660;16.749448
-Moravská Třebová;Borušov zářezy - Druckammer;;prameniste;sběrná jímka;49.775607;16.748210
-Litomyšl;ČS Trstěnice;;chlorace;DČ - Grundfos · SMART Digital - DDE · dávk. 0.07 %;;
-Litomyšl;ČS Morašice;;chlorace;DČ - Grundfos · SMART Digital - DDE · dávk. 0.008 %;;
-Litomyšl;ČS Suchá Lhota;;chlorace;DČ - Grundfos · SMART Digital - DDE · dávk. 0.01 %;;
-Litomyšl;VDJ Janov;;chlorace;DČ - Grundfos · SMART Digital - DDE · dávk. 0.01 %;;
-Litomyšl;ČS Bohuňovice;;chlorace;DČ - Grundfos · SMART Digital - DDE · dávk. 0.15 %;;
-Litomyšl;"ČS Budislav - "" Borek """;;chlorace;DČ - Grundfos · SMART Digital - DDE · dávk. 0.08 %;;
-Litomyšl;Dolní Újezd;;chlorace;DČ - Grundfos · SMART Digital - DDE · dávk. 0.01 %;;
-Litomyšl;Chotěnov;;chlorace;DČ - Grundfos · SMART Digital - DDE · dávk. 0.15 % · nechloruje se - z důvodu osazení chlorování na VDJ Hraničky 19.6.2026;;
-Litomyšl;VDJ Hraničky;;chlorace;DČ - Grundfos · SMART Digital - DDE · dávk. 0.005 %;;
-Litomyšl;V Litomyšli 22.6.2026;;chlorace;;;
+﻿stredisko;nazev;kod;typ;poznamka;gps_lat;gps_lng;cerpadlo
+Moravská Třebová;Boršov;VF1101019;vodovod;;;;
+Moravská Třebová;Borušov;VF1101004;vodovod;;;;
+Moravská Třebová;Dětřichov u M.Třebové;VF1101013;vodovod;;;;
+Moravská Třebová;Dlouhá Loučka;VF1101007;vodovod;;;;
+Moravská Třebová;Janůvky;VF1101017;vodovod;;;;
+Moravská Třebová;Koruna;VF1101025;vodovod;;;;
+Moravská Třebová;Křenov;VF1101016;vodovod;;;;
+Moravská Třebová;Kunčina;VF1101009;vodovod;;;;
+Moravská Třebová;Linhartice;VF1101006;vodovod;;;;
+Moravská Třebová;Malíkov;VF1101130;vodovod;;;;
+Moravská Třebová;Mladějov;VF1101021;vodovod;;;;
+Moravská Třebová;Mor. Třebová - zahr. Kolonie na Stráni;VF1101142;vodovod;;;;
+Moravská Třebová;Moravská Třebová;VF1101001;vodovod;;;;
+Moravská Třebová;Nová Ves;VF1101010;vodovod;;;;
+Moravská Třebová;Přední Arnoštov;VF1101128;vodovod;;;;
+Moravská Třebová;Radišov;VF1101012;vodovod;;;;
+Moravská Třebová;Radkov;VF1101015;vodovod;;;;
+Moravská Třebová;Rozstání;VF1101014;vodovod;;;;
+Moravská Třebová;Rudná;VF1101018;vodovod;;;;
+Moravská Třebová;Rychnov na Moravě;VF1101020;vodovod;;;;
+Moravská Třebová;Staré Město;VF1101011;vodovod;;;;
+Moravská Třebová;Sušice;VF1101002;vodovod;;;;
+Moravská Třebová;Třebářov;VF1101024;vodovod;;;;
+Moravská Třebová;Udánky;VF1101003;vodovod;;;;
+Moravská Třebová;Útěchov;VF1101008;vodovod;;;;
+Jevíčko;Bělá u Jevíčka;VF1105026;vodovod;;;;
+Jevíčko;Bezděčí u Trnávky;VF1111045;vodovod;;;;
+Jevíčko;Biskupice;VF1108031;vodovod;;;;
+Jevíčko;Bohdalov;VF1111116;vodovod;;;;
+Jevíčko;Borová;VF1111049;vodovod;;;;
+Jevíčko;Březina;VF1102022;vodovod;;;;
+Jevíčko;Březinky, Nectava;VF1106027;vodovod;;;;
+Jevíčko;Hartinkov;VF1108028;vodovod;;;;
+Jevíčko;Hraničky;VF1111047;vodovod;;;;
+Jevíčko;Chornice;VF1111040;vodovod;;;;
+Jevíčko;Jaroměřice;VF1108032;vodovod;;;;
+Jevíčko;Jevíčko;VF1108029;vodovod;;;;
+Jevíčko;Lázy;VF1111042;vodovod;;;;
+Jevíčko;Ludvíkov;VF1111129;vodovod;;;;
+Jevíčko;Mařín;VF1108035;vodovod;;;;
+Jevíčko;Městečko Trnávka;VF1111038;vodovod;;;;
+Jevíčko;Mezihoří;VF1111041;vodovod;;;;
+Jevíčko;Nectava;VF1106118;vodovod;;;;
+Jevíčko;Nový Dvůr;VF1108033;vodovod;;;;
+Jevíčko;Pacov;VF1111039;vodovod;;;;
+Jevíčko;Pěčíkov;VF1111048;vodovod;;;;
+Jevíčko;Petrůvka;VF1111043;vodovod;;;;
+Jevíčko;Plechtinec;VF1111050;vodovod;;;;
+Jevíčko;Slatina;VF1103023;vodovod;;;;
+Jevíčko;Smolná;VF1105117;vodovod;;;;
+Jevíčko;Šnekov;VF1102022;vodovod;;;;
+Jevíčko;Unerázka;VF1111044;vodovod;;;;
+Jevíčko;Víska u Jevíčka;VF1108030;vodovod;;;;
+Jevíčko;Vranová Lhota;VF1111046;vodovod;;;;
+Jevíčko;Vrážné;VF1111036;vodovod;;;;
+Jevíčko;Vysoká;VF1108037;vodovod;;;;
+Jevíčko;Zadní Arnoštov;VF1108034;vodovod;;;;
+Polička;Borová u Poličky (předaná);VF3125089;vodovod;;;;
+Polička;Jedlová;VF3126091;vodovod;;;;
+Polička;Kamenec;VF3125076;vodovod;;;;
+Polička;Korouhev;VF3125083;vodovod;;;;
+Polička;Květná;VF3125085;vodovod;;;;
+Polička;Lezník;VF3125077;vodovod;;;;
+Polička;Lubná;VF3125079;vodovod;;;;
+Polička;Modřec;VF3125087;vodovod;;;;
+Polička;N. Ves u Lit. (předaná);VF3125078;vodovod;;;;
+Polička;Oldřiš;VF3125088;vodovod;;;;
+Polička;Olešnice (voda předaná);VF3128121;vodovod;;;;
+Polička;Pohodlí (předaná);VF3125086;vodovod;;;;
+Polička;Polička;VF3125074;vodovod;;;;
+Polička;Pomezí;VF3125075;vodovod;;;;
+Polička;Pustá Kamenice;VF3127092;vodovod;;;;
+Polička;Sádek;VF3125084;vodovod;;;;
+Polička;Sebranice;VF3125080;vodovod;;;;
+Polička;Střítež;VF3125081;vodovod;;;;
+Polička;Široký Důl;VF3125082;vodovod;;;;
+Polička;Trpín;VF3128093;vodovod;;;;
+Litomyšl;Benátky;VF3137111;vodovod;;;;
+Litomyšl;Bohuňovice;VF3131096;vodovod;;;;
+Litomyšl;Budislav;VF3125104;vodovod;;;;
+Litomyšl;Budislavka;VF3125126;vodovod;;;;
+Litomyšl;Desná;VF3125123;vodovod;;;;
+Litomyšl;Dolní Újezd;VF3125090;vodovod;;;;
+Litomyšl;Gajer;VF3132103;vodovod;;;;
+Litomyšl;Horní Újezd;VF3125122;vodovod;;;;
+Litomyšl;Chotěnov;VF3125144;vodovod;;;;
+Litomyšl;Chotěnov (voda předaná) jen do 31.12.2021;VF3125127;vodovod;;;;
+Litomyšl;Janov;VF3132100;vodovod;;;;
+Litomyšl;Jarošov (předaná);VF3125132;vodovod;;;;
+Litomyšl;Jiříkov;VF3125139;vodovod;;;;
+Litomyšl;Lažany;VF3125138;vodovod;;;;
+Litomyšl;Mikuleč;VF3132102;vodovod;;;;
+Litomyšl;Mladočov;VF3125114;vodovod;;;;
+Litomyšl;Morašice;VF3125105;vodovod;;;;
+Litomyšl;Netřeby;VF3131099;vodovod;;;;
+Litomyšl;Nová Sídla;VF3125107;vodovod;;;;
+Litomyšl;Poříčí;VF3125113;vodovod;;;;
+Litomyšl;Řídký;VF3131098;vodovod;;;;
+Litomyšl;Říkovice;VF3125137;vodovod;;;;
+Litomyšl;Sedliště;VF3131097;vodovod;;;;
+Litomyšl;Sedlištka;VF3125106;vodovod;;;;
+Litomyšl;Strakov;VF3132101;vodovod;;;;
+Litomyšl;Suchá Lhota;VF3135109;vodovod;;;;
+Litomyšl;Trstěnice;VF3136110;vodovod;;;;
+Litomyšl;Tržek;VF3125108;vodovod;;;;
+Litomyšl;Václavky;VF3125140;vodovod;;;;
+Litomyšl;Vidlatá Seč;VF3125124;vodovod;;;;
+Litomyšl;Zrnětín;VF3125115;vodovod;;;;
+Svitavy;Banín;VF1117064;vodovod;;;;
+Svitavy;Bělá n. Svitavou;VF1118065;vodovod;;;;
+Svitavy;Brněnec;VF1154133;vodovod;;;;
+Svitavy;Dětřichov;VF1152131;vodovod;;;;
+Svitavy;Hradec n. Svitavou;VF1113060;vodovod;;;;
+Svitavy;Chrastová Lhota;VF1154134;vodovod;;;;
+Svitavy;Lavičné;VF1118066;vodovod;;;;
+Svitavy;Moravská Chrastová;VF1154135;vodovod;;;;
+Svitavy;Opatov;VF1114061;vodovod;;;;
+Svitavy;Opatovec;VF1115062;vodovod;;;;
+Svitavy;Pohledy;VF1120069;vodovod;;;;
+Svitavy;Půlpecen;VF1154136;vodovod;;;;
+Svitavy;Radiměř;VF1121070;vodovod;;;;
+Svitavy;Sklené;VF1122071;vodovod;;;;
+Svitavy;Študlov;VF1123072;vodovod;;;;
+Svitavy;Vítějeves;VF1118067;vodovod;;;;
+Litomyšl;Starý vodojem Bohuňovice;;vodojem;150 m³;49.900507;16.267592;
+Litomyšl;Nový vodojem Bohuňovice;;vodojem;150 m³;49.900363;16.267732;
+Polička;Pustá Kamenice vodojem;;vodojem;200 m³;49.750024;16.097667;
+Litomyšl;Vodojem Suchá Lhota + ATS;;vodojem;0 m³;49.876151;16.171474;
+Litomyšl;Vodojem Morašice;;vodojem;150 m³;49.862524;16.229505;
+Litomyšl;Vodojem s ČS Jarošov;;vodojem;0 m³;49.818189;16.173480;
+Litomyšl;Vidlatá Seč vodojem;;vodojem;250 m³;49.813212;16.192344;
+Litomyšl;Vodojem Mladočov;;vodojem;0 m³;49.812466;16.195591;
+Litomyšl;Vodojem Budislav;;vodojem;300 m³;49.806225;16.167350;
+Litomyšl;Vodojem Nová Ves;;vodojem;400 m³;49.827879;16.307433;
+Litomyšl;Vodojem Hraničky;;vodojem;420 m³;49.813289;16.235681;
+Litomyšl;Vodojem Horní Újezd;;vodojem;420 m³;49.802084;16.243519;
+Litomyšl;Strakov vodojem;;vodojem;100 m³;49.863236;16.371059;
+Litomyšl;Čistá Vodojem;;vodojem;400 m³;49.833718;16.324705;
+Litomyšl;Janov vodojem;;vodojem;420 m³;49.827838;16.392023;
+Svitavy;Vodojem Opatov;;vodojem;420 m³;49.822203;16.512516;
+Litomyšl;Lubná vodojem u hájenky;;vodojem;160 m³;49.772843;16.189082;
+Litomyšl;Vodojem Pohodlí;;vodojem;0 m³;49.800152;16.286672;
+Litomyšl;Vodojem Dolní Újezd;;vodojem;250 m³;49.789376;16.270710;
+Polička;Sebranice akumulace;;vodojem;800 m³;49.760774;16.235570;
+Polička;Oldříš vodojem;;vodojem;500 m³;49.728079;16.175616;
+Polička;Střitež vodojem;;vodojem;150 m³;49.743084;16.248453;
+Polička;Polička nový vodojem letiště;;vodojem;1500 m³;49.736808;16.256355;
+Polička;Polička starý vodojem letiště;;vodojem;1300 m³;49.736427;16.256404;
+Svitavy;Mikuleč vodojem;;vodojem;0 m³;49.803552;16.405470;
+Litomyšl;Vodojem Trstěnice;;vodojem;150 m³;49.783692;16.341970;
+Polička;Květná Vodojem;;vodojem;80 m³;49.738536;16.346876;
+Polička;Akumulace Šibeňák;;vodojem;200 m³;49.704964;16.253926;
+Polička;Pomezí nový vodojem;;vodojem;420 m³;49.716712;16.324646;
+Polička;Korouhev vodojem;;vodojem;500 m³;49.687420;16.245145;
+Polička;Vodojem pro poličské strojírny;;vodojem;100 m³;49.680077;16.281985;
+Polička;Modřec vodojem;;vodojem;30 m³;49.680874;16.290624;
+Polička;Jedlová vodojem;;vodojem;420 m³;49.668351;16.305305;
+Polička;Akumulace Trkač;;vodojem;75 m³;49.704913;16.344492;
+Svitavy;Vodojem Radiměř-Hájenka;;vodojem;40 m³;49.705454;16.379705;
+Svitavy;Vodojem Radiměř-starý;;vodojem;70 m³;49.700855;16.398250;
+Svitavy;Vodojem Radiměř-nový;;vodojem;420 m³;49.700703;16.398366;
+Svitavy;Vodojem Radiměř-nad školou;;vodojem;70 m³;49.698401;16.430563;
+Svitavy;Vodojem Hradec nad Svitavou;;vodojem;400 m³;49.711110;16.497024;
+Svitavy;Vodojem Sklené;;vodojem;50 m³;49.706202;16.542623;
+Svitavy;Vodojem Banín;;vodojem;100 m³;49.660084;16.471672;
+Svitavy;Pohledy Vodojem Slezáček;;vodojem;10 m³;49.670491;16.546249;
+Svitavy;Vodojem Bělá nad Svitavou;;vodojem;250 m³;49.636049;16.473631;
+Svitavy;Vodojem Brněnec;;vodojem;420 m³;49.624595;16.532880;
+Polička;Trpín vodojem;;vodojem;250 m³;49.589555;16.396463;
+Moravská Třebová;Akumulace pro ČS Mladějov na Moravě;;vodojem;30 m³;49.832150;16.591813;
+Moravská Třebová;Vodojem Třebařov;;vodojem;420 m³;49.843941;16.719535;
+Moravská Třebová;Vodojem Koruna;;vodojem;70 m³;49.840125;16.726236;
+Moravská Třebová;Vodojem Mladějov na Moravě-v sadu;;vodojem;50 m³;49.817166;16.580318;
+Moravská Třebová;Vodojem Mladějov;;vodojem;6 m³;49.817312;16.576814;
+Svitavy;Vodojem Mladějov na Moravě;;vodojem;500 m³;49.816661;16.582849;
+Svitavy;Vodojem Dětřichov;;vodojem;250 m³;49.807323;16.556261;
+Moravská Třebová;Vodojem Nová Ves;;vodojem;250 m³;49.799867;16.587944;
+Moravská Třebová;Vodojem Kunčina;;vodojem;420 m³;49.790567;16.604051;
+Moravská Třebová;Vodojem Staré Město;;vodojem;150 m³;49.794220;16.661389;
+Moravská Třebová;Vodojem Staré Město-nový;;vodojem;250 m³;49.794114;16.661427;
+Moravská Třebová;Akumulace ÚV Kunčina;;vodojem;100 m³;49.782496;16.658046;
+Moravská Třebová;Vodojem Sušice;;vodojem;1300 m³;49.775788;16.668414;
+Moravská Třebová;Vodojem Prklišov;;vodojem;150 m³;49.782452;16.746515;
+Moravská Třebová;Vodojem Borušov;;vodojem;50 m³;49.776645;16.737586;
+Moravská Třebová;Akumulace ČS Borušov;;vodojem;8,15 m³;49.775563;16.740175;
+Moravská Třebová;Vodojem Závodiště;;vodojem;2000 m³;49.765040;16.677651;
+Moravská Třebová;Vodojem Křížový Vrch;;vodojem;300 m³;49.759190;16.673304;
+Moravská Třebová;Vodojem Křížový vrch II;;vodojem;500 m³;49.757553;16.674718;
+Moravská Třebová;Vodojem Huttbusch;;vodojem;400 m³;49.748223;16.658277;
+Moravská Třebová;Vodojem Ptáček;;vodojem;7 m³;49.772851;16.751297;
+Moravská Třebová;Vodojem Boršov-Horní;;vodojem;80 m³;49.740259;16.591945;
+Moravská Třebová;Vodojem Boršov-Mach;;vodojem;150 m³;49.743122;16.600592;
+Moravská Třebová;Vodojem Bošov-spodní;;vodojem;65 m³;49.741744;16.622189;
+Moravská Třebová;Vodojem Útěchov;;vodojem;100 m³;49.723849;16.641224;
+Moravská Třebová;Vodojem Malíkov;;vodojem;50 m³;49.728751;16.686886;
+Moravská Třebová;Vodojem Rozstání-Horní;;vodojem;100 m³;49.739243;16.711160;
+Moravská Třebová;Vodojem Rozstání;;vodojem;50 m³;49.738895;16.716594;
+Jevíčko;Vodojem Pacov;;vodojem;100 m³;49.707539;16.676173;
+Jevíčko;Vodojem Petrůvka;;vodojem;420 m³;49.717664;16.754637;
+Jevíčko;Vodojem Petrůvka-obec;;vodojem;50 m³;49.714900;16.749867;
+Svitavy;Vodojem Pohledy;;vodojem;100 m³;49.693842;16.556004;
+Moravská Třebová;Vodojem Dlouhá Loučka;;vodojem;250 m³;49.695387;16.640646;
+Moravská Třebová;Akumulace pod ČS Křenov;;vodojem;65 m³;49.684908;16.656502;
+Moravská Třebová;Vodojem Přední Arnoštov;;vodojem;40 m³;49.684970;16.656577;
+Moravská Třebová;Akumulace ČS Janůvky;;vodojem;50 m³;49.672545;16.595239;
+Moravská Třebová;Vodojem Janůvky;;vodojem;30 m³;49.670714;16.587912;
+Moravská Třebová;Vodojem Křenov;;vodojem;500 m³;49.676955;16.649854;
+Jevíčko;Mařín vodojem;;vodojem;10 m³;49.673218;16.648245;
+Jevíčko;Vodojem Městečko Trnávka;;vodojem;120 m³;49.707682;16.732452;
+Jevíčko;Vodojem Mezihoří;;vodojem;21 m³;49.703500;16.738480;
+Jevíčko;Vodojem Lázy;;vodojem;250 m³;49.694861;16.722428;
+Jevíčko;Akumulace pro ČS Lazy;;vodojem;42 m³;49.699048;16.734043;
+Jevíčko;Vodojem Unerázka;;vodojem;25 m³;49.698715;16.755743;
+Jevíčko;Vodojem Bohdalov;;vodojem;100 m³;49.752503;16.779958;
+Jevíčko;Vodojem Vranová Lhota;;vodojem;250 m³;49.720934;16.821619;
+Jevíčko;Vodojem Vrážné;;vodojem;24 m³;49.682315;16.792150;
+Jevíčko;Vodojem Hartinkov;;vodojem;30 m³;49.682216;16.815369;
+Moravská Třebová;Vodojem Rudná-dolní;;vodojem;50 m³;49.654126;16.566240;
+Moravská Třebová;Vodojem Rudná-Horní;;vodojem;65 m³;49.657715;16.582060;
+Jevíčko;Vodojem Březina-Anna;;vodojem;150 m³;49.656998;16.608839;
+Jevíčko;Březina akumulace Důl Prokop;;vodojem;50 m³;49.649190;16.607463;
+Jevíčko;Zadní Arnoštov vodojem;;vodojem;50 m³;49.659317;16.658326;
+Jevíčko;Vodojem Bělá u Jevíčka;;vodojem;50 m³;49.644482;16.645320;
+Jevíčko;Vodojem Slatina;;vodojem;140 m³;49.627860;16.599170;
+Jevíčko;Vodojem Zadní Arnoštov;;vodojem;240 m³;49.639631;16.685702;
+Jevíčko;Vodojem Jevíčko-Červený Kopec;;vodojem;500 m³;49.632659;16.692641;
+Jevíčko;Vodojem Biskupice;;vodojem;150 m³;49.643486;16.748634;
+Jevíčko;Akumulace pro ATS Flintour;;vodojem;59 m³;49.643656;16.763995;
+Jevíčko;Vodojem Zálesí-Flintour;;vodojem;65 m³;49.643330;16.769231;
+Jevíčko;Vodojem Hejk;;vodojem;420 m³;49.637330;16.739747;
+Jevíčko;Akumulace pro ATS Kalvárie;;vodojem;63 m³;49.624102;16.745516;
+Jevíčko;Vodojem Jaroměřice-Za dvory;;vodojem;250 m³;49.626789;16.756765;
+Jevíčko;Vodojem Nový Dvůr;;vodojem;63,5 m³;49.610186;16.769818;
+Jevíčko;Vodojem Vysoká;;vodojem;25 m³;49.664142;16.812489;
+Jevíčko;Vodojem Březinky;;vodojem;40 m³;49.661590;16.792632;
+Moravská Třebová;Akumulace Západní;;vodojem;360 m³;49.758303;16.647373;
+Svitavy;Akumulace ČS Sklené;;vodojem;50 m³;49.709044;16.514922;
+Svitavy;Študlov akumulace;;vodojem;58 m³;49.602061;16.507062;
+Jevíčko;Akumulace Léčebna;;vodojem;0 m³;49.631639;16.663098;
+Svitavy;Akumulace ATS Samoty;;vodojem;60 m³;49.706232;16.542494;
+Polička;Manipulační vodojem;;vodojem;20 m³;49.736258;16.099833;
+Polička;Akumulace Pomezí;;vodojem;50 m³;49.713406;16.307642;
+Polička;Akumulace Vetešník;;vodojem;20 m³;49.709894;16.332676;
+Polička;Modřec vodojem;;vodojem;10 m³;49.680874;16.290624;
+Polička;Vodojem Na Stašov;;vodojem;0 m³;49.703340;16.351315;
+Svitavy;Provozní akumulace Dětřichov;;vodojem;15 m³;49.801461;16.526180;
+Svitavy;Vodojem Na Sibiři;;vodojem;50 m³;49.629162;16.538898;
+Svitavy;Provozní akumulace;;vodojem;11 m³;49.802724;16.471621;
+Svitavy;Provozní akumulace Dětřichov-mimo provoz;;vodojem;0 m³;49.801477;16.526206;
+Moravská Třebová;Akumulace ČS Nový Dvůr;;vodojem;23 m³;49.613994;16.767455;
+Litomyšl;Bohuňovice studna;;studna;studna;49.907393;16.249002;
+Polička;Pustá Kamenice vrt PKV-1;;vrt;vrt;49.750101;16.097662;
+Polička;Pustá Kamenice studna S1;;studna;studna;49.734999;16.100817;
+Polička;Pustá Kamenice studna S2;;studna;studna;49.736000;16.102127;
+Polička;Pustá Kamenice studna S3;;studna;studna;49.732806;16.102667;
+Litomyšl;Suchá Lhota vrt SL-2;;vrt;vrt;49.879118;16.167833;
+Litomyšl;Suchá Lhota studna S-1;;studna;studna;49.879271;16.168199;
+Litomyšl;Morašice vrt V-2;;vrt;vrt;49.862423;16.229208;
+Litomyšl;Morašice vrt V-1;;vrt;vrt;49.862497;16.229436;
+Litomyšl;Studna Budislav Borek S4;;studna;studna;49.809501;16.155001;
+Litomyšl;Studna Budislav Borek S5;;studna;studna;49.809749;16.155787;
+Litomyšl;Studna Budislav Borek S1;;studna;sběrná studna;49.809429;16.155794;
+Litomyšl;Studna Budislav Borek S3;;studna;studna;49.809497;16.156856;
+Litomyšl;Čistá vrt CL-1;;vrt;vrt;49.833827;16.324962;
+Litomyšl;Janov vrt JH-1;;vrt;vrt;49.828488;16.364773;
+Svitavy;Opatov Vrt HV-2;;vrt;vrt;49.822363;16.512595;
+Polička;Sebranice vrt V-1;;vrt;vrt;49.759298;16.232299;
+Polička;Sebranice vrt V-5A;;vrt;vrt;49.760854;16.234381;
+Litomyšl;Trstěnice vrt TC-1;;vrt;vrt;49.783434;16.340275;
+Svitavy;Opatovec Vrt HV-1;;vrt;vrt;49.802735;16.471516;
+Svitavy;Opatov Vrt OV-1;;vrt;vrt;49.819605;16.490890;
+Svitavy;Dětřichov Vrt HG-1;;vrt;vrt;49.793891;16.509981;
+Polička;Polička Vrt V-9;;vrt;vrt;49.714871;16.271807;
+Polička;Polička Vrt V-6;;vrt;vrt;49.713269;16.276467;
+Polička;Jedlová Vrt HV-5;;vrt;vrt;49.670003;16.300413;
+Polička;Jedlová Vrt HV-3;;vrt;vrt;49.668900;16.301354;
+Svitavy;Radiměř štola Cikánka;;prameniste;sběrná jímka;49.702628;16.391831;
+Svitavy;Vrt Hradec nad Svitavou V-3;;vrt;vrt;49.710925;16.496594;
+Svitavy;Vrt Hradec nad Svitavou V-2;;vrt;vrt;49.711165;16.496897;
+Svitavy;Vrt Sklené SN-2;;vrt;vrt;49.713815;16.513507;
+Svitavy;Vrt Banín BN-1;;vrt;vrt;49.662478;16.469031;
+Svitavy;Vrt Banín BN-2;;vrt;vrt;49.662408;16.468958;
+Svitavy;Bělá nad Svitavou Studna BS-1;;studna;studna;49.639672;16.479274;
+Svitavy;Brněnec Studna S 1;;studna;studna;49.625673;16.529898;
+Polička;Olešnice vrt S-1;;vrt;vrt;49.580896;16.391293;
+Polička;Trpín vrt S-2;;vrt;vrt;49.581025;16.396284;
+Polička;Olešnice studna;;studna;studna;49.578280;16.395776;
+Svitavy;Študlov zářez (prameniště I);;prameniste;pramenní jímka;49.601536;16.506467;
+Svitavy;Študlov prameniště Květiny (K1);;studna;studna;49.595995;16.504982;
+Svitavy;Študlov prameniště Květiny (K2);;studna;studna;49.595991;16.505040;
+Svitavy;Študlov prameniště Květiny (K3);;studna;studna;49.596008;16.505192;
+Svitavy;Študlov prameniště Květiny (K4);;studna;studna;49.596273;16.505482;
+Svitavy;Študlov prameniště Květiny (K5);;studna;studna;49.596336;16.505225;
+Moravská Třebová;Mladějov na Moravě Vrt HM-3 (vrt Trpík);;vrt;vrt;49.838192;16.586089;
+Moravská Třebová;Vrt Třebařov TK-2;;vrt;vrt;49.848536;16.702730;Ponorka UBG 9, H = asi 35 m, P = 12,5 kWh | Rezerva není potřeba. Vrt se využívá málo a je možné odebírat vodu z jiných zdrojů.
+Moravská Třebová;Vrt Koruna KO-1;;vrt;vrt;49.843858;16.719751;Ponorka GRUNDFOS SP 9-25, Q = 8,18 m3/hod, H = 140 m, P = 5,5 kWh | Ponorka pořízena v r.2019. Rezerva není. Lze si pomoci vodou z Krasíkova, resp. vrtu TK - 2
+Moravská Třebová;Kunčina Vrt HK-1;;vrt;vrt;49.780080;16.646719;Ponorka Lowara, Q = 3,3 - 11 l/s (optimal 7,8 l/s), H = 31 m, P = 3 kWh | Na OČ je uskladněno záložní čerpadlo.
+Moravská Třebová;Kunčina Vrt M-1;;vrt;vrt;49.782762;16.657879;
+Moravská Třebová;Sušice Studna S-1;;studna;studna;49.779970;16.657224;
+Moravská Třebová;Vrt Červená hospoda-MTČH 1;;vrt;vrt;49.768777;16.712081;Ponorka KSB, Q = 4,99 - 70,98 m3/hod, H = 35 - 92 m, P = 18,5 kWh | Rezerva není potřeba. Vrt se nevyužívá.
+Moravská Třebová;Vrt Červená hospoda-MTČH 4;;vrt;vrt;49.766174;16.723428;Ponorka KSB, Q = 2,54 - 38,78 l/s, H = 62 - 149 m, P = 44 kWh | Bez záložního čerpadla! Lze použít čerpadlo z vrtu Sebranice - nutná úprava kabelu.
+Moravská Třebová;Boršov Vrt HB-1;;vrt;vrt;49.741346;16.592568;Ponorka UBA 4, Q = 3,3 l/s, H = 63 m, P = 5,5 kWh, 13,5 A, kabel 45 m | Bez záložního čerpadla.
+Moravská Třebová;Vrt Malíkov HV-1;;vrt;vrt;49.731313;16.687057;
+Jevíčko;Petrůvka Vrt HV-1;;vrt;vrt;49.717604;16.764457;
+Svitavy;Vrt Pohledy P1;;vrt;vrt;49.693906;16.557347;
+Moravská Třebová;Studna Dlouhá Loučka Queck;;studna;studna;49.694647;16.632664;
+Moravská Třebová;Jímka Dlouhá Loučka Wőlfel;;prameniste;sběrná jímka;49.697485;16.644251;
+Moravská Třebová;Prameniště Křenov Kraví hora;;prameniste;sběrná jímka;49.684740;16.656442;
+Jevíčko;Sběrná jímka T Městečko Trnávka;;prameniste;sběrná jímka;49.695009;16.689877;
+Jevíčko;Sběrná jímka Pacov P;;prameniste;pramenní jímka;49.695024;16.689736;
+Jevíčko;Studna Bohdalov-BH-2;;studna;studna;49.754542;16.780927;
+Jevíčko;Studna Bohdalov-BH-1;;studna;studna;49.754510;16.782774;
+Jevíčko;Studna Bohdalov-ST-1;;studna;studna;49.752843;16.780194;
+Jevíčko;Studna Bohdalov-ZD;;studna;studna;49.752509;16.780209;
+Jevíčko;Studna Hartinkov-S3;;studna;studna;49.684216;16.814531;
+Jevíčko;Studna Hartinkov-S4;;studna;studna;49.682082;16.820004;
+Jevíčko;Březina Pekelná Zmola;;prameniste;sběrná jímka;49.649685;16.593209;
+Jevíčko;Jímka Bělá u Jevíčka-PJ1;;prameniste;pramenní jímka;49.644800;16.645290;
+Jevíčko;Jímka Bělá u Jevíčka-PJ2;;prameniste;pramenní jímka;49.644616;16.645404;
+Jevíčko;Vrt Bělá u Jevíčka-HV 502;;vrt;vrt;49.642705;16.651984;
+Jevíčko;Zadní Arnoštov studna;;studna;studna;49.657861;16.676447;
+Jevíčko;Studna Biskupice;;studna;studna;49.650196;16.744527;
+Jevíčko;Studna Jevíčko sv. Bartoloměj;;studna;studna;49.640426;16.686894;
+Jevíčko;Pramen Jevíčko sv. Bartoloměj;;prameniste;pramenní jímka;49.639716;16.685688;
+Jevíčko;Studna Jevíčko-Reifova pila;;studna;studna;49.638289;16.729208;
+Jevíčko;Prameniště se zářezem Jaroměřice Č. Skala;;prameniste;pramenní jímka;49.614578;16.768012;
+Jevíčko;Sběrná jímka Březinky 2;;prameniste;sběrná jímka;49.660778;16.803080;
+Jevíčko;Sběrná jímka Březinky 1;;prameniste;sběrná jímka;49.660809;16.803277;
+Jevíčko;Vrt Vysoká-VT-1;;vrt;vrt;49.661329;16.811842;
+Jevíčko;Studna Jaroměřice-Klučanina 1;;studna;studna;49.613869;16.785566;
+Jevíčko;Studna Jaroměřice Klučanina 2;;studna;studna;49.613368;16.786441;
+Moravská Třebová;Mladějov-zářezy prameniště II (socialistické);;prameniste;pramenní jímka;49.820271;16.575260;
+Moravská Třebová;"Mladějov-zářezy prameniště I ""Quelle C""";;prameniste;pramenní jímka;49.815443;16.574100;
+Moravská Třebová;"Mladějov-zářezy prameniště I ""Quelle B""";;prameniste;pramenní jímka;49.813781;16.573662;
+Moravská Třebová;"Mladějov-zářezy prameniště I ""Quelle A""";;prameniste;pramenní jímka;49.813414;16.573720;
+Moravská Třebová;"Mladějov-zářezy prameniště I ""Hauptquelle""";;prameniste;pramenní jímka;49.813117;16.573851;
+Moravská Třebová;"Mladějov-zářezy prameniště I  (německé) ""přerušovací jímka""";;prameniste;sběrná jímka;49.815619;16.575766;
+Litomyšl;Vrt HG-2 Horní Újezd;;vrt;vrt;49.802875;16.242695;
+Jevíčko;Vrt Březinky B-1;;vrt;vrt;49.662217;16.791933;
+Svitavy;Študlov prameniště Květiny (KS1);;prameniste;sběrná jímka;49.596337;16.505331;
+Svitavy;Študlov prameniště Květiny (KS2);;prameniste;sběrná jímka;49.596042;16.505078;
+Moravská Třebová;Š5;;prameniste;sběrná jímka;49.735701;16.580445;
+Moravská Třebová;Š4a;;prameniste;sběrná jímka;49.732190;16.578120;
+Moravská Třebová;Š4b;;prameniste;sběrná jímka;49.731741;16.578522;
+Moravská Třebová;Š3;;prameniste;sběrná jímka;49.731240;16.577334;
+Moravská Třebová;Š4c;;prameniste;sběrná jímka;49.730740;16.577375;
+Moravská Třebová;Š2;;prameniste;sběrná jímka;49.728680;16.577819;
+Moravská Třebová;Š1;;prameniste;sběrná jímka;49.728037;16.578357;
+Moravská Třebová;Rudná sběrná jímka;;prameniste;sběrná jímka;49.648806;16.574402;
+Moravská Třebová;Rudná pramenní jímka 2;;prameniste;pramenní jímka;49.649051;16.574819;
+Moravská Třebová;Rudná pramenní jímka 1;;prameniste;pramenní jímka;49.648612;16.574632;
+Svitavy;Radiměř Hájenka sběrná jímka š4;;prameniste;sběrná jímka;49.706589;16.375928;
+Svitavy;Radiměř Hájenka pramenní jímka š3;;prameniste;pramenní jímka;49.706385;16.375774;
+Svitavy;Radiměř Hájenka pramenní jímka š2;;prameniste;pramenní jímka;49.706773;16.374623;
+Svitavy;Radiměř Hájenka pramenní jímka š1;;prameniste;pramenní jímka;49.707601;16.374306;
+Svitavy;Radiměř Kuliny;;prameniste;pramenní jímka;49.690101;16.395908;
+Polička;Pustá Kamenice sběrná jímka;;prameniste;sběrná jímka;49.736004;16.102311;
+Jevíčko;Hartinkov vrt HV-3;;vrt;vrt;49.684692;16.815168;
+Svitavy;Dětřichov Vrt HG-2;;vrt;vrt;49.793719;16.509879;
+Moravská Třebová;Borušov zářezy - Quellsammelschacht;;prameniste;sběrná jímka;49.775660;16.749448;
+Moravská Třebová;Borušov zářezy - Druckammer;;prameniste;sběrná jímka;49.775607;16.748210;
+Litomyšl;ČS Trstěnice;;chlorace;DČ - Grundfos · SMART Digital - DDE · dávk. 0.07 %;;;
+Litomyšl;ČS Morašice;;chlorace;DČ - Grundfos · SMART Digital - DDE · dávk. 0.008 %;;;
+Litomyšl;ČS Suchá Lhota;;chlorace;DČ - Grundfos · SMART Digital - DDE · dávk. 0.01 %;;;
+Litomyšl;VDJ Janov;;chlorace;DČ - Grundfos · SMART Digital - DDE · dávk. 0.01 %;;;
+Litomyšl;ČS Bohuňovice;;chlorace;DČ - Grundfos · SMART Digital - DDE · dávk. 0.15 %;;;
+Litomyšl;"ČS Budislav - "" Borek """;;chlorace;DČ - Grundfos · SMART Digital - DDE · dávk. 0.08 %;;;
+Litomyšl;Dolní Újezd;;chlorace;DČ - Grundfos · SMART Digital - DDE · dávk. 0.01 %;;;
+Litomyšl;Chotěnov;;chlorace;DČ - Grundfos · SMART Digital - DDE · dávk. 0.15 % · nechloruje se - z důvodu osazení chlorování na VDJ Hraničky 19.6.2026;;;
+Litomyšl;VDJ Hraničky;;chlorace;DČ - Grundfos · SMART Digital - DDE · dávk. 0.005 %;;;
+Litomyšl;V Litomyšli 22.6.2026;;chlorace;;;;
+Moravská Třebová;Vrt HK-1 Mor.Třebová;;chlorace;Advance (plynné) · do potrubí na výtlaku do VDJ Sušice · nast. 7 g/hod;;;Ponorka E-TECH 6 VS 46/15, motor Franklin VS 46/15 6´´ 3P-22kW-380/415-50-W, Q = 24 - 55 m3/hod, H = 103 - 176 m, P = 22 kWh, 50 Hz, 3´´ závit (10 cm). Osazena 10.3.2021. | Rezerva není potřeba. Předchozí ponorka Lowara, Q = 30 - 78 m3/hod, H = 52,1 - 152 m, P = 22 kWh nefunkční od 20.1.2021
+Moravská Třebová;ÚV Kunčina;;chlorace;Advance (plynné) · do akumulace · nast. 17,5 g/hod;;;
+Moravská Třebová;ČS u vrtu ČH - 1 Mor.Třebová  (surová voda ze zdroje ČH - 1 + zářezy Borušov);;chlorace;Jesco (plynné) · do výtlaku na MT · nast. 4,5 g/hod;;;
+Moravská Třebová;ČS u vrtu ČH - 1  - ze zdroje zářezy Borušov;;chlorace;Jesco (plynné) · do přivaděče z Borušova · nast. 5 g/hod;;;
+Moravská Třebová;ČS Sušice;;chlorace;SMART DIGITAL DDE · do výtlaku na Kunčinu · nast. 0.004;;;
+Moravská Třebová;VDJ Boršov (80 m3) - horní;;chlorace;SMART DIGITAL DDE · do akumulace · nast. 0.15;;;
+Moravská Třebová;Pramenní jímka Wolfel Dlouhá Loučka;;chlorace;SMART DIGITAL DDE · do akumulace · nast. 0.0025;;;
+Moravská Třebová;ČS Křenov - Kraví hora;;chlorace;SMART DIGITAL DDE · do nátokového potrubí z prameniště · nast. 0.2;;;
+Moravská Třebová;ČS Mladějov - u vrtu HM 2 Mladějov na Moravě;;chlorace;SMART DIGITAL DDE · do nátoku do akumulace · nast. 0.013;;;Ponorka Lowara 6GS11T L4C, Q = 1,67 l/s, H = 30 m, P = 1,1 kWh | Rezerva není potřeba. Vrt se nevyužívá. Nevhodná kvalita vody.
+Moravská Třebová;VDJ Mladějov 500 m3;;chlorace;SMART DIGITAL DDE · do potrubí na přítoku do VDJ z prameniště · nast. 0.07;;;Ponorka nedohledána (původně UVN - IV), Q = 1,66 l/s, H = 40 m, P = 3 kWh (?) | Nutné pořízení záložního ponorného čerpadla (cena za pořízení cca 21 tis. bez DPH)
+Moravská Třebová;VDJ Mladějov 6 m3;;chlorace;BATERIOVÉ DÁVKOVACÍ ČERPADLO DK 11.1 · do akumulace;;;
+Moravská Třebová;ČS Janůvky (dolní);;chlorace;SMART DIGITAL DDE · do nátokového potrubí do akumulace · nast. 0.013;;;
+Moravská Třebová;VDJ Rozstání (dolní);;chlorace;SMART DIGITAL DDE · nast. 0.0002;;;
+Moravská Třebová;VDJ Třebařov 420 m3;;chlorace;SMART DIGITAL DDE · do akumulace · nast. 0.002;;;
+Moravská Třebová;Vypracoval: Vykydal;;chlorace;;;;
+Moravská Třebová;V Mor.Třebové 22.6.2026;;chlorace;;;;
