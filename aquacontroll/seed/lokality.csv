@@ -249,19 +249,19 @@ Svitavy;Vodojem Na Sibiři;;vodojem;50 m³;49.629162;16.538898
 Svitavy;Provozní akumulace;;vodojem;11 m³;49.802724;16.471621
 Svitavy;Provozní akumulace Dětřichov-mimo provoz;;vodojem;0 m³;49.801477;16.526206
 Moravská Třebová;Akumulace ČS Nový Dvůr;;vodojem;23 m³;49.613994;16.767455
-Litomyšl;Bohuňovice studna;;prameniste;studna;49.907393;16.249002
+Litomyšl;Bohuňovice studna;;studna;studna;49.907393;16.249002
 Polička;Pustá Kamenice vrt PKV-1;;vrt;vrt;49.750101;16.097662
-Polička;Pustá Kamenice studna S1;;prameniste;studna;49.734999;16.100817
-Polička;Pustá Kamenice studna S2;;prameniste;studna;49.736000;16.102127
-Polička;Pustá Kamenice studna S3;;prameniste;studna;49.732806;16.102667
+Polička;Pustá Kamenice studna S1;;studna;studna;49.734999;16.100817
+Polička;Pustá Kamenice studna S2;;studna;studna;49.736000;16.102127
+Polička;Pustá Kamenice studna S3;;studna;studna;49.732806;16.102667
 Litomyšl;Suchá Lhota vrt SL-2;;vrt;vrt;49.879118;16.167833
-Litomyšl;Suchá Lhota studna S-1;;prameniste;studna;49.879271;16.168199
+Litomyšl;Suchá Lhota studna S-1;;studna;studna;49.879271;16.168199
 Litomyšl;Morašice vrt V-2;;vrt;vrt;49.862423;16.229208
 Litomyšl;Morašice vrt V-1;;vrt;vrt;49.862497;16.229436
-Litomyšl;Studna Budislav Borek S4;;prameniste;studna;49.809501;16.155001
-Litomyšl;Studna Budislav Borek S5;;prameniste;studna;49.809749;16.155787
-Litomyšl;Studna Budislav Borek S1;;prameniste;sběrná studna;49.809429;16.155794
-Litomyšl;Studna Budislav Borek S3;;prameniste;studna;49.809497;16.156856
+Litomyšl;Studna Budislav Borek S4;;studna;studna;49.809501;16.155001
+Litomyšl;Studna Budislav Borek S5;;studna;studna;49.809749;16.155787
+Litomyšl;Studna Budislav Borek S1;;studna;sběrná studna;49.809429;16.155794
+Litomyšl;Studna Budislav Borek S3;;studna;studna;49.809497;16.156856
 Litomyšl;Čistá vrt CL-1;;vrt;vrt;49.833827;16.324962
 Litomyšl;Janov vrt JH-1;;vrt;vrt;49.828488;16.364773
 Svitavy;Opatov Vrt HV-2;;vrt;vrt;49.822363;16.512595
@@ -281,55 +281,55 @@ Svitavy;Vrt Hradec nad Svitavou V-2;;vrt;vrt;49.711165;16.496897
 Svitavy;Vrt Sklené SN-2;;vrt;vrt;49.713815;16.513507
 Svitavy;Vrt Banín BN-1;;vrt;vrt;49.662478;16.469031
 Svitavy;Vrt Banín BN-2;;vrt;vrt;49.662408;16.468958
-Svitavy;Bělá nad Svitavou Studna BS-1;;prameniste;studna;49.639672;16.479274
-Svitavy;Brněnec Studna S 1;;prameniste;studna;49.625673;16.529898
+Svitavy;Bělá nad Svitavou Studna BS-1;;studna;studna;49.639672;16.479274
+Svitavy;Brněnec Studna S 1;;studna;studna;49.625673;16.529898
 Polička;Olešnice vrt S-1;;vrt;vrt;49.580896;16.391293
 Polička;Trpín vrt S-2;;vrt;vrt;49.581025;16.396284
-Polička;Olešnice studna;;prameniste;studna;49.578280;16.395776
+Polička;Olešnice studna;;studna;studna;49.578280;16.395776
 Svitavy;Študlov zářez (prameniště I);;prameniste;pramenní jímka;49.601536;16.506467
-Svitavy;Študlov prameniště Květiny (K1);;prameniste;studna;49.595995;16.504982
-Svitavy;Študlov prameniště Květiny (K2);;prameniste;studna;49.595991;16.505040
-Svitavy;Študlov prameniště Květiny (K3);;prameniste;studna;49.596008;16.505192
-Svitavy;Študlov prameniště Květiny (K4);;prameniste;studna;49.596273;16.505482
-Svitavy;Študlov prameniště Květiny (K5);;prameniste;studna;49.596336;16.505225
+Svitavy;Študlov prameniště Květiny (K1);;studna;studna;49.595995;16.504982
+Svitavy;Študlov prameniště Květiny (K2);;studna;studna;49.595991;16.505040
+Svitavy;Študlov prameniště Květiny (K3);;studna;studna;49.596008;16.505192
+Svitavy;Študlov prameniště Květiny (K4);;studna;studna;49.596273;16.505482
+Svitavy;Študlov prameniště Květiny (K5);;studna;studna;49.596336;16.505225
 Moravská Třebová;Mladějov na Moravě Vrt HM-3 (vrt Trpík);;vrt;vrt;49.838192;16.586089
 Moravská Třebová;Vrt Třebařov TK-2;;vrt;vrt;49.848536;16.702730
 Moravská Třebová;Vrt Koruna KO-1;;vrt;vrt;49.843858;16.719751
 Moravská Třebová;Kunčina Vrt HK-1;;vrt;vrt;49.780080;16.646719
 Moravská Třebová;Kunčina Vrt M-1;;vrt;vrt;49.782762;16.657879
-Moravská Třebová;Sušice Studna S-1;;prameniste;studna;49.779970;16.657224
+Moravská Třebová;Sušice Studna S-1;;studna;studna;49.779970;16.657224
 Moravská Třebová;Vrt Červená hospoda-MTČH 1;;vrt;vrt;49.768777;16.712081
 Moravská Třebová;Vrt Červená hospoda-MTČH 4;;vrt;vrt;49.766174;16.723428
 Moravská Třebová;Boršov Vrt HB-1;;vrt;vrt;49.741346;16.592568
 Moravská Třebová;Vrt Malíkov HV-1;;vrt;vrt;49.731313;16.687057
 Jevíčko;Petrůvka Vrt HV-1;;vrt;vrt;49.717604;16.764457
 Svitavy;Vrt Pohledy P1;;vrt;vrt;49.693906;16.557347
-Moravská Třebová;Studna Dlouhá Loučka Queck;;prameniste;studna;49.694647;16.632664
+Moravská Třebová;Studna Dlouhá Loučka Queck;;studna;studna;49.694647;16.632664
 Moravská Třebová;Jímka Dlouhá Loučka Wőlfel;;prameniste;sběrná jímka;49.697485;16.644251
 Moravská Třebová;Prameniště Křenov Kraví hora;;prameniste;sběrná jímka;49.684740;16.656442
 Jevíčko;Sběrná jímka T Městečko Trnávka;;prameniste;sběrná jímka;49.695009;16.689877
 Jevíčko;Sběrná jímka Pacov P;;prameniste;pramenní jímka;49.695024;16.689736
-Jevíčko;Studna Bohdalov-BH-2;;prameniste;studna;49.754542;16.780927
-Jevíčko;Studna Bohdalov-BH-1;;prameniste;studna;49.754510;16.782774
-Jevíčko;Studna Bohdalov-ST-1;;prameniste;studna;49.752843;16.780194
-Jevíčko;Studna Bohdalov-ZD;;prameniste;studna;49.752509;16.780209
-Jevíčko;Studna Hartinkov-S3;;prameniste;studna;49.684216;16.814531
-Jevíčko;Studna Hartinkov-S4;;prameniste;studna;49.682082;16.820004
+Jevíčko;Studna Bohdalov-BH-2;;studna;studna;49.754542;16.780927
+Jevíčko;Studna Bohdalov-BH-1;;studna;studna;49.754510;16.782774
+Jevíčko;Studna Bohdalov-ST-1;;studna;studna;49.752843;16.780194
+Jevíčko;Studna Bohdalov-ZD;;studna;studna;49.752509;16.780209
+Jevíčko;Studna Hartinkov-S3;;studna;studna;49.684216;16.814531
+Jevíčko;Studna Hartinkov-S4;;studna;studna;49.682082;16.820004
 Jevíčko;Březina Pekelná Zmola;;prameniste;sběrná jímka;49.649685;16.593209
 Jevíčko;Jímka Bělá u Jevíčka-PJ1;;prameniste;pramenní jímka;49.644800;16.645290
 Jevíčko;Jímka Bělá u Jevíčka-PJ2;;prameniste;pramenní jímka;49.644616;16.645404
 Jevíčko;Vrt Bělá u Jevíčka-HV 502;;vrt;vrt;49.642705;16.651984
-Jevíčko;Zadní Arnoštov studna;;prameniste;studna;49.657861;16.676447
-Jevíčko;Studna Biskupice;;prameniste;studna;49.650196;16.744527
-Jevíčko;Studna Jevíčko sv. Bartoloměj;;prameniste;studna;49.640426;16.686894
+Jevíčko;Zadní Arnoštov studna;;studna;studna;49.657861;16.676447
+Jevíčko;Studna Biskupice;;studna;studna;49.650196;16.744527
+Jevíčko;Studna Jevíčko sv. Bartoloměj;;studna;studna;49.640426;16.686894
 Jevíčko;Pramen Jevíčko sv. Bartoloměj;;prameniste;pramenní jímka;49.639716;16.685688
-Jevíčko;Studna Jevíčko-Reifova pila;;prameniste;studna;49.638289;16.729208
+Jevíčko;Studna Jevíčko-Reifova pila;;studna;studna;49.638289;16.729208
 Jevíčko;Prameniště se zářezem Jaroměřice Č. Skala;;prameniste;pramenní jímka;49.614578;16.768012
 Jevíčko;Sběrná jímka Březinky 2;;prameniste;sběrná jímka;49.660778;16.803080
 Jevíčko;Sběrná jímka Březinky 1;;prameniste;sběrná jímka;49.660809;16.803277
 Jevíčko;Vrt Vysoká-VT-1;;vrt;vrt;49.661329;16.811842
-Jevíčko;Studna Jaroměřice-Klučanina 1;;prameniste;studna;49.613869;16.785566
-Jevíčko;Studna Jaroměřice Klučanina 2;;prameniste;studna;49.613368;16.786441
+Jevíčko;Studna Jaroměřice-Klučanina 1;;studna;studna;49.613869;16.785566
+Jevíčko;Studna Jaroměřice Klučanina 2;;studna;studna;49.613368;16.786441
 Moravská Třebová;Mladějov-zářezy prameniště II (socialistické);;prameniste;pramenní jímka;49.820271;16.575260
 Moravská Třebová;"Mladějov-zářezy prameniště I ""Quelle C""";;prameniste;pramenní jímka;49.815443;16.574100
 Moravská Třebová;"Mladějov-zářezy prameniště I ""Quelle B""";;prameniste;pramenní jímka;49.813781;16.573662
