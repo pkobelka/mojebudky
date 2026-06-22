@@ -123,7 +123,7 @@ padding:24px;z-index:50;overflow:auto}
 
 <div class="topbar">
   <div class="dat" id="dat">—</div>
-  <div class="online"><span class="l">Online:</span><span class="mono">TŘ</span><span class="mono">BK</span><span class="mono">LV</span></div>
+  <div class="online"><span class="l">Online:</span><span class="mono" title="Petr Kobelka">TŘ</span><span class="mono" title="Bláža Kolaříková">BK</span><span class="mono" title="Lukáš Vykydal">LV</span></div>
   <button class="btn-nova" onclick="otevri()">＋ Nová událost</button>
 </div>
 
@@ -322,11 +322,12 @@ function krok3(){
 function setZav(k){st.zavaznost=k;render();}
 
 function krok4(){
- const res=LIDE.map(([z,jm])=>`<div class="person ${st.resitel===z?'sel':''}" onclick="setRes('${z}')">${z} · ${jm}</div>`).join("");
- const inf=LIDE.map(([z,jm])=>`<div class="person ${st.info.includes(z)?'sel':''}" onclick="togInfo('${z}')">${z}</div>`).join("");
- return `<h4>Kdo to řeší a koho informovat</h4>
- <div class="fld"><label>Řešitel</label><div class="people">${res}</div></div>
- <div class="fld"><label>Informovaní (více lidí)</label><div class="people">${inf}</div></div>`;
+ const res=LIDE.map(([z,jm])=>`<div class="person ${st.resitel===z?'sel':''}" title="${esc(jm)}" onclick="setRes('${z}')">${z}</div>`).join("");
+ const inf=LIDE.map(([z,jm])=>`<div class="person ${st.info.includes(z)?'sel':''}" title="${esc(jm)}" onclick="togInfo('${z}')">${z}</div>`).join("");
+ return `<h4>Komu přiřadit a koho informovat</h4>
+ <p class="hint">Najeď myší na monogram → zobrazí se jméno. Klik = vybrat.</p>
+ <div class="fld"><label>Řešitel (komu přiřadit úkol)</label><div class="people">${res}</div></div>
+ <div class="fld"><label>Koho informovat (více lidí)</label><div class="people">${inf}</div></div>`;
 }
 function setRes(z){st.resitel=z;render();}
 function togInfo(z){const i=st.info.indexOf(z);if(i<0)st.info.push(z);else st.info.splice(i,1);render();}
