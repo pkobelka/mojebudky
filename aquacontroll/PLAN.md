@@ -115,11 +115,13 @@ respektovat. Notifikace se zapnou až vědomě, po dokončení.
   4. **Lidé** – řešitel + informovaní.
   *(Pořadí kroků 1↔2 je k doladění dle provozu.)*
 - 📋 **Nabídka pro novou událost** dle metodiky **MP01** (přepsáno ze skenu):
-  - **Plán kontroly jakosti PV (vzorkování):** Změna v plánu kontroly jakosti PV
-    (odběr se ten den přesouvá / nejde / jiné místo – člověk popíše nebo namluví).
-    Zdroj: soubor „Plán vzorkování PV 2026" (12 měsíců; týden/den, místo odběru,
-    rozsah analýzy, poznámky). *(Plán uložit do appky / sekce Dokumenty;
-    do budoucna možné napojit konkrétní odběr → změnu.)*
+  - **Plán kontroly jakosti PV (vzorkování):** „Změna v plánu kontroly jakosti PV"
+    **musí ukázat na konkrétní plánovaný odběr** (den + místo) → pak člověk popíše
+    nebo namluví, co se mění. Plán naimportován ze souboru „Plán vzorkování PV 2026"
+    do **`seed/plan_vzorkovani.csv`** (1005 odběrů; sloupce datum, misto, rozsah,
+    poznamka). Tok ve formuláři: výběr dne → výběr konkrétního odběru z plánu.
+    *(Do budoucna: tabulka `plan_vzorkovani` v DB, zobrazení odběrů na dnešní/příští
+    týden, plán i v sekci Dokumenty.)*
   - **Hlášení nestandardních podmínek na vodovodu (bod 2):** porucha/havárie na
     vodovodu (odstávka části); čištění vodojemu; porucha/odstávka/výměna
     chlorovacího zařízení; přerušení odběru / odstavení zdroje; obnovení dodávky

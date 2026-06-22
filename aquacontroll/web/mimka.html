@@ -169,6 +169,20 @@ const OBJ={ // ukázkové objekty (reálné jen vodovody MT)
 const LIDE=[["TŘ","Petr Kobelka"],["PŘ","Tomáš Zvejška"],["GŘ","Jana Drábková"],["BK","Bláža Kolaříková"],
 ["AB","Aleš Bubák"],["LV","Lukáš Vykydal"],["JR","Jan Rada"],["VH","Vladislav Halva"],["MH","Milan Horník"],
 ["JF","Jiří Fogl"],["KK","Karel Krombholz"],["KN","Kristýna Nerušilová"],["ZS","Zdeněk Sojma"],["EJ","Eva Jančáková"],["KV","Kateřina Vávrová"]];
+const PLAN=[{"datum": "2026-01-05", "misto": "Hartinkov - čp.6 p. Doležal (731 483 203)", "rozsah": "krácený"}, {"datum": "2026-01-05", "misto": "ÚV Březinky - ventil za úpravou", "rozsah": ""}, {"datum": "2026-01-05", "misto": "Jevíčko - REHAU", "rozsah": "krácený"}, {"datum": "2026-01-05", "misto": "Biskupice - MŠ", "rozsah": "krácený"}, {"datum": "2026-01-05", "misto": "Chornice - ZŠ", "rozsah": ""}, {"datum": "2026-01-05", "misto": "Jaroměřice- čp.40, pí. Hrbatová (607 102 841)", "rozsah": "krácený"}, {"datum": "2026-01-05", "misto": "Pěčíkov - čp. 28", "rozsah": ""}, {"datum": "2026-01-05", "misto": "Z. Arnoštov - čp.67, pí Hodaňová ( 733 778 115)", "rozsah": "krácený"}, {"datum": "2026-01-05", "misto": "Vrážné - čp.26", "rozsah": ""}, {"datum": "2026-01-05", "misto": "Bělá u Jev. - OÚ", "rozsah": "krácený"}, {"datum": "2026-01-05", "misto": "Jevíčko - ZŠ", "rozsah": ""}, {"datum": "2026-01-06", "misto": "Lubná-MŠ", "rozsah": "krácený"}, {"datum": "2026-01-06", "misto": "Lezník  - čp.41 p. Křivka", "rozsah": "krácený"}, {"datum": "2026-01-06", "misto": "Oldřiš - čp.249, obchod potraviny", "rozsah": "krácený"}, {"datum": "2026-01-06", "misto": "P. Kamenice - čp. 118 MŠ", "rozsah": "krácený"}, {"datum": "2026-01-06", "misto": "Polička - Hegerova, rest. Na Chalupě", "rozsah": "krácený"}, {"datum": "2026-01-06", "misto": "Polička - vrt V-9", "rozsah": "krácený"}, {"datum": "2026-01-06", "misto": "Polička - Jiráskova 820, obchod COOP", "rozsah": "MBR"}, {"datum": "2026-01-06", "misto": "Polička - Na Vyšehradě, ČS TopCar Oil", "rozsah": "MBR"}, {"datum": "2026-01-06", "misto": "Pomezí - čp.349, ZŠ dolní", "rozsah": "MBR"}, {"datum": "2026-01-06", "misto": "Květná - MŠ", "rozsah": "MBR"}, {"datum": "2026-01-12", "misto": "Dětřichov u Sy - MŠ", "rozsah": "krácený"}, {"datum": "2026-01-12", "misto": "M.Třebová - Nádražní 11, provoz VHOS", "rozsah": ""}, {"datum": "2026-01-12", "misto": "Opatov - ZŠ", "rozsah": "krácený"}, {"datum": "2026-01-12", "misto": "M.Třebová - Jiráskova 68", "rozsah": ""}, {"datum": "2026-01-12", "misto": "Opatovec - ZŠ", "rozsah": "krácený"}, {"datum": "2026-01-12", "misto": "M.Třebová - Jevíčská 40", "rozsah": ""}, {"datum": "2026-01-12", "misto": "Sklené - čp.1 p. Smolej Jiří (605 077 530)", "rozsah": "krácený"}, {"datum": "2026-01-12", "misto": "M.Třebová - Dvorní, ČS ÖMV", "rozsah": ""}, {"datum": "2026-01-12", "misto": "Pohledy- čp. 144 bytovka", "rozsah": "krácený"}, {"datum": "2026-01-12", "misto": "Staré Město - OÚ", "rozsah": ""}, {"datum": "2026-01-12", "misto": "Hradec n. Sv. - ZŠ", "rozsah": "krácený"}, {"datum": "2026-01-12", "misto": "Třebařov - MŠ", "rozsah": ""}, {"datum": "2026-01-12", "misto": "Radiměř - čp.491 COOP Družstvo", "rozsah": "krácený"}, {"datum": "2026-01-12", "misto": "Rychnov na Moravě - čp.63 OÚ", "rozsah": ""}, {"datum": "2026-01-13", "misto": "M.Třebová (I.),Sušice - čp.143 Ing.Žáček (602 356 508)", "rozsah": "krácený"}, {"datum": "2026-01-13", "misto": "Linhartice - čp.202 p. Michalčák (777 561 046)", "rozsah": "krácený"}, {"datum": "2026-01-13", "misto": "Borušov - čp.39, p Hudeček (604 505 197)", "rozsah": "krácený"}, {"datum": "2026-01-13", "misto": "Útěchov - čp. 45, METALI", "rozsah": "krácený"}, {"datum": "2026-01-13", "misto": "Křenov - č.p.26, obecní úřad", "rozsah": "krácený"}];
+let _datum=null;
+function jeZmenaPlanu(){return !!(st.podminka&&st.podminka.indexOf("plánu")>=0);}
+function selDatum(d){_datum=d;st.odber=null;render();}
+function setOdber(i){st.odber=PLAN.filter(p=>p.datum===_datum)[i];render();}
+function krok2plan(){
+ const daty=[...new Set(PLAN.map(p=>p.datum))].sort();
+ let h=`<h4>Vyber konkrétní odběr z plánu</h4><p class="hint">Nejdřív den, pak plánovaný odběr, kterého se změna týká. (ukázka: leden 2026)</p>`;
+ h+=`<div class="fld"><label>Den odběru</label><select onchange="selDatum(this.value)"><option value="">— vyber den —</option>`+daty.map(d=>`<option ${_datum===d?'selected':''} value="${d}">${d.split('-').reverse().join('.')}</option>`).join("")+`</select></div>`;
+ if(_datum){const list=PLAN.filter(p=>p.datum===_datum);
+  h+=`<div class="fld"><label>Plánovaný odběr (${list.length})</label><div class="people">`+list.map((p,i)=>`<div class="person ${st.odber&&st.odber.misto===p.misto?'sel':''}" onclick="setOdber(${i})">${esc(p.misto)}${p.rozsah?' · '+esc(p.rozsah):''}</div>`).join("")+`</div></div>`;}
+ return h;
+}
+
 
 // ---- přehled objektů ----
 document.getElementById("prehled").innerHTML=STR.map(([nm,p,bd])=>`
@@ -191,12 +205,12 @@ function zavri(){document.getElementById("ov").classList.remove("show");}
 function render(){
  // kroky
  document.getElementById("steps").innerHTML=KROKY.map((k,i)=>{
-   const n=i+1;let c=n===st.krok?"act":(n<st.krok?"done":"");return `<span class="${c}">${k}</span>`;}).join("");
+   const n=i+1;let c=n===st.krok?"act":(n<st.krok?"done":"");const lab=(i===1&&jeZmenaPlanu())?"2. Odběr z plánu":k;return `<span class="${c}">${lab}</span>`;}).join("");
  const wb=document.getElementById("wb");
  if(st.hotovo){wb.innerHTML=hotovoHTML();document.querySelector(".wiz-f").style.display="none";return;}
  document.querySelector(".wiz-f").style.display="flex";
  if(st.krok===1)wb.innerHTML=krok1();
- if(st.krok===2)wb.innerHTML=krok2();
+ if(st.krok===2)wb.innerHTML=jeZmenaPlanu()?krok2plan():krok2();
  if(st.krok===3)wb.innerHTML=krok3();
  if(st.krok===4)wb.innerHTML=krok4();
  // tlačítka
@@ -257,7 +271,7 @@ function togInfo(z){const i=st.info.indexOf(z);if(i<0)st.info.push(z);else st.in
 function krok(d){
  if(d>0){ // validace
   if(st.krok===1&&!st.podminka)return alert("Vyber, co se stalo.");
-  if(st.krok===2&&(!st.stredisko||!st.typ))return alert("Vyber středisko a typ objektu.");
+  if(st.krok===2){if(jeZmenaPlanu()){if(!st.odber)return alert("Vyber konkrétní odběr z plánu.");}else if(!st.stredisko||!st.typ)return alert("Vyber středisko a typ objektu.");}
   if(st.krok===4){st.hotovo=true;render();return;}
  }
  st.krok+=d;if(st.krok<1)st.krok=1;render();
@@ -268,7 +282,7 @@ function hotovoHTML(){
  <h4>Událost by se uložila</h4><p class="hint">(mimka – nic se reálně neukládá ani neodesílá)</p>
  <div style="text-align:left;max-width:440px;margin:10px auto 0">
  <div class="sumline"><b>Co:</b> ${esc(st.podminka||"—")} · <b>závažnost:</b> ${zl}</div>
- <div class="sumline"><b>Kde:</b> ${esc(st.stredisko||"—")} · ${esc(st.typ||"—")} · ${esc(st.objekt||"—")}</div>
+ ${jeZmenaPlanu()&&st.odber?`<div class="sumline"><b>Odběr z plánu:</b> ${esc(st.odber.datum)} · ${esc(st.odber.misto)}</div>`:`<div class="sumline"><b>Kde:</b> ${esc(st.stredisko||"—")} · ${esc(st.typ||"—")} · ${esc(st.objekt||"—")}</div>`}
  <div class="sumline"><b>Popis:</b> ${esc(st.popis||"—")}</div>
  <div class="sumline"><b>Nahlásil:</b> ${esc(st.nahlasil||"—")} ${st.tel?("· "+esc(st.tel)):""}</div>
  <div class="sumline"><b>Řešitel:</b> ${esc(st.resitel||"—")} · <b>Informováni:</b> ${st.info.join(", ")||"—"}</div>
