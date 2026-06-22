@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AquaControl – mimka (Nová událost)</title>
+<style>
+:root{--modra:#1e8fe0;--tmava:#0b3a66;--seda:#6b7a8d;--ram:#e2e9f1;--text:#1f2a37;
+--zel:#239048;--oran:#e8881b;--cerv:#e23b3b;--teal:#13a5b8;--fial:#7a5ea8;--hneda:#a9763e;
+--stin:0 5px 18px rgba(11,58,102,.12)}
+*{box-sizing:border-box}
+body{margin:0;font-family:"Segoe UI",Roboto,Arial,sans-serif;color:var(--text);
+background:linear-gradient(180deg,#eef6fc,#e6edf5);min-height:100vh}
+.testbar{background:#fff6e6;color:#8a5a12;border-bottom:1px solid #f0d8a8;font-size:13px;
+font-weight:600;text-align:center;padding:7px}
+.hlav{display:flex;align-items:center;gap:14px;padding:10px 22px;background:linear-gradient(180deg,#fff,#f4fbff);
+border-bottom:3px solid #cfe6f7;flex-wrap:wrap}
+.hlav .kap{width:46px;height:46px}
+.nazev{font-size:24px;font-weight:800}.nazev .a{color:var(--modra);font-weight:400}.nazev .c{color:var(--tmava)}
+.menu{display:flex;gap:6px;margin-left:18px;flex-wrap:wrap}
+.menu a{font-size:13px;font-weight:600;color:var(--seda);padding:6px 12px;border-radius:8px;text-decoration:none;cursor:pointer}
+.menu a.act{background:#e7f1fb;color:var(--tmava);font-weight:800}
+.menu .bdg{background:var(--cerv);color:#fff;border-radius:10px;font-size:11px;font-weight:800;padding:1px 6px;margin-left:5px}
+.vhos{margin-left:auto;display:flex;align-items:baseline;gap:6px}
+.vhos b{color:var(--tmava);font-size:22px;letter-spacing:1px}.vhos i{color:var(--cerv);font-weight:800;font-style:italic}
+.topbar{display:flex;align-items:center;gap:16px;flex-wrap:wrap;max-width:1080px;margin:14px auto 0;
+padding:9px 16px;background:#fff;border-radius:12px;box-shadow:var(--stin)}
+.topbar .dat{font-weight:700;color:var(--tmava)}
+.online{flex:1;display:flex;align-items:center;gap:6px}.online .l{color:var(--seda);font-size:13px;font-weight:600}
+.online .l::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;background:#2faf5a;margin-right:6px}
+.mono{background:#e9f6ee;color:var(--zel);border:1px solid #bfe3cc;border-radius:7px;padding:3px 8px;font-size:12px;font-weight:800}
+.btn-nova{border:0;cursor:pointer;color:#fff;font-weight:800;font-size:14px;
+background:linear-gradient(180deg,#34a85a,#239048);padding:9px 18px;border-radius:14px;box-shadow:var(--stin)}
+main{max-width:1080px;margin:0 auto;padding:16px 16px 80px}
+.card-s{background:#f6fafe;border:1px solid #dbe6f1;border-radius:16px;box-shadow:var(--stin);
+padding:12px 14px;margin-bottom:14px}
+.card-s h3{margin:2px 0 8px;color:var(--tmava);font-size:16px}
+.row5{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+.objt{position:relative;background:#fff;border-radius:12px;box-shadow:var(--stin);padding:10px 12px;cursor:pointer}
+.objt .top{height:6px;border-radius:3px;margin:-2px -4px 8px}
+.objt .num{font-size:24px;font-weight:800;text-align:right}
+.objt .lab{font-size:11.5px;color:var(--seda);font-weight:700}
+.objt .bdg{position:absolute;top:8px;right:8px;width:22px;height:22px;border-radius:50%;
+background:var(--cerv);color:#fff;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;border:2px solid #fff}
+.fab{position:fixed;right:20px;bottom:20px;width:56px;height:56px;border-radius:50%;border:0;cursor:pointer;
+color:#fff;font-size:28px;font-weight:800;background:linear-gradient(180deg,#34a85a,#239048);box-shadow:0 6px 18px rgba(11,58,102,.3)}
+
+/* WIZARD */
+.overlay{position:fixed;inset:0;background:rgba(11,40,70,.45);display:none;align-items:flex-start;justify-content:center;
+padding:24px;z-index:50;overflow:auto}
+.overlay.show{display:flex}
+.wiz{background:#fff;border-radius:18px;width:100%;max-width:680px;box-shadow:0 20px 60px rgba(0,0,0,.3);overflow:hidden}
+.wiz-h{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--ram)}
+.wiz-h b{font-size:20px;color:var(--tmava)}
+.wiz-h .x{cursor:pointer;color:var(--seda);font-size:20px;font-weight:700;border:0;background:none}
+.steps{display:flex;gap:6px;padding:12px 20px;flex-wrap:wrap;border-bottom:1px solid var(--ram)}
+.steps span{font-size:11.5px;font-weight:700;color:var(--seda);background:#f2f5f8;border-radius:12px;padding:4px 10px}
+.steps span.act{background:#e7f1fb;color:var(--tmava)}
+.steps span.done{background:#e5f6ec;color:#1d7a42}
+.wiz-b{padding:18px 20px;min-height:220px}
+.wiz-b h4{margin:0 0 4px;color:var(--tmava);font-size:15px}
+.hint{color:var(--seda);font-size:12.5px;margin:0 0 12px}
+.grp{margin-bottom:12px}
+.grp .gl{font-size:12px;font-weight:800;margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.grp .gl i{width:8px;height:8px;border-radius:50%;display:inline-block}
+.chips{display:flex;flex-wrap:wrap;gap:7px}
+.chip{border:1px solid #dbe6f1;background:#f4f8fc;border-radius:13px;padding:6px 12px;font-size:12.5px;cursor:pointer;color:var(--text)}
+.chip:hover{border-color:var(--modra)}
+.chip.sel{background:var(--modra);color:#fff;border-color:var(--modra)}
+.fld{margin-bottom:12px}
+.fld label{display:block;font-size:12.5px;font-weight:700;color:var(--seda);margin-bottom:4px}
+.fld input,.fld select,.fld textarea{width:100%;padding:9px 10px;border:1px solid var(--ram);border-radius:9px;font-size:14px;font-family:inherit}
+.fld textarea{min-height:64px;resize:vertical}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.zav-btns,.typ-btns,.str-btns{display:flex;flex-wrap:wrap;gap:7px}
+.pill{border:1px solid #dbe6f1;background:#fff;border-radius:20px;padding:6px 13px;font-size:13px;cursor:pointer}
+.pill.sel{color:#fff}
+.attach{display:flex;gap:8px;flex-wrap:wrap}
+.attach button{border:1px dashed #b9c6d6;background:#f7fbff;border-radius:10px;padding:9px 13px;font-size:13px;cursor:pointer;color:var(--tmava);font-weight:600}
+.people{display:flex;flex-wrap:wrap;gap:7px}
+.person{border:1px solid #dbe6f1;background:#fff;border-radius:20px;padding:5px 11px;font-size:12.5px;cursor:pointer}
+.person.sel{background:#eaf4fc;border-color:var(--modra);color:var(--tmava);font-weight:700}
+.sumline{font-size:13.5px;margin:4px 0}.sumline b{color:var(--tmava)}
+.wiz-f{display:flex;justify-content:space-between;gap:10px;padding:14px 20px;border-top:1px solid var(--ram)}
+.wiz-f button{border:0;border-radius:12px;padding:10px 20px;font-size:14px;font-weight:800;cursor:pointer}
+.b-back{background:#eef2f7;color:var(--seda)}
+.b-next{background:linear-gradient(180deg,#2f9be0,#1577c8);color:#fff}
+.b-save{background:linear-gradient(180deg,#34a85a,#239048);color:#fff}
+.done-box{text-align:center;padding:20px}
+.done-box .ok{font-size:46px}
+@media(max-width:680px){.row5{grid-template-columns:repeat(2,1fr)}.two{grid-template-columns:1fr}.menu{display:none}}
+</style>
+</head>
+<body>
+<div class="testbar">🔒 TESTOVACÍ PROVOZ — notifikace vypnuté, žádné avízo se neodesílá. (Toto je nezávazná mimka.)</div>
+
+<header class="hlav">
+  <svg class="kap" viewBox="0 0 64 64"><defs><linearGradient id="k" x1="0" y1="0" x2="0" y2="1">
+  <stop offset="0" stop-color="#36c5f0"/><stop offset=".55" stop-color="#1e8fe0"/><stop offset="1" stop-color="#0b63b8"/></linearGradient></defs>
+  <path d="M32 5 C32 5 13 27 13 41 a19 19 0 1 0 38 0 C51 27 32 5 32 5 Z" fill="url(#k)"/>
+  <circle cx="32" cy="41" r="13" fill="#fff"/><circle cx="32" cy="41" r="10.5" fill="none" stroke="#1379bf" stroke-width="2"/></svg>
+  <div class="nazev"><span class="a">Aqua</span><span class="c">Control</span></div>
+  <nav class="menu">
+    <a class="act">Přehled objektů</a>
+    <a onclick="alert('Sem se schovají Aktuální události (mimka).')">Aktuální události<span class="bdg">2</span></a>
+    <a onclick="alert('Sekce Dokumenty – metodické pokyny (mimka).')">Dokumenty</a>
+  </nav>
+  <div class="vhos"><b>VHOS</b><i>a.s.</i></div>
+</header>
+
+<div class="topbar">
+  <div class="dat" id="dat">—</div>
+  <div class="online"><span class="l">Online:</span><span class="mono">TŘ</span><span class="mono">BK</span><span class="mono">LV</span></div>
+  <button class="btn-nova" onclick="otevri()">＋ Nová událost</button>
+</div>
+
+<main id="prehled"></main>
+
+<button class="fab" title="Nová událost" onclick="otevri()">＋</button>
+
+<!-- WIZARD -->
+<div class="overlay" id="ov">
+  <div class="wiz">
+    <div class="wiz-h"><b>Nová událost</b><button class="x" onclick="zavri()">✕</button></div>
+    <div class="steps" id="steps"></div>
+    <div class="wiz-b" id="wb"></div>
+    <div class="wiz-f">
+      <button class="b-back" id="bb" onclick="krok(-1)">Zpět</button>
+      <button class="b-next" id="bn" onclick="krok(1)">Pokračovat →</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ---- živé hodiny ----
+function tik(){const d=new Date();let s=d.toLocaleDateString("cs-CZ",{weekday:"long",day:"numeric",month:"numeric",year:"numeric"});
+s=s.charAt(0).toUpperCase()+s.slice(1);document.getElementById("dat").textContent=s+" · "+d.toLocaleTimeString("cs-CZ",{hour:"2-digit",minute:"2-digit"});}
+tik();setInterval(tik,10000);
+
+// ---- data ----
+const KAT=[["Vodovody","#1e8fe0"],["Vodojemy","#13a5b8"],["Prameniště","#2faf5a"],["Vrty","#a9763e"],["Chlorace","#7a5ea8"]];
+const STR=[["Moravská Třebová",[25,15,20,11,6],[1,0,0,0,0]],["Svitavy",[16,8,5,3,4],[0,0,0,0,0]],
+["Polička",[20,10,7,4,5],[1,0,0,0,0]],["Litomyšl",[31,12,9,6,7],[0,0,0,0,0]],["Jevíčko",[32,14,10,8,6],[0,0,0,0,0]]];
+
+const NABIDKA=[
+ ["Kvalita vody","#1e8fe0","vysoka",["Mikrobiologický nález","Chemický rozbor mimo limit","Zákal / zabarvení","Zápach / pachuť","Volný chlor mimo rozsah"]],
+ ["Provoz / havárie","#e8881b","vysoka",["Havárie na řadu","Přerušení dodávky","Pokles tlaku / výpadek","Porucha zařízení","Nízká hladina"]],
+ ["Riziko kontaminace","#e23b3b","vysoka",["Podezření na kontaminaci","Narušení zabezpečení","Činnost v ochranném pásmu"]],
+ ["Podněty veřejnosti","#7a5ea8","stredni",["Stížnost občana","Reklamace"]],
+ ["Plánované","#13a5b8","nizka",["Odstávka / oprava","Odkalení / proplach","Odběr kontrolního vzorku"]],
+ ["Jiné","#6b7a8d","provereni",["Jiné (dopíšu)"]]
+];
+const ZAV={provereni:["Prověření","#6b7a8d"],nizka:["Nízká","#7e92a8"],stredni:["Střední","#1e8fe0"],vysoka:["Vysoká","#e8881b"],kriticka:["Kritická","#e23b3b"]};
+const TYPY=["Vodovod","Prameniště","Vrt","Vodojem","Chlorace"];
+const OBJ={ // ukázkové objekty (reálné jen vodovody MT)
+ "Moravská Třebová|Vodovod":["Boršov","Borušov","Dětřichov u M.Třebové","Kunčina","Moravská Třebová","Staré Město","Třebářov","…"],
+ "Polička|Vodovod":["Polička","Lubná","Pomezí","Sebranice","Korouhev","…"]
+};
+const LIDE=[["TŘ","Petr Kobelka"],["PŘ","Tomáš Zvejška"],["GŘ","Jana Drábková"],["BK","Bláža Kolaříková"],
+["AB","Aleš Bubák"],["LV","Lukáš Vykydal"],["JR","Jan Rada"],["VH","Vladislav Halva"],["MH","Milan Horník"],
+["JF","Jiří Fogl"],["KK","Karel Krombholz"],["KN","Kristýna Nerušilová"],["ZS","Zdeněk Sojma"],["EJ","Eva Jančáková"],["KV","Kateřina Vávrová"]];
+
+// ---- přehled objektů ----
+document.getElementById("prehled").innerHTML=STR.map(([nm,p,bd])=>`
+<div class="card-s"><h3>${nm}</h3><div class="row5">`+KAT.map(([kn,kc],i)=>`
+<div class="objt" onclick="alert('Seznam objektů: ${kn} – ${nm} (mimka)')">
+  <div class="top" style="background:${kc}"></div>
+  <div class="num" style="color:${kc}">${p[i]}</div><div class="lab">${kn}</div>
+  ${bd[i]>0?`<div class="bdg">${bd[i]}</div>`:""}
+</div>`).join("")+`</div></div>`).join("");
+
+// ---- WIZARD ----
+const KROKY=["1. Co se stalo?","2. Kde?","3. Podrobnosti","4. Lidé"];
+let st={krok:1,podminka:null,zavaznost:null,stredisko:null,typ:null,objekt:null,
+popis:"",nahlasil:"",tel:"",resitel:null,info:[],hotovo:false};
+
+function otevri(){st={krok:1,podminka:null,zavaznost:null,stredisko:null,typ:null,objekt:null,popis:"",nahlasil:"",tel:"",resitel:null,info:[],hotovo:false};
+document.getElementById("ov").classList.add("show");render();}
+function zavri(){document.getElementById("ov").classList.remove("show");}
+
+function render(){
+ // kroky
+ document.getElementById("steps").innerHTML=KROKY.map((k,i)=>{
+   const n=i+1;let c=n===st.krok?"act":(n<st.krok?"done":"");return `<span class="${c}">${k}</span>`;}).join("");
+ const wb=document.getElementById("wb");
+ if(st.hotovo){wb.innerHTML=hotovoHTML();document.querySelector(".wiz-f").style.display="none";return;}
+ document.querySelector(".wiz-f").style.display="flex";
+ if(st.krok===1)wb.innerHTML=krok1();
+ if(st.krok===2)wb.innerHTML=krok2();
+ if(st.krok===3)wb.innerHTML=krok3();
+ if(st.krok===4)wb.innerHTML=krok4();
+ // tlačítka
+ document.getElementById("bb").style.visibility=st.krok===1?"hidden":"visible";
+ const bn=document.getElementById("bn");
+ if(st.krok===4){bn.textContent="Uložit ✓";bn.className="b-save";}else{bn.textContent="Pokračovat →";bn.className="b-next";}
+}
+
+function krok1(){
+ let h=`<h4>Co se stalo?</h4><p class="hint">Vyber podmínku – podle ní se přednastaví závažnost.</p>`;
+ NABIDKA.forEach(([gn,gc,gz,opts])=>{
+  h+=`<div class="grp"><div class="gl"><i style="background:${gc}"></i>${gn}</div><div class="chips">`;
+  opts.forEach(o=>{h+=`<div class="chip ${st.podminka===o?'sel':''}" onclick="selPod('${esc(o)}','${gz}')">${o}</div>`;});
+  h+=`</div></div>`;});
+ return h;
+}
+function selPod(o,z){st.podminka=o;st.zavaznost=z;render();}
+
+function krok2(){
+ const objklic=(st.stredisko&&st.typ)?st.stredisko+"|"+st.typ:null;
+ const objs=objklic&&OBJ[objklic]?OBJ[objklic]:[];
+ return `<h4>Kde se to děje?</h4><p class="hint">Středisko → typ objektu → konkrétní objekt.</p>
+ <div class="fld"><label>Středisko</label><div class="str-btns">`+
+ STR.map(([nm])=>`<div class="pill ${st.stredisko===nm?'sel':''}" style="${st.stredisko===nm?'background:#1577c8':''}" onclick="setStr('${esc(nm)}')">${nm}</div>`).join("")+`</div></div>
+ <div class="fld"><label>Typ objektu</label><div class="typ-btns">`+
+ TYPY.map(t=>`<div class="pill ${st.typ===t?'sel':''}" style="${st.typ===t?'background:#1577c8':''}" onclick="setTyp('${esc(t)}')">${t}</div>`).join("")+`</div></div>
+ <div class="fld"><label>Konkrétní objekt</label>
+ <select onchange="st.objekt=this.value">${objs.length?'<option value="">— vyber —</option>'+objs.map(o=>`<option ${st.objekt===o?'selected':''}>${o}</option>`).join(""):'<option>(nejprve vyber středisko a typ)</option>'}</select></div>`;
+}
+function setStr(n){st.stredisko=n;st.objekt=null;render();}
+function setTyp(t){st.typ=t;st.objekt=null;render();}
+
+function krok3(){
+ const zb=Object.entries(ZAV).map(([k,[lb,c]])=>`<div class="pill ${st.zavaznost===k?'sel':''}" style="${st.zavaznost===k?'background:'+c:''}" onclick="setZav('${k}')">${lb}</div>`).join("");
+ return `<h4>Podrobnosti</h4>
+ <div class="fld"><label>Závažnost (přednastaveno, lze změnit)</label><div class="zav-btns">${zb}</div></div>
+ <div class="fld"><label>Popis</label><textarea placeholder="Stručně co se stalo…" oninput="st.popis=this.value">${esc(st.popis)}</textarea></div>
+ <div class="two"><div class="fld"><label>Kdo nahlásil</label><input value="${esc(st.nahlasil)}" oninput="st.nahlasil=this.value" placeholder="Jméno"></div>
+ <div class="fld"><label>Telefon</label><input value="${esc(st.tel)}" oninput="st.tel=this.value" placeholder="+420…"></div></div>
+ <div class="fld"><label>Přílohy</label><div class="attach">
+   <button onclick="alert('🎤 Nahrávání mluveného popisu (mimka)')">🎤 Mluvený popis</button>
+   <button onclick="alert('📷 Vyfotit / nahrát foto (mimka)')">📷 Foto</button>
+   <button onclick="alert('📎 Přiložit dokument (mimka)')">📎 Dokument</button>
+ </div></div>`;
+}
+function setZav(k){st.zavaznost=k;render();}
+
+function krok4(){
+ const res=LIDE.map(([z,jm])=>`<div class="person ${st.resitel===z?'sel':''}" onclick="setRes('${z}')">${z} · ${jm}</div>`).join("");
+ const inf=LIDE.map(([z,jm])=>`<div class="person ${st.info.includes(z)?'sel':''}" onclick="togInfo('${z}')">${z}</div>`).join("");
+ return `<h4>Kdo to řeší a koho informovat</h4>
+ <div class="fld"><label>Řešitel</label><div class="people">${res}</div></div>
+ <div class="fld"><label>Informovaní (více lidí)</label><div class="people">${inf}</div></div>`;
+}
+function setRes(z){st.resitel=z;render();}
+function togInfo(z){const i=st.info.indexOf(z);if(i<0)st.info.push(z);else st.info.splice(i,1);render();}
+
+function krok(d){
+ if(d>0){ // validace
+  if(st.krok===1&&!st.podminka)return alert("Vyber, co se stalo.");
+  if(st.krok===2&&(!st.stredisko||!st.typ))return alert("Vyber středisko a typ objektu.");
+  if(st.krok===4){st.hotovo=true;render();return;}
+ }
+ st.krok+=d;if(st.krok<1)st.krok=1;render();
+}
+function hotovoHTML(){
+ const zl=st.zavaznost?ZAV[st.zavaznost][0]:"—";
+ return `<div class="done-box"><div class="ok">✅</div>
+ <h4>Událost by se uložila</h4><p class="hint">(mimka – nic se reálně neukládá ani neodesílá)</p>
+ <div style="text-align:left;max-width:440px;margin:10px auto 0">
+ <div class="sumline"><b>Co:</b> ${esc(st.podminka||"—")} · <b>závažnost:</b> ${zl}</div>
+ <div class="sumline"><b>Kde:</b> ${esc(st.stredisko||"—")} · ${esc(st.typ||"—")} · ${esc(st.objekt||"—")}</div>
+ <div class="sumline"><b>Popis:</b> ${esc(st.popis||"—")}</div>
+ <div class="sumline"><b>Nahlásil:</b> ${esc(st.nahlasil||"—")} ${st.tel?("· "+esc(st.tel)):""}</div>
+ <div class="sumline"><b>Řešitel:</b> ${esc(st.resitel||"—")} · <b>Informováni:</b> ${st.info.join(", ")||"—"}</div>
+ </div>
+ <div style="margin-top:18px"><button class="b-save" style="border:0;border-radius:12px;padding:10px 22px;color:#fff;font-weight:800;cursor:pointer" onclick="zavri()">Hotovo</button></div></div>`;
+}
+function esc(s){return (s==null?"":String(s)).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+</script>
+</body>
+</html>
