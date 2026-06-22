@@ -81,6 +81,9 @@ padding:24px;z-index:50;overflow:auto}
 .person{border:1px solid #dbe6f1;background:#fff;border-radius:20px;padding:5px 11px;font-size:12.5px;cursor:pointer}
 .person.sel{background:#eaf4fc;border-color:var(--modra);color:var(--tmava);font-weight:700}
 .sumline{font-size:13.5px;margin:4px 0}.sumline b{color:var(--tmava)}
+.bc{display:flex;flex-wrap:wrap;gap:6px;background:#eef5fc;border:1px solid #d6e4f2;border-radius:10px;padding:8px 10px;margin-bottom:14px}
+.bc .t{font-size:12px;background:#fff;border:1px solid #dbe6f1;border-radius:8px;padding:3px 9px;color:#1f2a37}
+.bc .t b{color:#6b7a8d;font-weight:700;font-size:9.5px;text-transform:uppercase;letter-spacing:.03em;margin-right:5px}
 .wiz-f{display:flex;justify-content:space-between;gap:10px;padding:14px 20px;border-top:1px solid var(--ram)}
 .wiz-f button{border:0;border-radius:12px;padding:10px 20px;font-size:14px;font-weight:800;cursor:pointer}
 .b-back{background:#eef2f7;color:var(--seda)}
@@ -209,16 +212,28 @@ function render(){
  const wb=document.getElementById("wb");
  if(st.hotovo){wb.innerHTML=hotovoHTML();document.querySelector(".wiz-f").style.display="none";return;}
  document.querySelector(".wiz-f").style.display="flex";
- if(st.krok===1)wb.innerHTML=krok1();
- if(st.krok===2)wb.innerHTML=jeZmenaPlanu()?krok2plan():krok2();
- if(st.krok===3)wb.innerHTML=krok3();
- if(st.krok===4)wb.innerHTML=krok4();
+ let _o="";
+ if(st.krok===1)_o=krok1();
+ else if(st.krok===2)_o=jeZmenaPlanu()?krok2plan():krok2();
+ else if(st.krok===3)_o=krok3();
+ else if(st.krok===4)_o=krok4();
+ wb.innerHTML=breadcrumb()+_o;
  // tlačítka
  document.getElementById("bb").style.visibility=st.krok===1?"hidden":"visible";
  const bn=document.getElementById("bn");
  if(st.krok===4){bn.textContent="Uložit ✓";bn.className="b-save";}else{bn.textContent="Pokračovat →";bn.className="b-next";}
 }
 
+function breadcrumb(){
+ const t=[];
+ if(st.podminka)t.push(["Co",st.podminka]);
+ if(jeZmenaPlanu()){if(st.odber)t.push(["Odběr",st.odber.datum.split("-").reverse().join(".")+" · "+st.odber.misto]);}
+ else{if(st.stredisko)t.push(["Středisko",st.stredisko]);if(st.typ)t.push(["Typ",st.typ]);if(st.objekt)t.push(["Objekt",st.objekt]);}
+ if(st.zavaznost)t.push(["Závažnost",ZAV[st.zavaznost][0]]);
+ if(st.resitel)t.push(["Řešitel",st.resitel]);
+ if(!t.length)return "";
+ return `<div class="bc">`+t.map(([k,v])=>`<span class="t"><b>${k}</b>${esc(v)}</span>`).join("")+`</div>`;
+}
 function krok1(){
  let h=`<h4>Co se stalo?</h4><p class="hint">Vyber podmínku – podle ní se přednastaví závažnost.</p>`;
  NABIDKA.forEach(([gn,gc,gz,opts])=>{
