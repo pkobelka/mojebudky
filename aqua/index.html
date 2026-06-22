@@ -12,6 +12,13 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="AquaControl">
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('sw.js', { scope: '/mojebudky/aqua/' }).catch(function () {});
+  });
+}
+</script>
 <style>
 :root{--modra:#1e8fe0;--tmava:#0b3a66;--seda:#6b7a8d;--ram:#e2e9f1;--text:#1f2a37;
 --zel:#239048;--oran:#e8881b;--cerv:#e23b3b;--teal:#13a5b8;--fial:#7a5ea8;--hneda:#a9763e;
