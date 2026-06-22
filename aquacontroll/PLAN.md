@@ -114,17 +114,16 @@ respektovat. Notifikace se zapnou až vědomě, po dokončení.
      (🎤 mluvený popis / 📷 foto / 📎 dokument).
   4. **Lidé** – řešitel + informovaní.
   *(Pořadí kroků 1↔2 je k doladění dle provozu.)*
-- 📋 **Nabídka „nestandardní podmínky na vodovodu"** (návrh k úpravě – zdroj
-  MP06/MP07, k doplnění přesných bodů z MP06):
-  - **Kvalita vody:** mikrobiologický nález; chemický rozbor mimo limit; zákal/zabarvení;
-    zápach/pachuť; volný chlor mimo rozsah
-  - **Provoz/havárie:** havárie na řadu; přerušení dodávky; pokles tlaku/výpadek;
-    porucha zařízení (čerpadlo/úpravna/chlorace); nízká hladina (vodojem/zdroj)
-  - **Riziko kontaminace:** podezření na kontaminaci; narušení zabezpečení objektu;
-    činnost v ochranném pásmu
+- 📋 **Nabídka pro novou událost** strukturovaná dle metodiky MP06
+  (MP06 je sken – přesné body doplní uživatel):
+  - **Nestandardní podmínky na vodovodu (bod 2):** porucha na vodovodu;
+    porucha zařízení (čerpadlo/úpravna/chlorace); čištění/proplach; přerušení
+    dodávky; pokles tlaku/výpadek; … (doplnit)
+  - **Zhoršení kvality vody – postupy po oznámení (bod 3):**
+    a) základní ukazatele (železo, barva, zákal, pach…);
+    b) nevyhovující mikrobiologický rozbor
   - **Podněty veřejnosti:** stížnost občana; reklamace
-  - **Plánované:** odstávka/oprava; odkalení/proplach; odběr kontrolního vzorku
-  - **Jiné** (volná položka pro případy mimo nabídku – uživatel dopíše popis)
+  - **Jiné** (volná položka – uživatel dopíše popis)
 - 🎤📷📎 **Přílohy:** hlasová zpráva (nahrávání mikrofonem v PWA), fotka, soubor.
   → nová tabulka `prilohy` (typ audio/foto/soubor, kdo, kdy).
 - ⏰ **Úkoly s termínem (datum + hodina):** označení splnění fajfkou (kdo, kdy,
