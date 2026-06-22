@@ -220,9 +220,9 @@ document.getElementById("prehled").innerHTML=STR.map(([nm,p,bd])=>`
 // ---- WIZARD ----
 const KROKY=["1. Co se stalo?","2. Kde?","3. Podrobnosti","4. Lidé"];
 let st={krok:1,podminka:null,zavaznost:null,stredisko:null,typ:null,objekt:null,
-popis:"",nahlasil:"",tel:"",resitel:null,info:[],hotovo:false};
+popis:"",nahlasil:"",tel:"",resitel:null,info:[],ukol:"",tdatum:"",tcas:"",upozorneni:[],hotovo:false};
 
-function otevri(){st={krok:1,podminka:null,zavaznost:null,stredisko:null,typ:null,objekt:null,popis:"",nahlasil:"",tel:"",resitel:null,info:[],hotovo:false};
+function otevri(){st={krok:1,podminka:null,zavaznost:null,stredisko:null,typ:null,objekt:null,popis:"",nahlasil:"",tel:"",resitel:null,info:[],ukol:"",tdatum:"",tcas:"",upozorneni:[],hotovo:false};
 document.getElementById("ov").classList.add("show");render();}
 function zavri(){document.getElementById("ov").classList.remove("show");}
 
@@ -323,12 +323,18 @@ function setZav(k){st.zavaznost=k;render();}
 
 function krok4(){
  const res=LIDE.map(([z,jm])=>`<div class="person ${st.resitel===z?'sel':''}" title="${esc(jm)}" onclick="setRes('${z}')">${z}</div>`).join("");
+ const upo=LIDE.map(([z,jm])=>`<div class="person ${st.upozorneni.includes(z)?'sel':''}" title="${esc(jm)}" onclick="togUpoz('${z}')">${z}</div>`).join("");
  const inf=LIDE.map(([z,jm])=>`<div class="person ${st.info.includes(z)?'sel':''}" title="${esc(jm)}" onclick="togInfo('${z}')">${z}</div>`).join("");
- return `<h4>Komu přiřadit a koho informovat</h4>
- <p class="hint">Najeď myší na monogram → zobrazí se jméno. Klik = vybrat.</p>
- <div class="fld"><label>Řešitel (komu přiřadit úkol)</label><div class="people">${res}</div></div>
- <div class="fld"><label>Koho informovat (více lidí)</label><div class="people">${inf}</div></div>`;
+ return `<h4>Úkol a lidé</h4>
+ <p class="hint">Najeď myší na monogram → jméno. Klik = vybrat.</p>
+ <div class="fld"><label>Řešitel – komu přiřadit úkol</label><div class="people">${res}</div></div>
+ <div class="fld"><label>Co se má udělat (úkol)</label><textarea placeholder="Např. odebrat vzorek, propláchnout řad…" oninput="st.ukol=this.value">${esc(st.ukol||"")}</textarea></div>
+ <div class="two"><div class="fld"><label>Termín – datum</label><input type="date" value="${esc(st.tdatum||"")}" onchange="st.tdatum=this.value"></div>
+ <div class="fld"><label>Termín – čas</label><input type="time" value="${esc(st.tcas||"")}" onchange="st.tcas=this.value"></div></div>
+ <div class="fld"><label>Upozornit na (ne)splnění úkolu</label><div class="people">${upo}</div></div>
+ <div class="fld"><label>Koho informovat o události</label><div class="people">${inf}</div></div>`;
 }
+function togUpoz(z){const i=st.upozorneni.indexOf(z);if(i<0)st.upozorneni.push(z);else st.upozorneni.splice(i,1);render();}
 function setRes(z){st.resitel=z;render();}
 function togInfo(z){const i=st.info.indexOf(z);if(i<0)st.info.push(z);else st.info.splice(i,1);render();}
 
@@ -350,6 +356,7 @@ function hotovoHTML(){
  <div class="sumline"><b>Popis:</b> ${esc(st.popis||"—")}</div>
  <div class="sumline"><b>Zadal:</b> ${UZIVATEL}${(jePodnet()&&st.nahlasil)?` · nahlásil: ${esc(st.nahlasil)}${st.tel?(" · "+esc(st.tel)):""}`:""}</div>
  <div class="sumline"><b>Řešitel:</b> ${esc(st.resitel||"—")} · <b>Informováni:</b> ${st.info.join(", ")||"—"}</div>
+ ${st.ukol?`<div class="sumline"><b>Úkol:</b> ${esc(st.ukol)}${(st.tdatum||st.tcas)?` · termín ${esc(st.tdatum)} ${esc(st.tcas)}`:""}${st.upozorneni.length?` · upozornit: ${st.upozorneni.join(", ")}`:""}</div>`:""}
  </div>
  <div style="margin-top:18px"><button class="b-save" style="border:0;border-radius:12px;padding:10px 22px;color:#fff;font-weight:800;cursor:pointer" onclick="zavri()">Hotovo</button></div></div>`;
 }
