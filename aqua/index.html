@@ -116,6 +116,17 @@ padding:24px;z-index:50;overflow:auto}
 .sl-row{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 10px;border-bottom:1px solid #eef2f7;font-size:13.5px}
 .sl-map{background:#eaf4fc;color:#0b3a66;border-radius:8px;padding:4px 11px;font-size:12px;font-weight:700;text-decoration:none;white-space:nowrap}
 .sl-map:hover{background:#d6e9fb}.sl-nogps{color:#9aa7b8;font-size:11.5px}
+.koliz-open{border:1px solid #f0c36d;background:#fff7e6;color:#8a5a12;border-radius:12px;padding:10px 14px;font-size:13px;font-weight:700;cursor:pointer;width:100%}
+.koliz-open:hover{background:#fef0d2}
+.koliz-den{font-size:12px;font-weight:800;color:#0b3a66;margin:10px 0 4px}
+.koliz-row{display:flex;align-items:center;gap:8px;padding:7px 9px;border:1px solid #e2e9f1;border-radius:9px;margin-bottom:5px;cursor:pointer;font-size:13px;background:#fff}
+.koliz-row.sel{background:#fdecea;border-color:#e2a39c}
+.koliz-row .kx{font-size:15px}.koliz-row .km{flex:1}
+.koliz-row .kshoda{font-size:11px;font-weight:800;color:#b3261e;background:#fde7e3;border-radius:8px;padding:2px 7px;white-space:nowrap}
+.koliz-more{margin:6px 0;border:1px dashed #b9c6d6;background:#f7fbff;border-radius:9px;padding:7px 12px;font-size:12.5px;cursor:pointer;color:#0b3a66;font-weight:700;width:100%}
+.koliz-warn{margin-top:10px;background:#fdecea;border:1px solid #e2a39c;color:#b3261e;border-radius:10px;padding:9px 11px;font-size:12.5px;font-weight:700}
+.koliz-box{border-top:1px dashed #cfe0ef;padding-top:12px;margin-top:6px}
+.koliz-list{max-height:260px;overflow:auto;border:1px solid #eef2f7;border-radius:10px;padding:8px;background:#fafdff}
 </style>
 </head>
 <body>
@@ -233,9 +244,9 @@ document.getElementById("prehled").innerHTML=STR.map(([nm,p,bd])=>`
 // ---- WIZARD ----
 const KROKY=["1. Co se stalo?","2. Kde?","3. Podrobnosti","4. Lidé"];
 let st={krok:1,podminka:null,zavaznost:null,stredisko:null,typ:null,objekt:null,
-popis:"",nahlasil:"",tel:"",resitel:null,info:[],ukol:"",tdatum:"",tcas:"",upozorneni:[],hotovo:false};
+popis:"",nahlasil:"",tel:"",resitel:null,info:[],ukol:"",tdatum:"",tcas:"",upozorneni:[],kolize:[],kolizeOpen:false,kolizeDni:5,kolizeAuto:[],hotovo:false};
 
-function otevri(){st={krok:1,podminka:null,zavaznost:null,stredisko:null,typ:null,objekt:null,adresa:"",popis:"",nahlasil:"",tel:"",resitel:null,info:[],ukol:"",tdatum:"",tcas:"",upozorneni:[],hotovo:false};
+function otevri(){st={krok:1,podminka:null,zavaznost:null,stredisko:null,typ:null,objekt:null,adresa:"",popis:"",nahlasil:"",tel:"",resitel:null,info:[],ukol:"",tdatum:"",tcas:"",upozorneni:[],kolize:[],kolizeOpen:false,kolizeDni:5,kolizeAuto:[],hotovo:false};
 document.getElementById("ov").classList.add("show");render();}
 function zavri(){document.getElementById("ov").classList.remove("show");}
 
@@ -353,11 +364,50 @@ function krok4(){
  <div class="two"><div class="fld"><label>Termín – datum</label><input type="date" value="${esc(st.tdatum||"")}" onchange="st.tdatum=this.value"></div>
  <div class="fld"><label>Termín – čas</label><input type="time" value="${esc(st.tcas||"")}" onchange="st.tcas=this.value"></div></div>
  <div class="fld"><label>Upozornit na (ne)splnění úkolu</label><div class="people">${upo}</div></div>
- <div class="fld"><label>Koho informovat o události</label><div class="people">${inf}</div></div>`;
+ <div class="fld"><label>Koho informovat o události</label><div class="people">${inf}</div></div>
+ <div class="koliz-box"><label style="font-size:12.5px;font-weight:700;color:var(--seda);display:block;margin-bottom:6px">Kontrola jakosti pitné vody</label>${renderKolize()}</div>`;
 }
 function togUpoz(z){const i=st.upozorneni.indexOf(z);if(i<0)st.upozorneni.push(z);else st.upozorneni.splice(i,1);render();}
 function setRes(z){st.resitel=z;render();}
 function togInfo(z){const i=st.info.indexOf(z);if(i<0)st.info.push(z);else st.info.splice(i,1);render();}
+
+/* ---- Kolize s plánem kontroly jakosti PV ---- */
+function kolizeBase(){const d=new Date();return d.toISOString().slice(0,10);}
+function czDatum(d){const x=new Date(d+"T00:00:00");return x.toLocaleDateString("cs-CZ",{weekday:"short",day:"numeric",month:"numeric",year:"numeric"});}
+function slovaMista(s){return (s||"").toLowerCase().replace(/[.,()\/0-9]/g," ").split(/\s+/).filter(w=>w.length>=4&&["vodojem","prameniste","studna","studny","vodovod","chlorace"].indexOf(w)<0);}
+function kolizeShoda(misto){const a=new Set(slovaMista((st.objekt||"")+" "+(st.adresa||"")+" "+(jeZmenaPlanu()&&st.odber?st.odber.misto:"")));return slovaMista(misto).some(w=>a.has(w));}
+function otevriKolizi(){st.kolizeOpen=true;st.kolizeDni=5;render();}
+function viceKolize(){st.kolizeDni+=5;render();}
+function togKolize(i){const k=st.kolize.indexOf(i);if(k<0)st.kolize.push(i);else st.kolize.splice(k,1);syncKolizeInfo();render();}
+function syncKolizeInfo(){
+ st.kolizeAuto=st.kolizeAuto||[];
+ if(st.kolize.length){["BK","SŠ"].forEach(z=>{if(st.info.indexOf(z)<0){st.info.push(z);st.kolizeAuto.push(z);}});}
+ else{st.kolizeAuto.forEach(z=>{const i=st.info.indexOf(z);if(i>=0)st.info.splice(i,1);});st.kolizeAuto=[];}
+}
+function renderKolize(){
+ if(!st.kolizeOpen)return `<button type="button" class="koliz-open" onclick="otevriKolizi()">🔬 Prověřit možnou kolizi s plánem kontroly jakosti</button>`;
+ const base=kolizeBase();
+ const fut=PLAN.map((p,i)=>({...p,_i:i})).filter(p=>p.datum>=base).sort((a,b)=>a.datum<b.datum?-1:a.datum>b.datum?1:0);
+ const dny=[...new Set(fut.map(p=>p.datum))];
+ const ukaz=dny.slice(0,st.kolizeDni);
+ let h=`<p class="hint">Plánované odběry od <b>${czDatum(base)}</b> dál. Označ ty, které může porucha / odstávka ovlivnit.</p>`;
+ if(!ukaz.length){h+=`<p class="hint">V plánu nejsou žádné odběry od tohoto data.</p>`;}
+ else{
+  h+=`<div class="koliz-list">`;
+  ukaz.forEach(d=>{
+   h+=`<div class="koliz-den">${czDatum(d)}</div>`;
+   fut.filter(p=>p.datum===d).forEach(p=>{
+    const sel=st.kolize.indexOf(p._i)>=0,shoda=kolizeShoda(p.misto);
+    h+=`<div class="koliz-row ${sel?'sel':''}" onclick="togKolize(${p._i})"><span class="kx">${sel?'☑':'☐'}</span><span class="km">${esc(p.misto)}${p.rozsah?` · <i>${esc(p.rozsah)}</i>`:''}</span>${shoda?'<span class="kshoda">možná shoda místa</span>':''}</div>`;
+   });
+  });
+  h+=`</div>`;
+  if(dny.length>ukaz.length)h+=`<button type="button" class="koliz-more" onclick="viceKolize()">▾ Zobrazit další dny (+${Math.min(5,dny.length-ukaz.length)}, zbývá ${dny.length-ukaz.length})</button>`;
+ }
+ if(st.kolize.length)h+=`<div class="koliz-warn">⚠️ Označeno ${st.kolize.length} možných kolizí s odběry. Automaticky bude informována <b>technoložka (BK)</b> a <b>laboratoř (SŠ)</b>. Událost se uloží s upozorněním na možnou kolizi.</div>`;
+ return h;
+}
+function kolizeSouhrn(){return st.kolize.map(i=>`<div class="sumline" style="font-size:12px;color:#8a3b32">• ${czDatum(PLAN[i].datum)} – ${esc(PLAN[i].misto)}</div>`).join("");}
 
 function krok(d){
  if(d>0){ // validace
@@ -378,6 +428,7 @@ function hotovoHTML(){
  <div class="sumline"><b>Zadal:</b> ${UZIVATEL}${(jePodnet()&&st.nahlasil)?` · nahlásil: ${esc(st.nahlasil)}${st.tel?(" · "+esc(st.tel)):""}`:""}</div>
  <div class="sumline"><b>Řešitel:</b> ${esc(st.resitel||"—")} · <b>Informováni:</b> ${st.info.join(", ")||"—"}</div>
  ${st.ukol?`<div class="sumline"><b>Úkol:</b> ${esc(st.ukol)}${(st.tdatum||st.tcas)?` · termín ${esc(st.tdatum)} ${esc(st.tcas)}`:""}${st.upozorneni.length?` · upozornit: ${st.upozorneni.join(", ")}`:""}</div>`:""}
+ ${st.kolize.length?`<div class="koliz-warn" style="margin-top:12px">⚠️ <b>Hrozí kolize s plánem kontroly jakosti PV</b> (${st.kolize.length}×). Porucha / odstávka může ovlivnit naplánované odběry vzorků – automaticky informována technoložka (BK) a laboratoř (SŠ).</div>${kolizeSouhrn()}`:""}
  </div>
  <div style="margin-top:18px"><button class="b-save" style="border:0;border-radius:12px;padding:10px 22px;color:#fff;font-weight:800;cursor:pointer" onclick="zavri()">Hotovo</button></div></div>`;
 }
