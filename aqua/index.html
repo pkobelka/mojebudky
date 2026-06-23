@@ -413,7 +413,7 @@ function krok(d){
  if(d>0){ // validace
   if(st.krok===1&&!st.podminka)return alert("Vyber, co se stalo.");
   if(st.krok===2){if(jeZmenaPlanu()){if(!st.odber)return alert("Vyber konkrétní odběr z plánu.");}else{const tp=PODM_TYP[st.podminka];if(tp){if(!st.stredisko||!st.objekt)return alert("Vyber pracoviště a konkrétní "+tp+".");}else if(!st.stredisko||!st.typ)return alert("Vyber středisko a typ objektu.");}}
-  if(st.krok===4){st.hotovo=true;render();return;}
+  if(st.krok===4){if((st.ukol&&st.ukol.trim())&&(!st.tdatum||!st.tcas))return alert("U úkolu vyber termín – datum i čas.");st.hotovo=true;render();return;}
  }
  st.krok+=d;if(st.krok<1)st.krok=1;if(st.krok===3&&!st.zavaznost)st.zavaznost=st.zavDef||"stredni";render();
 }
