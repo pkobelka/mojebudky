@@ -138,7 +138,7 @@ padding:24px;z-index:50;overflow:auto}
 
 <div class="topbar">
   <div class="dat" id="dat">—</div>
-  <div class="online"><span class="l">Online:</span><span class="mono" title="Petr Kobelka">TŘ</span><span class="mono" title="Bláža Kolaříková">BK</span><span class="mono" title="Lukáš Vykydal">LV</span></div>
+  <div class="online"><span class="l">Online:</span><span class="mono" title="Petr Kobelka">TŘ</span><span class="mono" title="Bláža Kolaříková">Bláža Kolaříková</span><span class="mono" title="Lukáš Vykydal">Lukáš Vykydal</span></div>
   <button class="btn-nova" onclick="otevri()">＋ Nová událost</button>
 </div>
 
@@ -271,10 +271,13 @@ const OBJEKTY={"Moravská Třebová": {"vodovod": [{"n": "Borušov", "p": "", "c
 const KAT_TYP={"Vodovody":"vodovod","Vodojemy":"vodojem","Prameniště":"prameniste","Studny":"studna","Vrty":"vrt","Chlorace":"chlorace","Ostatní":"ostatni"};
 function openSeznam(s,kl){const typ=KAT_TYP[kl];const objs=(OBJEKTY[s]&&OBJEKTY[s][typ])?OBJEKTY[s][typ]:[];
  document.getElementById("seznamHead").textContent=kl+" – "+s+" ("+objs.length+")";
- document.getElementById("seznamBody").innerHTML=objs.length?objs.map(o=>`<div class="sl-row"><div><b>${esc(o.n)}</b>${o.p?` <span style="color:#6b7a8d">· ${esc(o.p)}</span>`:""}${o.c?` <span title="${esc(o.c)}" style="cursor:help">🔧</span>`:""}</div>`+(o.lat?`<a class="sl-map" target="_blank" href="https://www.openstreetmap.org/?mlat=${o.lat}&mlon=${o.lon}#map=16/${o.lat}/${o.lon}">📍 Mapa</a>`:`<span class="sl-nogps">bez GPS</span>`)+`</div>`).join(""):`<p class="hint">Žádné objekty.</p>`;
+ document.getElementById("seznamBody").innerHTML=objs.length?objs.map(o=>`<div class="sl-row"><div><b>${esc(o.n)}</b>${o.p?` <span style="color:#6b7a8d">· ${esc(o.p)}</span>`:""}${o.c?` <span title="${esc(o.c)}" style="cursor:help">🔧</span>`:""}</div>`+(o.lat?`<a class="sl-map" href="https://www.openstreetmap.org/?mlat=${o.lat}&mlon=${o.lon}#map=16/${o.lat}/${o.lon}" onclick="return otevriMapu(this.href)">📍 Mapa</a>`:`<span class="sl-nogps">bez GPS</span>`)+`</div>`).join(""):`<p class="hint">Žádné objekty.</p>`;
  document.getElementById("seznamOv").classList.add("show");}
 function zavriSeznam(){document.getElementById("seznamOv").classList.remove("show");}
 const UZIVATEL="Petr Kobelka";
+const ROLE_ZKR=["GŘ","TŘ","PŘ"];
+function lbl(z,jm){return ROLE_ZKR.indexOf(z)>=0?z:(jm||z);}
+function otevriMapu(u){window.open(u,"_blank","noopener");return false;}
 function jePodnet(){return st.podminka==="Stížnost občana"||st.podminka==="Reklamace";}
 function breadcrumb(){
  const t=[["Zadává",UZIVATEL]];
@@ -336,11 +339,11 @@ function krok3(){
 function setZav(k){st.zavaznost=k;render();}
 
 function krok4(){
- const res=LIDE.map(([z,jm])=>`<div class="person ${st.resitel===z?'sel':''}" title="${esc(jm)}" onclick="setRes('${z}')">${z}</div>`).join("");
- const upo=LIDE.map(([z,jm])=>`<div class="person ${st.upozorneni.includes(z)?'sel':''}" title="${esc(jm)}" onclick="togUpoz('${z}')">${z}</div>`).join("");
- const inf=LIDE.map(([z,jm])=>`<div class="person ${st.info.includes(z)?'sel':''}" title="${esc(jm)}" onclick="togInfo('${z}')">${z}</div>`).join("");
+ const res=LIDE.map(([z,jm])=>`<div class="person ${st.resitel===z?'sel':''}" title="${esc(jm)}" onclick="setRes('${z}')">${esc(lbl(z,jm))}</div>`).join("");
+ const upo=LIDE.map(([z,jm])=>`<div class="person ${st.upozorneni.includes(z)?'sel':''}" title="${esc(jm)}" onclick="togUpoz('${z}')">${esc(lbl(z,jm))}</div>`).join("");
+ const inf=LIDE.map(([z,jm])=>`<div class="person ${st.info.includes(z)?'sel':''}" title="${esc(jm)}" onclick="togInfo('${z}')">${esc(lbl(z,jm))}</div>`).join("");
  return `<h4>Úkol a lidé</h4>
- <p class="hint">Najeď myší na monogram → jméno. Klik = vybrat.</p>
+ <p class="hint">Klik = vybrat. (GŘ/TŘ/PŘ zůstávají zkratkou.)</p>
  <div class="fld"><label>Řešitel – komu přiřadit úkol</label><div class="people">${res}</div></div>
  <div class="fld"><label>Co se má udělat (úkol)</label><textarea placeholder="Např. odebrat vzorek, propláchnout řad…" oninput="st.ukol=this.value">${esc(st.ukol||"")}</textarea></div>
  <div class="two"><div class="fld"><label>Termín – datum</label><input type="date" value="${esc(st.tdatum||"")}" onchange="st.tdatum=this.value"></div>
