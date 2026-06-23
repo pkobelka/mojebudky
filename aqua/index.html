@@ -235,7 +235,7 @@ const KROKY=["1. Co se stalo?","2. Kde?","3. Podrobnosti","4. Lidé"];
 let st={krok:1,podminka:null,zavaznost:null,stredisko:null,typ:null,objekt:null,
 popis:"",nahlasil:"",tel:"",resitel:null,info:[],ukol:"",tdatum:"",tcas:"",upozorneni:[],hotovo:false};
 
-function otevri(){st={krok:1,podminka:null,zavaznost:null,stredisko:null,typ:null,objekt:null,popis:"",nahlasil:"",tel:"",resitel:null,info:[],ukol:"",tdatum:"",tcas:"",upozorneni:[],hotovo:false};
+function otevri(){st={krok:1,podminka:null,zavaznost:null,stredisko:null,typ:null,objekt:null,adresa:"",popis:"",nahlasil:"",tel:"",resitel:null,info:[],ukol:"",tdatum:"",tcas:"",upozorneni:[],hotovo:false};
 document.getElementById("ov").classList.add("show");render();}
 function zavri(){document.getElementById("ov").classList.remove("show");}
 
@@ -284,6 +284,7 @@ function breadcrumb(){
  if(st.podminka)t.push(["Co",st.podminka]);
  if(jeZmenaPlanu()){if(st.odber)t.push(["Odběr",st.odber.datum.split("-").reverse().join(".")+" · "+st.odber.misto]);}
  else{if(st.stredisko)t.push(["Středisko",st.stredisko]);if(st.typ)t.push(["Typ",st.typ]);if(st.objekt)t.push(["Objekt",st.objekt]);}
+ if(st.adresa&&st.adresa.trim())t.push(["Adresa",st.adresa.trim()]);
  if(st.zavaznost)t.push(["Závažnost",ZAV[st.zavaznost][0]]);
  if(st.resitel)t.push(["Řešitel",st.resitel]);
  if(!t.length)return "";
@@ -308,7 +309,8 @@ function krok2(){
  if(tp){st.typ=tp;const objs=(st.stredisko&&OBJEKTY[st.stredisko]&&OBJEKTY[st.stredisko][tp])?OBJEKTY[st.stredisko][tp].map(o=>o.n):[];
   let h=`<h4>Kde – ${tp}</h4><p class="hint">Vyber pracoviště a pak konkrétní ${tp}.</p>`;
   h+=`<div class="fld"><label>Pracoviště</label><div class="str-btns">`+STR.map(([nm])=>`<div class="pill ${st.stredisko===nm?'sel':''}" style="${st.stredisko===nm?'background:#1577c8':''}" onclick="setStr('${esc(nm)}')">${nm}</div>`).join("")+`</div></div>`;
-  if(st.stredisko){h+=`<div class="fld"><label>Vyber ${tp} (${objs.length})</label>`+(objs.length?`<div class="people" style="max-height:240px;overflow:auto">`+objs.map((o,i)=>`<div class="person ${st.objekt===o?'sel':''}" onclick="setObjekt2(${i})">${esc(o)}</div>`).join("")+`</div>`:`<p class="hint">Seznam pro „${tp}" zatím není naimportovaný.</p>`)+`</div>`;}
+  if(st.stredisko){h+=`<div class="fld"><label>Vyber ${tp} (${objs.length})</label>`+(objs.length?`<div class="people" style="max-height:240px;overflow:auto">`+objs.map((o,i)=>`<div class="person ${st.objekt===o?'sel':''}" onclick="setObjekt2(${i})">${esc(o)}</div>`).join("")+`</div>`:`<p class="hint">Seznam pro „${tp}" zatím není naimportovaný.</p>`)+`</div>`;
+   h+=`<div class="fld"><label>Upřesnění adresy / místa <span style="font-weight:400;color:#9aa3ad">(nepovinné)</span></label><input type="text" placeholder="ulice, č.p., orientační bod – např. MŠ, ul. Hlavní 12" value="${esc(st.adresa||"")}" oninput="st.adresa=this.value"></div>`;}
   return h;
  }
  const tk=st.typ?TYP2KEY[st.typ]:null;
@@ -319,7 +321,9 @@ function krok2(){
  <div class="fld"><label>Typ objektu</label><div class="typ-btns">`+
  TYPY.map(t=>`<div class="pill ${st.typ===t?'sel':''}" style="${st.typ===t?'background:#1577c8':''}" onclick="setTyp('${esc(t)}')">${t}</div>`).join("")+`</div></div>
  <div class="fld"><label>Konkrétní objekt</label>
- <select onchange="st.objekt=this.value">${objs.length?'<option value="">— vyber —</option>'+objs.map(o=>`<option ${st.objekt===o?'selected':''}>${o}</option>`).join(""):'<option>(nejprve vyber středisko a typ)</option>'}</select></div>`;
+ <select onchange="st.objekt=this.value">${objs.length?'<option value="">— vyber —</option>'+objs.map(o=>`<option ${st.objekt===o?'selected':''}>${o}</option>`).join(""):'<option>(nejprve vyber středisko a typ)</option>'}</select></div>
+ <div class="fld"><label>Upřesnění adresy / místa <span style="font-weight:400;color:#9aa3ad">(nepovinné)</span></label>
+ <input type="text" placeholder="ulice, č.p., orientační bod – např. MŠ, ul. Hlavní 12" value="${esc(st.adresa||"")}" oninput="st.adresa=this.value"></div>`;
 }
 function setStr(n){st.stredisko=n;st.objekt=null;render();}
 function setTyp(t){st.typ=t;st.objekt=null;render();}
