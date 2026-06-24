@@ -245,13 +245,13 @@ function setCist(v){st.cistAno=v;if(!v){st.cisterna=null;st.cistMisto="";st.cist
 function casSelect(field){
  const v=st[field]||"";const p=v.split(":");const hh=p[0]||"",mm=p[1]||"";
  const ho=Array.from({length:24},(_,i)=>String(i).padStart(2,"0")).map(h=>`<option ${h===hh?'selected':''}>${h}</option>`).join("");
- const mi=Array.from({length:60},(_,i)=>String(i).padStart(2,"0")).map(m=>`<option ${m===mm?'selected':''}>${m}</option>`).join("");
+ const mi=[0,10,20,30,40,50].map(n=>String(n).padStart(2,"0")).map(m=>`<option ${m===mm?'selected':''}>${m}</option>`).join("");
  return `<div style="display:flex;gap:6px;align-items:center">
    <select onchange="setCas('${field}',this.value,null)" style="flex:1"><option value="">hh</option>${ho}</select>
    <b>:</b>
    <select onchange="setCas('${field}',null,this.value)" style="flex:1"><option value="">mm</option>${mi}</select></div>`;
 }
-function setCas(field,h,m){const p=(st[field]||"").split(":");let ch=p[0]||"",cm=p[1]||"";if(h!==null)ch=h;if(m!==null)cm=m;st[field]=(ch||cm)?(ch+":"+cm):"";render();}
+function setCas(field,h,m){const p=(st[field]||"").split(":");let ch=p[0]||"",cm=p[1]||"";if(h!==null){ch=h;if(h&&!cm)cm="00";}if(m!==null)cm=m;st[field]=(ch||cm)?(ch+":"+cm):"";render();}
 // --- Kolize s plánem vzorkování ---
 function normTxt(s){return (s||"").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"");}
 function fmtDatumCz(iso){const p=iso.split("-");return p[2]+"."+p[1]+"."+p[0];}
@@ -271,6 +271,8 @@ function planObecIdx(){
   .sort((a,b)=>PLAN[a].datum<PLAN[b].datum?-1:1);
 }
 function togVzorek(i){i=+i;const j=st.kolVzorky.indexOf(i);if(j<0)st.kolVzorky.push(i);else st.kolVzorky.splice(j,1);render();}
+// celý plán od data události (všechna místa) – pro ruční prohlédnutí
+function planAllIdx(){const od=new Date((st.udDatum||dnesISO())+"T00:00:00");return PLAN.map((p,i)=>i).filter(i=>new Date(PLAN[i].datum+"T00:00:00")>=od).sort((a,b)=>PLAN[a].datum<PLAN[b].datum?-1:1);}
 function kolizeBlok(){
  if(!st.objekt) return "";
  const idx=planObecIdx();
@@ -300,18 +302,20 @@ function kolizeBlok(){
      </div>
    </div></div>`;
  if(!st.kolOpen) return hdr;
- if(!idx.length) return hdr+`<div class="fld"><div style="background:#e9f6ee;border:1px solid #bfe3cc;border-radius:10px;padding:9px 12px;font-size:13px;color:#1d7a42;font-weight:700">✓ Od ${fmtDatumCz(st.udDatum||dnesISO())} nejsou pro tuto obec naplánované žádné odběry.</div></div>`;
+ const full=planAllIdx();
+ if(!full.length) return hdr+`<div class="fld"><div style="background:#e9f6ee;border:1px solid #bfe3cc;border-radius:10px;padding:9px 12px;font-size:13px;color:#1d7a42;font-weight:700">✓ Od ${fmtDatumCz(st.udDatum||dnesISO())} nejsou v plánu žádné další odběry.</div></div>`;
+ const scopeSet=new Set(idx);
  let html="",lastD=null;
- idx.forEach(i=>{const p=PLAN[i];
+ full.forEach(i=>{const p=PLAN[i];
   if(p.datum!==lastD){lastD=p.datum;const dnu=Math.round((new Date(p.datum+"T00:00:00")-od)/86400000);
    html+=`<div style="font-weight:800;color:#0b3a66;margin:8px 0 4px;font-size:13px">${fmtDatumCz(p.datum)} <span style="color:#6b7a8d;font-weight:600">(+${dnu} dní)</span></div>`;}
-  const sel=st.kolVzorky.includes(i);
-  html+=`<div onclick="togVzorek(${i})" style="cursor:pointer;display:flex;gap:8px;align-items:center;padding:6px 9px;border:1px solid ${sel?'#e8881b':'#e2e9f1'};background:${sel?'#fff6e6':'#fff'};border-radius:9px;margin-bottom:5px;font-size:12.5px">
+  const sel=st.kolVzorky.includes(i);const zas=scopeSet.has(i);
+  html+=`<div onclick="togVzorek(${i})" style="cursor:pointer;display:flex;gap:8px;align-items:center;padding:6px 9px;border:1px solid ${sel?'#e8881b':'#e2e9f1'};border-left:${zas?'4px solid #e8881b':'1px solid '+(sel?'#e8881b':'#e2e9f1')};background:${sel?'#fff6e6':(zas?'#fffaf2':'#fff')};border-radius:9px;margin-bottom:5px;font-size:12.5px">
     <span style="width:18px;height:18px;border-radius:5px;border:2px solid ${sel?'#e8881b':'#b9c6d6'};background:${sel?'#e8881b':'#fff'};color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex:none">${sel?'✓':''}</span>
-    <span>${esc(p.misto)}${p.rozsah?` <span style="color:#6b7a8d">(${esc(p.rozsah)})</span>`:''}</span></div>`;
+    <span>${zas?'📍 ':''}${esc(p.misto)}${p.rozsah?` <span style="color:#6b7a8d">(${esc(p.rozsah)})</span>`:''}</span></div>`;
  });
  const oznaceno=st.kolVzorky.length?`<div style="font-weight:700;color:#d2730f;margin:6px 0 2px;font-size:13px">Označeno k přesunu: ${st.kolVzorky.length}</div>`:"";
- return hdr+`<div class="fld" style="margin-top:-4px"><p class="hint" style="margin:2px 0 6px">Klikni na odběr, který kolize ohrozí – označíš ho k přesunu. Roluj dolů pro další dny.</p>${oznaceno}<div style="max-height:260px;overflow:auto;border:1px solid #e2e9f1;border-radius:10px;padding:8px;background:#f6fafe">${html}</div></div>`;
+ return hdr+`<div class="fld" style="margin-top:-4px"><p class="hint" style="margin:2px 0 6px">Zobrazen celý plán od data události. 📍 = dotčené místo (objekt / vodovody). Klikni na odběr → označíš k přesunu. Roluj dolů pro další dny.</p>${oznaceno}<div style="max-height:300px;overflow:auto;border:1px solid #e2e9f1;border-radius:10px;padding:8px;background:#f6fafe">${html}</div></div>`;
 }
 function cisternaBlok(){
  const ano=st.cistAno===true;
