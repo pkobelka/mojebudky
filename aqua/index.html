@@ -255,36 +255,46 @@ function setCas(field,h,m){const p=(st[field]||"").split(":");let ch=p[0]||"",cm
 // --- Kolize s plánem vzorkování ---
 function normTxt(s){return (s||"").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"");}
 function fmtDatumCz(iso){const p=iso.split("-");return p[2]+"."+p[1]+"."+p[0];}
-function kolizeNajdi(){
- if(!st.objekt) return {near:[],dale:[]};
+function dnesISO(){const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");}
+// indexy odběrů v PLAN pro vybranou obec od data události dál (chronologicky)
+function planObecIdx(){
+ if(!st.objekt) return [];
  const slova=normTxt(st.objekt).split(/\s+/).filter(w=>w.length>=4);
- if(!slova.length) return {near:[],dale:[]};
- const dnes=new Date();dnes.setHours(0,0,0,0);
- const limit=new Date(dnes);limit.setDate(limit.getDate()+21);
- const near=[],dale=[];
- PLAN.forEach(p=>{
-  const m=normTxt(p.misto);
-  if(!slova.some(w=>m.includes(w))) return;
-  const dt=new Date(p.datum+"T00:00:00");
-  if(dt<dnes) return;
-  (dt<=limit?near:dale).push(p);
- });
- const ds=(a,b)=>a.datum<b.datum?-1:1;
- return {near:near.sort(ds),dale:dale.sort(ds)};
+ if(!slova.length) return [];
+ const od=new Date((st.udDatum||dnesISO())+"T00:00:00");
+ return PLAN.map((p,i)=>i)
+  .filter(i=>slova.some(w=>normTxt(PLAN[i].misto).includes(w)) && new Date(PLAN[i].datum+"T00:00:00")>=od)
+  .sort((a,b)=>PLAN[a].datum<PLAN[b].datum?-1:1);
 }
+function togVzorek(i){i=+i;const j=st.kolVzorky.indexOf(i);if(j<0)st.kolVzorky.push(i);else st.kolVzorky.splice(j,1);render();}
 function kolizeBlok(){
  if(!st.objekt) return "";
- const k=kolizeNajdi();
- if(!k.near.length&&!k.dale.length)
-  return `<div class="fld"><div style="background:#e9f6ee;border:1px solid #bfe3cc;border-radius:10px;padding:9px 12px;font-size:13px;color:#1d7a42;font-weight:700">✓ Žádná kolize s plánem vzorkování v této obci</div></div>`;
- if(!k.near.length){const p=k.dale[0];
-  return `<div class="fld"><div style="background:#fff6e6;border:1px solid #f0d8a8;border-radius:10px;padding:9px 12px;font-size:12.5px;color:#8a5a12">📅 Plán vzorkování: nejbližší odběr <b>${fmtDatumCz(p.datum)}</b> – ${esc(p.misto)} (mimo rizikové okno)</div></div>`;}
- const seznam=k.near.map(p=>`<div style="font-size:12.5px;padding:2px 0">• <b>${fmtDatumCz(p.datum)}</b> – ${esc(p.misto)}${p.rozsah?` <span style="color:#6b7a8d">(${esc(p.rozsah)})</span>`:''}</div>`).join("");
- return `<div class="fld"><div style="background:#fde9e9;border:1px solid #f3c2c2;border-radius:10px;padding:10px 12px;color:#c0392b">
-   <div style="font-weight:800;margin-bottom:5px">⚠️ Nebezpečí kolize s plánem vzorkování (${k.near.length})</div>
-   ${seznam}
-   <div style="font-size:12px;margin-top:6px">Odstávka / změna zdroje / chlorace může znehodnotit plánovaný odběr – domluvte přesun vzorkování.</div>
- </div></div>`;
+ const idx=planObecIdx();
+ const od=new Date((st.udDatum||dnesISO())+"T00:00:00");
+ const limit=new Date(od);limit.setDate(limit.getDate()+21);
+ const vOkne=idx.filter(i=>new Date(PLAN[i].datum+"T00:00:00")<=limit).length;
+ const bg=vOkne?"linear-gradient(180deg,#e8881b,#d2730f)":"linear-gradient(180deg,#2f9be0,#1577c8)";
+ const hdr=`<div class="fld"><label>Kolize s plánem vzorkování</label>
+   <div class="two">
+     <div><div style="font-size:11.5px;color:#6b7a8d;font-weight:700;margin-bottom:3px">Datum události</div>
+       <input type="date" value="${esc(st.udDatum||'')}" onchange="st.udDatum=this.value;render()"></div>
+     <div style="display:flex;align-items:flex-end">
+       <button type="button" onclick="st.kolOpen=!st.kolOpen;render()" style="width:100%;border:0;border-radius:10px;padding:10px;font-weight:800;cursor:pointer;color:#fff;background:${bg}">${st.kolOpen?'Skrýt plán':'🔍 Prověřit v plánu'}${vOkne?` · ${vOkne} v okolí`:''}</button>
+     </div>
+   </div></div>`;
+ if(!st.kolOpen) return hdr;
+ if(!idx.length) return hdr+`<div class="fld"><div style="background:#e9f6ee;border:1px solid #bfe3cc;border-radius:10px;padding:9px 12px;font-size:13px;color:#1d7a42;font-weight:700">✓ Od ${fmtDatumCz(st.udDatum||dnesISO())} nejsou pro tuto obec naplánované žádné odběry.</div></div>`;
+ let html="",lastD=null;
+ idx.forEach(i=>{const p=PLAN[i];
+  if(p.datum!==lastD){lastD=p.datum;const dnu=Math.round((new Date(p.datum+"T00:00:00")-od)/86400000);
+   html+=`<div style="font-weight:800;color:#0b3a66;margin:8px 0 4px;font-size:13px">${fmtDatumCz(p.datum)} <span style="color:#6b7a8d;font-weight:600">(+${dnu} dní)</span></div>`;}
+  const sel=st.kolVzorky.includes(i);
+  html+=`<div onclick="togVzorek(${i})" style="cursor:pointer;display:flex;gap:8px;align-items:center;padding:6px 9px;border:1px solid ${sel?'#e8881b':'#e2e9f1'};background:${sel?'#fff6e6':'#fff'};border-radius:9px;margin-bottom:5px;font-size:12.5px">
+    <span style="width:18px;height:18px;border-radius:5px;border:2px solid ${sel?'#e8881b':'#b9c6d6'};background:${sel?'#e8881b':'#fff'};color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex:none">${sel?'✓':''}</span>
+    <span>${esc(p.misto)}${p.rozsah?` <span style="color:#6b7a8d">(${esc(p.rozsah)})</span>`:''}</span></div>`;
+ });
+ const oznaceno=st.kolVzorky.length?`<div style="font-weight:700;color:#d2730f;margin:6px 0 2px;font-size:13px">Označeno k přesunu: ${st.kolVzorky.length}</div>`:"";
+ return hdr+`<div class="fld" style="margin-top:-4px"><p class="hint" style="margin:2px 0 6px">Klikni na odběr, který kolize ohrozí – označíš ho k přesunu. Roluj dolů pro další dny.</p>${oznaceno}<div style="max-height:260px;overflow:auto;border:1px solid #e2e9f1;border-radius:10px;padding:8px;background:#f6fafe">${html}</div></div>`;
 }
 function cisternaBlok(){
  const ano=st.cistAno===true;
@@ -329,10 +339,10 @@ document.getElementById("prehled").innerHTML=STR.map(([nm,p,bd])=>`
 // ---- WIZARD ----
 const KROKY=["1. Co se stalo?","2. Kde?","3. Podrobnosti","4. Lidé"];
 let st={krok:1,podminka:null,zavaznost:null,stredisko:null,typ:null,objekt:null,adresa:"",
-popis:"",nahlasil:"",tel:"",resitel:null,info:[],ukol:"",tdatum:"",tcas:"",upozorneni:[],cistAno:null,cisterna:null,cistMisto:"",cistOd:"",cistCas:"",hotovo:false};
+popis:"",nahlasil:"",tel:"",resitel:null,info:[],ukol:"",tdatum:"",tcas:"",upozorneni:[],cistAno:null,cisterna:null,cistMisto:"",cistOd:"",cistCas:"",udDatum:"",kolOpen:false,kolVzorky:[],hotovo:false};
 
-function otevri(){st={krok:1,podminka:null,zavaznost:null,stredisko:null,typ:null,objekt:null,adresa:"",popis:"",nahlasil:"",tel:"",resitel:null,info:[],ukol:"",tdatum:"",tcas:"",upozorneni:[],cistAno:null,cisterna:null,cistMisto:"",cistOd:"",cistCas:"",hotovo:false};
-document.getElementById("ov").classList.add("show");render();}
+function otevri(){st={krok:1,podminka:null,zavaznost:null,stredisko:null,typ:null,objekt:null,adresa:"",popis:"",nahlasil:"",tel:"",resitel:null,info:[],ukol:"",tdatum:"",tcas:"",upozorneni:[],cistAno:null,cisterna:null,cistMisto:"",cistOd:"",cistCas:"",udDatum:"",kolOpen:false,kolVzorky:[],hotovo:false};
+st.udDatum=dnesISO();document.getElementById("ov").classList.add("show");render();}
 function zavri(){document.getElementById("ov").classList.remove("show");}
 
 function render(){
@@ -395,7 +405,7 @@ function selPod(o,z){st.podminka=o;st.zavDef=z;render();}
 const PODM_TYP={"Čištění vodojemu":"vodojem","Porucha / odstávka / výměna chlorovacího zařízení":"chlorace"};
 const TYP2KEY={"Vodovod":"vodovod","Vodojem":"vodojem","Prameniště":"prameniste","Studny":"studna","Vrt":"vrt","Chlorace":"chlorace","Ostatní":"ostatni"};
 const OBJTYP_DATA={"vodojem": {"Jevíčko": ["Akumulace Léčebna", "Akumulace pro ATS Flintour", "Akumulace pro ATS Kalvárie", "Akumulace pro ČS Lazy", "Březina akumulace Důl Prokop", "Mařín vodojem", "Vodojem Biskupice", "Vodojem Bohdalov", "Vodojem Bělá u Jevíčka", "Vodojem Březina-Anna", "Vodojem Březinky", "Vodojem Hartinkov", "Vodojem Hejk", "Vodojem Jaroměřice-Za dvory", "Vodojem Jevíčko-Červený Kopec", "Vodojem Lázy", "Vodojem Mezihoří", "Vodojem Městečko Trnávka", "Vodojem Nový Dvůr", "Vodojem Pacov", "Vodojem Petrůvka", "Vodojem Petrůvka-obec", "Vodojem Slatina", "Vodojem Unerázka", "Vodojem Vranová Lhota", "Vodojem Vrážné", "Vodojem Vysoká", "Vodojem Zadní Arnoštov", "Vodojem Zálesí-Flintour", "Zadní Arnoštov vodojem"], "Litomyšl": ["Janov vodojem", "Lubná vodojem u hájenky", "Nový vodojem Bohuňovice", "Starý vodojem Bohuňovice", "Strakov vodojem", "Vidlatá Seč vodojem", "Vodojem Budislav", "Vodojem Dolní Újezd", "Vodojem Horní Újezd", "Vodojem Hraničky", "Vodojem Mladočov", "Vodojem Morašice", "Vodojem Nová Ves", "Vodojem Pohodlí", "Vodojem Suchá Lhota + ATS", "Vodojem Trstěnice", "Vodojem s ČS Jarošov", "Čistá Vodojem"], "Moravská Třebová": ["Akumulace Západní", "Akumulace pod ČS Křenov", "Akumulace pro ČS Mladějov na Moravě", "Akumulace ÚV Kunčina", "Akumulace ČS Borušov", "Akumulace ČS Janůvky", "Akumulace ČS Nový Dvůr", "Vodojem Borušov", "Vodojem Boršov-Horní", "Vodojem Boršov-Mach", "Vodojem Bošov-spodní", "Vodojem Dlouhá Loučka", "Vodojem Huttbusch", "Vodojem Janůvky", "Vodojem Koruna", "Vodojem Kunčina", "Vodojem Křenov", "Vodojem Křížový Vrch", "Vodojem Křížový vrch II", "Vodojem Malíkov", "Vodojem Mladějov", "Vodojem Mladějov na Moravě-v sadu", "Vodojem Nová Ves", "Vodojem Prklišov", "Vodojem Ptáček", "Vodojem Přední Arnoštov", "Vodojem Rozstání", "Vodojem Rozstání-Horní", "Vodojem Rudná-Horní", "Vodojem Rudná-dolní", "Vodojem Staré Město", "Vodojem Staré Město-nový", "Vodojem Sušice", "Vodojem Třebařov", "Vodojem Závodiště", "Vodojem Útěchov"], "Polička": ["Akumulace Pomezí", "Akumulace Trkač", "Akumulace Vetešník", "Akumulace Šibeňák", "Jedlová vodojem", "Korouhev vodojem", "Květná Vodojem", "Manipulační vodojem", "Modřec vodojem", "Oldříš vodojem", "Polička nový vodojem letiště", "Polička starý vodojem letiště", "Pomezí nový vodojem", "Pustá Kamenice vodojem", "Sebranice akumulace", "Střitež vodojem", "Trpín vodojem", "Vodojem Na Stašov", "Vodojem pro poličské strojírny"], "Svitavy": ["Akumulace ATS Samoty", "Akumulace ČS Sklené", "Mikuleč vodojem", "Pohledy Vodojem Slezáček", "Provozní akumulace", "Provozní akumulace Dětřichov", "Provozní akumulace Dětřichov-mimo provoz", "Vodojem Banín", "Vodojem Brněnec", "Vodojem Bělá nad Svitavou", "Vodojem Dětřichov", "Vodojem Hradec nad Svitavou", "Vodojem Mladějov na Moravě", "Vodojem Na Sibiři", "Vodojem Opatov", "Vodojem Pohledy", "Vodojem Radiměř-Hájenka", "Vodojem Radiměř-nad školou", "Vodojem Radiměř-nový", "Vodojem Radiměř-starý", "Vodojem Sklené", "Študlov akumulace"]}};
-function setObjekt2(i){const tp=PODM_TYP[st.podminka];const objs=(st.stredisko&&OBJEKTY[st.stredisko]&&OBJEKTY[st.stredisko][tp])?OBJEKTY[st.stredisko][tp].map(o=>o.n):[];st.objekt=objs[i];render();}
+function setObjekt2(i){const tp=PODM_TYP[st.podminka];const objs=(st.stredisko&&OBJEKTY[st.stredisko]&&OBJEKTY[st.stredisko][tp])?OBJEKTY[st.stredisko][tp].map(o=>o.n):[];st.objekt=objs[i];resetKol();render();}
 function krok2(){
  const tp=PODM_TYP[st.podminka]||null;
  if(tp){st.typ=tp;const objs=(st.stredisko&&OBJEKTY[st.stredisko]&&OBJEKTY[st.stredisko][tp])?OBJEKTY[st.stredisko][tp].map(o=>o.n):[];
@@ -413,11 +423,12 @@ function krok2(){
  <div class="fld"><label>Typ objektu</label><div class="typ-btns">`+
  TYPY.map(t=>`<div class="pill ${st.typ===t?'sel':''}" style="${st.typ===t?'background:#1577c8':''}" onclick="setTyp('${esc(t)}')">${t}</div>`).join("")+`</div></div>
  <div class="fld"><label>Konkrétní objekt</label>
- <select onchange="st.objekt=this.value;render()">${objs.length?'<option value="">— vyber —</option>'+objs.map(o=>`<option ${st.objekt===o?'selected':''}>${o}</option>`).join(""):'<option>(nejprve vyber středisko a typ)</option>'}</select></div>
+ <select onchange="st.objekt=this.value;resetKol();render()">${objs.length?'<option value="">— vyber —</option>'+objs.map(o=>`<option ${st.objekt===o?'selected':''}>${o}</option>`).join(""):'<option>(nejprve vyber středisko a typ)</option>'}</select></div>
  ${st.objekt?`<div class="fld"><label>Upřesnění adresy</label><input value="${esc(st.adresa||'')}" oninput="st.adresa=this.value" placeholder="Ulice, č.p., část obce…"></div>`:''}`;
 }
-function setStr(n){st.stredisko=n;st.objekt=null;st.adresa="";render();}
-function setTyp(t){st.typ=t;st.objekt=null;st.adresa="";render();}
+function resetKol(){st.kolVzorky=[];st.kolOpen=false;}
+function setStr(n){st.stredisko=n;st.objekt=null;st.adresa="";resetKol();render();}
+function setTyp(t){st.typ=t;st.objekt=null;st.adresa="";resetKol();render();}
 
 function krok3(){
  const zb=Object.entries(ZAV).map(([k,[lb,c]])=>`<div class="pill ${st.zavaznost===k?'sel':''}" style="${st.zavaznost===k?'background:'+c:''}" onclick="setZav('${k}')">${lb}</div>`).join("");
@@ -470,6 +481,7 @@ function hotovoHTML(){
  <div class="sumline"><b>Co:</b> ${esc(st.podminka||"—")} · <b>závažnost:</b> ${zl}</div>
  ${jeZmenaPlanu()&&st.odber?`<div class="sumline"><b>Odběr z plánu:</b> ${esc(st.odber.datum)} · ${esc(st.odber.misto)}</div>`:`<div class="sumline"><b>Kde:</b> ${esc(st.stredisko||"—")} · ${esc(st.typ||"—")} · ${esc(st.objekt||"—")}${st.adresa?` · ${esc(st.adresa)}`:""}</div>`}
  <div class="sumline"><b>Popis:</b> ${esc(st.popis||"—")}</div>
+ ${st.kolVzorky.length?`<div class="sumline"><b>Kolize – vzorky k přesunu (${st.kolVzorky.length}):</b> ${st.kolVzorky.slice().sort((a,b)=>PLAN[a].datum<PLAN[b].datum?-1:1).map(i=>fmtDatumCz(PLAN[i].datum)+" "+esc(PLAN[i].misto)).join("; ")}</div>`:""}
  ${st.cistAno&&st.cisterna!=null?`<div class="sumline"><b>Cisterna:</b> ${fmtL(CISTERNY[st.cisterna].obj)} · ${esc(CISTERNY[st.cisterna].typ)} (${esc(CISTERNY[st.cisterna].stred)})${st.cistMisto?` → ${esc(st.cistMisto)}`:""}${(st.cistOd||st.cistCas)?` · od ${esc(st.cistOd)} ${esc(st.cistCas)}`:""}</div>`:(st.cistAno?`<div class="sumline"><b>Cisterna:</b> ano (cisterna nevybrána)</div>`:"")}
  <div class="sumline"><b>Zadal:</b> ${UZIVATEL}${(jePodnet()&&st.nahlasil)?` · nahlásil: ${esc(st.nahlasil)}${st.tel?(" · "+esc(st.tel)):""}`:""}</div>
  <div class="sumline"><b>Řešitel:</b> ${st.resitel?esc(lidLbl(st.resitel)):"—"} · <b>Informováni:</b> ${st.info.map(z=>esc(lidLbl(z))).join(", ")||"—"}</div>
