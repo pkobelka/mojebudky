@@ -4,6 +4,10 @@ on:
   push:
     branches:
       - main
+    paths:
+      - database.rules.json
+      - firebase.json
+      - .github/workflows/firebase-deploy.yml
 
 jobs:
   deploy:
@@ -14,6 +18,12 @@ jobs:
       - name: Deploy Firebase Database Rules
         run: |
           echo '${{ secrets.FIREBASE_SERVICE_ACCOUNT }}' > /tmp/sa.json
-          npx firebase-tools@latest deploy --only database --project moje-budky
+          n=0
+          until npx firebase-tools@13 deploy --only database --project moje-budky --non-interactive; do
+            n=$((n+1))
+            if [ $n -ge 3 ]; then echo "Selhalo po 3 pokusech"; exit 1; fi
+            echo "Pokus $n selhal, zkousim znovu za 10s..."
+            sleep 10
+          done
         env:
           GOOGLE_APPLICATION_CREDENTIALS: /tmp/sa.json
