@@ -327,7 +327,7 @@ async function _zobrazAdminPanel(loginId) {
       if (_zadostiRef) { _zadostiRef.off(); _zadostiRef = null; }
       _navBadgePocty.zadosti = 0; _navBadgePocty.zpravy = 0;
       if (btn) {
-        btn.textContent = 'Vstup pro správce';
+        btn.textContent = 'Přihlášení pro správce';
         btn.classList.remove('prihlaseny');
         btn.removeEventListener('click', btn._dropdownHandler);
       }
