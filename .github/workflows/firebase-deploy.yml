@@ -19,11 +19,11 @@ jobs:
         run: |
           echo '${{ secrets.FIREBASE_SERVICE_ACCOUNT }}' > /tmp/sa.json
           n=0
-          until npx firebase-tools@13 deploy --only database --project moje-budky --non-interactive; do
+          until npx firebase-tools@latest deploy --only database --project moje-budky; do
             n=$((n+1))
             if [ $n -ge 3 ]; then echo "Selhalo po 3 pokusech"; exit 1; fi
-            echo "Pokus $n selhal, zkousim znovu za 10s..."
-            sleep 10
+            echo "Pokus $n selhal, zkousim znovu za 15s..."
+            sleep 15
           done
         env:
           GOOGLE_APPLICATION_CREDENTIALS: /tmp/sa.json
