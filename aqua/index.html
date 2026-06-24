@@ -252,6 +252,40 @@ function casSelect(field){
    <select onchange="setCas('${field}',null,this.value)" style="flex:1"><option value="">mm</option>${mi}</select></div>`;
 }
 function setCas(field,h,m){const p=(st[field]||"").split(":");let ch=p[0]||"",cm=p[1]||"";if(h!==null)ch=h;if(m!==null)cm=m;st[field]=(ch||cm)?(ch+":"+cm):"";render();}
+// --- Kolize s plánem vzorkování ---
+function normTxt(s){return (s||"").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"");}
+function fmtDatumCz(iso){const p=iso.split("-");return p[2]+"."+p[1]+"."+p[0];}
+function kolizeNajdi(){
+ if(!st.objekt) return {near:[],dale:[]};
+ const slova=normTxt(st.objekt).split(/\s+/).filter(w=>w.length>=4);
+ if(!slova.length) return {near:[],dale:[]};
+ const dnes=new Date();dnes.setHours(0,0,0,0);
+ const limit=new Date(dnes);limit.setDate(limit.getDate()+21);
+ const near=[],dale=[];
+ PLAN.forEach(p=>{
+  const m=normTxt(p.misto);
+  if(!slova.some(w=>m.includes(w))) return;
+  const dt=new Date(p.datum+"T00:00:00");
+  if(dt<dnes) return;
+  (dt<=limit?near:dale).push(p);
+ });
+ const ds=(a,b)=>a.datum<b.datum?-1:1;
+ return {near:near.sort(ds),dale:dale.sort(ds)};
+}
+function kolizeBlok(){
+ if(!st.objekt) return "";
+ const k=kolizeNajdi();
+ if(!k.near.length&&!k.dale.length)
+  return `<div class="fld"><div style="background:#e9f6ee;border:1px solid #bfe3cc;border-radius:10px;padding:9px 12px;font-size:13px;color:#1d7a42;font-weight:700">✓ Žádná kolize s plánem vzorkování v této obci</div></div>`;
+ if(!k.near.length){const p=k.dale[0];
+  return `<div class="fld"><div style="background:#fff6e6;border:1px solid #f0d8a8;border-radius:10px;padding:9px 12px;font-size:12.5px;color:#8a5a12">📅 Plán vzorkování: nejbližší odběr <b>${fmtDatumCz(p.datum)}</b> – ${esc(p.misto)} (mimo rizikové okno)</div></div>`;}
+ const seznam=k.near.map(p=>`<div style="font-size:12.5px;padding:2px 0">• <b>${fmtDatumCz(p.datum)}</b> – ${esc(p.misto)}${p.rozsah?` <span style="color:#6b7a8d">(${esc(p.rozsah)})</span>`:''}</div>`).join("");
+ return `<div class="fld"><div style="background:#fde9e9;border:1px solid #f3c2c2;border-radius:10px;padding:10px 12px;color:#c0392b">
+   <div style="font-weight:800;margin-bottom:5px">⚠️ Nebezpečí kolize s plánem vzorkování (${k.near.length})</div>
+   ${seznam}
+   <div style="font-size:12px;margin-top:6px">Odstávka / změna zdroje / chlorace může znehodnotit plánovaný odběr – domluvte přesun vzorkování.</div>
+ </div></div>`;
+}
 function cisternaBlok(){
  const ano=st.cistAno===true;
  const toggle=`<div class="zav-btns">
@@ -388,6 +422,7 @@ function setTyp(t){st.typ=t;st.objekt=null;st.adresa="";render();}
 function krok3(){
  const zb=Object.entries(ZAV).map(([k,[lb,c]])=>`<div class="pill ${st.zavaznost===k?'sel':''}" style="${st.zavaznost===k?'background:'+c:''}" onclick="setZav('${k}')">${lb}</div>`).join("");
  return `<h4>Podrobnosti</h4>
+ ${kolizeBlok()}
  <div class="fld"><label>Závažnost (přednastaveno, lze změnit)</label><div class="zav-btns">${zb}</div></div>
  <div class="fld"><label>Popis</label><textarea placeholder="Stručně co se stalo…" oninput="st.popis=this.value">${esc(st.popis)}</textarea></div>
  ${nabidnoutCisternu()?cisternaBlok():""}
