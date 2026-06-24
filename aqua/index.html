@@ -256,14 +256,18 @@ function setCas(field,h,m){const p=(st[field]||"").split(":");let ch=p[0]||"",cm
 function normTxt(s){return (s||"").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"");}
 function fmtDatumCz(iso){const p=iso.split("-");return p[2]+"."+p[1]+"."+p[0];}
 function dnesISO(){const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");}
-// indexy odběrů v PLAN pro vybranou obec od data události dál (chronologicky)
+// generická slova, která sama o sobě neidentifikují místo
+const KOL_STOP=new Set(["vodojem","akumulace","prameniste","studna","studny","vrt","chlorace","ostatni","nadrz","cerpaci","stanice","horni","dolni","novy","stary","nova","obec"]);
+// místa zasažená událostí = vybraný objekt + dotčené vodovody
+function kolScope(){return [st.objekt,...(st.dotcene||[])].filter(Boolean);}
+function kolSlova(loc){return normTxt(loc).split(/\s+/).filter(w=>w.length>=4&&!KOL_STOP.has(w));}
+function matchMisto(misto){const m=normTxt(misto);return kolScope().some(loc=>{const sl=kolSlova(loc);return sl.length&&sl.some(w=>m.includes(w));});}
+// indexy odběrů v PLAN pro zasažená místa od data události dál (chronologicky)
 function planObecIdx(){
- if(!st.objekt) return [];
- const slova=normTxt(st.objekt).split(/\s+/).filter(w=>w.length>=4);
- if(!slova.length) return [];
+ if(!kolScope().length) return [];
  const od=new Date((st.udDatum||dnesISO())+"T00:00:00");
  return PLAN.map((p,i)=>i)
-  .filter(i=>slova.some(w=>normTxt(PLAN[i].misto).includes(w)) && new Date(PLAN[i].datum+"T00:00:00")>=od)
+  .filter(i=>matchMisto(PLAN[i].misto) && new Date(PLAN[i].datum+"T00:00:00")>=od)
   .sort((a,b)=>PLAN[a].datum<PLAN[b].datum?-1:1);
 }
 function togVzorek(i){i=+i;const j=st.kolVzorky.indexOf(i);if(j<0)st.kolVzorky.push(i);else st.kolVzorky.splice(j,1);render();}
@@ -354,7 +358,7 @@ const KROKY=["1. Co se stalo?","2. Kde?","3. Podrobnosti","4. Lidé"];
 let st={krok:1,podminka:null,zavaznost:null,stredisko:null,typ:null,objekt:null,adresa:"",
 popis:"",nahlasil:"",tel:"",ukoly:[{resitel:null,popis:"",tdatum:"",tcas:"",upozorneni:[]}],info:[],cistAno:null,cisterna:null,cistMisto:"",cistOd:"",cistCas:"",udDatum:"",kolOpen:false,kolVzorky:[],hotovo:false};
 
-function otevri(){st={krok:1,podminka:null,zavaznost:null,stredisko:null,typ:null,objekt:null,adresa:"",popis:"",nahlasil:"",tel:"",ukoly:[{resitel:null,popis:"",tdatum:"",tcas:"",upozorneni:[]}],info:[],cistAno:null,cisterna:null,cistMisto:"",cistOd:"",cistCas:"",udDatum:"",kolOpen:false,kolVzorky:[],hotovo:false};
+function otevri(){st={krok:1,podminka:null,zavaznost:null,stredisko:null,typ:null,objekt:null,adresa:"",dotcene:[],popis:"",nahlasil:"",tel:"",ukoly:[{resitel:null,popis:"",tdatum:"",tcas:"",upozorneni:[]}],info:[],cistAno:null,cisterna:null,cistMisto:"",cistOd:"",cistCas:"",udDatum:"",kolOpen:false,kolVzorky:[],hotovo:false};
 st.udDatum=dnesISO();document.getElementById("ov").classList.add("show");render();}
 function zavri(){document.getElementById("ov").classList.remove("show");}
 
@@ -426,6 +430,8 @@ function krok2(){
   h+=`<div class="fld"><label>Pracoviště</label><div class="str-btns">`+STR.map(([nm])=>`<div class="pill ${st.stredisko===nm?'sel':''}" style="${st.stredisko===nm?'background:#1577c8':''}" onclick="setStr('${esc(nm)}')">${nm}</div>`).join("")+`</div></div>`;
   if(st.stredisko){h+=`<div class="fld"><label>Vyber ${tp} (${objs.length})</label>`+(objs.length?`<div class="people" style="max-height:240px;overflow:auto">`+objs.map((o,i)=>`<div class="person ${st.objekt===o?'sel':''}" onclick="setObjekt2(${i})">${esc(o)}</div>`).join("")+`</div>`:`<p class="hint">Seznam pro „${tp}" zatím není naimportovaný.</p>`)+`</div>`;}
   if(st.objekt)h+=`<div class="fld"><label>Upřesnění adresy</label><input value="${esc(st.adresa||'')}" oninput="st.adresa=this.value" placeholder="Ulice, č.p., část obce…"></div>`;
+  if(st.objekt&&tp==="vodojem"){const vv=(st.stredisko&&OBJEKTY[st.stredisko]&&OBJEKTY[st.stredisko].vodovod)?OBJEKTY[st.stredisko].vodovod.map(o=>o.n):[];
+   h+=`<div class="fld"><label>Dotčené vodovody (lze vybrat víc) ${st.dotcene.length?`· ${st.dotcene.length}`:''}</label><p class="hint" style="margin:0 0 6px">Které vodovody / obce čištění vodojemu zasáhne – podle nich se prověří kolize s plánem.</p><div class="chips" style="max-height:200px;overflow:auto">`+vv.map(o=>`<div class="chip ${st.dotcene.includes(o)?'sel':''}" onclick="togDotceny('${esc(o).replace(/'/g,"\\'")}')">${esc(o)}</div>`).join("")+`</div></div>`;}
   return h;
  }
  const tk=st.typ?TYP2KEY[st.typ]:null;
@@ -440,8 +446,9 @@ function krok2(){
  ${st.objekt?`<div class="fld"><label>Upřesnění adresy</label><input value="${esc(st.adresa||'')}" oninput="st.adresa=this.value" placeholder="Ulice, č.p., část obce…"></div>`:''}`;
 }
 function resetKol(){st.kolVzorky=[];st.kolOpen=false;}
-function setStr(n){st.stredisko=n;st.objekt=null;st.adresa="";resetKol();render();}
-function setTyp(t){st.typ=t;st.objekt=null;st.adresa="";resetKol();render();}
+function setStr(n){st.stredisko=n;st.objekt=null;st.adresa="";st.dotcene=[];resetKol();render();}
+function setTyp(t){st.typ=t;st.objekt=null;st.adresa="";st.dotcene=[];resetKol();render();}
+function togDotceny(nm){const i=st.dotcene.indexOf(nm);if(i<0)st.dotcene.push(nm);else st.dotcene.splice(i,1);resetKol();render();}
 
 function krok3(){
  const zb=Object.entries(ZAV).map(([k,[lb,c]])=>`<div class="pill ${st.zavaznost===k?'sel':''}" style="${st.zavaznost===k?'background:'+c:''}" onclick="setZav('${k}')">${lb}</div>`).join("");
@@ -464,12 +471,12 @@ function lidLbl(z){if(z==="GŘ"||z==="TŘ"||z==="PŘ")return z;const f=LIDE.find
 function casSelectU(ti){
  const v=st.ukoly[ti].tcas||"";const p=v.split(":");const hh=p[0]||"",mm=p[1]||"";
  const ho=Array.from({length:24},(_,i)=>String(i).padStart(2,"0")).map(h=>`<option ${h===hh?'selected':''}>${h}</option>`).join("");
- const mi=Array.from({length:60},(_,i)=>String(i).padStart(2,"0")).map(m=>`<option ${m===mm?'selected':''}>${m}</option>`).join("");
+ const mi=[0,10,20,30,40,50].map(n=>String(n).padStart(2,"0")).map(m=>`<option ${m===mm?'selected':''}>${m}</option>`).join("");
  return `<div style="display:flex;gap:6px;align-items:center">
    <select onchange="setCasU(${ti},this.value,null)" style="flex:1"><option value="">hh</option>${ho}</select><b>:</b>
    <select onchange="setCasU(${ti},null,this.value)" style="flex:1"><option value="">mm</option>${mi}</select></div>`;
 }
-function setCasU(ti,h,m){const p=(st.ukoly[ti].tcas||"").split(":");let ch=p[0]||"",cm=p[1]||"";if(h!==null)ch=h;if(m!==null)cm=m;st.ukoly[ti].tcas=(ch||cm)?(ch+":"+cm):"";render();}
+function setCasU(ti,h,m){const p=(st.ukoly[ti].tcas||"").split(":");let ch=p[0]||"",cm=p[1]||"";if(h!==null){ch=h;if(h&&!cm)cm="00";}if(m!==null)cm=m;st.ukoly[ti].tcas=(ch||cm)?(ch+":"+cm):"";render();}
 function krok4(){
  const inf=LIDE.map(([z,jm])=>`<div class="person ${st.info.includes(z)?'sel':''}" title="${esc(jm)}" onclick="togInfo('${z}')">${esc(lidLbl(z))}</div>`).join("");
  const ukoly=st.ukoly.map((u,ti)=>{
@@ -511,6 +518,7 @@ function hotovoHTML(){
  <div style="text-align:left;max-width:440px;margin:10px auto 0">
  <div class="sumline"><b>Co:</b> ${esc(st.podminka||"—")} · <b>závažnost:</b> ${zl}</div>
  ${jeZmenaPlanu()&&st.odber?`<div class="sumline"><b>Odběr z plánu:</b> ${esc(st.odber.datum)} · ${esc(st.odber.misto)}</div>`:`<div class="sumline"><b>Kde:</b> ${esc(st.stredisko||"—")} · ${esc(st.typ||"—")} · ${esc(st.objekt||"—")}${st.adresa?` · ${esc(st.adresa)}`:""}</div>`}
+ ${st.dotcene.length?`<div class="sumline"><b>Dotčené vodovody:</b> ${st.dotcene.map(esc).join(", ")}</div>`:""}
  <div class="sumline"><b>Popis:</b> ${esc(st.popis||"—")}</div>
  ${st.kolVzorky.length?`<div class="sumline"><b>Kolize – vzorky k přesunu (${st.kolVzorky.length}):</b> ${st.kolVzorky.slice().sort((a,b)=>PLAN[a].datum<PLAN[b].datum?-1:1).map(i=>fmtDatumCz(PLAN[i].datum)+" "+esc(PLAN[i].misto)).join("; ")}</div>`:""}
  ${st.cistAno&&st.cisterna!=null?`<div class="sumline"><b>Cisterna:</b> ${fmtL(CISTERNY[st.cisterna].obj)} · ${esc(CISTERNY[st.cisterna].typ)} (${esc(CISTERNY[st.cisterna].stred)})${st.cistMisto?` → ${esc(st.cistMisto)}`:""}${(st.cistOd||st.cistCas)?` · od ${esc(st.cistOd)} ${esc(st.cistCas)}`:""}</div>`:(st.cistAno?`<div class="sumline"><b>Cisterna:</b> ano (cisterna nevybrána)</div>`:"")}
