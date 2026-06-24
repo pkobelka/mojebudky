@@ -33,7 +33,8 @@
 ## Data doplněná z podkladů
 - **Chlorace:** Moravská Třebová (původní), **Svitavy 13**, **Jevíčko 20**, **Polička 12** (placeholder – jen názvy + chlornan/plynný, čeká na podrobný seznam s typy čerpadel a dávkováním).
 - **Ponorná čerpadla** (pole `c`) doplněna k vrtům/zdrojům Svitavy, Litomyšl, Jevíčko, Polička (MT už byla). Vynechané zdroje bez objektu v datech: Pohledy P-2, Sklené SN-1, Budislav S-2, Polička V-7/V-8, Pustá Kamenice PKV-3.
-- **Kontakty:** všech 19 lidí má telefon; bez e-mailu zůstávají **Radovan Selinger** a **Jiří Bombera**. Funkce vedení: GŘ=generální, PŘ=provozní, TŘ=technický ředitel (odhad z kódů, k potvrzení).
+- **Kontakty:** všech 19 lidí má telefon; bez e-mailu zůstávají **Radovan Selinger** a **Jiří Bombera**. Funkce vedení: GŘ=generální, PŘ=provozní, TŘ=technický ředitel (**potvrzeno**).
+- **GPS chlorací:** chlorovací zařízení sedí na objektech, jejichž GPS je v `OBJEKTY`. Doplněno `lat/lon` k 66 ze 71 chlorací (spárováno podle názvu objektu/obce a objemu vodojemu). Bez GPS zůstává 5: importní artefakty „V Mor.Třebové 22.6.2026", „Vypracoval: Vykydal", „V Litomyšli 22.6.2026", dále **Chotěnov** (nechloruje se – přesunuto na VDJ Hraničky) a **Bezděčí – ATS** (chybí objekt s GPS).
 
 ## CI / GitHub Actions
 - `.github/workflows/firebase-deploy.yml` – nasazuje pravidla Firebase DB. Upraveno: běží **jen při změně** `database.rules.json`/`firebase.json`/workflow (ne při každém pushi), `firebase-tools@latest` (verze 13 neuměla ADC auth → nepinovat), retry 3×. Poslední běh zelený.
@@ -42,7 +43,7 @@
 ## Otevřené úkoly / nápady
 1. **Polička chlorace** – nahradit placeholder podrobným seznamem (typy čerpadel, dávkování), až dorazí.
 2. **Doplnit e-maily** Selinger, Bombera (zatím jen tel).
-3. **Potvrdit funkce vedení** a případně doplnit funkce ostatním.
+3. ~~Potvrdit funkce vedení~~ ✅ potvrzeno (GŘ/PŘ/TŘ). Případně doplnit funkce ostatním.
 4. **Backend pro notifikace** (push + e-mail; SMS jen pro vysokou závažnost kvůli ceně) – zatím mimka.
 5. **Samostatné repo pro AC** (mimo `mojebudky`) – nutno přepsat scope v `manifest.json`, `sw.js`, registraci SW v `index.html` (teď natvrdo `/mojebudky/aqua/`).
 6. Případně propsat mail/tel do souhrnu události u řešitele/informovaných.
