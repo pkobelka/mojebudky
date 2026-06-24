@@ -352,9 +352,9 @@ document.getElementById("prehled").innerHTML=STR.map(([nm,p,bd])=>`
 // ---- WIZARD ----
 const KROKY=["1. Co se stalo?","2. Kde?","3. Podrobnosti","4. Lidé"];
 let st={krok:1,podminka:null,zavaznost:null,stredisko:null,typ:null,objekt:null,adresa:"",
-popis:"",nahlasil:"",tel:"",resitel:null,info:[],ukol:"",tdatum:"",tcas:"",upozorneni:[],cistAno:null,cisterna:null,cistMisto:"",cistOd:"",cistCas:"",udDatum:"",kolOpen:false,kolVzorky:[],hotovo:false};
+popis:"",nahlasil:"",tel:"",ukoly:[{resitel:null,popis:"",tdatum:"",tcas:"",upozorneni:[]}],info:[],cistAno:null,cisterna:null,cistMisto:"",cistOd:"",cistCas:"",udDatum:"",kolOpen:false,kolVzorky:[],hotovo:false};
 
-function otevri(){st={krok:1,podminka:null,zavaznost:null,stredisko:null,typ:null,objekt:null,adresa:"",popis:"",nahlasil:"",tel:"",resitel:null,info:[],ukol:"",tdatum:"",tcas:"",upozorneni:[],cistAno:null,cisterna:null,cistMisto:"",cistOd:"",cistCas:"",udDatum:"",kolOpen:false,kolVzorky:[],hotovo:false};
+function otevri(){st={krok:1,podminka:null,zavaznost:null,stredisko:null,typ:null,objekt:null,adresa:"",popis:"",nahlasil:"",tel:"",ukoly:[{resitel:null,popis:"",tdatum:"",tcas:"",upozorneni:[]}],info:[],cistAno:null,cisterna:null,cistMisto:"",cistOd:"",cistCas:"",udDatum:"",kolOpen:false,kolVzorky:[],hotovo:false};
 st.udDatum=dnesISO();document.getElementById("ov").classList.add("show");render();}
 function zavri(){document.getElementById("ov").classList.remove("show");}
 
@@ -401,7 +401,7 @@ function breadcrumb(){
  if(jeZmenaPlanu()){if(st.odber)t.push(["Odběr",st.odber.datum.split("-").reverse().join(".")+" · "+st.odber.misto]);}
  else{if(st.stredisko)t.push(["Středisko",st.stredisko]);if(st.typ)t.push(["Typ",st.typ]);if(st.objekt)t.push(["Objekt",st.objekt]);}
  if(st.zavaznost)t.push(["Závažnost",ZAV[st.zavaznost][0]]);
- if(st.resitel)t.push(["Řešitel",st.resitel]);
+ {const resit=[...new Set(st.ukoly.map(u=>u.resitel).filter(Boolean))];if(resit.length)t.push(["Řešitel",resit.map(lidLbl).join(", ")]);}
  if(!t.length)return "";
  return `<div class="bc">`+t.map(([k,v])=>`<span class="t"><b>${k}</b>${esc(v)}</span>`).join("")+`</div>`;
 }
@@ -461,21 +461,39 @@ function setZav(k){st.zavaznost=k;render();}
 
 // vedení zůstává jako kód (GŘ/TŘ/PŘ), ostatní se zobrazují plným jménem
 function lidLbl(z){if(z==="GŘ"||z==="TŘ"||z==="PŘ")return z;const f=LIDE.find(x=>x[0]===z);return f?f[1]:z;}
-function krok4(){
- const res=LIDE.map(([z,jm])=>`<div class="person ${st.resitel===z?'sel':''}" title="${esc(jm)}" onclick="setRes('${z}')">${esc(lidLbl(z))}</div>`).join("");
- const upo=LIDE.map(([z,jm])=>`<div class="person ${st.upozorneni.includes(z)?'sel':''}" title="${esc(jm)}" onclick="togUpoz('${z}')">${esc(lidLbl(z))}</div>`).join("");
- const inf=LIDE.map(([z,jm])=>`<div class="person ${st.info.includes(z)?'sel':''}" title="${esc(jm)}" onclick="togInfo('${z}')">${esc(lidLbl(z))}</div>`).join("");
- return `<h4>Úkol a lidé</h4>
- <p class="hint">Klik = vybrat. (GŘ/TŘ/PŘ = vedení.)</p>
- <div class="fld"><label>Řešitel – komu přiřadit úkol</label><div class="people">${res}</div></div>
- <div class="fld"><label>Co se má udělat (úkol)</label><textarea placeholder="Např. odebrat vzorek, propláchnout řad…" oninput="st.ukol=this.value">${esc(st.ukol||"")}</textarea></div>
- <div class="two"><div class="fld"><label>Termín – datum</label><input type="date" value="${esc(st.tdatum||"")}" onchange="st.tdatum=this.value"></div>
- <div class="fld"><label>Termín – čas</label>${casSelect('tcas')}</div></div>
- <div class="fld"><label>Upozornit na (ne)splnění úkolu</label><div class="people">${upo}</div></div>
- <div class="fld"><label>Koho informovat o události</label><div class="people">${inf}</div></div>`;
+function casSelectU(ti){
+ const v=st.ukoly[ti].tcas||"";const p=v.split(":");const hh=p[0]||"",mm=p[1]||"";
+ const ho=Array.from({length:24},(_,i)=>String(i).padStart(2,"0")).map(h=>`<option ${h===hh?'selected':''}>${h}</option>`).join("");
+ const mi=Array.from({length:60},(_,i)=>String(i).padStart(2,"0")).map(m=>`<option ${m===mm?'selected':''}>${m}</option>`).join("");
+ return `<div style="display:flex;gap:6px;align-items:center">
+   <select onchange="setCasU(${ti},this.value,null)" style="flex:1"><option value="">hh</option>${ho}</select><b>:</b>
+   <select onchange="setCasU(${ti},null,this.value)" style="flex:1"><option value="">mm</option>${mi}</select></div>`;
 }
-function togUpoz(z){const i=st.upozorneni.indexOf(z);if(i<0)st.upozorneni.push(z);else st.upozorneni.splice(i,1);render();}
-function setRes(z){st.resitel=z;render();}
+function setCasU(ti,h,m){const p=(st.ukoly[ti].tcas||"").split(":");let ch=p[0]||"",cm=p[1]||"";if(h!==null)ch=h;if(m!==null)cm=m;st.ukoly[ti].tcas=(ch||cm)?(ch+":"+cm):"";render();}
+function krok4(){
+ const inf=LIDE.map(([z,jm])=>`<div class="person ${st.info.includes(z)?'sel':''}" title="${esc(jm)}" onclick="togInfo('${z}')">${esc(lidLbl(z))}</div>`).join("");
+ const ukoly=st.ukoly.map((u,ti)=>{
+  const res=LIDE.map(([z,jm])=>`<div class="person ${u.resitel===z?'sel':''}" title="${esc(jm)}" onclick="setRes(${ti},'${z}')">${esc(lidLbl(z))}</div>`).join("");
+  const upo=LIDE.map(([z,jm])=>`<div class="person ${u.upozorneni.includes(z)?'sel':''}" title="${esc(jm)}" onclick="togUpoz(${ti},'${z}')">${esc(lidLbl(z))}</div>`).join("");
+  return `<div style="border:1px solid #dbe6f1;border-radius:14px;padding:12px;margin-bottom:12px;background:#fbfdff">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><b style="color:#0b3a66">Úkol ${ti+1}</b>${st.ukoly.length>1?`<button type="button" onclick="smazUkol(${ti})" style="border:0;background:none;color:#c0392b;font-weight:800;cursor:pointer;font-size:13px">✕ Smazat</button>`:''}</div>
+    <div class="fld"><label>Řešitel – komu přiřadit</label><div class="people">${res}</div></div>
+    <div class="fld"><label>Co se má udělat</label><textarea placeholder="Např. odebrat vzorek, propláchnout řad…" oninput="st.ukoly[${ti}].popis=this.value">${esc(u.popis||"")}</textarea></div>
+    <div class="two"><div class="fld"><label>Termín – datum</label><input type="date" value="${esc(u.tdatum||"")}" onchange="st.ukoly[${ti}].tdatum=this.value"></div>
+    <div class="fld"><label>Termín – čas</label>${casSelectU(ti)}</div></div>
+    <div class="fld" style="margin-bottom:0"><label>Upozornit na (ne)splnění tohoto úkolu</label><div class="people">${upo}</div></div>
+  </div>`;
+ }).join("");
+ return `<h4>Úkoly a lidé</h4>
+ <p class="hint">Klik = vybrat. (GŘ/TŘ/PŘ = vedení.)</p>
+ ${ukoly}
+ <button type="button" onclick="pridejUkol()" style="width:100%;border:1px dashed #b9c6d6;background:#f7fbff;border-radius:12px;padding:11px;font-weight:800;color:#1577c8;cursor:pointer;margin-bottom:16px">＋ Další úkol</button>
+ <div class="fld"><label>Koho informovat o události (celkově)</label><div class="people">${inf}</div></div>`;
+}
+function pridejUkol(){st.ukoly.push({resitel:null,popis:"",tdatum:"",tcas:"",upozorneni:[]});render();}
+function smazUkol(ti){st.ukoly.splice(ti,1);if(!st.ukoly.length)st.ukoly.push({resitel:null,popis:"",tdatum:"",tcas:"",upozorneni:[]});render();}
+function togUpoz(ti,z){const a=st.ukoly[ti].upozorneni;const i=a.indexOf(z);if(i<0)a.push(z);else a.splice(i,1);render();}
+function setRes(ti,z){st.ukoly[ti].resitel=(st.ukoly[ti].resitel===z?null:z);render();}
 function togInfo(z){const i=st.info.indexOf(z);if(i<0)st.info.push(z);else st.info.splice(i,1);render();}
 
 function krok(d){
@@ -497,8 +515,8 @@ function hotovoHTML(){
  ${st.kolVzorky.length?`<div class="sumline"><b>Kolize – vzorky k přesunu (${st.kolVzorky.length}):</b> ${st.kolVzorky.slice().sort((a,b)=>PLAN[a].datum<PLAN[b].datum?-1:1).map(i=>fmtDatumCz(PLAN[i].datum)+" "+esc(PLAN[i].misto)).join("; ")}</div>`:""}
  ${st.cistAno&&st.cisterna!=null?`<div class="sumline"><b>Cisterna:</b> ${fmtL(CISTERNY[st.cisterna].obj)} · ${esc(CISTERNY[st.cisterna].typ)} (${esc(CISTERNY[st.cisterna].stred)})${st.cistMisto?` → ${esc(st.cistMisto)}`:""}${(st.cistOd||st.cistCas)?` · od ${esc(st.cistOd)} ${esc(st.cistCas)}`:""}</div>`:(st.cistAno?`<div class="sumline"><b>Cisterna:</b> ano (cisterna nevybrána)</div>`:"")}
  <div class="sumline"><b>Zadal:</b> ${UZIVATEL}${(jePodnet()&&st.nahlasil)?` · nahlásil: ${esc(st.nahlasil)}${st.tel?(" · "+esc(st.tel)):""}`:""}</div>
- <div class="sumline"><b>Řešitel:</b> ${st.resitel?esc(lidLbl(st.resitel)):"—"} · <b>Informováni:</b> ${st.info.map(z=>esc(lidLbl(z))).join(", ")||"—"}</div>
- ${st.ukol?`<div class="sumline"><b>Úkol:</b> ${esc(st.ukol)}${(st.tdatum||st.tcas)?` · termín ${esc(st.tdatum)} ${esc(st.tcas)}`:""}${st.upozorneni.length?` · upozornit: ${st.upozorneni.map(z=>esc(lidLbl(z))).join(", ")}`:""}</div>`:""}
+ ${st.ukoly.map((u,i)=>(u.resitel||u.popis||u.tdatum||u.tcas||u.upozorneni.length)?`<div class="sumline"><b>Úkol ${i+1}:</b> ${u.resitel?esc(lidLbl(u.resitel)):"—"}${u.popis?` – ${esc(u.popis)}`:""}${(u.tdatum||u.tcas)?` · termín ${esc(u.tdatum)} ${esc(u.tcas)}`:""}${u.upozorneni.length?` · upozornit: ${u.upozorneni.map(z=>esc(lidLbl(z))).join(", ")}`:""}</div>`:"").join("")}
+ <div class="sumline"><b>Informováni:</b> ${st.info.map(z=>esc(lidLbl(z))).join(", ")||"—"}</div>
  </div>
  <div style="margin-top:18px"><button class="b-save" style="border:0;border-radius:12px;padding:10px 22px;color:#fff;font-weight:800;cursor:pointer" onclick="zavri()">Hotovo</button></div></div>`;
 }
