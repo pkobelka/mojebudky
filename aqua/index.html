@@ -396,7 +396,7 @@ function render(){
 let _planDatum=null;
 function planDaty(){return [...new Set(PLAN.map(p=>p.datum))].sort();}
 function denTitul(iso){const dny=["Neděle","Pondělí","Úterý","Středa","Čtvrtek","Pátek","Sobota"];return dny[new Date(iso+"T00:00:00").getDay()]+" "+fmtDatumCz(iso);}
-function otevriPlan(){if(!_planDatum){const dn=dnesISO(),d=planDaty();_planDatum=d.find(x=>x>=dn)||d[d.length-1];}document.getElementById("planOv").classList.add("show");renderPlan();}
+function otevriPlan(){_planDatum=dnesISO();document.getElementById("planOv").classList.add("show");renderPlan();}
 function zavriPlan(){document.getElementById("planOv").classList.remove("show");}
 function setPlanDatum(v){if(v)_planDatum=v;renderPlan();}
 function planNav(dir){const d=planDaty();const cand=dir>0?d.find(x=>x>_planDatum):[...d].reverse().find(x=>x<_planDatum);if(cand){_planDatum=cand;renderPlan();}}
