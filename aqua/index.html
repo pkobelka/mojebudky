@@ -124,7 +124,7 @@ padding:24px;z-index:50;overflow:auto}
 </style>
 </head>
 <body>
-<div class="testbar">🔒 TESTOVACÍ PROVOZ — notifikace vypnuté, žádné avízo se neodesílá. (Toto je nezávazná mimka.)</div>
+<div class="testbar">🔒 TESTOVACÍ PROVOZ — událostní avíza se zatím neodesílají (mimka). Testovací push lze zapnout tlačítkem „🔔 Povolit notifikace".</div>
 
 <header class="hlav">
   <img class="kap" src="logo-ac-icon.png" alt="AquaControl – VHOS a.s." width="46" height="46">
@@ -135,6 +135,7 @@ padding:24px;z-index:50;overflow:auto}
     <a onclick="otevriPlan()">Plán vzorkování 2026</a>
     <a onclick="openKontakty()">Kontakty</a>
     <a onclick="alert('Sekce Dokumenty – metodické pokyny (mimka).')">Dokumenty</a>
+    <a id="btnPush" onclick="acEnablePush()">🔔 Povolit notifikace</a>
   </nav>
   <div class="vhos"><b>VHOS</b><i>a.s.</i></div>
 </header>
@@ -586,6 +587,47 @@ function hotovoHTML(){
  <div style="margin-top:18px"><button class="b-save" style="border:0;border-radius:12px;padding:10px 22px;color:#fff;font-weight:800;cursor:pointer" onclick="zavri()">Hotovo</button></div></div>`;
 }
 function esc(s){return (s==null?"":String(s)).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+</script>
+
+<!-- Push notifikace (FCM) -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging-compat.js"></script>
+<script>
+(function(){
+  var CFG={apiKey:"AIzaSyBEAhZNxq3REoy1vExIrnNEXlyFXHzP4uI",authDomain:"moje-budky.firebaseapp.com",databaseURL:"https://moje-budky-default-rtdb.firebaseio.com",projectId:"moje-budky",storageBucket:"moje-budky.firebasestorage.app",messagingSenderId:"325649258561",appId:"1:325649258561:web:b5571c3278d98405320ec0"};
+  var VAPID='BCn3YD9DqB2ejEGoqAxpnUpKuo6oG3TPBrGhjgXtLuQl4kbEee_hghSKE6nJ8ttffH-RIMjtyPNY-PPflKiCSho';
+  // trvalé id zařízení (AC nemá login)
+  function devId(){var k='ac_dev_id';var v=localStorage.getItem(k);if(!v){v='ac-'+Math.random().toString(36).slice(2,10)+Date.now().toString(36);localStorage.setItem(k,v);}return v;}
+  function setStav(t,ok){var b=document.getElementById('btnPush');if(!b)return;b.textContent=t;b.dataset.ok=ok?'1':'';}
+  function supported(){return ('Notification'in window)&&('serviceWorker'in navigator)&&(location.protocol==='https:');}
+
+  try{ firebase.initializeApp(CFG); }catch(e){}
+
+  window.acEnablePush=async function(){
+    if(!supported()){alert('Push potřebuje HTTPS a moderní prohlížeč (na iPhonu přidej appku na plochu a spusť odtud).');return;}
+    try{
+      setStav('🔔 …',false);
+      var perm=await Notification.requestPermission();
+      if(perm!=='granted'){setStav('🔕 Notifikace zakázány',false);return;}
+      var reg=await navigator.serviceWorker.register('firebase-messaging-sw.js',{scope:'/mojebudky/aqua/fcm/'});
+      var msg=firebase.messaging();
+      var token=await msg.getToken({vapidKey:VAPID,serviceWorkerRegistration:reg});
+      if(!token){setStav('⚠️ Token se nezískal',false);return;}
+      var id=devId();
+      firebase.database().ref('aqua_push_tokens/'+id).set({token:token,ts:Date.now(),ua:navigator.userAgent.slice(0,90)});
+      // notifikace v popředí (otevřená karta)
+      msg.onMessage(function(p){var n=(p&&p.notification)||{};try{new Notification(n.title||'AquaControl',{body:n.body||'',icon:'icon-192.png'});}catch(_){}});
+      setStav('✅ Notifikace zapnuté',true);
+      console.log('AC push token:',token.slice(0,24)+'…');
+    }catch(err){console.warn('AC push:',err);setStav('⚠️ Chyba – zkus znovu',false);}
+  };
+
+  // při startu: když už je povoleno, ukaž stav
+  document.addEventListener('DOMContentLoaded',function(){
+    if(supported()&&Notification.permission==='granted')setStav('✅ Notifikace zapnuté',true);
+  });
+})();
 </script>
 </body>
 </html>

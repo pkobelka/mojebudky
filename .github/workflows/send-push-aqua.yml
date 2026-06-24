@@ -1,0 +1,37 @@
+name: Odeslat push (AquaControl)
+
+on:
+  workflow_dispatch:
+    inputs:
+      title:
+        description: 'Titulek notifikace'
+        required: true
+        default: 'AquaControl'
+      body:
+        description: 'Text zprávy'
+        required: true
+        default: 'Testovací notifikace z AquaControlu'
+      target_id:
+        description: 'Device ID příjemce (prázdné = všichni)'
+        required: false
+        default: ''
+
+jobs:
+  send-push:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Nastav Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Instaluj závislosti
+        run: pip install firebase-admin
+
+      - name: Ulož service account key
+        run: echo '${{ secrets.FIREBASE_SERVICE_ACCOUNT }}' > service-account-key.json
+
+      - name: Odešli push notifikaci
+        run: python send_push_aqua.py "${{ github.event.inputs.title }}" "${{ github.event.inputs.body }}" "${{ github.event.inputs.target_id }}"

@@ -44,15 +44,25 @@
 - Generátor (jednorázový, není v repu): `scratchpad/gen.js` přes `pngjs` (area-resample, premultiplied alpha). Při výměně loga znovu spustit a bumpnout `CACHE` v `sw.js`.
 - Pozn.: v malých velikostech (16/32 px) je vnitřní text odznaku nečitelný – čte se jako barevný kroužek „AC". Pro ostrou malou ikonu by chtělo samostatnou značku jen „AC".
 
+## Push notifikace (FCM) – ve fázi testování
+- **Sdílí Firebase projekt `moje-budky`** (stejný config/VAPID jako budky appka, stejná doména) – netřeba nové klíče.
+- `aqua/firebase-messaging-sw.js` – FCM service worker (vlastní úzký scope `/mojebudky/aqua/fcm/`, nekoliduje s offline `sw.js`), ikona + klik-URL na AC.
+- `index.html` – Firebase compat SDK (app+database+messaging 10.12.2) + tlačítko **„🔔 Povolit notifikace"** v hlavičce. Token se ukládá do **`aqua_push_tokens/{id}`** (AC nemá login → `id` = trvalé náhodné z localStorage, klíč `ac_dev_id`).
+- `database.rules.json` – přidán uzel `aqua_push_tokens`.
+- `send_push_aqua.py` + workflow `.github/workflows/send-push-aqua.yml` (**Odeslat push (AquaControl)**, ruční spuštění) – pošle FCM všem/jednomu zařízení.
+- **Jak otestovat:** 1) na živém webu (https, na iPhonu přidat na plochu) kliknout „Povolit notifikace" → povolit → tlačítko ukáže „✅". 2) GitHub → Actions → *Odeslat push (AquaControl)* → Run workflow (titulek+text) → notifikace dorazí (i offline).
+- TODO: e-mail (zvoleno **Gmail SMTP / app password** – zatím neimplementováno), pak napojit na vznik události (řešitel/informovaní).
+
 ## CI / GitHub Actions
 - `.github/workflows/firebase-deploy.yml` – nasazuje pravidla Firebase DB. Upraveno: běží **jen při změně** `database.rules.json`/`firebase.json`/workflow (ne při každém pushi), `firebase-tools@latest` (verze 13 neuměla ADC auth → nepinovat), retry 3×. Poslední běh zelený.
-- `.github/workflows/send-push.yml` – ruční odeslání push notifikace (workflow_dispatch).
+- `.github/workflows/send-push.yml` – ruční odeslání push notifikace pro **budky** (`push_tokens`).
+- `.github/workflows/send-push-aqua.yml` – ruční odeslání push pro **AquaControl** (`aqua_push_tokens`).
 
 ## Otevřené úkoly / nápady
 1. **Polička chlorace** – nahradit placeholder podrobným seznamem (typy čerpadel, dávkování), až dorazí.
 2. **Doplnit e-maily** Selinger, Bombera (zatím jen tel).
 3. ~~Potvrdit funkce vedení~~ ✅ potvrzeno (GŘ/PŘ/TŘ). Případně doplnit funkce ostatním.
-4. **Backend pro notifikace** (push + e-mail; SMS jen pro vysokou závažnost kvůli ceně) – zatím mimka.
+4. **Backend pro notifikace** – ⏳ **push hotový (testuje se)**, viz sekce *Push notifikace*. Zbývá **e-mail** (Gmail SMTP / app password) a SMS jen pro vysokou závažnost (kvůli ceně), pak napojit na vznik události.
 5. **Samostatné repo pro AC** (mimo `mojebudky`) – nutno přepsat scope v `manifest.json`, `sw.js`, registraci SW v `index.html` (teď natvrdo `/mojebudky/aqua/`).
 6. Případně propsat mail/tel do souhrnu události u řešitele/informovaných.
 
