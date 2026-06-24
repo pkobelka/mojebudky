@@ -241,6 +241,17 @@ function cisternySorted(){
  });
 }
 function setCist(v){st.cistAno=v;if(!v){st.cisterna=null;st.cistMisto="";st.cistOd="";st.cistCas="";}render();}
+// Náhrada nativního výběru času dvěma selecty (nativní time-picker zůstával otevřený)
+function casSelect(field){
+ const v=st[field]||"";const p=v.split(":");const hh=p[0]||"",mm=p[1]||"";
+ const ho=Array.from({length:24},(_,i)=>String(i).padStart(2,"0")).map(h=>`<option ${h===hh?'selected':''}>${h}</option>`).join("");
+ const mi=Array.from({length:60},(_,i)=>String(i).padStart(2,"0")).map(m=>`<option ${m===mm?'selected':''}>${m}</option>`).join("");
+ return `<div style="display:flex;gap:6px;align-items:center">
+   <select onchange="setCas('${field}',this.value,null)" style="flex:1"><option value="">hh</option>${ho}</select>
+   <b>:</b>
+   <select onchange="setCas('${field}',null,this.value)" style="flex:1"><option value="">mm</option>${mi}</select></div>`;
+}
+function setCas(field,h,m){const p=(st[field]||"").split(":");let ch=p[0]||"",cm=p[1]||"";if(h!==null)ch=h;if(m!==null)cm=m;st[field]=(ch||cm)?(ch+":"+cm):"";render();}
 function cisternaBlok(){
  const ano=st.cistAno===true;
  const toggle=`<div class="zav-btns">
@@ -255,7 +266,7 @@ function cisternaBlok(){
     ${sel?`<div class="bc" style="margin-bottom:12px"><span class="t" style="${sel.dispo?'background:#e9f6ee;border-color:#bfe3cc':'background:#fde9e9;border-color:#f3c2c2'}"><b>Stav</b>${sel.dispo?'k dispozici':'mimo provoz'}</span><span class="t"><b>Objem</b>${fmtL(sel.obj)}</span><span class="t"><b>Typ</b>${esc(sel.typ)}</span><span class="t"><b>Stanoviště</b>${esc(sel.stred)}</span>${sel.spz?`<span class="t"><b>SPZ</b>${esc(sel.spz)}</span>`:''}${sel.opr?`<span class="t"><b>Řidičák</b>${esc(sel.opr)}</span>`:''}${sel.pozn?`<span class="t"><b>Pozn.</b>${esc(sel.pozn)}</span>`:''}</div>`:''}
     <div class="fld"><label>Místo přistavení</label><input value="${esc(st.cistMisto||'')}" oninput="st.cistMisto=this.value" placeholder="Kam cisternu přistavit (obec, ulice, objekt)…"></div>
     <div class="two"><div class="fld"><label>Přistavit od – datum</label><input type="date" value="${esc(st.cistOd||'')}" onchange="st.cistOd=this.value"></div>
-    <div class="fld"><label>Od – čas</label><input type="time" value="${esc(st.cistCas||'')}" onchange="st.cistCas=this.value"></div></div>`;
+    <div class="fld"><label>Od – čas</label>${casSelect('cistCas')}</div></div>`;
  }
  return `<div class="fld"><label>Náhradní zásobování cisternou</label>${toggle}</div>${det}`;
 }
@@ -400,7 +411,7 @@ function krok4(){
  <div class="fld"><label>Řešitel – komu přiřadit úkol</label><div class="people">${res}</div></div>
  <div class="fld"><label>Co se má udělat (úkol)</label><textarea placeholder="Např. odebrat vzorek, propláchnout řad…" oninput="st.ukol=this.value">${esc(st.ukol||"")}</textarea></div>
  <div class="two"><div class="fld"><label>Termín – datum</label><input type="date" value="${esc(st.tdatum||"")}" onchange="st.tdatum=this.value"></div>
- <div class="fld"><label>Termín – čas</label><input type="time" value="${esc(st.tcas||"")}" onchange="st.tcas=this.value"></div></div>
+ <div class="fld"><label>Termín – čas</label>${casSelect('tcas')}</div></div>
  <div class="fld"><label>Upozornit na (ne)splnění úkolu</label><div class="people">${upo}</div></div>
  <div class="fld"><label>Koho informovat o události</label><div class="people">${inf}</div></div>`;
 }
