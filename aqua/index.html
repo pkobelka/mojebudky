@@ -389,12 +389,14 @@ function krok3(){
 }
 function setZav(k){st.zavaznost=k;render();}
 
+// vedení zůstává jako kód (GŘ/TŘ/PŘ), ostatní se zobrazují plným jménem
+function lidLbl(z){if(z==="GŘ"||z==="TŘ"||z==="PŘ")return z;const f=LIDE.find(x=>x[0]===z);return f?f[1]:z;}
 function krok4(){
- const res=LIDE.map(([z,jm])=>`<div class="person ${st.resitel===z?'sel':''}" title="${esc(jm)}" onclick="setRes('${z}')">${z}</div>`).join("");
- const upo=LIDE.map(([z,jm])=>`<div class="person ${st.upozorneni.includes(z)?'sel':''}" title="${esc(jm)}" onclick="togUpoz('${z}')">${z}</div>`).join("");
- const inf=LIDE.map(([z,jm])=>`<div class="person ${st.info.includes(z)?'sel':''}" title="${esc(jm)}" onclick="togInfo('${z}')">${z}</div>`).join("");
+ const res=LIDE.map(([z,jm])=>`<div class="person ${st.resitel===z?'sel':''}" title="${esc(jm)}" onclick="setRes('${z}')">${esc(lidLbl(z))}</div>`).join("");
+ const upo=LIDE.map(([z,jm])=>`<div class="person ${st.upozorneni.includes(z)?'sel':''}" title="${esc(jm)}" onclick="togUpoz('${z}')">${esc(lidLbl(z))}</div>`).join("");
+ const inf=LIDE.map(([z,jm])=>`<div class="person ${st.info.includes(z)?'sel':''}" title="${esc(jm)}" onclick="togInfo('${z}')">${esc(lidLbl(z))}</div>`).join("");
  return `<h4>Úkol a lidé</h4>
- <p class="hint">Najeď myší na monogram → jméno. Klik = vybrat.</p>
+ <p class="hint">Klik = vybrat. (GŘ/TŘ/PŘ = vedení.)</p>
  <div class="fld"><label>Řešitel – komu přiřadit úkol</label><div class="people">${res}</div></div>
  <div class="fld"><label>Co se má udělat (úkol)</label><textarea placeholder="Např. odebrat vzorek, propláchnout řad…" oninput="st.ukol=this.value">${esc(st.ukol||"")}</textarea></div>
  <div class="two"><div class="fld"><label>Termín – datum</label><input type="date" value="${esc(st.tdatum||"")}" onchange="st.tdatum=this.value"></div>
@@ -424,8 +426,8 @@ function hotovoHTML(){
  <div class="sumline"><b>Popis:</b> ${esc(st.popis||"—")}</div>
  ${st.cistAno&&st.cisterna!=null?`<div class="sumline"><b>Cisterna:</b> ${fmtL(CISTERNY[st.cisterna].obj)} · ${esc(CISTERNY[st.cisterna].typ)} (${esc(CISTERNY[st.cisterna].stred)})${st.cistMisto?` → ${esc(st.cistMisto)}`:""}${(st.cistOd||st.cistCas)?` · od ${esc(st.cistOd)} ${esc(st.cistCas)}`:""}</div>`:(st.cistAno?`<div class="sumline"><b>Cisterna:</b> ano (cisterna nevybrána)</div>`:"")}
  <div class="sumline"><b>Zadal:</b> ${UZIVATEL}${(jePodnet()&&st.nahlasil)?` · nahlásil: ${esc(st.nahlasil)}${st.tel?(" · "+esc(st.tel)):""}`:""}</div>
- <div class="sumline"><b>Řešitel:</b> ${esc(st.resitel||"—")} · <b>Informováni:</b> ${st.info.join(", ")||"—"}</div>
- ${st.ukol?`<div class="sumline"><b>Úkol:</b> ${esc(st.ukol)}${(st.tdatum||st.tcas)?` · termín ${esc(st.tdatum)} ${esc(st.tcas)}`:""}${st.upozorneni.length?` · upozornit: ${st.upozorneni.join(", ")}`:""}</div>`:""}
+ <div class="sumline"><b>Řešitel:</b> ${st.resitel?esc(lidLbl(st.resitel)):"—"} · <b>Informováni:</b> ${st.info.map(z=>esc(lidLbl(z))).join(", ")||"—"}</div>
+ ${st.ukol?`<div class="sumline"><b>Úkol:</b> ${esc(st.ukol)}${(st.tdatum||st.tcas)?` · termín ${esc(st.tdatum)} ${esc(st.tcas)}`:""}${st.upozorneni.length?` · upozornit: ${st.upozorneni.map(z=>esc(lidLbl(z))).join(", ")}`:""}</div>`:""}
  </div>
  <div style="margin-top:18px"><button class="b-save" style="border:0;border-radius:12px;padding:10px 22px;color:#fff;font-weight:800;cursor:pointer" onclick="zavri()">Hotovo</button></div></div>`;
 }
