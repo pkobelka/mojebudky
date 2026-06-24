@@ -283,10 +283,10 @@ document.getElementById("prehled").innerHTML=STR.map(([nm,p,bd])=>`
 
 // ---- WIZARD ----
 const KROKY=["1. Co se stalo?","2. Kde?","3. Podrobnosti","4. Lidé"];
-let st={krok:1,podminka:null,zavaznost:null,stredisko:null,typ:null,objekt:null,
+let st={krok:1,podminka:null,zavaznost:null,stredisko:null,typ:null,objekt:null,adresa:"",
 popis:"",nahlasil:"",tel:"",resitel:null,info:[],ukol:"",tdatum:"",tcas:"",upozorneni:[],cistAno:null,cisterna:null,cistMisto:"",cistOd:"",cistCas:"",hotovo:false};
 
-function otevri(){st={krok:1,podminka:null,zavaznost:null,stredisko:null,typ:null,objekt:null,popis:"",nahlasil:"",tel:"",resitel:null,info:[],ukol:"",tdatum:"",tcas:"",upozorneni:[],cistAno:null,cisterna:null,cistMisto:"",cistOd:"",cistCas:"",hotovo:false};
+function otevri(){st={krok:1,podminka:null,zavaznost:null,stredisko:null,typ:null,objekt:null,adresa:"",popis:"",nahlasil:"",tel:"",resitel:null,info:[],ukol:"",tdatum:"",tcas:"",upozorneni:[],cistAno:null,cisterna:null,cistMisto:"",cistOd:"",cistCas:"",hotovo:false};
 document.getElementById("ov").classList.add("show");render();}
 function zavri(){document.getElementById("ov").classList.remove("show");}
 
@@ -357,6 +357,7 @@ function krok2(){
   let h=`<h4>Kde – ${tp}</h4><p class="hint">Vyber pracoviště a pak konkrétní ${tp}.</p>`;
   h+=`<div class="fld"><label>Pracoviště</label><div class="str-btns">`+STR.map(([nm])=>`<div class="pill ${st.stredisko===nm?'sel':''}" style="${st.stredisko===nm?'background:#1577c8':''}" onclick="setStr('${esc(nm)}')">${nm}</div>`).join("")+`</div></div>`;
   if(st.stredisko){h+=`<div class="fld"><label>Vyber ${tp} (${objs.length})</label>`+(objs.length?`<div class="people" style="max-height:240px;overflow:auto">`+objs.map((o,i)=>`<div class="person ${st.objekt===o?'sel':''}" onclick="setObjekt2(${i})">${esc(o)}</div>`).join("")+`</div>`:`<p class="hint">Seznam pro „${tp}" zatím není naimportovaný.</p>`)+`</div>`;}
+  if(st.objekt)h+=`<div class="fld"><label>Upřesnění adresy</label><input value="${esc(st.adresa||'')}" oninput="st.adresa=this.value" placeholder="Ulice, č.p., část obce…"></div>`;
   return h;
  }
  const tk=st.typ?TYP2KEY[st.typ]:null;
@@ -367,10 +368,11 @@ function krok2(){
  <div class="fld"><label>Typ objektu</label><div class="typ-btns">`+
  TYPY.map(t=>`<div class="pill ${st.typ===t?'sel':''}" style="${st.typ===t?'background:#1577c8':''}" onclick="setTyp('${esc(t)}')">${t}</div>`).join("")+`</div></div>
  <div class="fld"><label>Konkrétní objekt</label>
- <select onchange="st.objekt=this.value">${objs.length?'<option value="">— vyber —</option>'+objs.map(o=>`<option ${st.objekt===o?'selected':''}>${o}</option>`).join(""):'<option>(nejprve vyber středisko a typ)</option>'}</select></div>`;
+ <select onchange="st.objekt=this.value;render()">${objs.length?'<option value="">— vyber —</option>'+objs.map(o=>`<option ${st.objekt===o?'selected':''}>${o}</option>`).join(""):'<option>(nejprve vyber středisko a typ)</option>'}</select></div>
+ ${st.objekt?`<div class="fld"><label>Upřesnění adresy</label><input value="${esc(st.adresa||'')}" oninput="st.adresa=this.value" placeholder="Ulice, č.p., část obce…"></div>`:''}`;
 }
-function setStr(n){st.stredisko=n;st.objekt=null;render();}
-function setTyp(t){st.typ=t;st.objekt=null;render();}
+function setStr(n){st.stredisko=n;st.objekt=null;st.adresa="";render();}
+function setTyp(t){st.typ=t;st.objekt=null;st.adresa="";render();}
 
 function krok3(){
  const zb=Object.entries(ZAV).map(([k,[lb,c]])=>`<div class="pill ${st.zavaznost===k?'sel':''}" style="${st.zavaznost===k?'background:'+c:''}" onclick="setZav('${k}')">${lb}</div>`).join("");
@@ -418,7 +420,7 @@ function hotovoHTML(){
  <h4>Událost by se uložila</h4><p class="hint">(mimka – nic se reálně neukládá ani neodesílá)</p>
  <div style="text-align:left;max-width:440px;margin:10px auto 0">
  <div class="sumline"><b>Co:</b> ${esc(st.podminka||"—")} · <b>závažnost:</b> ${zl}</div>
- ${jeZmenaPlanu()&&st.odber?`<div class="sumline"><b>Odběr z plánu:</b> ${esc(st.odber.datum)} · ${esc(st.odber.misto)}</div>`:`<div class="sumline"><b>Kde:</b> ${esc(st.stredisko||"—")} · ${esc(st.typ||"—")} · ${esc(st.objekt||"—")}</div>`}
+ ${jeZmenaPlanu()&&st.odber?`<div class="sumline"><b>Odběr z plánu:</b> ${esc(st.odber.datum)} · ${esc(st.odber.misto)}</div>`:`<div class="sumline"><b>Kde:</b> ${esc(st.stredisko||"—")} · ${esc(st.typ||"—")} · ${esc(st.objekt||"—")}${st.adresa?` · ${esc(st.adresa)}`:""}</div>`}
  <div class="sumline"><b>Popis:</b> ${esc(st.popis||"—")}</div>
  ${st.cistAno&&st.cisterna!=null?`<div class="sumline"><b>Cisterna:</b> ${fmtL(CISTERNY[st.cisterna].obj)} · ${esc(CISTERNY[st.cisterna].typ)} (${esc(CISTERNY[st.cisterna].stred)})${st.cistMisto?` → ${esc(st.cistMisto)}`:""}${(st.cistOd||st.cistCas)?` · od ${esc(st.cistOd)} ${esc(st.cistCas)}`:""}</div>`:(st.cistAno?`<div class="sumline"><b>Cisterna:</b> ano (cisterna nevybrána)</div>`:"")}
  <div class="sumline"><b>Zadal:</b> ${UZIVATEL}${(jePodnet()&&st.nahlasil)?` · nahlásil: ${esc(st.nahlasil)}${st.tel?(" · "+esc(st.tel)):""}`:""}</div>
