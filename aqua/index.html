@@ -210,7 +210,7 @@ const OBJ={ // ukázkové objekty (reálné jen vodovody MT)
  "Moravská Třebová|Vodovod":["Boršov","Borušov","Dětřichov u M.Třebové","Kunčina","Moravská Třebová","Staré Město","Třebářov","…"],
  "Polička|Vodovod":["Polička","Lubná","Pomezí","Sebranice","Korouhev","…"]
 };
-const LIDE=[["AB", "Aleš Bubák"], ["BK", "Bláža Kolaříková"], ["JR", "Jan Rada"], ["GŘ", "Jana Drábková"], ["LV", "Lukáš Vykydal"], ["MH", "Milan Horník"], ["PŘ", "Tomáš Zvejška"], ["VH", "Vladislav Halva"], ["TŘ", "Petr Kobelka"], ["JF", "Jiří Fogl"], ["KK", "Karel Krombholz"], ["KN", "Kristýna Nerušilová"], ["ZS", "Zdeněk Sojma"], ["EJ", "Eva Jančáková"], ["KV", "Kateřina Vávrová"], ["SŠ", "Stanislav Škeřík"], ["JB", "Jiří Bombera"], ["RS", "Radovan Selinger"], ["DM", "Dana Mikulková"]];
+const LIDE=[["AB", "Aleš Bubák"], ["BK", "Bláža Kolaříková"], ["JR", "Jan Rada"], ["GŘ", "Jana Drábková"], ["LV", "Lukáš Vykydal"], ["MH", "Milan Horník"], ["PŘ", "Tomáš Zvejška"], ["VH", "Vladislav Halva"], ["TŘ", "Petr Kobelka"], ["JF", "Jiří Fogl"], ["KK", "Karel Krombholz"], ["KN", "Kristýna Nerušilová"], ["ZS", "Zdeněk Sojma"], ["EJ", "Eva Jančáková"], ["KV", "Kateřina Vávrová"], ["SŠ", "Stanislav Škeřík"], ["JB", "Jiří Bombera"], ["RS", "Radovan Selinger"], ["DM", "Dana Mikulková", "dana.mikulkova@vhos.cz", "+420606095149"]];
 // pořadí v nabídkách lidí: nejdřív vedení GŘ, PŘ, TŘ, pak ostatní podle jména
 const VEDENI=["GŘ","PŘ","TŘ"];
 const LIDE_R=[...LIDE].sort((a,b)=>{const ia=VEDENI.indexOf(a[0]),ib=VEDENI.indexOf(b[0]);if(ia>=0||ib>=0){if(ia<0)return 1;if(ib<0)return -1;return ia-ib;}return a[1].localeCompare(b[1],"cs");});
