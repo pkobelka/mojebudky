@@ -36,6 +36,14 @@
 - **Kontakty:** všech 19 lidí má telefon; bez e-mailu zůstávají **Radovan Selinger** a **Jiří Bombera**. Funkce vedení: GŘ=generální, PŘ=provozní, TŘ=technický ředitel (**potvrzeno**).
 - **GPS chlorací:** chlorovací zařízení sedí na objektech, jejichž GPS je v `OBJEKTY`. Doplněno `lat/lon` k 66 ze 71 chlorací (spárováno podle názvu objektu/obce a objemu vodojemu). Bez GPS zůstává 5: importní artefakty „V Mor.Třebové 22.6.2026", „Vypracoval: Vykydal", „V Litomyšli 22.6.2026", dále **Chotěnov** (nechloruje se – přesunuto na VDJ Hraničky) a **Bezděčí – ATS** (chybí objekt s GPS).
 
+## Logo / branding
+- Zdroj: **`aqua/logo-ac.png`** (mockup odznaku na zdi, 2220×1888, nahrál uživatel). Z něj vyříznut kruhový odznak (střed ~1114,940, r≈704) a vygenerovány:
+  - `logo-ac-icon.png` (256, průhledné pozadí) – použito v **hlavičce** místo původní SVG kapky.
+  - `logo-ac-512.png` (512, průhledné) – čistý master.
+  - `icon-512/192/180/32/16.png` – PWA/favicon, kruh na **bílém čtverci** (kvůli maskable), regenerováno ze zdroje.
+- Generátor (jednorázový, není v repu): `scratchpad/gen.js` přes `pngjs` (area-resample, premultiplied alpha). Při výměně loga znovu spustit a bumpnout `CACHE` v `sw.js`.
+- Pozn.: v malých velikostech (16/32 px) je vnitřní text odznaku nečitelný – čte se jako barevný kroužek „AC". Pro ostrou malou ikonu by chtělo samostatnou značku jen „AC".
+
 ## CI / GitHub Actions
 - `.github/workflows/firebase-deploy.yml` – nasazuje pravidla Firebase DB. Upraveno: běží **jen při změně** `database.rules.json`/`firebase.json`/workflow (ne při každém pushi), `firebase-tools@latest` (verze 13 neuměla ADC auth → nepinovat), retry 3×. Poslední běh zelený.
 - `.github/workflows/send-push.yml` – ruční odeslání push notifikace (workflow_dispatch).
