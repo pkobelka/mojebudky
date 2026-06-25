@@ -1,13 +1,14 @@
 # AquaControl – stav projektu (handoff)
 
-> Poslední aktualizace: 2026-06-24. Tenhle soubor slouží k navázání v novém chatu.
+> Poslední aktualizace: 2026-06-25. Tenhle soubor slouží k navázání v novém chatu.
 
 ## Co to je
 **AquaControl** = webová PWA pro evidenci mimořádných událostí na vodárenské infrastruktuře VHOS („mimka" / klikací prototyp). Vše je v jednom souboru **`aqua/index.html`** (inline CSS+JS), + ikony, `manifest.json`, `sw.js`.
 
 - ⚠️ **ŽIVÁ adresa je teď nové repo:** **https://pkobelka.github.io/aquacontrol/** (samostatné repo `pkobelka/aquacontrol`, viz úkol 5). Stará `https://pkobelka.github.io/mojebudky/aqua/` je legacy – po ověření ke smazání.
-- **Dvě kopie kódu:** vývoj/editace probíhá v `mojebudky/aqua/` (na větvi `claude/nice-allen-68fd6m`), protože chat má GitHub přístup jen k `mojebudky`. **Do `aquacontrol` chat nemůže pushovat** → změny se uživateli posílají jako soubory k ručnímu nahrání (cesty přepsané `/mojebudky/aqua/` → `/aquacontrol/`). Až bude čas, sjednotit na jeden zdroj (ideálně jen `aquacontrol`).
-- Pozn.: stále jde o **mimku** – události se reálně neukládají; **push ale funguje** (jediné reálně odesílané). E-mail/SMS až s backendem.
+- **Dvě kopie kódu:** vývoj/editace probíhá v `mojebudky/aqua/` (na větvi `claude/adoring-ritchie-wp9fcu`), protože chat má GitHub přístup jen k `mojebudky`. **Do `aquacontrol` chat nemůže pushovat** → změny se uživateli posílají jako soubory k ručnímu nahrání (cesty přepsané `/mojebudky/aqua/` → `/aquacontrol/`). Až bude čas, sjednotit na jeden zdroj (ideálně jen `aquacontrol`).
+  - ⚠️ **Past při ručním uploadu:** prohlížeč při stahování `index.html` přidá `(n)` (`index (6).html`) a GitHub „Upload files" to pak založí jako **nový soubor**, ne přepis → web dál servíruje starý `index.html`. Po nahrání vždy ověřit, že obsah je opravdu v souboru **`index.html`** (ne `index (n).html`), případně přejmenovat. (Stalo se 25.6. – odhalilo se to tak, že živá lišta zůstávala stará i v anonymním okně.)
+- Pozn.: stále jde o **mimku** – události se reálně neukládají; **push ale funguje** (jediné reálně odesílané), a to i **automaticky při vzniku události** (viz Push). E-mail/SMS až s backendem.
 
 ## Hlavní datové struktury v `aqua/index.html`
 - `STR` – střediska + počty objektů po kategoriích [Vodovody,Vodojemy,Prameniště,Studny,Vrty,Chlorace,Ostatní].
@@ -43,7 +44,12 @@
 - Generátor (jednorázový, není v repu): `scratchpad/gen.js` přes `pngjs` (area-resample, premultiplied alpha). Při výměně loga znovu spustit a bumpnout `CACHE` v `sw.js`.
 - Pozn.: v malých velikostech (16/32 px) je vnitřní text odznaku nečitelný – čte se jako barevný kroužek „AC". Pro ostrou malou ikonu by chtělo samostatnou značku jen „AC".
 
-## Push notifikace (FCM) – ✅ FUNGUJE (otestováno na PC i Android)
+## Push notifikace (FCM) – ✅ FUNGUJE (ruční i auto při vzniku události, otestováno PC i Android)
+- **Auto-push při vzniku události – ✅ HOTOVO a otestováno end-to-end (25.6.).** Wizard v kroku 4 (`acSendEvent` v `index.html`) zapíše do RTDB **`aqua_outbox`** `{title, body, targets, ts}`. Cloud Function **`aquaNotify`** (`functions/index.js`, 1st gen, trigger `onCreate` na `/aqua_outbox/{id}`, region `us-central1`) najde tokeny adresátů a pošle FCM; do záznamu dopíše `status` (`sent`/`no-recipients`) + `sent`/`fail`.
+  - **`targets`** = sjednocení řešitelů + „upozornit" + „informovat" (kódy z `LIDE`). **Prázdné `targets` = broadcast všem.** Jinak se pošle jen tokenům, jejichž `person` je v `targets` → **uživatel si musí na svém zařízení dát „Povolit notifikace" a vybrat sebe v „Kdo jsi?"**, jinak má token bez `person` a push mu nepřijde (`no-recipients`).
+  - **Deploy:** workflow `firebase-deploy.yml` (push do `main` při změně `functions/**` nebo ruční `workflow_dispatch`). Vyžaduje **Blaze** + povolené API Cloud Build/Artifact Registry – proto merge #65 (25.6. 12:38) na Spark/oprávnění **selhal**; po přepnutí na Blaze prošel běh 12:46 („functions[aquaNotify(us-central1)] Successful update operation"). Projekt je teď na **Blaze (Free Trial, 90 dní)**.
+  - **Pozn. ke 2 kopiím:** funkce + outbox je nová věc – na živý `aquacontrol` se musel ručně nahrát aktualizovaný `index.html` (viz past s „index (n).html" výše).
+
 - **Zprávy jsou `data-only`** (titulek/text v `data{}`), zobrazení řeší výhradně náš kód (SW na pozadí, `onMessage` na popředí) → **vždy jen jedna** notifikace (dřív chodily 2×, protože Firebase zobrazil jednu sám). Header `Urgency: high`.
 - Notifikace má **`requireInteraction: true`** → zůstane na obrazovce do kliknutí (klik ji zavře a otevře appku).
 - **FCM SW se auto-aktualizuje:** `firebase-messaging-sw.js` má `skipWaiting`/`clients.claim` a `index.html` ho při startu (pokud `ac_push_on`) tiše přeregistruje + `update()`. → nové verze SW se šíří samy, **netřeba mazat data webu** (to byl jediný způsob, jak prosadit změnu, dokud se SW registroval jen na klik).
@@ -64,7 +70,7 @@
 1. ~~**Polička chlorace** – nahradit placeholder podrobným seznamem (typy čerpadel, dávkování)~~ ✅ hotovo (z podkladu „Chlorátory Polička"). K prověření 2 párování GPS: „Pomezí VDJ (pro Květnou)" je nově na VDJ Pomezí (dle podkladu) místo dřívějšího VDJ Květná; „Pustá Kamenice úpravna vody" na Manipulačním vodojemu ÚV (není samostatný objekt ÚV).
 2. ~~**Doplnit e-maily** Selinger, Bombera~~ ✅ Bombera `jiri.bombera@cevak.cz` doplněn; Selinger odebrán z appky (bez mailu, nejistá příslušnost do skupiny).
 3. ~~Potvrdit funkce vedení~~ ✅ potvrzeno (GŘ/PŘ/TŘ). Případně doplnit funkce ostatním.
-4. **Backend pro notifikace** – ✅ **push hotový a funkční** (viz sekce *Push notifikace*). Posílá se ručně z Actions (všem/jednomu). Zbývá: **e-mail** (Gmail SMTP / app password) a SMS jen pro vysokou závažnost; pak **napojit na vznik události** (automaticky řešiteli + informovaným). Auto-odeslání z appky vyžaduje server/Cloud Function (Blaze) – z prohlížeče nelze (tajný klíč).
+4. **Backend pro notifikace** – ✅ **push hotový a funkční, včetně auto-odeslání při vzniku události** (Cloud Function `aquaNotify` na Blaze, viz sekce *Push notifikace*). Ruční push z Actions (všem/jednomu) zůstává taky. Zbývá: **e-mail** (Gmail SMTP / app password) a SMS jen pro vysokou závažnost.
 5. ~~**Samostatné repo pro AC**~~ ✅ **HOTOVO a živé.** Nové repo **`pkobelka/aquacontrol`** (public) → Pages **https://pkobelka.github.io/aquacontrol/**, secret `FIREBASE_SERVICE_ACCOUNT` nastaven, workflow „Odeslat push (AquaControl)" funguje. Jiná cesta `/aquacontrol/` = oddělený SW scope (vyřešilo „otevírá se jako mojebudky" i push na mobilu). Pozn.: existuje i omylem vzniklé prázdné repo **`AquaControll`** (2× L, privátní) – ke smazání.
 6. Případně propsat mail/tel do souhrnu události u řešitele/informovaných.
 
