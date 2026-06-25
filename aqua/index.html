@@ -131,7 +131,7 @@ padding:24px;z-index:50;overflow:auto}
   <img class="kap" src="logo-ac-icon.png" alt="AquaControl – VHOS a.s." width="46" height="46">
   <div class="nazev"><span class="a">Aqua</span><span class="c">Control</span></div>
   <nav class="menu">
-    <a onclick="openUdalosti()">Aktuální události<span class="bdg" id="bdgUd" style="display:none;background:#1577c8">0</span></a>
+    <a onclick="openUdalosti()">Aktuální události<span class="bdg" id="bdgUd" style="display:none;background:#e23b3b">0</span></a>
     <a onclick="otevriPlan()">Plán vzorkování 2026</a>
     <a onclick="openMojeUkoly()">Moje úkoly</a>
     <a onclick="openCisterny()">Cisterny<span class="bdg" id="bdgCist" style="display:none;background:#1577c8">0</span></a>
@@ -405,7 +405,7 @@ function renderPrehled(){
 <div class="objt" onclick="openSeznam('${nm}','${kn}')">
   <div class="top" style="background:${kc}"></div>
   <div class="num" style="color:${kc}">${p[i]}</div><div class="lab">${kn}</div>
-  ${cnt>0?`<div class="bdg" style="background:#1577c8">${cnt}</div>`:""}
+  ${cnt>0?`<div class="bdg" style="background:#e23b3b">${cnt}</div>`:""}
 </div>`;}).join("")+`</div></div>`).join("");
 }
 function acPrehledCounts(){
@@ -483,7 +483,7 @@ function _eventKat(){
 }
 function openSeznam(s,kl){const typ=KAT_TYP[kl];const objs=(OBJEKTY[s]&&OBJEKTY[s][typ])?OBJEKTY[s][typ]:[];
  document.getElementById("seznamHead").textContent=kl+" – "+s+" ("+objs.length+")";
- document.getElementById("seznamBody").innerHTML=objs.length?objs.map((o,i)=>`<div><div class="sl-row"><div><b>${esc(o.n)}</b>${(_evObjCounts[s+"|"+kl+"|"+o.n]||0)>0?` <span style="background:#1577c8;color:#fff;border-radius:9px;padding:1px 7px;font-size:11px;font-weight:800">${_evObjCounts[s+"|"+kl+"|"+o.n]}</span>`:""}${o.p?` <span style="color:#6b7a8d">· ${esc(o.p)}</span>`:""}${o.c?` <span class="sl-tech" title="Zobrazit info o čerpadle" onclick="document.getElementById('ci${i}').classList.toggle('show')">🔧</span>`:""}</div>`+(o.lat?`<a class="sl-map" target="_blank" href="https://www.openstreetmap.org/?mlat=${o.lat}&mlon=${o.lon}#map=16/${o.lat}/${o.lon}">📍 Mapa</a>`:`<span class="sl-nogps">bez GPS</span>`)+`</div>${o.c?`<div class="sl-cinfo" id="ci${i}">${esc(o.c)}</div>`:""}</div>`).join(""):`<p class="hint">Žádné objekty.</p>`;
+ document.getElementById("seznamBody").innerHTML=objs.length?objs.map((o,i)=>`<div><div class="sl-row"><div><b>${esc(o.n)}</b>${(_evObjCounts[s+"|"+kl+"|"+o.n]||0)>0?` <span style="background:#e23b3b;color:#fff;border-radius:9px;padding:1px 7px;font-size:11px;font-weight:800">${_evObjCounts[s+"|"+kl+"|"+o.n]}</span>`:""}${o.p?` <span style="color:#6b7a8d">· ${esc(o.p)}</span>`:""}${o.c?` <span class="sl-tech" title="Zobrazit info o čerpadle" onclick="document.getElementById('ci${i}').classList.toggle('show')">🔧</span>`:""}</div>`+(o.lat?`<a class="sl-map" target="_blank" href="https://www.openstreetmap.org/?mlat=${o.lat}&mlon=${o.lon}#map=16/${o.lat}/${o.lon}">📍 Mapa</a>`:`<span class="sl-nogps">bez GPS</span>`)+`</div>${o.c?`<div class="sl-cinfo" id="ci${i}">${esc(o.c)}</div>`:""}</div>`).join(""):`<p class="hint">Žádné objekty.</p>`;
  document.getElementById("seznamOv").classList.add("show");}
 function zavriSeznam(){document.getElementById("seznamOv").classList.remove("show");}
 function openKontakty(){
