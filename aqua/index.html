@@ -215,6 +215,9 @@ const LIDE=[["AB", "Aleš Bubák"], ["BK", "Bláža Kolaříková"], ["JR", "Jan
 const VEDENI=["GŘ","TŘ","PŘ"];
 const _prijmeni=jm=>{const p=String(jm).trim().split(/\s+/);return p[p.length-1];};
 const LIDE_R=[...LIDE].sort((a,b)=>{const ia=VEDENI.indexOf(a[0]),ib=VEDENI.indexOf(b[0]);if(ia>=0||ib>=0){if(ia<0)return 1;if(ib<0)return -1;return ia-ib;}return _prijmeni(a[1]).localeCompare(_prijmeni(b[1]),"cs")||a[1].localeCompare(b[1],"cs");});
+// Kdo smí uzavírat události (Zvejška, Rada, Vykydal, Kolaříková)
+const MOHOU_UZAVIRAT=["PŘ","JR","LV","BK"];
+function jsemUzaviratel(){return MOHOU_UZAVIRAT.includes(localStorage.getItem("ac_person")||"");}
 // Kontaktní údaje (doplňuje se postupně): kód -> { funkce, mail, tel }
 const KONTAKTY={
  "GŘ":{funkce:"generální ředitel", mail:"jana.drabkova@vhos.cz", tel:"+420602117919"},
@@ -714,14 +717,24 @@ function _udalostKarta(ev,ukoly){
     : (done===total) ? `<span style="background:#2faf5a;color:#fff;border-radius:7px;padding:1px 8px;font-size:11px;font-weight:800">✔️ Hotovo</span>`
     : `<span style="font-size:11.5px;color:${late?'#e23b3b':'#6b7a8d'};font-weight:700">${done}/${total} splněno${late?` · ${late} po termínu`:""}</span>`;
   const nahl=ev.nahlasil?`<div style="font-size:12px;color:#6b7a8d">nahlásil: ${esc(ev.nahlasil)}${ev.tel?` · ${esc(ev.tel)}`:""}</div>`:"";
-  return `<div style="border:1px solid #dbe6f1;border-radius:14px;padding:12px;margin-bottom:12px;background:#fbfdff">
+  let footer;
+  if(ev.uzavreno){
+    footer=`<div style="margin-top:8px;font-size:12px;color:#2faf5a;font-weight:700">🔒 Uzavřeno — ${esc(ev.uzavrel_jmeno||"")} · ${_fmtCas(ev.uzavreno_ts)}${ev.uzavreno_pozn?` · ${esc(ev.uzavreno_pozn)}`:""}</div>`;
+  }else{
+    const muzu=MOHOU_UZAVIRAT.includes(localStorage.getItem("ac_person")||"");
+    footer=`<div style="display:flex;gap:8px;margin-top:8px">${muzu
+      ?`<button onclick="uzavriUdalost('${ev.id}')" style="border:0;border-radius:10px;padding:8px 14px;background:#0b5cae;color:#fff;font-weight:800;cursor:pointer">🔒 Uzavřít událost</button>`
+      :`<button onclick="vyzviUzavreni('${ev.id}')" style="border:1px solid #0b5cae;border-radius:10px;padding:8px 14px;background:#fff;color:#0b5cae;font-weight:800;cursor:pointer">📣 Vyzvat k uzavření</button>`}</div>`;
+  }
+  return `<div style="border:1px solid #dbe6f1;border-radius:14px;padding:12px;margin-bottom:12px;background:${ev.uzavreno?'#f6f8fa':'#fbfdff'};${ev.uzavreno?'opacity:.78':''}">
     <div style="display:flex;justify-content:space-between;gap:8px;align-items:center;margin-bottom:4px">
       <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">${zlB}<b style="color:#0b3a66">${esc(ev.co||"Událost")}</b></div>${stavTag}</div>
     ${ev.kde?`<div style="font-size:12.5px;color:#6b7a8d">${esc(ev.kde)}</div>`:""}
     ${ev.popis?`<div style="font-size:12.5px;color:#33485e;margin:2px 0">${esc(ev.popis)}</div>`:""}
     <div style="font-size:11.5px;color:#9aa7b8;margin-bottom:2px">zadal: ${esc(ev.zadal_jmeno||"—")} · ${_fmtCas(ev.ts)}</div>
     ${nahl}
-    ${ukoly.length?`<div style="margin-top:6px">${ukoly.map(_ukolRadek).join("")}</div>`:""}</div>`;
+    ${ukoly.length?`<div style="margin-top:6px">${ukoly.map(_ukolRadek).join("")}</div>`:""}
+    ${footer}</div>`;
 }
 function _udNactiVse(cb){
   const db=firebase.database();
@@ -733,8 +746,8 @@ function _udNactiVse(cb){
     cb(null,evs,byEvent);
   }).catch(function(e){cb(e);});
 }
-function acRefreshBadge(evs,byEvent){
-  try{ let open=0; evs.forEach(ev=>{const t=byEvent[ev.id]||[]; const done=t.filter(u=>u.stav==="splneny").length; if(t.length>0&&done<t.length)open++;});
+function acRefreshBadge(evs){
+  try{ const open=evs.filter(ev=>!ev.uzavreno).length;
     const b=document.getElementById("bdgUd"); if(b){ b.textContent=open; b.style.display=open?"":"none"; } }catch(_){}
 }
 function openUdalosti(){
@@ -746,11 +759,68 @@ function openUdalosti(){
   body.innerHTML='<p class="hint">Načítám…</p>';
   _udNactiVse(function(err,evs,byEvent){
     if(err){ body.innerHTML='<p class="hint">Chyba načtení: '+esc(err.message||err)+'</p>'; return; }
-    body.innerHTML=evs.length?evs.map(ev=>_udalostKarta(ev,byEvent[ev.id]||[])).join(""):'<p class="hint">Zatím žádné události. Vytvoř první přes „＋ Nová událost".</p>';
-    acRefreshBadge(evs,byEvent);
+    if(!evs.length){ body.innerHTML='<p class="hint">Zatím žádné události. Vytvoř první přes „＋ Nová událost".</p>'; acRefreshBadge(evs); return; }
+    const open=evs.filter(e=>!e.uzavreno), closed=evs.filter(e=>e.uzavreno);
+    let html=open.length?open.map(ev=>_udalostKarta(ev,byEvent[ev.id]||[])).join(""):'<p class="hint">Žádné otevřené události. 🎉</p>';
+    if(closed.length){ html+='<div style="margin:14px 0 8px;border-top:1px solid #e6eef6;padding-top:10px;font-size:12px;color:#9aa7b8;font-weight:800">UZAVŘENÉ ('+closed.length+')</div>'+closed.map(ev=>_udalostKarta(ev,byEvent[ev.id]||[])).join(""); }
+    body.innerHTML=html;
+    acRefreshBadge(evs);
   });
 }
 function acBadgeStartup(){ try{ if(!(window.firebase&&firebase.database))return; _udNactiVse(function(err,evs,byEvent){ if(!err)acRefreshBadge(evs,byEvent); }); }catch(_){} }
+
+// ===== Uzavírání událostí =====
+// Univerzální dialog: poznámka (nepovinné) + výběr lidí (chips). Vrací {persons,note} nebo null.
+function acVyberLidi(opt){
+  opt=opt||{};
+  return new Promise(function(resolve){
+    const sel=new Set(opt.preselect||[]);
+    const ov=document.createElement("div");
+    ov.style.cssText="position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px";
+    const chips=LIDE_R.map(function(p){return '<span class="person'+(sel.has(p[0])?' sel':'')+'" data-z="'+p[0]+'" style="cursor:pointer">'+esc(lidLbl(p[0]))+'</span>';}).join("");
+    ov.innerHTML='<div style="background:#fff;border-radius:14px;max-width:460px;width:100%;padding:18px;box-shadow:0 10px 40px rgba(0,0,0,.3);max-height:86vh;overflow:auto">'
+      +'<h3 style="margin:0 0 4px;color:#0b3a66">'+esc(opt.head||"Vybrat")+'</h3>'
+      +(opt.sub?'<p style="margin:0 0 10px;font-size:13px;color:#555">'+esc(opt.sub)+'</p>':'')
+      +'<div class="fld"><label>Poznámka (nepovinné)</label><textarea id="acvNote" placeholder="'+esc(opt.notePh||"")+'" style="width:100%"></textarea></div>'
+      +(opt.people!==false?'<div class="fld"><label>'+esc(opt.peopleLabel||"Koho upozornit")+'</label><div class="people" id="acvPeople">'+chips+'</div></div>':'')
+      +'<div style="display:flex;gap:8px;margin-top:14px"><button id="acvCancel" style="flex:1;padding:10px;border:1px solid #ccc;background:#f3f3f3;border-radius:8px;cursor:pointer">Zrušit</button>'
+      +'<button id="acvOk" style="flex:1;padding:10px;border:0;background:#0b5cae;color:#fff;border-radius:8px;font-weight:700;cursor:pointer">'+esc(opt.ok||"Potvrdit")+'</button></div></div>';
+    document.body.appendChild(ov);
+    if(opt.people!==false){ ov.querySelectorAll('#acvPeople .person').forEach(function(el){ el.onclick=function(){ const z=el.getAttribute("data-z"); if(sel.has(z)){sel.delete(z);el.classList.remove("sel");}else{sel.add(z);el.classList.add("sel");} }; }); }
+    ov.querySelector("#acvCancel").onclick=function(){document.body.removeChild(ov);resolve(null);};
+    ov.querySelector("#acvOk").onclick=function(){ const note=((ov.querySelector("#acvNote")||{}).value||"").trim(); document.body.removeChild(ov); resolve({persons:Array.from(sel), note:note}); };
+  });
+}
+function uzavriUdalost(id){
+  if(!jsemUzaviratel()){ alert("Uzavírat může jen: "+MOHOU_UZAVIRAT.map(lidLbl).join(", ")); return; }
+  firebase.database().ref("aqua_udalosti/"+id).get().then(function(s){
+    const ev=s.val()||{};
+    if(ev.uzavreno){ alert("Událost je už uzavřená."); return; }
+    const popis=(ev.co||"Událost")+(ev.kde?" · "+ev.kde:"");
+    acVyberLidi({head:"Uzavřít událost", sub:popis, peopleLabel:"Koho upozornit na uzavření", ok:"🔒 Uzavřít", notePh:"např. důvod / výsledek"}).then(function(r){
+      if(!r) return;
+      const ja=localStorage.getItem("ac_person")||"";
+      firebase.database().ref("aqua_udalosti/"+id).update({uzavreno:true, uzavrel:ja, uzavrel_jmeno:lidLbl(ja), uzavreno_ts:Date.now(), uzavreno_pozn:r.note});
+      if(r.persons.length){
+        firebase.database().ref("aqua_outbox").push({title:"🔒 Událost uzavřena", body:popis+" — uzavřel/a "+lidLbl(ja)+(r.note?" · "+r.note:""), targets:r.persons, ts:Date.now()});
+      }
+      openUdalosti();
+    });
+  });
+}
+function vyzviUzavreni(id){
+  firebase.database().ref("aqua_udalosti/"+id).get().then(function(s){
+    const ev=s.val()||{};
+    if(ev.uzavreno){ alert("Událost je už uzavřená."); return; }
+    const popis=(ev.co||"Událost")+(ev.kde?" · "+ev.kde:"");
+    acVyberLidi({head:"Vyzvat k uzavření", sub:popis, people:false, ok:"📣 Odeslat výzvu", notePh:"např. akce skončena, lze uzavřít"}).then(function(r){
+      if(!r) return;
+      const ja=lidLbl(localStorage.getItem("ac_person")||"")||"Někdo";
+      firebase.database().ref("aqua_outbox").push({title:"📣 Návrh na uzavření", body:ja+" navrhuje uzavřít: "+popis+(r.note?" — "+r.note:""), targets:MOHOU_UZAVIRAT.slice(), ts:Date.now()});
+      alert("Výzva odeslána oprávněným osobám. 📣");
+    });
+  });
+}
 // Výběr „kdo jsi" (uloží se k push tokenu, ať chodí adresné notifikace)
 function acPickPerson(){
   return new Promise(resolve=>{
