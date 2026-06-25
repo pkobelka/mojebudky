@@ -135,7 +135,7 @@ padding:24px;z-index:50;overflow:auto}
     <a onclick="openUdalosti()">Aktuální události<span class="bdg" id="bdgUd" style="display:none">0</span></a>
     <a onclick="otevriPlan()">Plán vzorkování 2026</a>
     <a onclick="openMojeUkoly()">Moje úkoly</a>
-    <a onclick="openCisterny()">Cisterny</a>
+    <a onclick="openCisterny()">Cisterny<span class="bdg" id="bdgCist" style="display:none;background:#e23b3b">0</span></a>
     <a onclick="openKontakty()">Kontakty</a>
     <a id="navZariz" onclick="openZarizeni()" style="display:none">Zařízení</a>
     <a onclick="alert('Sekce Dokumenty – metodické pokyny (mimka).')">Dokumenty</a>
@@ -187,7 +187,7 @@ tik();setInterval(tik,10000);
 
 // ---- data ----
 const KAT=[["Vodovody","#1e8fe0"],["Vodojemy","#13a5b8"],["Prameniště","#2faf5a"],["Studny","#3a8f8f"],["Vrty","#a9763e"],["Chlorace","#7a5ea8"],["Ostatní","#9aa3ad"]];
-const STR=[["Moravská Třebová", [25, 36, 20, 2, 9, 16, 0], [1, 0, 0, 0, 0, 0, 0]], ["Svitavy", [16, 22, 9, 7, 11, 13, 0], [0, 0, 0, 0, 0, 0, 0]], ["Polička", [20, 19, 1, 4, 9, 12, 0], [1, 0, 0, 0, 0, 0, 0]], ["Litomyšl", [31, 18, 0, 6, 7, 10, 0], [0, 0, 0, 0, 0, 0, 0]], ["Jevíčko", [32, 30, 9, 12, 5, 20, 0], [0, 0, 0, 0, 0, 0, 0]]];
+const STR=[["Moravská Třebová", [25, 36, 20, 2, 9, 16, 0], [0, 0, 0, 0, 0, 0, 0]], ["Svitavy", [16, 22, 9, 7, 11, 13, 0], [0, 0, 0, 0, 0, 0, 0]], ["Polička", [20, 19, 1, 4, 9, 12, 0], [0, 0, 0, 0, 0, 0, 0]], ["Litomyšl", [31, 18, 0, 6, 7, 10, 0], [0, 0, 0, 0, 0, 0, 0]], ["Jevíčko", [32, 30, 9, 12, 5, 20, 0], [0, 0, 0, 0, 0, 0, 0]]];
 
 const NABIDKA=[
  ["Plán kontroly jakosti PV 2026","#0b63b8","nizka",[
@@ -788,7 +788,7 @@ function openUdalosti(){
     let html=open.length?open.map(ev=>_udalostKarta(ev,byEvent[ev.id]||[])).join(""):'<p class="hint">Žádné otevřené události. 🎉</p>';
     if(closed.length){ html+='<div style="margin:14px 0 8px;border-top:1px solid #e6eef6;padding-top:10px;font-size:12px;color:#9aa7b8;font-weight:800">UZAVŘENÉ ('+closed.length+')</div>'+closed.map(ev=>_udalostKarta(ev,byEvent[ev.id]||[])).join(""); }
     body.innerHTML=html;
-    acRefreshBadge(evs);
+    acRefreshBadge(evs);acCistBadge();
   });
 }
 function acBadgeStartup(){ try{ if(!(window.firebase&&firebase.database))return; _udNactiVse(function(err,evs,byEvent){ if(!err)acRefreshBadge(evs,byEvent); }); }catch(_){} }
@@ -917,6 +917,8 @@ function zarizSchval(id){
 function zarizZamit(id){ if(!confirm("Opravdu odebrat toto zařízení? (přestane dostávat notifikace)"))return; firebase.database().ref("aqua_push_tokens/"+id).remove().then(openZarizeni).catch(function(e){alert("Chyba: "+(e&&e.message?e.message:e));}); }
 
 // ===== Cisterny – obsazenost =====
+// Odznak v menu = počet cisteren právě v akci (aktivní rezervace teď)
+function acCistBadge(){ try{ if(!(window.firebase&&firebase.database))return; firebase.database().ref("aqua_udalosti").get().then(function(s){ const now=Date.now(); const used=new Set(); s.forEach(function(c){ const e=c.val()||{}; const x=e.cist; if(x&&!e.uzavreno&&x.idx!=null&&x.od!=null&&x.do!=null&&x.od<=now&&now<=x.do) used.add(x.idx); }); const b=document.getElementById("bdgCist"); if(b){ b.textContent=used.size; b.style.display=used.size?"":"none"; } }).catch(function(){}); }catch(_){} }
 function openCisterny(){
   zavriPlan();
   document.getElementById("seznamHead").textContent="Cisterny";
@@ -996,6 +998,7 @@ window.addEventListener("load",_acHashRoute);
 window.addEventListener("hashchange",_acHashRoute);
 window.addEventListener("load",acBadgeStartup);
 window.addEventListener("load",acInitGate);
+window.addEventListener("load",acCistBadge);
 </script>
 
 <!-- Push notifikace (FCM) -->
