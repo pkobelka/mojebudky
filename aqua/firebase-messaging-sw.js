@@ -31,6 +31,7 @@ messaging.onBackgroundMessage(payload => {
     badge:   ICON,
     vibrate: [200, 100, 200],
     tag:     payload.data?.push_id || undefined,
+    requireInteraction: true,
     data:    { url: payload.data?.url || APP_URL }
   });
 });

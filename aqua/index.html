@@ -632,7 +632,7 @@ function esc(s){return (s==null?"":String(s)).replace(/[&<>"']/g,c=>({'&':'&amp;
       if(!token){ setStav('⚠️ Token se nezískal',false); alert('Nepodařilo se získat push token. Zkus to prosím znovu.'); return; }
       await firebase.database().ref('aqua_push_tokens/'+devId()).set({token:token,ts:Date.now(),ua:navigator.userAgent.slice(0,90)});
       localStorage.setItem('ac_push_on','1');
-      msg.onMessage(function(p){var d=(p&&p.data)||{};try{new Notification(d.title||'AquaControl',{body:d.body||'',icon:'icon-192.png'});}catch(_){}});
+      msg.onMessage(function(p){var d=(p&&p.data)||{};try{new Notification(d.title||'AquaControl',{body:d.body||'',icon:'icon-192.png',requireInteraction:true});}catch(_){}});
       setStav('✅ Notifikace zapnuté',true);
       alert('✅ Hotovo! Notifikace jsou zapnuté a token uložený.\n\nTeď můžeš na GitHubu spustit „Odeslat push (AquaControl)" a zpráva ti dorazí.');
     }catch(err){
