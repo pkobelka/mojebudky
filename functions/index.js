@@ -23,6 +23,7 @@ async function sendToPersons(persons, title, body, link) {
   const tokens = [];
   tokensSnap.forEach((c) => {
     const v = c.val() || {};
+    if (v.schvaleno === false) return; // nové, neschválené zařízení nedostává push
     if (v.token && v.person && set.has(v.person)) tokens.push({ key: c.key, token: v.token });
   });
   if (!tokens.length) return 0;
@@ -74,6 +75,7 @@ exports.aquaNotify = functions.database
     tokensSnap.forEach((c) => {
       const v = c.val() || {};
       if (!v.token) return;
+      if (v.schvaleno === false) return; // nové, neschválené zařízení nedostává push
       if (!targets.length || (v.person && targets.includes(v.person))) {
         tokens.push({ key: c.key, token: v.token });
       }
