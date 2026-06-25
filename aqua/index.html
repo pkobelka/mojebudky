@@ -970,10 +970,11 @@ function openCisterny(){
       else if(!c.dispo){ prio=3; stav="⛔ Mimo provoz"; col="#7e92a8"; detail="stanoviště: "+esc(c.stred); }
       else if(upcoming){ prio=1; stav="🟡 Rezervace "+_fmtCas(upcoming.od)+"–"+_fmtCas(upcoming.do); col="#e8881b"; detail="kde bude: "+esc(upcoming.misto||"—")+" · "+esc(upcoming.co||""); }
       else { prio=2; stav="🟢 Volná"; col="#2faf5a"; detail="stanoviště: "+esc(c.stred); }
-      const html=`<div style="border:1px solid #dbe6f1;border-radius:14px;padding:12px;margin-bottom:10px;background:#fbfdff">
+      const klik=!!(active||upcoming);
+      const html=`<div ${klik?`onclick="openCistDetail(${i})"`:""} style="border:1px solid #dbe6f1;border-radius:14px;padding:12px;margin-bottom:10px;background:#fbfdff;cursor:${klik?'pointer':'default'}">
         <div style="display:flex;justify-content:space-between;gap:8px;align-items:center;margin-bottom:2px">
           <b style="color:#0b3a66">${fmtL(c.obj)} · ${esc(c.typ)}</b>
-          <span style="background:${col};color:#fff;border-radius:7px;padding:1px 8px;font-size:11px;font-weight:800;white-space:nowrap">${stav}</span></div>
+          <span style="background:${col};color:#fff;border-radius:7px;padding:1px 8px;font-size:11px;font-weight:800;white-space:nowrap">${stav}${klik?' ▸':''}</span></div>
         <div style="font-size:12px;color:#33485e">${detail}</div>
         <div style="font-size:11px;color:#9aa7b8">stanoviště ${esc(c.stred)}${c.spz?` · SPZ ${esc(c.spz)}`:""}${c.opr?` · ${esc(c.opr)}`:""}${c.pozn?` · ${esc(c.pozn)}`:""}${mine.length>1?` · další rezervace: ${mine.length-1}`:""}</div>
       </div>`;
@@ -982,6 +983,26 @@ function openCisterny(){
     karty.sort((a,b)=>a.prio-b.prio || a.obj-b.obj);
     body.innerHTML=karty.map(k=>k.html).join("");
   }).catch(function(e){ body.innerHTML='<p class="hint">Chyba: '+esc(e&&e.message?e.message:e)+'</p>'; });
+}
+// Detail cisterny – kde je, jaká událost, do kdy (z aktuálních rezervací)
+function openCistDetail(i){
+  i=+i; const c=CISTERNY[i], now=Date.now();
+  const mine=_cistRez.filter(r=>r.idx===i&&r.od!=null&&r.do!=null).sort((a,b)=>a.od-b.od);
+  const rezHtml=mine.length?mine.map(function(r){const act=r.od<=now&&now<=r.do;return `<div style="border:1px solid #dbe6f1;border-radius:10px;padding:10px;margin-top:8px;background:${act?'#fff5f5':'#fffaf0'}">
+      <div style="font-weight:800;font-size:12px;color:${act?'#e23b3b':'#e8881b'}">${act?'🔴 Právě obsazená':'🟡 Rezervace'} · ${_fmtCas(r.od)} – ${_fmtCas(r.do)}</div>
+      <div style="font-size:13px;color:#0b3a66;margin-top:3px"><b>Kde stojí:</b> ${esc(r.misto||'—')}</div>
+      <div style="font-size:12px;color:#6b7a8d">Událost: ${esc(r.co||'—')}</div>
+      ${act?`<div style="font-size:12px;color:#2faf5a;font-weight:700">K dispozici od ${_fmtCas(r.do)}</div>`:''}</div>`;}).join(""):'<p class="hint" style="margin-top:8px">Žádná rezervace — cisterna je volná na stanovišti '+esc(c.stred)+'.</p>';
+  const ov=document.createElement("div");
+  ov.style.cssText="position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px";
+  ov.innerHTML='<div style="background:#fff;border-radius:14px;max-width:460px;width:100%;padding:18px;box-shadow:0 10px 40px rgba(0,0,0,.3);max-height:86vh;overflow:auto">'
+    +'<div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><h3 style="margin:0;color:#0b3a66">'+esc(fmtL(c.obj)+" · "+c.typ)+'</h3><button id="cdX" style="border:0;background:none;font-size:20px;cursor:pointer;color:#888">✕</button></div>'
+    +'<div style="font-size:12px;color:#9aa7b8;margin:2px 0 4px">stanoviště '+esc(c.stred)+(c.spz?" · SPZ "+esc(c.spz):"")+(c.opr?" · řidičák "+esc(c.opr):"")+(c.pozn?" · "+esc(c.pozn):"")+'</div>'
+    +rezHtml+'</div>';
+  document.body.appendChild(ov);
+  const close=function(){ if(ov.parentNode)document.body.removeChild(ov); };
+  ov.onclick=function(e){ if(e.target===ov)close(); };
+  ov.querySelector("#cdX").onclick=close;
 }
 // Výběr „kdo jsi" (uloží se k push tokenu, ať chodí adresné notifikace)
 function acPickPerson(){
