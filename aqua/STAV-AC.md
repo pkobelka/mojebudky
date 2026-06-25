@@ -63,7 +63,7 @@
 2. **Doplnit e-maily** Selinger, Bombera (zatím jen tel).
 3. ~~Potvrdit funkce vedení~~ ✅ potvrzeno (GŘ/PŘ/TŘ). Případně doplnit funkce ostatním.
 4. **Backend pro notifikace** – ⏳ **push hotový (testuje se)**, viz sekce *Push notifikace*. Zbývá **e-mail** (Gmail SMTP / app password) a SMS jen pro vysokou závažnost (kvůli ceně), pak napojit na vznik události.
-5. **Samostatné repo pro AC** (mimo `mojebudky`) – nutno přepsat scope v `manifest.json`, `sw.js`, registraci SW v `index.html` (teď natvrdo `/mojebudky/aqua/`).
+5. **Samostatné repo pro AC** – ⏳ **rozpracováno**. Připraven kompletní standalone projekt (scratchpad `aquacontrol/`, ZIP), všechny cesty přepsány `/mojebudky/aqua/` → `/aquacontrol/` (manifest, SW scope v index.html, sw.js, firebase-messaging-sw.js, send_push_aqua.py, workflow). Cíl: nové repo `pkobelka/aquacontrol` → Pages https://pkobelka.github.io/aquacontrol/ (jiná cesta = oddělený SW scope od budek, řeší kolizi „otevírá se jako mojebudky" + push na mobilu). Stejný origin → Firebase/VAPID beze změny. **Zbývá (uživatel):** založit repo, nahrát soubory, zapnout Pages, přidat secret `FIREBASE_SERVICE_ACCOUNT`. Pozn.: integrace v chatu nemá právo zakládat repo (403) ani pushovat mimo `mojebudky`.
 6. Případně propsat mail/tel do souhrnu události u řešitele/informovaných.
 
 ## Mimochodem (budky app)
