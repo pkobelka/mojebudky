@@ -61,6 +61,21 @@
 - **Jak otestovat:** 1) na živém webu (https, na iPhonu přidat na plochu) kliknout „Povolit notifikace" → povolit → tlačítko ukáže „✅". 2) GitHub → Actions → *Odeslat push (AquaControl)* → Run workflow (titulek+text) → notifikace dorazí (i offline).
 - TODO: e-mail (zvoleno **Gmail SMTP / app password** – zatím neimplementováno), pak napojit na vznik události (řešitel/informovaní).
 
+## Úkoly: ukládání + potvrzení + hlídání termínů (NOVÉ, 25.6.)
+- **Naostro se ukládají události i úkoly** (volba 1a). Při „Uložit" (`acSaveEvent` v `index.html`):
+  - `aqua_udalosti/{id}` = `{co, kde, stredisko, objekt, adresa, zavaznost, popis, dotcene[], zadal, zadal_jmeno, ts}`.
+  - pro každý úkol (má řešitele nebo popis) `aqua_ukoly/{id}` = `{eventId, co, kontext, resitel, resitel_jmeno, zadal, zadal_jmeno, popis, termin(ms|null), termin_txt, upozornit[], stav, vznik_ts}`.
+  - dál se píše i `aqua_outbox` (push při vzniku, beze změny).
+- **Stavy úkolu:** `novy` → `potvrzeny` → `splneny` (volba 2a). Obrazovka **„Moje úkoly"** v menu (`openMojeUkoly`) – úkoly, kde `resitel == ac_person`; tlačítka **Potvrdit přijetí** / **Splněno** (`ukolPotvrd`/`ukolSplneno`). Řazení: nesplněné/po termínu nahoře.
+- **Push z úkolů otevře appku na `#moje-ukoly`** (hash routing `_acHashRoute`).
+- **Plánovač `aquaUkolyCheck`** (`functions/index.js`, `pubsub.schedule("every 15 minutes")`, TZ Europe/Prague) – volba 3a+b+c:
+  - a) **po termínu & nesplněno** → push „upozornit" osobám + řešiteli (flag `alerted_overdue`),
+  - b) **připomenutí 1 h před termínem** → řešiteli (`reminded_pre`),
+  - c) **nepotvrzeno do 2 h** → zadavateli události (`alerted_unconfirmed`).
+  - Flagy brání duplicitám. Konstanty `PRE_LEAD_MS` (1 h) a `CONFIRM_GRACE_MS` (2 h) v `functions/index.js`.
+- **DB pravidla:** přidány `aqua_udalosti` a `aqua_ukoly` (s `.indexOn:["resitel","stav"]`).
+- ⚠️ **Deploy plánovače:** `pubsub.schedule` (1st gen) vyžaduje **Cloud Scheduler API** (+ obvykle App Engine app v projektu) a **Blaze** – při prvním deploy může `firebase deploy` chtít doplnit App Engine / povolit API (obdoba dřívějšího Cloud Build). Deploy běží přes `firebase-deploy.yml` až po **pushi do `main`** (změna `functions/**`) nebo ručním `workflow_dispatch`.
+
 ## CI / GitHub Actions
 - `.github/workflows/firebase-deploy.yml` – nasazuje pravidla Firebase DB. Upraveno: běží **jen při změně** `database.rules.json`/`firebase.json`/workflow (ne při každém pushi), `firebase-tools@latest` (verze 13 neuměla ADC auth → nepinovat), retry 3×. Poslední běh zelený.
 - `.github/workflows/send-push.yml` – ruční odeslání push notifikace pro **budky** (`push_tokens`).

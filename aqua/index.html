@@ -124,7 +124,7 @@ padding:24px;z-index:50;overflow:auto}
 </style>
 </head>
 <body>
-<div class="testbar">🔔 TESTOVACÍ PROVOZ — událost se zatím neukládá (mimka), ale po „Uložit" se informovaným osobám odešle push. Nejdřív klikni „🔔 Povolit notifikace" a vyber, kdo jsi.</div>
+<div class="testbar">🔔 TESTOVACÍ PROVOZ — události a úkoly se ukládají; po „Uložit" se odešle push a přidělené úkoly najdeš v „Moje úkoly" (potvrzení + plnění, hlídání termínů). Nejdřív klikni „🔔 Povolit notifikace" a vyber, kdo jsi.</div>
 
 <header class="hlav">
   <img class="kap" src="logo-ac-icon.png" alt="AquaControl – VHOS a.s." width="46" height="46">
@@ -133,6 +133,7 @@ padding:24px;z-index:50;overflow:auto}
     <a class="act" onclick="zavriPlan();zavriSeznam();document.getElementById('prehled').scrollIntoView({behavior:'smooth'})">Přehled objektů</a>
     <a onclick="alert('Sem se schovají Aktuální události (mimka).')">Aktuální události<span class="bdg">2</span></a>
     <a onclick="otevriPlan()">Plán vzorkování 2026</a>
+    <a onclick="openMojeUkoly()">Moje úkoly</a>
     <a onclick="openKontakty()">Kontakty</a>
     <a onclick="alert('Sekce Dokumenty – metodické pokyny (mimka).')">Dokumenty</a>
     <a id="btnPush" onclick="acEnablePush()">🔔 Povolit notifikace</a>
@@ -586,6 +587,85 @@ function acSendEvent(){
     firebase.database().ref("aqua_outbox").push({title:t.title, body:t.body, targets:tg, ts:Date.now()});
   }catch(e){ console.warn("AC outbox:",e); }
 }
+// Uloží událost + úkoly do RTDB (naostro) a odešle push při vzniku (aqua_outbox).
+function acSaveEvent(){
+  try{
+    if(!(window.firebase&&firebase.database)) return;
+    const db=firebase.database(), now=Date.now();
+    const zadalKod=localStorage.getItem("ac_person")||"";
+    const kontext=[st.stredisko,st.objekt,st.adresa].filter(Boolean).join(" · ");
+    // událost
+    const evRef=db.ref("aqua_udalosti").push();
+    const eventId=evRef.key;
+    evRef.set({
+      co: st.podminka||st.typ||"Mimořádná událost", kde: kontext,
+      stredisko: st.stredisko||"", objekt: st.objekt||"", adresa: st.adresa||"",
+      zavaznost: st.zavaznost||"", popis: st.popis||"", dotcene: st.dotcene||[],
+      zadal: zadalKod, zadal_jmeno: UZIVATEL, ts: now
+    });
+    // úkoly (jen ty s řešitelem nebo popisem)
+    (st.ukoly||[]).forEach(function(u){
+      if(!u.resitel && !u.popis) return;
+      let terminMs=null, terminTxt="";
+      if(u.tdatum){ const hm=(u.tcas||"00:00"); const dd=new Date(u.tdatum+"T"+hm+":00");
+        if(!isNaN(dd.getTime())){ terminMs=dd.getTime(); terminTxt=fmtDatumCz(u.tdatum)+" "+hm; } }
+      db.ref("aqua_ukoly").push({
+        eventId: eventId, co: st.podminka||"", kontext: kontext,
+        resitel: u.resitel||"", resitel_jmeno: u.resitel?lidLbl(u.resitel):"",
+        zadal: zadalKod, zadal_jmeno: UZIVATEL,
+        popis: u.popis||"", termin: terminMs, termin_txt: terminTxt,
+        upozornit: u.upozorneni||[], stav: "novy", vznik_ts: now
+      });
+    });
+    // push při vzniku (informovaní + řešitelé + upozornit) – beze změny
+    const t=acEventText(), tg=acEventTargets();
+    db.ref("aqua_outbox").push({title:t.title, body:t.body, targets:tg, ts:now});
+  }catch(e){ console.warn("AC save:",e); }
+}
+
+// ===== Moje úkoly (kde jsem řešitel) =====
+const UK_STAV={novy:["🆕 Nový","#1577c8"],potvrzeny:["✅ Potvrzený","#2faf5a"],splneny:["✔️ Splněno","#7e92a8"]};
+function ukolKartaHTML(u){
+  const now=Date.now();
+  const poTerminu=u.termin&&now>u.termin&&u.stav!=="splneny";
+  const s=UK_STAV[u.stav]||UK_STAV.novy;
+  const badge=poTerminu?`<span style="background:#e23b3b;color:#fff;border-radius:8px;padding:2px 8px;font-size:12px;font-weight:800">⏰ Po termínu</span>`
+                       :`<span style="background:${s[1]};color:#fff;border-radius:8px;padding:2px 8px;font-size:12px;font-weight:800">${s[0]}</span>`;
+  let btns="";
+  if(u.stav==="novy") btns=`<button onclick="ukolPotvrd('${u.id}')" style="border:0;border-radius:10px;padding:8px 14px;background:#1577c8;color:#fff;font-weight:800;cursor:pointer">Potvrdit přijetí</button>`+
+                           `<button onclick="ukolSplneno('${u.id}')" style="border:1px solid #2faf5a;border-radius:10px;padding:8px 14px;background:#fff;color:#2faf5a;font-weight:800;cursor:pointer">Splněno</button>`;
+  else if(u.stav==="potvrzeny") btns=`<button onclick="ukolSplneno('${u.id}')" style="border:0;border-radius:10px;padding:8px 14px;background:#2faf5a;color:#fff;font-weight:800;cursor:pointer">Označit splněno</button>`;
+  return `<div style="border:1px solid #dbe6f1;border-radius:14px;padding:12px;margin-bottom:10px;background:#fbfdff">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:6px">${badge}
+      ${u.termin?`<span style="font-size:12px;color:${poTerminu?'#e23b3b':'#6b7a8d'};font-weight:700">termín ${esc(u.termin_txt||"")}</span>`:`<span style="font-size:12px;color:#9aa7b8">bez termínu</span>`}</div>
+    <div style="font-weight:800;color:#0b3a66;margin-bottom:2px">${esc(u.popis||"(bez popisu)")}</div>
+    ${u.kontext?`<div style="font-size:12.5px;color:#6b7a8d;margin-bottom:2px">${esc(u.co?u.co+" · ":"")}${esc(u.kontext)}</div>`:""}
+    <div style="font-size:12px;color:#9aa7b8;margin-bottom:8px">zadal: ${esc(u.zadal_jmeno||"—")}</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">${btns}</div></div>`;
+}
+function openMojeUkoly(){
+  zavriPlan();
+  document.getElementById("seznamHead").textContent="Moje úkoly";
+  const body=document.getElementById("seznamBody");
+  document.getElementById("seznamOv").classList.add("show");
+  const me=localStorage.getItem("ac_person")||"";
+  if(!me){ body.innerHTML='<p class="hint">Nejdřív klikni „🔔 Povolit notifikace" a vyber, kdo jsi — pak se ti tu zobrazí úkoly, kde jsi řešitel.</p>'; return; }
+  if(!(window.firebase&&firebase.database)){ body.innerHTML='<p class="hint">Databáze není dostupná.</p>'; return; }
+  body.innerHTML='<p class="hint">Načítám…</p>';
+  firebase.database().ref("aqua_ukoly").orderByChild("resitel").equalTo(me).get().then(function(snap){
+    const rows=[];
+    snap.forEach(function(c){ rows.push(Object.assign({id:c.key}, c.val()||{})); });
+    // nesplněné první (po termínu úplně nahoře), pak podle termínu
+    rows.sort(function(a,b){
+      const ad=a.stav==="splneny"?1:0, bd=b.stav==="splneny"?1:0;
+      if(ad!==bd) return ad-bd;
+      return (a.termin||9e15)-(b.termin||9e15);
+    });
+    body.innerHTML=rows.length?rows.map(ukolKartaHTML).join(""):'<p class="hint">Žádné úkoly pro tebe. 🎉</p>';
+  }).catch(function(e){ body.innerHTML='<p class="hint">Chyba načtení úkolů: '+esc(e&&e.message?e.message:e)+'</p>'; });
+}
+function ukolPotvrd(id){ firebase.database().ref("aqua_ukoly/"+id).update({stav:"potvrzeny",potvrzeno_ts:Date.now()}).then(openMojeUkoly).catch(function(e){alert("Chyba: "+(e&&e.message?e.message:e));}); }
+function ukolSplneno(id){ firebase.database().ref("aqua_ukoly/"+id).update({stav:"splneny",splneno_ts:Date.now()}).then(openMojeUkoly).catch(function(e){alert("Chyba: "+(e&&e.message?e.message:e));}); }
 // Výběr „kdo jsi" (uloží se k push tokenu, ať chodí adresné notifikace)
 function acPickPerson(){
   return new Promise(resolve=>{
@@ -604,7 +684,7 @@ function krok(d){
  if(d>0){ // validace
   if(st.krok===1&&!st.podminka)return alert("Vyber, co se stalo.");
   if(st.krok===2){if(jeZmenaPlanu()){if(!st.odber)return alert("Vyber konkrétní odběr z plánu.");}else{const tp=PODM_TYP[st.podminka];if(tp){if(!st.stredisko||!st.objekt)return alert("Vyber pracoviště a konkrétní "+tp+".");}else if(!st.stredisko||!st.typ)return alert("Vyber středisko a typ objektu.");}}
-  if(st.krok===4){acSendEvent();st.hotovo=true;render();return;}
+  if(st.krok===4){acSaveEvent();st.hotovo=true;render();return;}
  }
  st.krok+=d;if(st.krok<1)st.krok=1;if(st.krok===3&&!st.zavaznost)st.zavaznost=st.zavDef||"stredni";render();
 }
@@ -626,6 +706,11 @@ function hotovoHTML(){
  <div style="margin-top:18px"><button class="b-save" style="border:0;border-radius:12px;padding:10px 22px;color:#fff;font-weight:800;cursor:pointer" onclick="zavri()">Hotovo</button></div></div>`;
 }
 function esc(s){return (s==null?"":String(s)).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+
+// Otevření „Moje úkoly" při příchodu z push notifikace (#moje-ukoly)
+function _acHashRoute(){ if((location.hash||"").indexOf("moje-ukoly")>=0){ setTimeout(openMojeUkoly,300); } }
+window.addEventListener("load",_acHashRoute);
+window.addEventListener("hashchange",_acHashRoute);
 </script>
 
 <!-- Push notifikace (FCM) -->
