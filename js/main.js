@@ -10,7 +10,6 @@ const PREZDIVKY = {
   'Ladislav': ['Laďa'],
   'Vítězslav': ['Víťa'],
   'Jaroslav': ['Rafan'],
-  'Lubomír': ['Luboš'],
 };
 const KANONICKY = {};
 for (const [k, arr] of Object.entries(PREZDIVKY)) arr.forEach(p => KANONICKY[p] = k);
@@ -51,7 +50,7 @@ function najdiSvatekSpravce(svarekJmeno) {
 async function nactiSpravce() {
   try {
     const [resJmena, resHesla] = await Promise.all([
-      fetch('data/spravci_jmena.json?v=20260527k'),
+      fetch('data/spravci_jmena.json?v=20260625a'),
       fetch('data/spravci.json?v=20260618')
     ]);
     spravciJmena = await resJmena.json();
