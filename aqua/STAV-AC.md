@@ -5,10 +5,9 @@
 ## Co to je
 **AquaControl** = webová PWA pro evidenci mimořádných událostí na vodárenské infrastruktuře VHOS („mimka" / klikací prototyp). Vše je v jednom souboru **`aqua/index.html`** (inline CSS+JS), + ikony, `manifest.json`, `sw.js`.
 
-- **Živá adresa:** https://pkobelka.github.io/mojebudky/aqua/ (GitHub Pages z větve `main`).
-- **Vývojová větev:** `claude/epic-feynman-hqyngr`. Po každé změně se pushuje na větev **i** na `main` (fast-forward) → web se hned aktualizuje.
-- **Náhled větve bez nasazení:** htmlpreview.github.io/?https://github.com/pkobelka/mojebudky/blob/claude/epic-feynman-hqyngr/aqua/index.html
-- Pozn.: stále jde o **mimku** – nic se reálně neukládá ani neodesílá (žádné push/e-mail/SMS, to až s backendem).
+- ⚠️ **ŽIVÁ adresa je teď nové repo:** **https://pkobelka.github.io/aquacontrol/** (samostatné repo `pkobelka/aquacontrol`, viz úkol 5). Stará `https://pkobelka.github.io/mojebudky/aqua/` je legacy – po ověření ke smazání.
+- **Dvě kopie kódu:** vývoj/editace probíhá v `mojebudky/aqua/` (na větvi `claude/nice-allen-68fd6m`), protože chat má GitHub přístup jen k `mojebudky`. **Do `aquacontrol` chat nemůže pushovat** → změny se uživateli posílají jako soubory k ručnímu nahrání (cesty přepsané `/mojebudky/aqua/` → `/aquacontrol/`). Až bude čas, sjednotit na jeden zdroj (ideálně jen `aquacontrol`).
+- Pozn.: stále jde o **mimku** – události se reálně neukládají; **push ale funguje** (jediné reálně odesílané). E-mail/SMS až s backendem.
 
 ## Hlavní datové struktury v `aqua/index.html`
 - `STR` – střediska + počty objektů po kategoriích [Vodovody,Vodojemy,Prameniště,Studny,Vrty,Chlorace,Ostatní].
@@ -31,9 +30,9 @@
 - **Online** u data ukazuje příjmení.
 
 ## Data doplněná z podkladů
-- **Chlorace:** Moravská Třebová (původní), **Svitavy 13**, **Jevíčko 20**, **Polička 12** (placeholder – jen názvy + chlornan/plynný, čeká na podrobný seznam s typy čerpadel a dávkováním).
+- **Chlorace:** Moravská Třebová (původní), **Svitavy 13**, **Jevíčko 20**, **Polička 12** (✅ doplněno z podkladu „Chlorátory Polička": typ čerpadla Grundfos SMART Digital DDE / Sebranice JESCO C7700, řešení dávkování, dávkování v %; GPS spárováno dle objektů).
 - **Ponorná čerpadla** (pole `c`) doplněna k vrtům/zdrojům Svitavy, Litomyšl, Jevíčko, Polička (MT už byla). Vynechané zdroje bez objektu v datech: Pohledy P-2, Sklené SN-1, Budislav S-2, Polička V-7/V-8, Pustá Kamenice PKV-3.
-- **Kontakty:** všech 19 lidí má telefon; bez e-mailu zůstávají **Radovan Selinger** a **Jiří Bombera**. Funkce vedení: GŘ=generální, PŘ=provozní, TŘ=technický ředitel (**potvrzeno**).
+- **Kontakty:** všichni mají telefon. **Jiří Bombera** – doplněn mail `jiri.bombera@cevak.cz`. **Radovan Selinger** – odebrán z LIDE i KONTAKTY (bez mailu, nejistá příslušnost do uzavřené skupiny). Funkce vedení: GŘ=generální, PŘ=provozní, TŘ=technický ředitel (**potvrzeno**).
 - **GPS chlorací:** chlorovací zařízení sedí na objektech, jejichž GPS je v `OBJEKTY`. Doplněno `lat/lon` k 66 ze 71 chlorací (spárováno podle názvu objektu/obce a objemu vodojemu). Bez GPS zůstává 5: importní artefakty „V Mor.Třebové 22.6.2026", „Vypracoval: Vykydal", „V Litomyšli 22.6.2026", dále **Chotěnov** (nechloruje se – přesunuto na VDJ Hraničky) a **Bezděčí – ATS** (chybí objekt s GPS).
 
 ## Logo / branding
@@ -44,8 +43,11 @@
 - Generátor (jednorázový, není v repu): `scratchpad/gen.js` přes `pngjs` (area-resample, premultiplied alpha). Při výměně loga znovu spustit a bumpnout `CACHE` v `sw.js`.
 - Pozn.: v malých velikostech (16/32 px) je vnitřní text odznaku nečitelný – čte se jako barevný kroužek „AC". Pro ostrou malou ikonu by chtělo samostatnou značku jen „AC".
 
-## Push notifikace (FCM) – ve fázi testování
-- **Sdílí Firebase projekt `moje-budky`** (stejný config/VAPID jako budky appka, stejná doména) – netřeba nové klíče.
+## Push notifikace (FCM) – ✅ FUNGUJE (otestováno na PC i Android)
+- **Zprávy jsou `data-only`** (titulek/text v `data{}`), zobrazení řeší výhradně náš kód (SW na pozadí, `onMessage` na popředí) → **vždy jen jedna** notifikace (dřív chodily 2×, protože Firebase zobrazil jednu sám). Header `Urgency: high`.
+- Notifikace má **`requireInteraction: true`** → zůstane na obrazovce do kliknutí (klik ji zavře a otevře appku).
+- **FCM SW se auto-aktualizuje:** `firebase-messaging-sw.js` má `skipWaiting`/`clients.claim` a `index.html` ho při startu (pokud `ac_push_on`) tiše přeregistruje + `update()`. → nové verze SW se šíří samy, **netřeba mazat data webu** (to byl jediný způsob, jak prosadit změnu, dokud se SW registroval jen na klik).
+- **Sdílí Firebase projekt `moje-budky`** (stejný config/VAPID jako budky appka, stejná doména) – netřeba nové klíče. Projekt je na **Spark (free)** – Cloud Functions by chtěly Blaze.
 - `aqua/firebase-messaging-sw.js` – FCM service worker (vlastní úzký scope `/mojebudky/aqua/fcm/`, nekoliduje s offline `sw.js`), ikona + klik-URL na AC.
 - `index.html` – Firebase compat SDK (app+database+messaging 10.12.2) + tlačítko **„🔔 Povolit notifikace"** v hlavičce. Token se ukládá do **`aqua_push_tokens/{id}`** (AC nemá login → `id` = trvalé náhodné z localStorage, klíč `ac_dev_id`).
 - `database.rules.json` – přidán uzel `aqua_push_tokens`.
@@ -59,11 +61,11 @@
 - `.github/workflows/send-push-aqua.yml` – ruční odeslání push pro **AquaControl** (`aqua_push_tokens`).
 
 ## Otevřené úkoly / nápady
-1. **Polička chlorace** – nahradit placeholder podrobným seznamem (typy čerpadel, dávkování), až dorazí.
-2. **Doplnit e-maily** Selinger, Bombera (zatím jen tel).
+1. ~~**Polička chlorace** – nahradit placeholder podrobným seznamem (typy čerpadel, dávkování)~~ ✅ hotovo (z podkladu „Chlorátory Polička"). K prověření 2 párování GPS: „Pomezí VDJ (pro Květnou)" je nově na VDJ Pomezí (dle podkladu) místo dřívějšího VDJ Květná; „Pustá Kamenice úpravna vody" na Manipulačním vodojemu ÚV (není samostatný objekt ÚV).
+2. ~~**Doplnit e-maily** Selinger, Bombera~~ ✅ Bombera `jiri.bombera@cevak.cz` doplněn; Selinger odebrán z appky (bez mailu, nejistá příslušnost do skupiny).
 3. ~~Potvrdit funkce vedení~~ ✅ potvrzeno (GŘ/PŘ/TŘ). Případně doplnit funkce ostatním.
-4. **Backend pro notifikace** – ⏳ **push hotový (testuje se)**, viz sekce *Push notifikace*. Zbývá **e-mail** (Gmail SMTP / app password) a SMS jen pro vysokou závažnost (kvůli ceně), pak napojit na vznik události.
-5. **Samostatné repo pro AC** (mimo `mojebudky`) – nutno přepsat scope v `manifest.json`, `sw.js`, registraci SW v `index.html` (teď natvrdo `/mojebudky/aqua/`).
+4. **Backend pro notifikace** – ✅ **push hotový a funkční** (viz sekce *Push notifikace*). Posílá se ručně z Actions (všem/jednomu). Zbývá: **e-mail** (Gmail SMTP / app password) a SMS jen pro vysokou závažnost; pak **napojit na vznik události** (automaticky řešiteli + informovaným). Auto-odeslání z appky vyžaduje server/Cloud Function (Blaze) – z prohlížeče nelze (tajný klíč).
+5. ~~**Samostatné repo pro AC**~~ ✅ **HOTOVO a živé.** Nové repo **`pkobelka/aquacontrol`** (public) → Pages **https://pkobelka.github.io/aquacontrol/**, secret `FIREBASE_SERVICE_ACCOUNT` nastaven, workflow „Odeslat push (AquaControl)" funguje. Jiná cesta `/aquacontrol/` = oddělený SW scope (vyřešilo „otevírá se jako mojebudky" i push na mobilu). Pozn.: existuje i omylem vzniklé prázdné repo **`AquaControll`** (2× L, privátní) – ke smazání.
 6. Případně propsat mail/tel do souhrnu události u řešitele/informovaných.
 
 ## Mimochodem (budky app)

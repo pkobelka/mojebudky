@@ -58,12 +58,11 @@ def main():
     neplatne = []
     for key, token in tokens:
         msg = messaging.Message(
-            notification=messaging.Notification(title=title, body=body),
             webpush=messaging.WebpushConfig(
-                notification=messaging.WebpushNotification(title=title, body=body, icon=ICON_URL, badge=ICON_URL),
+                headers={'Urgency': 'high'},
                 fcm_options=messaging.WebpushFCMOptions(link=APP_URL),
             ),
-            data={'push_id': push_id, 'url': APP_URL},
+            data={'push_id': push_id, 'title': title, 'body': body, 'url': APP_URL},
             token=token,
         )
         try:

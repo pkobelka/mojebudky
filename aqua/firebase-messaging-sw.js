@@ -17,16 +17,21 @@ const messaging = firebase.messaging();
 const ICON = '/mojebudky/aqua/icon-192.png';
 const APP_URL = 'https://pkobelka.github.io/mojebudky/aqua/';
 
+// Nová verze SW se aktivuje hned (nečeká na zavření všech oken)
+self.addEventListener('install', () => self.skipWaiting());
+self.addEventListener('activate', e => e.waitUntil(self.clients.claim()));
+
 // Notifikace na pozadí (zavřená/neaktivní karta)
 messaging.onBackgroundMessage(payload => {
-  const title = payload.notification?.title || 'AquaControl';
-  const body  = payload.notification?.body  || '';
+  const title = payload.data?.title || 'AquaControl';
+  const body  = payload.data?.body  || '';
   return self.registration.showNotification(title, {
     body,
     icon:    ICON,
     badge:   ICON,
     vibrate: [200, 100, 200],
     tag:     payload.data?.push_id || undefined,
+    requireInteraction: true,
     data:    { url: payload.data?.url || APP_URL }
   });
 });
