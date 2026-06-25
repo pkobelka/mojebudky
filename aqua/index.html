@@ -131,7 +131,7 @@ padding:24px;z-index:50;overflow:auto}
   <div class="nazev"><span class="a">Aqua</span><span class="c">Control</span></div>
   <nav class="menu">
     <a class="act" onclick="zavriPlan();zavriSeznam();document.getElementById('prehled').scrollIntoView({behavior:'smooth'})">Přehled objektů</a>
-    <a onclick="alert('Sem se schovají Aktuální události (mimka).')">Aktuální události<span class="bdg">2</span></a>
+    <a onclick="openUdalosti()">Aktuální události<span class="bdg" id="bdgUd" style="display:none">0</span></a>
     <a onclick="otevriPlan()">Plán vzorkování 2026</a>
     <a onclick="openMojeUkoly()">Moje úkoly</a>
     <a onclick="openKontakty()">Kontakty</a>
@@ -602,6 +602,7 @@ function acSaveEvent(){
       co: st.podminka||st.typ||"Mimořádná událost", kde: kontext,
       stredisko: st.stredisko||"", objekt: st.objekt||"", adresa: st.adresa||"",
       zavaznost: st.zavaznost||"", popis: st.popis||"", dotcene: st.dotcene||[],
+      nahlasil: st.nahlasil||"", tel: st.tel||"",
       zadal: zadalKod, zadal_jmeno: UZIVATEL, ts: now
     });
     // úkoly (jen ty s řešitelem nebo popisem)
@@ -685,6 +686,70 @@ function _ukolZmenaStav(id,novyStav,tsPole,pushTitle,sloveso){
 }
 function ukolPotvrd(id){ _ukolZmenaStav(id,"potvrzeny","potvrzeno_ts","✅ Úkol přijat","přijal/a"); }
 function ukolSplneno(id){ _ukolZmenaStav(id,"splneny","splneno_ts","✔️ Úkol splněn","splnil/a"); }
+
+// ===== Aktuální události (přehled průběhu) =====
+function _fmtCas(ms){ if(!ms)return""; try{return new Date(ms).toLocaleString("cs-CZ",{day:"numeric",month:"numeric",hour:"2-digit",minute:"2-digit"});}catch(_){return"";} }
+function _ukolRadek(u){
+  const now=Date.now();
+  const poTerminu=u.termin&&now>u.termin&&u.stav!=="splneny";
+  const s=UK_STAV[u.stav]||UK_STAV.novy;
+  const col=poTerminu?"#e23b3b":s[1], lab=poTerminu?"⏰ Po termínu":s[0];
+  const tl=["zadáno "+_fmtCas(u.vznik_ts)];
+  if(u.potvrzeno_ts)tl.push("přijato "+_fmtCas(u.potvrzeno_ts));
+  if(u.splneno_ts)tl.push("splněno "+_fmtCas(u.splneno_ts));
+  return `<div style="border-left:3px solid ${col};padding:5px 8px;margin:6px 0;background:#fff;border-radius:6px">
+    <div style="display:flex;justify-content:space-between;gap:6px;align-items:center">
+      <b style="color:#0b3a66;font-size:13px">${esc(u.popis||"(úkol)")}</b>
+      <span style="background:${col};color:#fff;border-radius:7px;padding:1px 7px;font-size:11px;font-weight:800;white-space:nowrap">${lab}</span></div>
+    <div style="font-size:11.5px;color:#6b7a8d">řešitel: ${esc(u.resitel_jmeno||u.resitel||"—")}${u.termin_txt?` · termín ${esc(u.termin_txt)}`:""}</div>
+    <div style="font-size:11px;color:#9aa7b8">${tl.map(esc).join(" → ")}</div></div>`;
+}
+function _udalostKarta(ev,ukoly){
+  const zl=(ev.zavaznost&&ZAV[ev.zavaznost])?ZAV[ev.zavaznost]:null;
+  const zlB=zl?`<span style="background:${zl[1]};color:#fff;border-radius:7px;padding:1px 8px;font-size:11px;font-weight:800">${zl[0]}</span>`:"";
+  const now=Date.now(), total=ukoly.length, done=ukoly.filter(u=>u.stav==="splneny").length;
+  const late=ukoly.filter(u=>u.termin&&now>u.termin&&u.stav!=="splneny").length;
+  const stavTag = total===0 ? `<span style="font-size:11px;color:#9aa7b8">bez úkolů</span>`
+    : (done===total) ? `<span style="background:#2faf5a;color:#fff;border-radius:7px;padding:1px 8px;font-size:11px;font-weight:800">✔️ Hotovo</span>`
+    : `<span style="font-size:11.5px;color:${late?'#e23b3b':'#6b7a8d'};font-weight:700">${done}/${total} splněno${late?` · ${late} po termínu`:""}</span>`;
+  const nahl=ev.nahlasil?`<div style="font-size:12px;color:#6b7a8d">nahlásil: ${esc(ev.nahlasil)}${ev.tel?` · ${esc(ev.tel)}`:""}</div>`:"";
+  return `<div style="border:1px solid #dbe6f1;border-radius:14px;padding:12px;margin-bottom:12px;background:#fbfdff">
+    <div style="display:flex;justify-content:space-between;gap:8px;align-items:center;margin-bottom:4px">
+      <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">${zlB}<b style="color:#0b3a66">${esc(ev.co||"Událost")}</b></div>${stavTag}</div>
+    ${ev.kde?`<div style="font-size:12.5px;color:#6b7a8d">${esc(ev.kde)}</div>`:""}
+    ${ev.popis?`<div style="font-size:12.5px;color:#33485e;margin:2px 0">${esc(ev.popis)}</div>`:""}
+    <div style="font-size:11.5px;color:#9aa7b8;margin-bottom:2px">zadal: ${esc(ev.zadal_jmeno||"—")} · ${_fmtCas(ev.ts)}</div>
+    ${nahl}
+    ${ukoly.length?`<div style="margin-top:6px">${ukoly.map(_ukolRadek).join("")}</div>`:""}</div>`;
+}
+function _udNactiVse(cb){
+  const db=firebase.database();
+  Promise.all([db.ref("aqua_udalosti").get(),db.ref("aqua_ukoly").get()]).then(function(res){
+    const evs=[]; res[0].forEach(c=>evs.push(Object.assign({id:c.key},c.val()||{})));
+    const byEvent={}; res[1].forEach(c=>{const u=Object.assign({id:c.key},c.val()||{});(byEvent[u.eventId]=byEvent[u.eventId]||[]).push(u);});
+    Object.keys(byEvent).forEach(k=>byEvent[k].sort((a,b)=>{const ad=a.stav==="splneny"?1:0,bd=b.stav==="splneny"?1:0;if(ad!==bd)return ad-bd;return (a.termin||9e15)-(b.termin||9e15);}));
+    evs.sort((a,b)=>(b.ts||0)-(a.ts||0));
+    cb(null,evs,byEvent);
+  }).catch(function(e){cb(e);});
+}
+function acRefreshBadge(evs,byEvent){
+  try{ let open=0; evs.forEach(ev=>{const t=byEvent[ev.id]||[]; const done=t.filter(u=>u.stav==="splneny").length; if(t.length>0&&done<t.length)open++;});
+    const b=document.getElementById("bdgUd"); if(b){ b.textContent=open; b.style.display=open?"":"none"; } }catch(_){}
+}
+function openUdalosti(){
+  zavriPlan();
+  document.getElementById("seznamHead").textContent="Aktuální události";
+  const body=document.getElementById("seznamBody");
+  document.getElementById("seznamOv").classList.add("show");
+  if(!(window.firebase&&firebase.database)){ body.innerHTML='<p class="hint">Databáze není dostupná.</p>'; return; }
+  body.innerHTML='<p class="hint">Načítám…</p>';
+  _udNactiVse(function(err,evs,byEvent){
+    if(err){ body.innerHTML='<p class="hint">Chyba načtení: '+esc(err.message||err)+'</p>'; return; }
+    body.innerHTML=evs.length?evs.map(ev=>_udalostKarta(ev,byEvent[ev.id]||[])).join(""):'<p class="hint">Zatím žádné události. Vytvoř první přes „＋ Nová událost".</p>';
+    acRefreshBadge(evs,byEvent);
+  });
+}
+function acBadgeStartup(){ try{ if(!(window.firebase&&firebase.database))return; _udNactiVse(function(err,evs,byEvent){ if(!err)acRefreshBadge(evs,byEvent); }); }catch(_){} }
 // Výběr „kdo jsi" (uloží se k push tokenu, ať chodí adresné notifikace)
 function acPickPerson(){
   return new Promise(resolve=>{
@@ -730,6 +795,7 @@ function esc(s){return (s==null?"":String(s)).replace(/[&<>"']/g,c=>({'&':'&amp;
 function _acHashRoute(){ if((location.hash||"").indexOf("moje-ukoly")>=0){ setTimeout(openMojeUkoly,300); } }
 window.addEventListener("load",_acHashRoute);
 window.addEventListener("hashchange",_acHashRoute);
+window.addEventListener("load",acBadgeStartup);
 </script>
 
 <!-- Push notifikace (FCM) -->
