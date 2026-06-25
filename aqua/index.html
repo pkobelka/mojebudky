@@ -644,8 +644,14 @@ function esc(s){return (s==null?"":String(s)).replace(/[&<>"']/g,c=>({'&':'&amp;
 
   // při startu: „zapnuté" jen když už máme uložený AC token
   document.addEventListener('DOMContentLoaded',function(){
-    if(supported()&&Notification.permission==='granted'&&localStorage.getItem('ac_push_on')==='1')
+    if(supported()&&Notification.permission==='granted'&&localStorage.getItem('ac_push_on')==='1'){
       setStav('✅ Notifikace zapnuté',true);
+      // tiché obnovení FCM service workeru – natáhne novou verzi sám, bez mazání dat webu
+      navigator.serviceWorker.register('firebase-messaging-sw.js',{scope:'/mojebudky/aqua/fcm/'}).then(function(reg){
+        try{reg.update();}catch(_){}
+        try{firebase.messaging().onMessage(function(p){var d=(p&&p.data)||{};try{new Notification(d.title||'AquaControl',{body:d.body||'',icon:'icon-192.png',requireInteraction:true});}catch(_){}});}catch(_){}
+      }).catch(function(){});
+    }
   });
 })();
 </script>
