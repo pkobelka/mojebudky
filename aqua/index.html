@@ -131,7 +131,6 @@ padding:24px;z-index:50;overflow:auto}
   <img class="kap" src="logo-ac-icon.png" alt="AquaControl – VHOS a.s." width="46" height="46">
   <div class="nazev"><span class="a">Aqua</span><span class="c">Control</span></div>
   <nav class="menu">
-    <a class="act" onclick="zavriPlan();zavriSeznam();document.getElementById('prehled').scrollIntoView({behavior:'smooth'})">Přehled objektů</a>
     <a onclick="openUdalosti()">Aktuální události<span class="bdg" id="bdgUd" style="display:none">0</span></a>
     <a onclick="otevriPlan()">Plán vzorkování 2026</a>
     <a onclick="openMojeUkoly()">Moje úkoly</a>
@@ -473,7 +472,7 @@ function openKontakty(){
   const k=KONTAKTY[z]||{};const fce=k.funkce||"";const mail=k.mail||"";const tel=k.tel||"";
   const det=(mail||tel)?`${mail?esc(mail):""}${mail&&tel?" · ":""}${tel?esc(tel):""}`:`<i style="color:#9aa7b8">kontakt zatím nevyplněn</i>`;
   const links=`${mail?`<a class="sl-map" title="Napsat e-mail" href="mailto:${esc(mail)}">✉</a>`:""}${tel?`<a class="sl-map" title="Zavolat" href="tel:${esc(telHref(tel))}">📞</a>`:""}`;
-  return `<div class="sl-row"><div><b>${esc(jm)}</b>${fce?` <span style="color:#6b7a8d">· ${esc(fce)}</span>`:""}<br><span style="font-size:12px;color:#6b7a8d">${det}</span></div><div style="display:flex;gap:6px">${links}</div></div>`;
+  return `<div class="sl-row"><div><b>${esc(prijmeniJmeno(jm))}</b>${fce?` <span style="color:#6b7a8d">· ${esc(fce)}</span>`:""}<br><span style="font-size:12px;color:#6b7a8d">${det}</span></div><div style="display:flex;gap:6px">${links}</div></div>`;
  }).join("");
  document.getElementById("seznamOv").classList.add("show");
 }
@@ -553,6 +552,7 @@ function setZav(k){st.zavaznost=k;render();}
 
 // vedení zůstává jako kód (GŘ/TŘ/PŘ), ostatní se zobrazují plným jménem
 function lidLbl(z){if(z==="GŘ"||z==="TŘ"||z==="PŘ")return z;const f=LIDE.find(x=>x[0]===z);return f?f[1]:z;}
+function prijmeniJmeno(jm){const p=String(jm).trim().split(/\s+/);if(p.length<2)return jm;const sur=p.pop();return sur+" "+p.join(" ");}
 function casSelectU(ti){
  const v=st.ukoly[ti].tcas||"";const p=v.split(":");const hh=p[0]||"",mm=p[1]||"";
  const ho=Array.from({length:24},(_,i)=>String(i).padStart(2,"0")).map(h=>`<option ${h===hh?'selected':''}>${h}</option>`).join("");
@@ -956,23 +956,26 @@ function openCisterny(){
   firebase.database().ref("aqua_udalosti").get().then(function(s){
     const rez=[]; s.forEach(function(c){ const e=c.val()||{}; if(e.uzavreno)return; _cistArr(e).forEach(function(x){ if(x.idx!=null) rez.push(Object.assign({eventId:c.key,co:e.co},x)); }); });
     _cistRez=rez; const now=Date.now();
-    body.innerHTML=CISTERNY.map(function(c,i){
+    const karty=CISTERNY.map(function(c,i){
       const mine=rez.filter(r=>r.idx===i&&r.od!=null&&r.do!=null).sort((a,b)=>a.od-b.od);
       const active=mine.find(r=>r.od<=now&&now<=r.do);
       const upcoming=mine.find(r=>r.od>now);
-      let stav,col,detail;
-      if(!c.dispo){ stav="⛔ Mimo provoz"; col="#7e92a8"; detail="stanoviště: "+esc(c.stred); }
-      else if(active){ stav="🔴 Obsazená do "+_fmtCas(active.do); col="#e23b3b"; detail="kde: "+esc(active.misto||"—")+" · "+esc(active.co||"")+" · k dispozici od "+_fmtCas(active.do); }
-      else if(upcoming){ stav="🟡 Rezervace "+_fmtCas(upcoming.od)+"–"+_fmtCas(upcoming.do); col="#e8881b"; detail="kde bude: "+esc(upcoming.misto||"—")+" · "+esc(upcoming.co||""); }
-      else { stav="🟢 Volná"; col="#2faf5a"; detail="stanoviště: "+esc(c.stred); }
-      return `<div style="border:1px solid #dbe6f1;border-radius:14px;padding:12px;margin-bottom:10px;background:#fbfdff">
+      let stav,col,detail,prio;
+      if(active){ prio=0; stav="🔴 Obsazená do "+_fmtCas(active.do); col="#e23b3b"; detail="kde: "+esc(active.misto||"—")+" · "+esc(active.co||"")+" · k dispozici od "+_fmtCas(active.do); }
+      else if(!c.dispo){ prio=3; stav="⛔ Mimo provoz"; col="#7e92a8"; detail="stanoviště: "+esc(c.stred); }
+      else if(upcoming){ prio=1; stav="🟡 Rezervace "+_fmtCas(upcoming.od)+"–"+_fmtCas(upcoming.do); col="#e8881b"; detail="kde bude: "+esc(upcoming.misto||"—")+" · "+esc(upcoming.co||""); }
+      else { prio=2; stav="🟢 Volná"; col="#2faf5a"; detail="stanoviště: "+esc(c.stred); }
+      const html=`<div style="border:1px solid #dbe6f1;border-radius:14px;padding:12px;margin-bottom:10px;background:#fbfdff">
         <div style="display:flex;justify-content:space-between;gap:8px;align-items:center;margin-bottom:2px">
           <b style="color:#0b3a66">${fmtL(c.obj)} · ${esc(c.typ)}</b>
           <span style="background:${col};color:#fff;border-radius:7px;padding:1px 8px;font-size:11px;font-weight:800;white-space:nowrap">${stav}</span></div>
         <div style="font-size:12px;color:#33485e">${detail}</div>
         <div style="font-size:11px;color:#9aa7b8">stanoviště ${esc(c.stred)}${c.spz?` · SPZ ${esc(c.spz)}`:""}${c.opr?` · ${esc(c.opr)}`:""}${c.pozn?` · ${esc(c.pozn)}`:""}${mine.length>1?` · další rezervace: ${mine.length-1}`:""}</div>
       </div>`;
-    }).join("");
+      return {prio:prio, obj:c.obj, html:html};
+    });
+    karty.sort((a,b)=>a.prio-b.prio || a.obj-b.obj);
+    body.innerHTML=karty.map(k=>k.html).join("");
   }).catch(function(e){ body.innerHTML='<p class="hint">Chyba: '+esc(e&&e.message?e.message:e)+'</p>'; });
 }
 // Výběr „kdo jsi" (uloží se k push tokenu, ať chodí adresné notifikace)
