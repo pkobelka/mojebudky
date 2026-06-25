@@ -366,24 +366,23 @@ function kolizeBlok(){
  const oznaceno=st.kolVzorky.length?`<div style="font-weight:700;color:#d2730f;margin:6px 0 2px;font-size:13px">Označeno k přesunu: ${st.kolVzorky.length}</div>`:"";
  return hdr+`<div class="fld" style="margin-top:-4px"><p class="hint" style="margin:2px 0 6px">Zobrazen celý plán od data události. 📍 = dotčené místo (objekt / vodovody). Klikni na odběr → označíš k přesunu. Roluj dolů pro další dny.</p>${oznaceno}<div style="max-height:300px;overflow:auto;border:1px solid #e2e9f1;border-radius:10px;padding:8px;background:#f6fafe">${html}</div></div>`;
 }
-function cisternaBlok(){
- const ano=st.cistAno===true;
- const toggle=`<div class="zav-btns">
-   <div class="pill ${ano?'sel':''}" style="${ano?'background:var(--modra)':''}" onclick="setCist(true)">Ano</div>
-   <div class="pill ${st.cistAno===false?'sel':''}" style="${st.cistAno===false?'background:#7e92a8':''}" onclick="setCist(false)">Ne</div></div>`;
- let det="";
- if(ano){
+function cisternaDetail(){
   const od=_msFrom(st.cistOd,st.cistCas),doo=_msFrom(st.cistDoDatum,st.cistDoCas);
   const chips=cisternySorted().map(i=>{const c=CISTERNY[i];const on=st.cisterny.includes(i);return `<div class="person ${on?'sel':''}" onclick="togCist(${i})">${fmtL(c.obj)} · ${esc(c.typ)} · ${esc(c.stred)}${c.dispo?'':' ⛔'}</div>`;}).join("");
   const selDet=st.cisterny.map(i=>{const c=CISTERNY[i];const k=_cistKonflikty(i,od,doo);return `<div class="bc" style="margin:6px 0 0"><span class="t"><b>Vybráno</b>${fmtL(c.obj)} · ${esc(c.typ)} (${esc(c.stred)})</span>${c.pozn?`<span class="t"><b>Pozn.</b>${esc(c.pozn)}</span>`:''}${c.dispo?'':'<span class="t" style="background:#fde9e9;border-color:#f3c2c2"><b>Stav</b>mimo provoz</span>'}${k.length?`<span class="t" style="background:#fde9e9;border-color:#f3c2c2;color:#a32626"><b>⚠️ Kolize</b>${esc(k.map(x=>(x.co||'událost')+' '+_fmtCas(x.od)+'–'+_fmtCas(x.do)).join('; '))}</span>`:''}</div>`;}).join("");
-  det=`<div class="fld" style="margin-top:10px"><label>Cisterny (lze vybrat víc)${st.cisterny.length?` · ${st.cisterny.length}`:''}</label><div class="people" style="max-height:200px;overflow:auto">${chips}</div>${selDet}</div>
+  return `<div class="fld" style="margin-top:10px"><label>Cisterny (lze vybrat víc)${st.cisterny.length?` · ${st.cisterny.length}`:''}</label><div class="people" style="max-height:200px;overflow:auto">${chips}</div>${selDet}</div>
     <div class="fld"><label>Místo přistavení</label><input value="${esc(st.cistMisto||'')}" oninput="st.cistMisto=this.value" placeholder="Kam cisternu přistavit (obec, ulice, objekt)…"></div>
     <div class="two"><div class="fld"><label>Od – datum</label><input type="date" value="${esc(st.cistOd||'')}" onchange="st.cistOd=this.value;render()"></div>
     <div class="fld"><label>Od – čas</label>${casSelect('cistCas')}</div></div>
     <div class="two"><div class="fld"><label>Do – datum</label><input type="date" value="${esc(st.cistDoDatum||'')}" onchange="st.cistDoDatum=this.value;render()"></div>
     <div class="fld"><label>Do – čas</label>${casSelect('cistDoCas')}</div></div>`;
- }
- return `<div class="fld"><label>Náhradní zásobování cisternou</label>${toggle}</div>${det}`;
+}
+function cisternaBlok(){
+ const ano=st.cistAno===true;
+ const toggle=`<div class="zav-btns">
+   <div class="pill ${ano?'sel':''}" style="${ano?'background:var(--modra)':''}" onclick="setCist(true)">Ano</div>
+   <div class="pill ${st.cistAno===false?'sel':''}" style="${st.cistAno===false?'background:#7e92a8':''}" onclick="setCist(false)">Ne</div></div>`;
+ return `<div class="fld"><label>Náhradní zásobování cisternou</label>${toggle}</div>${ano?cisternaDetail():""}`;
 }
 function jeZmenaPlanu(){return !!(st.podminka&&st.podminka.indexOf("plánu")>=0);}
 function selDatum(d){_datum=d;st.odber=null;render();}
@@ -504,6 +503,12 @@ const OBJTYP_DATA={"vodojem": {"Jevíčko": ["Akumulace Léčebna", "Akumulace p
 function setObjekt2(i){const tp=PODM_TYP[st.podminka];const objs=(st.stredisko&&OBJEKTY[st.stredisko]&&OBJEKTY[st.stredisko][tp])?OBJEKTY[st.stredisko][tp].map(o=>o.n):[];st.objekt=objs[i];st.objektStred="";resetKol();render();}
 function setObjektJiny(stred,name){st.objekt=name;st.objektStred=stred;resetKol();render();}
 function krok2(){
+ if(st.podminka==="Použití cisterny"){
+  let h=`<h4>Použití cisterny – kde</h4><p class="hint">Vyber pracoviště a pak cisterny, místo a dobu přistavení.</p>`;
+  h+=`<div class="fld"><label>Pracoviště</label><div class="str-btns">`+STR.map(([nm])=>`<div class="pill ${st.stredisko===nm?'sel':''}" style="${st.stredisko===nm?'background:#1577c8':''}" onclick="setStr('${esc(nm)}')">${nm}</div>`).join("")+`</div></div>`;
+  h+=cisternaDetail();
+  return h;
+ }
  const tp=PODM_TYP[st.podminka]||null;
  if(tp){st.typ=tp;const objs=(st.stredisko&&OBJEKTY[st.stredisko]&&OBJEKTY[st.stredisko][tp])?OBJEKTY[st.stredisko][tp].map(o=>o.n):[];
   let h=`<h4>Kde – ${tp}</h4><p class="hint">Vyber pracoviště a pak konkrétní ${tp}.</p>`;
@@ -540,7 +545,7 @@ function krok3(){
  ${kolizeBlok()}
  <div class="fld"><label>Závažnost (přednastaveno, lze změnit)</label><div class="zav-btns">${zb}</div></div>
  <div class="fld"><label>Popis</label><textarea placeholder="Stručně co se stalo…" oninput="st.popis=this.value">${esc(st.popis)}</textarea></div>
- ${nabidnoutCisternu()?cisternaBlok():""}
+ ${(nabidnoutCisternu()&&st.podminka!=="Použití cisterny")?cisternaBlok():""}
  ${jePodnet()?`<div class="two"><div class="fld"><label>Kdo nahlásil (občan)</label><input value="${esc(st.nahlasil)}" oninput="st.nahlasil=this.value" placeholder="Jméno"></div><div class="fld"><label>Telefon</label><input value="${esc(st.tel)}" oninput="st.tel=this.value" placeholder="+420…"></div></div>`:""}
  <div class="fld"><label>Přílohy</label><div class="attach">
    <button onclick="alert('🎤 Nahrávání mluveného popisu (mimka)')">🎤 Mluvený popis</button>
@@ -996,7 +1001,7 @@ function acPickPerson(){
 function krok(d){
  if(d>0){ // validace
   if(st.krok===1&&!st.podminka)return alert("Vyber, co se stalo.");
-  if(st.krok===2){if(jeZmenaPlanu()){if(!st.odber)return alert("Vyber konkrétní odběr z plánu.");}else{const tp=PODM_TYP[st.podminka];if(tp){if(!st.stredisko||!st.objekt)return alert("Vyber pracoviště a konkrétní "+tp+".");}else if(!st.stredisko||!st.typ)return alert("Vyber středisko a typ objektu.");}}
+  if(st.krok===2){if(jeZmenaPlanu()){if(!st.odber)return alert("Vyber konkrétní odběr z plánu.");}else if(st.podminka==="Použití cisterny"){if(!st.stredisko)return alert("Vyber pracoviště.");if(!st.cisterny.length)return alert("Vyber aspoň jednu cisternu.");const od=_msFrom(st.cistOd,st.cistCas),doo=_msFrom(st.cistDoDatum,st.cistDoCas);if(!od||!doo)return alert("Vyplň datum i čas Od i Do.");if(doo<=od)return alert("„Do\" musí být po „Od\".");}else{const tp=PODM_TYP[st.podminka];if(tp){if(!st.stredisko||!st.objekt)return alert("Vyber pracoviště a konkrétní "+tp+".");}else if(!st.stredisko||!st.typ)return alert("Vyber středisko a typ objektu.");}}
   if(st.krok===4){
    if(st.cistAno&&st.cisterny.length){const od=_msFrom(st.cistOd,st.cistCas),doo=_msFrom(st.cistDoDatum,st.cistDoCas);if(!od||!doo)return alert("U cisterny vyplň datum i čas Od i Do.");if(doo<=od)return alert("U cisterny musí být „Do\" po „Od\".");}
    acSaveEvent();st.hotovo=true;render();return;}
