@@ -19,8 +19,8 @@ const APP_URL = 'https://pkobelka.github.io/mojebudky/aqua/';
 
 // Notifikace na pozadí (zavřená/neaktivní karta)
 messaging.onBackgroundMessage(payload => {
-  const title = payload.notification?.title || 'AquaControl';
-  const body  = payload.notification?.body  || '';
+  const title = payload.data?.title || 'AquaControl';
+  const body  = payload.data?.body  || '';
   return self.registration.showNotification(title, {
     body,
     icon:    ICON,

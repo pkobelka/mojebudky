@@ -1,6 +1,6 @@
 // AquaControl – samostatný service worker pro /mojebudky/aqua/
 // Účel: oddělit appku od "budek" (vlastní scope) a umožnit instalaci na plochu.
-const CACHE = 'aqua-v5';
+const CACHE = 'aqua-v6';
 const ASSETS = [
   './',
   './index.html',
