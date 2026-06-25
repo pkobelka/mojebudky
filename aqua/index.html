@@ -204,7 +204,7 @@ const NABIDKA=[
   "a) Zhoršení v základních ukazatelích (železo, barva, zákal)",
   "b) Nevyhovující mikrobiologický rozbor"]],
  ["Podněty veřejnosti","#7a5ea8","stredni",["Stížnost občana","Reklamace"]],
- ["Jiné","#6b7a8d","nizka",["Jiné (dopíšu)"]]
+ ["Jiné","#6b7a8d","nizka",["Použití cisterny","Jiné (dopíšu)"]]
 ];
 const ZAV={nizka:["Nízká","#7e92a8"],stredni:["Střední","#e8881b"],vysoka:["Vysoká","#e23b3b"]};
 const TYPY=["Vodovod","Vodojem","Prameniště","Studny","Vrt","Chlorace","Ostatní"];
@@ -274,7 +274,7 @@ function _cistKonflikty(idx,od,doo,exceptId){ if(idx==null||od==null||doo==null)
 // Cisternu nabídnout u událostí s rizikem přerušení dodávky nebo u střední/vysoké závažnosti
 function nabidnoutCisternu(){
  const p=st.podminka||"";
- const relP=p.indexOf("Porucha / havárie na vodovodu")>=0||p.indexOf("Čištění vodojemu")>=0||p.indexOf("Přerušení odběru")>=0;
+ const relP=p.indexOf("Porucha / havárie na vodovodu")>=0||p.indexOf("Čištění vodojemu")>=0||p.indexOf("Přerušení odběru")>=0||p.indexOf("Použití cisterny")>=0;
  const relZ=st.zavaznost==="stredni"||st.zavaznost==="vysoka";
  return relP||relZ;
 }
@@ -496,7 +496,7 @@ function krok1(){
   h+=`</div></div>`;});
  return h;
 }
-function selPod(o,z){st.podminka=o;st.zavDef=z;render();}
+function selPod(o,z){st.podminka=o;st.zavDef=z;if(o==="Použití cisterny")st.cistAno=true;render();}
 
 const PODM_TYP={"Čištění vodojemu":"vodojem","Porucha / odstávka / výměna chlorovacího zařízení":"chlorace"};
 const TYP2KEY={"Vodovod":"vodovod","Vodojem":"vodojem","Prameniště":"prameniste","Studny":"studna","Vrt":"vrt","Chlorace":"chlorace","Ostatní":"ostatni"};
