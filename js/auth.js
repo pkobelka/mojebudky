@@ -1183,6 +1183,20 @@ async function _zobrazHistoriiNavstev() {
     return `${Math.floor(m/60)}h ${m%60}m`;
   }
 
+  // Karta správce (jméno, příjmení, budky) – dohledání přes loginId
+  const info = await _nactiSpravciInfo().catch(() => ({})) || {};
+  const _celeJmeno = (z) => {
+    const si = z.loginId ? info[z.loginId] : null;
+    if (si) { const fn = ((si.jmeno || '') + ' ' + (si.prijmeni || '')).trim(); if (fn) return fn; }
+    return z.jmeno;
+  };
+  const _budkyText = (z) => {
+    const si = z.loginId ? info[z.loginId] : null;
+    if (si && Array.isArray(si.budky) && si.budky.length) return si.budky.map(b => b.cislo).join(', ');
+    if (si && si.budka_cislo != null) return String(si.budka_cislo);
+    return z.budky || '';
+  };
+
   const obsah = document.getElementById('historieNavstevObsah');
   if (!zaznamy.length) { obsah.textContent = 'Zatím žádné záznamy.'; return; }
 
@@ -1198,9 +1212,14 @@ async function _zobrazHistoriiNavstev() {
       <tbody>
         ${zaznamy.map(z => {
           const isAdmin = z.admin;
-          const jmeno = z.jmeno === 'Anonym'
-            ? '<span style="color:var(--text-muted);font-style:italic">🌐 Anonym</span>'
-            : `👤 <strong>${z.jmeno}</strong>${isAdmin ? ' <span style="color:#7dd444;font-size:0.78rem">(správce)</span>' : ''}`;
+          let jmeno;
+          if (z.jmeno === 'Anonym') {
+            jmeno = '<span style="color:var(--text-muted);font-style:italic">🌐 Anonym</span>';
+          } else {
+            const budky = _budkyText(z);
+            const budkyHtml = budky ? ` <span style="color:var(--text-muted);font-size:0.8rem">· 🏠 ${budky}</span>` : '';
+            jmeno = `👤 <strong>${_celeJmeno(z)}</strong>${budkyHtml}${isAdmin ? ' <span style="color:#7dd444;font-size:0.78rem">(správce)</span>' : ''}`;
+          }
           const doba = _fmtDoba(z.ts, z.ts_end);
           return `<tr style="border-bottom:1px solid var(--panel-border)">
             <td style="padding:7px 8px;white-space:nowrap">${_fmtCas(z.ts)}</td>
