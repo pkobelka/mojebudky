@@ -212,8 +212,9 @@ const OBJ={ // ukázkové objekty (reálné jen vodovody MT)
 };
 const LIDE=[["AB", "Aleš Bubák"], ["BK", "Bláža Kolaříková"], ["JR", "Jan Rada"], ["GŘ", "Jana Drábková"], ["LV", "Lukáš Vykydal"], ["MH", "Milan Horník"], ["PŘ", "Tomáš Zvejška"], ["VH", "Vladislav Halva"], ["TŘ", "Petr Kobelka"], ["JF", "Jiří Fogl"], ["KK", "Karel Krombholz"], ["KN", "Kristýna Nerušilová"], ["ZS", "Zdeněk Sojma"], ["EJ", "Eva Jančáková"], ["KV", "Kateřina Vávrová"], ["SŠ", "Stanislav Škeřík"], ["JB", "Jiří Bombera"], ["PK", "Petra Křečková"], ["PT", "Pavlína Tillová"], ["DM", "Dana Mikulková", "dana.mikulkova@vhos.cz", "+420606095149"], ["AK", "Alena Kobelková"]];
 // pořadí v nabídkách lidí: nejdřív vedení GŘ, PŘ, TŘ, pak ostatní podle jména
-const VEDENI=["GŘ","PŘ","TŘ"];
-const LIDE_R=[...LIDE].sort((a,b)=>{const ia=VEDENI.indexOf(a[0]),ib=VEDENI.indexOf(b[0]);if(ia>=0||ib>=0){if(ia<0)return 1;if(ib<0)return -1;return ia-ib;}return a[1].localeCompare(b[1],"cs");});
+const VEDENI=["GŘ","TŘ","PŘ"];
+const _prijmeni=jm=>{const p=String(jm).trim().split(/\s+/);return p[p.length-1];};
+const LIDE_R=[...LIDE].sort((a,b)=>{const ia=VEDENI.indexOf(a[0]),ib=VEDENI.indexOf(b[0]);if(ia>=0||ib>=0){if(ia<0)return 1;if(ib<0)return -1;return ia-ib;}return _prijmeni(a[1]).localeCompare(_prijmeni(b[1]),"cs")||a[1].localeCompare(b[1],"cs");});
 // Kontaktní údaje (doplňuje se postupně): kód -> { funkce, mail, tel }
 const KONTAKTY={
  "GŘ":{funkce:"generální ředitel", mail:"jana.drabkova@vhos.cz", tel:"+420602117919"},
