@@ -153,13 +153,13 @@ padding:24px;z-index:50;overflow:auto}
 <button class="fab" title="Nová událost" onclick="otevri()">＋</button>
 
 <!-- WIZARD -->
-<div class="overlay" id="seznamOv">
+<div class="overlay" id="seznamOv" onclick="if(event.target===this)zavriSeznam()">
   <div class="wiz" style="max-width:640px">
     <div class="wiz-h"><b id="seznamHead">Seznam</b><button class="x" onclick="zavriSeznam()">✕</button></div>
     <div class="wiz-b" id="seznamBody" style="max-height:70vh;overflow:auto"></div>
   </div>
 </div>
-<div class="overlay" id="planOv">
+<div class="overlay" id="planOv" onclick="if(event.target===this)zavriPlan()">
   <div class="wiz" style="max-width:780px">
     <div class="wiz-h"><b>Plán vzorkování 2026</b><button class="x" onclick="zavriPlan()">✕</button></div>
     <div class="wiz-b" id="planBody" style="max-height:72vh;overflow:auto"></div>
@@ -731,6 +731,9 @@ function _udalostKarta(ev,ukoly){
     : (done===total) ? `<span style="background:#2faf5a;color:#fff;border-radius:7px;padding:1px 8px;font-size:11px;font-weight:800">✔️ Hotovo</span>`
     : `<span style="font-size:11.5px;color:${late?'#e23b3b':'#6b7a8d'};font-weight:700">${done}/${total} splněno${late?` · ${late} po termínu`:""}</span>`;
   const nahl=ev.nahlasil?`<div style="font-size:12px;color:#6b7a8d">nahlásil: ${esc(ev.nahlasil)}${ev.tel?` · ${esc(ev.tel)}`:""}</div>`:"";
+  let cistLine="";
+  if(ev.cist){ const c=ev.cist;
+    cistLine=`<div style="font-size:12px;color:#33485e;margin-top:2px">🚚 ${esc(fmtL(c.obj))} · ${esc(c.typ||"")}${c.misto?` → ${esc(c.misto)}`:""}${(c.od||c.do)?` · ${c.od?_fmtCas(c.od):"?"}–${c.do?_fmtCas(c.do):"?"}`:""}${!ev.uzavreno?` <a onclick="upravCisternu('${ev.id}')" style="color:#0b5cae;cursor:pointer;font-weight:700">✏️ upravit</a>`:""}</div>`; }
   let footer;
   if(ev.uzavreno){
     footer=`<div style="margin-top:8px;font-size:12px;color:#2faf5a;font-weight:700">🔒 Uzavřeno — ${esc(ev.uzavrel_jmeno||"")} · ${_fmtCas(ev.uzavreno_ts)}${ev.uzavreno_pozn?` · ${esc(ev.uzavreno_pozn)}`:""}</div>`;
@@ -747,6 +750,7 @@ function _udalostKarta(ev,ukoly){
     ${ev.popis?`<div style="font-size:12.5px;color:#33485e;margin:2px 0">${esc(ev.popis)}</div>`:""}
     <div style="font-size:11.5px;color:#9aa7b8;margin-bottom:2px">zadal: ${esc(ev.zadal_jmeno||"—")} · ${_fmtCas(ev.ts)}</div>
     ${nahl}
+    ${cistLine}
     ${ukoly.length?`<div style="margin-top:6px">${ukoly.map(_ukolRadek).join("")}</div>`:""}
     ${footer}</div>`;
 }
@@ -801,6 +805,7 @@ function acVyberLidi(opt){
       +'<button id="acvOk" style="flex:1;padding:10px;border:0;background:#0b5cae;color:#fff;border-radius:8px;font-weight:700;cursor:pointer">'+esc(opt.ok||"Potvrdit")+'</button></div></div>';
     document.body.appendChild(ov);
     if(opt.people!==false){ ov.querySelectorAll('#acvPeople .person').forEach(function(el){ el.onclick=function(){ const z=el.getAttribute("data-z"); if(sel.has(z)){sel.delete(z);el.classList.remove("sel");}else{sel.add(z);el.classList.add("sel");} }; }); }
+    ov.onclick=function(e){ if(e.target===ov){document.body.removeChild(ov);resolve(null);} };
     ov.querySelector("#acvCancel").onclick=function(){document.body.removeChild(ov);resolve(null);};
     ov.querySelector("#acvOk").onclick=function(){ const note=((ov.querySelector("#acvNote")||{}).value||"").trim(); document.body.removeChild(ov); resolve({persons:Array.from(sel), note:note}); };
   });
@@ -836,6 +841,36 @@ function vyzviUzavreni(id){
   });
 }
 
+// Úprava rezervace cisterny u existující (otevřené) události
+function upravCisternu(id){
+  firebase.database().ref("aqua_udalosti/"+id).get().then(function(s){
+    const ev=s.val()||{}, c=ev.cist||{};
+    if(ev.uzavreno){ alert("Událost je uzavřená — rezervaci nelze měnit."); return; }
+    const od=c.od?new Date(c.od):null, doo=c.do?new Date(c.do):null;
+    const dISO=d=>d?(d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")):"";
+    const tHM=d=>d?(String(d.getHours()).padStart(2,"0")+":"+String(d.getMinutes()).padStart(2,"0")):"";
+    const ov=document.createElement("div");
+    ov.style.cssText="position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px";
+    ov.innerHTML='<div style="background:#fff;border-radius:14px;max-width:460px;width:100%;padding:18px;box-shadow:0 10px 40px rgba(0,0,0,.3);max-height:86vh;overflow:auto">'
+      +'<h3 style="margin:0 0 4px;color:#0b3a66">Upravit cisternu</h3>'
+      +'<p style="margin:0 0 10px;font-size:13px;color:#555">'+esc(fmtL(c.obj||0))+' · '+esc(c.typ||"")+'</p>'
+      +'<div class="fld"><label>Místo přistavení</label><input id="ucMisto" value="'+esc(c.misto||"")+'"></div>'
+      +'<div class="two"><div class="fld"><label>Od – datum</label><input type="date" id="ucOdD" value="'+dISO(od)+'"></div><div class="fld"><label>Od – čas</label><input type="time" id="ucOdT" step="600" value="'+tHM(od)+'"></div></div>'
+      +'<div class="two"><div class="fld"><label>Do – datum</label><input type="date" id="ucDoD" value="'+dISO(doo)+'"></div><div class="fld"><label>Do – čas</label><input type="time" id="ucDoT" step="600" value="'+tHM(doo)+'"></div></div>'
+      +'<div style="display:flex;gap:8px;margin-top:8px"><button id="ucCancel" style="flex:1;padding:10px;border:1px solid #ccc;background:#f3f3f3;border-radius:8px;cursor:pointer">Zrušit</button><button id="ucOk" style="flex:1;padding:10px;border:0;background:#0b5cae;color:#fff;border-radius:8px;font-weight:700;cursor:pointer">Uložit</button></div></div>';
+    document.body.appendChild(ov);
+    const close=function(){ if(ov.parentNode)document.body.removeChild(ov); };
+    ov.onclick=function(e){ if(e.target===ov)close(); };
+    ov.querySelector("#ucCancel").onclick=close;
+    ov.querySelector("#ucOk").onclick=function(){
+      const odMs=_msFrom(ov.querySelector("#ucOdD").value, ov.querySelector("#ucOdT").value);
+      const doMs=_msFrom(ov.querySelector("#ucDoD").value, ov.querySelector("#ucDoT").value);
+      if(!odMs||!doMs)return alert("Vyplň datum i čas Od i Do.");
+      if(doMs<=odMs)return alert("„Do\" musí být po „Od\".");
+      firebase.database().ref("aqua_udalosti/"+id+"/cist").update({misto:ov.querySelector("#ucMisto").value, od:odMs, do:doMs}).then(function(){ close(); openUdalosti(); });
+    };
+  });
+}
 // ===== Cisterny – obsazenost =====
 function openCisterny(){
   zavriPlan();
@@ -875,6 +910,7 @@ function acPickPerson(){
     ov.style.cssText="position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px";
     ov.innerHTML='<div style="background:#fff;border-radius:14px;max-width:360px;width:100%;padding:18px;box-shadow:0 10px 40px rgba(0,0,0,.3)"><h3 style="margin:0 0 6px;color:#0b3a66">Kdo jsi?</h3><p style="margin:0 0 12px;font-size:13px;color:#555">Vyber své jméno, ať ti chodí notifikace adresované přímo tobě.</p><select id="acWhoSel" style="width:100%;padding:10px;font-size:15px;border:1px solid #ccc;border-radius:8px">'+opts+'</select><div style="display:flex;gap:8px;margin-top:14px"><button id="acWhoCancel" style="flex:1;padding:10px;border:1px solid #ccc;background:#f3f3f3;border-radius:8px;cursor:pointer">Zrušit</button><button id="acWhoOk" style="flex:1;padding:10px;border:0;background:#0b5cae;color:#fff;border-radius:8px;font-weight:700;cursor:pointer">Potvrdit</button></div></div>';
     document.body.appendChild(ov);
+    ov.onclick=(e)=>{ if(e.target===ov){document.body.removeChild(ov);resolve(null);} };
     ov.querySelector("#acWhoCancel").onclick=()=>{document.body.removeChild(ov);resolve(null);};
     ov.querySelector("#acWhoOk").onclick=()=>{const v=ov.querySelector("#acWhoSel").value;document.body.removeChild(ov);resolve(v||null);};
   });
@@ -884,7 +920,9 @@ function krok(d){
  if(d>0){ // validace
   if(st.krok===1&&!st.podminka)return alert("Vyber, co se stalo.");
   if(st.krok===2){if(jeZmenaPlanu()){if(!st.odber)return alert("Vyber konkrétní odběr z plánu.");}else{const tp=PODM_TYP[st.podminka];if(tp){if(!st.stredisko||!st.objekt)return alert("Vyber pracoviště a konkrétní "+tp+".");}else if(!st.stredisko||!st.typ)return alert("Vyber středisko a typ objektu.");}}
-  if(st.krok===4){acSaveEvent();st.hotovo=true;render();return;}
+  if(st.krok===4){
+   if(st.cistAno&&st.cisterna!=null){const od=_msFrom(st.cistOd,st.cistCas),doo=_msFrom(st.cistDoDatum,st.cistDoCas);if(!od||!doo)return alert("U cisterny vyplň datum i čas Od i Do.");if(doo<=od)return alert("U cisterny musí být „Do\" po „Od\".");}
+   acSaveEvent();st.hotovo=true;render();return;}
  }
  st.krok+=d;if(st.krok<1)st.krok=1;if(st.krok===3&&!st.zavaznost)st.zavaznost=st.zavDef||"stredni";render();
 }
