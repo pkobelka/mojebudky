@@ -1,0 +1,13 @@
+{
+  "name": "functions",
+  "description": "AquaControl Cloud Functions (push notifikace pro události)",
+  "engines": {
+    "node": "20"
+  },
+  "main": "index.js",
+  "private": true,
+  "dependencies": {
+    "firebase-admin": "^12.6.0",
+    "firebase-functions": "^5.1.1"
+  }
+}

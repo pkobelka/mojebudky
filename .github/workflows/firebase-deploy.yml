@@ -1,4 +1,4 @@
-name: Deploy Firebase Database Rules
+name: Deploy Firebase (rules + functions)
 
 on:
   push:
@@ -7,7 +7,9 @@ on:
     paths:
       - database.rules.json
       - firebase.json
+      - functions/**
       - .github/workflows/firebase-deploy.yml
+  workflow_dispatch:
 
 jobs:
   deploy:
@@ -15,15 +17,35 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Deploy Firebase Database Rules
+      - name: Nastav Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Service account
+        run: echo '${{ secrets.FIREBASE_SERVICE_ACCOUNT }}' > /tmp/sa.json
+
+      - name: Deploy database rules
         run: |
-          echo '${{ secrets.FIREBASE_SERVICE_ACCOUNT }}' > /tmp/sa.json
           n=0
-          until npx firebase-tools@latest deploy --only database --project moje-budky; do
+          until npx firebase-tools@latest deploy --only database --project moje-budky --non-interactive; do
             n=$((n+1))
-            if [ $n -ge 3 ]; then echo "Selhalo po 3 pokusech"; exit 1; fi
-            echo "Pokus $n selhal, zkousim znovu za 15s..."
-            sleep 15
+            if [ $n -ge 3 ]; then echo "Database deploy selhal po 3 pokusech"; exit 1; fi
+            echo "Pokus $n selhal, zkousim znovu za 15s..."; sleep 15
+          done
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: /tmp/sa.json
+
+      - name: Instaluj zavislosti funkci
+        run: npm --prefix functions ci || npm --prefix functions install
+
+      - name: Deploy functions
+        run: |
+          n=0
+          until npx firebase-tools@latest deploy --only functions --project moje-budky --non-interactive --force; do
+            n=$((n+1))
+            if [ $n -ge 3 ]; then echo "Functions deploy selhal po 3 pokusech"; exit 1; fi
+            echo "Pokus $n selhal, zkousim znovu za 20s..."; sleep 20
           done
         env:
           GOOGLE_APPLICATION_CREDENTIALS: /tmp/sa.json

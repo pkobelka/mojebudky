@@ -18,6 +18,9 @@
     "aqua_push_tokens": {
       "$id": { ".read": true, ".write": true }
     },
+    "aqua_outbox": {
+      "$id": { ".read": true, ".write": true }
+    },
     "zpravy_spravci": {
       "$loginId": { ".read": true, ".write": true }
     },

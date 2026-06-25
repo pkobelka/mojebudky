@@ -124,7 +124,7 @@ padding:24px;z-index:50;overflow:auto}
 </style>
 </head>
 <body>
-<div class="testbar">🔒 TESTOVACÍ PROVOZ — událostní avíza se zatím neodesílají (mimka). Testovací push lze zapnout tlačítkem „🔔 Povolit notifikace".</div>
+<div class="testbar">🔔 TESTOVACÍ PROVOZ — událost se zatím neukládá (mimka), ale po „Uložit" se informovaným osobám odešle push. Nejdřív klikni „🔔 Povolit notifikace" a vyber, kdo jsi.</div>
 
 <header class="hlav">
   <img class="kap" src="logo-ac-icon.png" alt="AquaControl – VHOS a.s." width="46" height="46">
@@ -562,11 +562,49 @@ function togUpoz(ti,z){const a=st.ukoly[ti].upozorneni;const i=a.indexOf(z);if(i
 function setRes(ti,z){st.ukoly[ti].resitel=(st.ukoly[ti].resitel===z?null:z);render();}
 function togInfo(z){const i=st.info.indexOf(z);if(i<0)st.info.push(z);else st.info.splice(i,1);render();}
 
+// ===== Push při vzniku události (přes Firebase aqua_outbox → Cloud Function) =====
+function acEventTargets(){
+  const s=new Set();
+  (st.ukoly||[]).forEach(u=>{ if(u.resitel)s.add(u.resitel); (u.upozorneni||[]).forEach(z=>s.add(z)); });
+  (st.info||[]).forEach(z=>s.add(z));
+  return Array.from(s);
+}
+function acEventText(){
+  const typ=st.podminka||st.typ||"Mimořádná událost";
+  const kde=[st.stredisko,st.objekt,st.adresa].filter(Boolean).join(" · ");
+  const resit=[...new Set((st.ukoly||[]).map(u=>u.resitel).filter(Boolean))].map(lidLbl).join(", ");
+  const title=(st.zavaznost?("["+st.zavaznost+"] "):"")+typ;
+  let body=kde||"";
+  if(st.popis) body+=(body?" — ":"")+st.popis;
+  if(resit) body+=(body?" · ":"")+"řešitel: "+resit;
+  return {title:title, body:body||"Nová událost"};
+}
+function acSendEvent(){
+  try{
+    if(!(window.firebase&&firebase.database)) return;
+    const t=acEventText(), tg=acEventTargets();
+    firebase.database().ref("aqua_outbox").push({title:t.title, body:t.body, targets:tg, ts:Date.now()});
+  }catch(e){ console.warn("AC outbox:",e); }
+}
+// Výběr „kdo jsi" (uloží se k push tokenu, ať chodí adresné notifikace)
+function acPickPerson(){
+  return new Promise(resolve=>{
+    const cur=localStorage.getItem("ac_person")||"";
+    const opts='<option value="">— vyber sebe —</option>'+LIDE_R.map(p=>'<option value="'+p[0]+'"'+(p[0]===cur?' selected':'')+'>'+esc(p[1])+'</option>').join("");
+    const ov=document.createElement("div");
+    ov.style.cssText="position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px";
+    ov.innerHTML='<div style="background:#fff;border-radius:14px;max-width:360px;width:100%;padding:18px;box-shadow:0 10px 40px rgba(0,0,0,.3)"><h3 style="margin:0 0 6px;color:#0b3a66">Kdo jsi?</h3><p style="margin:0 0 12px;font-size:13px;color:#555">Vyber své jméno, ať ti chodí notifikace adresované přímo tobě.</p><select id="acWhoSel" style="width:100%;padding:10px;font-size:15px;border:1px solid #ccc;border-radius:8px">'+opts+'</select><div style="display:flex;gap:8px;margin-top:14px"><button id="acWhoCancel" style="flex:1;padding:10px;border:1px solid #ccc;background:#f3f3f3;border-radius:8px;cursor:pointer">Zrušit</button><button id="acWhoOk" style="flex:1;padding:10px;border:0;background:#0b5cae;color:#fff;border-radius:8px;font-weight:700;cursor:pointer">Potvrdit</button></div></div>';
+    document.body.appendChild(ov);
+    ov.querySelector("#acWhoCancel").onclick=()=>{document.body.removeChild(ov);resolve(null);};
+    ov.querySelector("#acWhoOk").onclick=()=>{const v=ov.querySelector("#acWhoSel").value;document.body.removeChild(ov);resolve(v||null);};
+  });
+}
+
 function krok(d){
  if(d>0){ // validace
   if(st.krok===1&&!st.podminka)return alert("Vyber, co se stalo.");
   if(st.krok===2){if(jeZmenaPlanu()){if(!st.odber)return alert("Vyber konkrétní odběr z plánu.");}else{const tp=PODM_TYP[st.podminka];if(tp){if(!st.stredisko||!st.objekt)return alert("Vyber pracoviště a konkrétní "+tp+".");}else if(!st.stredisko||!st.typ)return alert("Vyber středisko a typ objektu.");}}
-  if(st.krok===4){st.hotovo=true;render();return;}
+  if(st.krok===4){acSendEvent();st.hotovo=true;render();return;}
  }
  st.krok+=d;if(st.krok<1)st.krok=1;if(st.krok===3&&!st.zavaznost)st.zavaznost=st.zavDef||"stredni";render();
 }
@@ -627,12 +665,14 @@ function esc(s){return (s==null?"":String(s)).replace(/[&<>"']/g,c=>({'&':'&amp;
         return;
       }
       if(perm!=='granted'){ setStav('🔔 Povolit notifikace',false); return; }
+      var person=localStorage.getItem('ac_person');
+      if(!person){ person=await acPickPerson(); if(!person){ setStav('🔔 Povolit notifikace',false); return; } localStorage.setItem('ac_person',person); }
       var reg=await navigator.serviceWorker.register('firebase-messaging-sw.js',{scope:'/mojebudky/aqua/fcm/'});
       await navigator.serviceWorker.ready;
       var msg=firebase.messaging();
       var token=await msg.getToken({vapidKey:VAPID,serviceWorkerRegistration:reg});
       if(!token){ setStav('⚠️ Token se nezískal',false); alert('Nepodařilo se získat push token. Zkus to prosím znovu.'); return; }
-      await firebase.database().ref('aqua_push_tokens/'+devId()).set({token:token,ts:Date.now(),ua:navigator.userAgent.slice(0,90)});
+      await firebase.database().ref('aqua_push_tokens/'+devId()).set({token:token,person:person,ts:Date.now(),ua:navigator.userAgent.slice(0,90)});
       localStorage.setItem('ac_push_on','1');
       msg.onMessage(function(p){var d=(p&&p.data)||{};try{new Notification(d.title||'AquaControl',{body:d.body||'',icon:'icon-192.png',requireInteraction:true});}catch(_){}});
       setStav('✅ Notifikace zapnuté',true);
