@@ -410,10 +410,10 @@ document.getElementById("prehled").innerHTML=STR.map(([nm,p,bd])=>`
 
 // ---- WIZARD ----
 const KROKY=["1. Co se stalo?","2. Kde?","3. Podrobnosti","4. Lidé"];
-let st={krok:1,podminka:null,zavaznost:null,stredisko:null,typ:null,objekt:null,adresa:"",
+let st={krok:1,podminka:null,zavaznost:null,stredisko:null,typ:null,objekt:null,objektStred:"",objJiny:false,adresa:"",
 popis:"",nahlasil:"",tel:"",ukoly:[{resitel:null,popis:"",tdatum:"",tcas:"",upozorneni:[]}],info:[],cistAno:null,cisterna:null,cistMisto:"",cistOd:"",cistCas:"",cistDoDatum:"",cistDoCas:"",udDatum:"",kolOpen:false,kolVzorky:[],hotovo:false};
 
-function otevri(){st={krok:1,podminka:null,zavaznost:null,stredisko:null,typ:null,objekt:null,adresa:"",dotcene:[],popis:"",nahlasil:"",tel:"",ukoly:[{resitel:null,popis:"",tdatum:"",tcas:"",upozorneni:[]}],info:[],cistAno:null,cisterna:null,cistMisto:"",cistOd:"",cistCas:"",cistDoDatum:"",cistDoCas:"",udDatum:"",kolOpen:false,kolVzorky:[],hotovo:false};
+function otevri(){st={krok:1,podminka:null,zavaznost:null,stredisko:null,typ:null,objekt:null,objektStred:"",objJiny:false,adresa:"",dotcene:[],popis:"",nahlasil:"",tel:"",ukoly:[{resitel:null,popis:"",tdatum:"",tcas:"",upozorneni:[]}],info:[],cistAno:null,cisterna:null,cistMisto:"",cistOd:"",cistCas:"",cistDoDatum:"",cistDoCas:"",udDatum:"",kolOpen:false,kolVzorky:[],hotovo:false};
 st.udDatum=dnesISO();_loadCistRez();document.getElementById("ov").classList.add("show");render();}
 function zavri(){document.getElementById("ov").classList.remove("show");}
 
@@ -502,13 +502,18 @@ function selPod(o,z){st.podminka=o;st.zavDef=z;render();}
 const PODM_TYP={"Čištění vodojemu":"vodojem","Porucha / odstávka / výměna chlorovacího zařízení":"chlorace"};
 const TYP2KEY={"Vodovod":"vodovod","Vodojem":"vodojem","Prameniště":"prameniste","Studny":"studna","Vrt":"vrt","Chlorace":"chlorace","Ostatní":"ostatni"};
 const OBJTYP_DATA={"vodojem": {"Jevíčko": ["Akumulace Léčebna", "Akumulace pro ATS Flintour", "Akumulace pro ATS Kalvárie", "Akumulace pro ČS Lazy", "Březina akumulace Důl Prokop", "Mařín vodojem", "Vodojem Biskupice", "Vodojem Bohdalov", "Vodojem Bělá u Jevíčka", "Vodojem Březina-Anna", "Vodojem Březinky", "Vodojem Hartinkov", "Vodojem Hejk", "Vodojem Jaroměřice-Za dvory", "Vodojem Jevíčko-Červený Kopec", "Vodojem Lázy", "Vodojem Mezihoří", "Vodojem Městečko Trnávka", "Vodojem Nový Dvůr", "Vodojem Pacov", "Vodojem Petrůvka", "Vodojem Petrůvka-obec", "Vodojem Slatina", "Vodojem Unerázka", "Vodojem Vranová Lhota", "Vodojem Vrážné", "Vodojem Vysoká", "Vodojem Zadní Arnoštov", "Vodojem Zálesí-Flintour", "Zadní Arnoštov vodojem"], "Litomyšl": ["Janov vodojem", "Lubná vodojem u hájenky", "Nový vodojem Bohuňovice", "Starý vodojem Bohuňovice", "Strakov vodojem", "Vidlatá Seč vodojem", "Vodojem Budislav", "Vodojem Dolní Újezd", "Vodojem Horní Újezd", "Vodojem Hraničky", "Vodojem Mladočov", "Vodojem Morašice", "Vodojem Nová Ves", "Vodojem Pohodlí", "Vodojem Suchá Lhota + ATS", "Vodojem Trstěnice", "Vodojem s ČS Jarošov", "Čistá Vodojem"], "Moravská Třebová": ["Akumulace Západní", "Akumulace pod ČS Křenov", "Akumulace pro ČS Mladějov na Moravě", "Akumulace ÚV Kunčina", "Akumulace ČS Borušov", "Akumulace ČS Janůvky", "Akumulace ČS Nový Dvůr", "Vodojem Borušov", "Vodojem Boršov-Horní", "Vodojem Boršov-Mach", "Vodojem Bošov-spodní", "Vodojem Dlouhá Loučka", "Vodojem Huttbusch", "Vodojem Janůvky", "Vodojem Koruna", "Vodojem Kunčina", "Vodojem Křenov", "Vodojem Křížový Vrch", "Vodojem Křížový vrch II", "Vodojem Malíkov", "Vodojem Mladějov", "Vodojem Mladějov na Moravě-v sadu", "Vodojem Nová Ves", "Vodojem Prklišov", "Vodojem Ptáček", "Vodojem Přední Arnoštov", "Vodojem Rozstání", "Vodojem Rozstání-Horní", "Vodojem Rudná-Horní", "Vodojem Rudná-dolní", "Vodojem Staré Město", "Vodojem Staré Město-nový", "Vodojem Sušice", "Vodojem Třebařov", "Vodojem Závodiště", "Vodojem Útěchov"], "Polička": ["Akumulace Pomezí", "Akumulace Trkač", "Akumulace Vetešník", "Akumulace Šibeňák", "Jedlová vodojem", "Korouhev vodojem", "Květná Vodojem", "Manipulační vodojem", "Modřec vodojem", "Oldříš vodojem", "Polička nový vodojem letiště", "Polička starý vodojem letiště", "Pomezí nový vodojem", "Pustá Kamenice vodojem", "Sebranice akumulace", "Střitež vodojem", "Trpín vodojem", "Vodojem Na Stašov", "Vodojem pro poličské strojírny"], "Svitavy": ["Akumulace ATS Samoty", "Akumulace ČS Sklené", "Mikuleč vodojem", "Pohledy Vodojem Slezáček", "Provozní akumulace", "Provozní akumulace Dětřichov", "Provozní akumulace Dětřichov-mimo provoz", "Vodojem Banín", "Vodojem Brněnec", "Vodojem Bělá nad Svitavou", "Vodojem Dětřichov", "Vodojem Hradec nad Svitavou", "Vodojem Mladějov na Moravě", "Vodojem Na Sibiři", "Vodojem Opatov", "Vodojem Pohledy", "Vodojem Radiměř-Hájenka", "Vodojem Radiměř-nad školou", "Vodojem Radiměř-nový", "Vodojem Radiměř-starý", "Vodojem Sklené", "Študlov akumulace"]}};
-function setObjekt2(i){const tp=PODM_TYP[st.podminka];const objs=(st.stredisko&&OBJEKTY[st.stredisko]&&OBJEKTY[st.stredisko][tp])?OBJEKTY[st.stredisko][tp].map(o=>o.n):[];st.objekt=objs[i];resetKol();render();}
+function setObjekt2(i){const tp=PODM_TYP[st.podminka];const objs=(st.stredisko&&OBJEKTY[st.stredisko]&&OBJEKTY[st.stredisko][tp])?OBJEKTY[st.stredisko][tp].map(o=>o.n):[];st.objekt=objs[i];st.objektStred="";resetKol();render();}
+function setObjektJiny(stred,name){st.objekt=name;st.objektStred=stred;resetKol();render();}
 function krok2(){
  const tp=PODM_TYP[st.podminka]||null;
  if(tp){st.typ=tp;const objs=(st.stredisko&&OBJEKTY[st.stredisko]&&OBJEKTY[st.stredisko][tp])?OBJEKTY[st.stredisko][tp].map(o=>o.n):[];
   let h=`<h4>Kde – ${tp}</h4><p class="hint">Vyber pracoviště a pak konkrétní ${tp}.</p>`;
   h+=`<div class="fld"><label>Pracoviště</label><div class="str-btns">`+STR.map(([nm])=>`<div class="pill ${st.stredisko===nm?'sel':''}" style="${st.stredisko===nm?'background:#1577c8':''}" onclick="setStr('${esc(nm)}')">${nm}</div>`).join("")+`</div></div>`;
-  if(st.stredisko){h+=`<div class="fld"><label>Vyber ${tp} (${objs.length})</label>`+(objs.length?`<div class="people" style="max-height:240px;overflow:auto">`+objs.map((o,i)=>`<div class="person ${st.objekt===o?'sel':''}" onclick="setObjekt2(${i})">${esc(o)}</div>`).join("")+`</div>`:`<p class="hint">Seznam pro „${tp}" zatím není naimportovaný.</p>`)+`</div>`;}
+  if(st.stredisko){
+   const jine=st.objJiny?STR.map(([nm])=>nm).filter(nm=>nm!==st.stredisko).map(nm=>{const list=(OBJEKTY[nm]&&OBJEKTY[nm][tp])?OBJEKTY[nm][tp].map(o=>o.n):[];return list.length?`<div style="margin-top:8px"><div style="font-size:11.5px;font-weight:800;color:#6b7a8d;margin-bottom:4px">${esc(nm)}</div><div class="people" style="max-height:180px;overflow:auto">`+list.map(o=>`<div class="person ${(st.objekt===o&&st.objektStred===nm)?'sel':''}" onclick="setObjektJiny('${esc(nm).replace(/'/g,"\\'")}','${esc(o).replace(/'/g,"\\'")}')">${esc(o)}</div>`).join("")+`</div></div>`:"";}).join(""):"";
+   h+=`<div class="fld"><label>Vyber ${tp} (${objs.length})</label>`+(objs.length?`<div class="people" style="max-height:240px;overflow:auto">`+objs.map((o,i)=>`<div class="person ${(st.objekt===o&&!st.objektStred)?'sel':''}" onclick="setObjekt2(${i})">${esc(o)}</div>`).join("")+`</div>`:`<p class="hint">Seznam pro „${tp}" zatím není naimportovaný.</p>`)
+     +`<button type="button" onclick="st.objJiny=!st.objJiny;render()" style="margin-top:8px;border:1px dashed #b9c6d6;background:#f7fbff;border-radius:10px;padding:8px 12px;font-weight:800;color:#1577c8;cursor:pointer">${st.objJiny?'▲ Skrýt jiná střediska':'➕ Z jiného střediska'}</button>`
+     +jine+`</div>`;}
   if(st.objekt)h+=`<div class="fld"><label>Upřesnění adresy</label><input value="${esc(st.adresa||'')}" oninput="st.adresa=this.value" placeholder="Ulice, č.p., část obce…"></div>`;
   if(st.objekt&&tp==="vodojem"){const vv=(st.stredisko&&OBJEKTY[st.stredisko]&&OBJEKTY[st.stredisko].vodovod)?OBJEKTY[st.stredisko].vodovod.map(o=>o.n):[];
    h+=`<div class="fld"><label>Dotčené vodovody (lze vybrat víc) ${st.dotcene.length?`· ${st.dotcene.length}`:''}</label><p class="hint" style="margin:0 0 6px">Které vodovody / obce čištění vodojemu zasáhne – podle nich se prověří kolize s plánem.</p><div class="chips" style="max-height:200px;overflow:auto">`+vv.map(o=>`<div class="chip ${st.dotcene.includes(o)?'sel':''}" onclick="togDotceny('${esc(o).replace(/'/g,"\\'")}')">${esc(o)}</div>`).join("")+`</div></div>`;}
@@ -526,7 +531,7 @@ function krok2(){
  ${st.objekt?`<div class="fld"><label>Upřesnění adresy</label><input value="${esc(st.adresa||'')}" oninput="st.adresa=this.value" placeholder="Ulice, č.p., část obce…"></div>`:''}`;
 }
 function resetKol(){st.kolVzorky=[];st.kolOpen=false;}
-function setStr(n){st.stredisko=n;st.objekt=null;st.adresa="";st.dotcene=[];resetKol();render();}
+function setStr(n){st.stredisko=n;st.objekt=null;st.objektStred="";st.objJiny=false;st.adresa="";st.dotcene=[];resetKol();render();}
 function setTyp(t){st.typ=t;st.objekt=null;st.adresa="";st.dotcene=[];resetKol();render();}
 function togDotceny(nm){const i=st.dotcene.indexOf(nm);if(i<0)st.dotcene.push(nm);else st.dotcene.splice(i,1);resetKol();render();}
 
@@ -613,7 +618,8 @@ function acSaveEvent(){
     if(!(window.firebase&&firebase.database)) return;
     const db=firebase.database(), now=Date.now();
     const zadalKod=localStorage.getItem("ac_person")||"";
-    const kontext=[st.stredisko,st.objekt,st.adresa].filter(Boolean).join(" · ");
+    const objLbl=st.objekt?(st.objekt+((st.objektStred&&st.objektStred!==st.stredisko)?" (stř. "+st.objektStred+")":"")):"";
+    const kontext=[st.stredisko,objLbl,st.adresa].filter(Boolean).join(" · ");
     // rezervace cisterny (pokud zvolena)
     const cistData=(st.cistAno&&st.cisterna!=null)?{
       idx:+st.cisterna, obj:CISTERNY[st.cisterna].obj, typ:CISTERNY[st.cisterna].typ, stred:CISTERNY[st.cisterna].stred,
@@ -624,7 +630,7 @@ function acSaveEvent(){
     const eventId=evRef.key;
     evRef.set({
       co: st.podminka||st.typ||"Mimořádná událost", kde: kontext,
-      stredisko: st.stredisko||"", objekt: st.objekt||"", adresa: st.adresa||"",
+      stredisko: st.stredisko||"", objekt: st.objekt||"", objektStred: st.objektStred||"", adresa: st.adresa||"",
       zavaznost: st.zavaznost||"", popis: st.popis||"", dotcene: st.dotcene||[],
       nahlasil: st.nahlasil||"", tel: st.tel||"", cist: cistData,
       zadal: zadalKod, zadal_jmeno: UZIVATEL, ts: now
