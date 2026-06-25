@@ -33,7 +33,7 @@
 ## Data doplněná z podkladů
 - **Chlorace:** Moravská Třebová (původní), **Svitavy 13**, **Jevíčko 20**, **Polička 12** (✅ doplněno z podkladu „Chlorátory Polička": typ čerpadla Grundfos SMART Digital DDE / Sebranice JESCO C7700, řešení dávkování, dávkování v %; GPS spárováno dle objektů).
 - **Ponorná čerpadla** (pole `c`) doplněna k vrtům/zdrojům Svitavy, Litomyšl, Jevíčko, Polička (MT už byla). Vynechané zdroje bez objektu v datech: Pohledy P-2, Sklené SN-1, Budislav S-2, Polička V-7/V-8, Pustá Kamenice PKV-3.
-- **Kontakty:** všech 19 lidí má telefon; bez e-mailu zůstávají **Radovan Selinger** a **Jiří Bombera**. Funkce vedení: GŘ=generální, PŘ=provozní, TŘ=technický ředitel (**potvrzeno**).
+- **Kontakty:** všichni mají telefon. **Jiří Bombera** – doplněn mail `jiri.bombera@cevak.cz`. **Radovan Selinger** – odebrán z LIDE i KONTAKTY (bez mailu, nejistá příslušnost do uzavřené skupiny). Funkce vedení: GŘ=generální, PŘ=provozní, TŘ=technický ředitel (**potvrzeno**).
 - **GPS chlorací:** chlorovací zařízení sedí na objektech, jejichž GPS je v `OBJEKTY`. Doplněno `lat/lon` k 66 ze 71 chlorací (spárováno podle názvu objektu/obce a objemu vodojemu). Bez GPS zůstává 5: importní artefakty „V Mor.Třebové 22.6.2026", „Vypracoval: Vykydal", „V Litomyšli 22.6.2026", dále **Chotěnov** (nechloruje se – přesunuto na VDJ Hraničky) a **Bezděčí – ATS** (chybí objekt s GPS).
 
 ## Logo / branding
