@@ -600,32 +600,53 @@ function esc(s){return (s==null?"":String(s)).replace(/[&<>"']/g,c=>({'&':'&amp;
   // trvalé id zařízení (AC nemá login)
   function devId(){var k='ac_dev_id';var v=localStorage.getItem(k);if(!v){v='ac-'+Math.random().toString(36).slice(2,10)+Date.now().toString(36);localStorage.setItem(k,v);}return v;}
   function setStav(t,ok){var b=document.getElementById('btnPush');if(!b)return;b.textContent=t;b.dataset.ok=ok?'1':'';}
-  function supported(){return ('Notification'in window)&&('serviceWorker'in navigator)&&(location.protocol==='https:');}
+  function supported(){return ('Notification'in window)&&('serviceWorker'in navigator)&&('PushManager'in window)&&(location.protocol==='https:');}
+  function isStandalone(){return window.matchMedia('(display-mode: standalone)').matches||window.navigator.standalone===true;}
+  function isIOS(){return /iphone|ipad|ipod/i.test(navigator.userAgent);}
 
   try{ firebase.initializeApp(CFG); }catch(e){}
 
   window.acEnablePush=async function(){
-    if(!supported()){alert('Push potřebuje HTTPS a moderní prohlížeč (na iPhonu přidej appku na plochu a spusť odtud).');return;}
+    // iPhone: push jen z appky přidané na plochu
+    if(isIOS()&&!isStandalone()){
+      alert('Na iPhonu: otevři Sdílet (□↑) → „Přidat na plochu", a appku spusť z plochy. Teprve odtud jde push povolit.');
+      return;
+    }
+    if(!supported()){
+      alert('Tenhle prohlížeč push nepodporuje.\n\nÚdaje:\n• Notification: '+('Notification'in window)+'\n• serviceWorker: '+('serviceWorker'in navigator)+'\n• PushManager: '+('PushManager'in window)+'\n• https: '+(location.protocol==='https:'));
+      return;
+    }
     try{
       setStav('🔔 …',false);
-      var perm=await Notification.requestPermission();
-      if(perm!=='granted'){setStav('🔕 Notifikace zakázány',false);return;}
+      var perm=Notification.permission;
+      if(perm!=='granted'){ perm=await Notification.requestPermission(); }
+      if(perm==='denied'){
+        setStav('🔕 Zakázáno',false);
+        alert('Notifikace jsou pro tuto stránku zakázané. Povol je v nastavení prohlížeče (ikona zámku v adrese → Oprávnění → Notifikace) a zkus znovu.');
+        return;
+      }
+      if(perm!=='granted'){ setStav('🔔 Povolit notifikace',false); return; }
       var reg=await navigator.serviceWorker.register('firebase-messaging-sw.js',{scope:'/mojebudky/aqua/fcm/'});
+      await navigator.serviceWorker.ready;
       var msg=firebase.messaging();
       var token=await msg.getToken({vapidKey:VAPID,serviceWorkerRegistration:reg});
-      if(!token){setStav('⚠️ Token se nezískal',false);return;}
-      var id=devId();
-      firebase.database().ref('aqua_push_tokens/'+id).set({token:token,ts:Date.now(),ua:navigator.userAgent.slice(0,90)});
-      // notifikace v popředí (otevřená karta)
+      if(!token){ setStav('⚠️ Token se nezískal',false); alert('Nepodařilo se získat push token. Zkus to prosím znovu.'); return; }
+      await firebase.database().ref('aqua_push_tokens/'+devId()).set({token:token,ts:Date.now(),ua:navigator.userAgent.slice(0,90)});
+      localStorage.setItem('ac_push_on','1');
       msg.onMessage(function(p){var n=(p&&p.notification)||{};try{new Notification(n.title||'AquaControl',{body:n.body||'',icon:'icon-192.png'});}catch(_){}});
       setStav('✅ Notifikace zapnuté',true);
-      console.log('AC push token:',token.slice(0,24)+'…');
-    }catch(err){console.warn('AC push:',err);setStav('⚠️ Chyba – zkus znovu',false);}
+      alert('✅ Hotovo! Notifikace jsou zapnuté a token uložený.\n\nTeď můžeš na GitHubu spustit „Odeslat push (AquaControl)" a zpráva ti dorazí.');
+    }catch(err){
+      console.warn('AC push:',err);
+      setStav('⚠️ Chyba – zkus znovu',false);
+      alert('Chyba při zapínání notifikací:\n'+(err&&err.message?err.message:err));
+    }
   };
 
-  // při startu: když už je povoleno, ukaž stav
+  // při startu: „zapnuté" jen když už máme uložený AC token
   document.addEventListener('DOMContentLoaded',function(){
-    if(supported()&&Notification.permission==='granted')setStav('✅ Notifikace zapnuté',true);
+    if(supported()&&Notification.permission==='granted'&&localStorage.getItem('ac_push_on')==='1')
+      setStav('✅ Notifikace zapnuté',true);
   });
 })();
 </script>
