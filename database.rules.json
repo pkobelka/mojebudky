@@ -21,6 +21,8 @@
     "aqua_outbox": {
       "$id": { ".read": true, ".write": true }
     },
+    "aqua_udalosti": { ".read": true, ".write": true },
+    "aqua_ukoly":    { ".read": true, ".write": true, ".indexOn": ["resitel", "stav"] },
     "zpravy_spravci": {
       "$loginId": { ".read": true, ".write": true }
     },
