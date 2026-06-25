@@ -665,8 +665,26 @@ function openMojeUkoly(){
     body.innerHTML=rows.length?rows.map(ukolKartaHTML).join(""):'<p class="hint">Žádné úkoly pro tebe. 🎉</p>';
   }).catch(function(e){ body.innerHTML='<p class="hint">Chyba načtení úkolů: '+esc(e&&e.message?e.message:e)+'</p>'; });
 }
-function ukolPotvrd(id){ firebase.database().ref("aqua_ukoly/"+id).update({stav:"potvrzeny",potvrzeno_ts:Date.now()}).then(openMojeUkoly).catch(function(e){alert("Chyba: "+(e&&e.message?e.message:e));}); }
-function ukolSplneno(id){ firebase.database().ref("aqua_ukoly/"+id).update({stav:"splneny",splneno_ts:Date.now()}).then(openMojeUkoly).catch(function(e){alert("Chyba: "+(e&&e.message?e.message:e));}); }
+// Změna stavu úkolu + push zadavateli (echo „přijal/splnil"). Self-úkol (zadal==řešitel) se neupozorňuje.
+function _ukolZmenaStav(id,novyStav,tsPole,pushTitle,sloveso){
+  const ref=firebase.database().ref("aqua_ukoly/"+id);
+  ref.get().then(function(s){
+    const u=s.val()||{};
+    const upd={stav:novyStav}; upd[tsPole]=Date.now();
+    return ref.update(upd).then(function(){
+      if(u.zadal && u.zadal!==u.resitel){
+        const kdo=u.resitel_jmeno||u.resitel||"Řešitel";
+        firebase.database().ref("aqua_outbox").push({
+          title:pushTitle,
+          body:kdo+" "+sloveso+" úkol: "+(u.popis||"")+(u.kontext?(" – "+u.kontext):""),
+          targets:[u.zadal], ts:Date.now()
+        });
+      }
+    });
+  }).then(openMojeUkoly).catch(function(e){alert("Chyba: "+(e&&e.message?e.message:e));});
+}
+function ukolPotvrd(id){ _ukolZmenaStav(id,"potvrzeny","potvrzeno_ts","✅ Úkol přijat","přijal/a"); }
+function ukolSplneno(id){ _ukolZmenaStav(id,"splneny","splneno_ts","✔️ Úkol splněn","splnil/a"); }
 // Výběr „kdo jsi" (uloží se k push tokenu, ať chodí adresné notifikace)
 function acPickPerson(){
   return new Promise(resolve=>{
