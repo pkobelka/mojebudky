@@ -269,7 +269,8 @@ function fmtL(n){return n.toLocaleString("cs-CZ")+" l";}
 // --- cisterny: čas od/do + rezervace ---
 function _msFrom(datum,cas){ if(!datum)return null; const hm=/^\d{2}:\d{2}$/.test(cas||"")?cas:"00:00"; const d=new Date(datum+"T"+hm+":00"); return isNaN(d.getTime())?null:d.getTime(); }
 let _cistRez=[]; // rezervace z otevřených událostí: {eventId,co,idx,misto,od,do,...}
-function _loadCistRez(){ try{ if(!(window.firebase&&firebase.database))return; firebase.database().ref("aqua_udalosti").get().then(function(s){ const r=[]; s.forEach(function(c){ const e=c.val()||{}; if(e.cist&&!e.uzavreno&&e.cist.idx!=null) r.push(Object.assign({eventId:c.key,co:e.co},e.cist)); }); _cistRez=r; }).catch(function(){}); }catch(_){} }
+function _cistArr(ev){ const c=ev&&ev.cist; if(!c)return []; return Array.isArray(c)?c.filter(Boolean):[c]; }
+function _loadCistRez(){ try{ if(!(window.firebase&&firebase.database))return; firebase.database().ref("aqua_udalosti").get().then(function(s){ const r=[]; s.forEach(function(c){ const e=c.val()||{}; if(e.uzavreno)return; _cistArr(e).forEach(function(x){ if(x.idx!=null) r.push(Object.assign({eventId:c.key,co:e.co},x)); }); }); _cistRez=r; }).catch(function(){}); }catch(_){} }
 function _cistKonflikty(idx,od,doo,exceptId){ if(idx==null||od==null||doo==null)return []; return _cistRez.filter(function(r){ return r.idx===idx && r.eventId!==exceptId && r.od!=null && r.do!=null && r.od<doo && r.do>od; }); }
 // Cisternu nabídnout u událostí s rizikem přerušení dodávky nebo u střední/vysoké závažnosti
 function nabidnoutCisternu(){
@@ -288,7 +289,8 @@ function cisternySorted(){
   return CISTERNY[a].obj-CISTERNY[b].obj;
  });
 }
-function setCist(v){st.cistAno=v;if(!v){st.cisterna=null;st.cistMisto="";st.cistOd="";st.cistCas="";st.cistDoDatum="";st.cistDoCas="";}render();}
+function setCist(v){st.cistAno=v;if(!v){st.cisterny=[];st.cistMisto="";st.cistOd="";st.cistCas="";st.cistDoDatum="";st.cistDoCas="";}render();}
+function togCist(i){i=+i;const j=st.cisterny.indexOf(i);if(j<0)st.cisterny.push(i);else st.cisterny.splice(j,1);render();}
 // Náhrada nativního výběru času dvěma selecty (nativní time-picker zůstával otevřený)
 function casSelect(field){
  const v=st[field]||"";const p=v.split(":");const hh=p[0]||"",mm=p[1]||"";
@@ -372,17 +374,15 @@ function cisternaBlok(){
    <div class="pill ${st.cistAno===false?'sel':''}" style="${st.cistAno===false?'background:#7e92a8':''}" onclick="setCist(false)">Ne</div></div>`;
  let det="";
  if(ano){
-  const opts=cisternySorted().map(i=>{const c=CISTERNY[i];return `<option value="${i}" ${st.cisterna===i?'selected':''}>${fmtL(c.obj)} · ${c.typ} · ${c.stred}${c.dispo?'':' · ⛔ mimo provoz'}${c.pozn?' · '+c.pozn:''}</option>`;}).join("");
-  const sel=(st.cisterna!=null)?CISTERNY[st.cisterna]:null;
-  det=`<div class="fld" style="margin-top:10px"><label>Cisterna</label>
-    <select onchange="st.cisterna=this.value===''?null:+this.value;render()"><option value="">— vyber cisternu —</option>${opts}</select></div>
-    ${sel?`<div class="bc" style="margin-bottom:12px"><span class="t" style="${sel.dispo?'background:#e9f6ee;border-color:#bfe3cc':'background:#fde9e9;border-color:#f3c2c2'}"><b>Stav</b>${sel.dispo?'k dispozici':'mimo provoz'}</span><span class="t"><b>Objem</b>${fmtL(sel.obj)}</span><span class="t"><b>Typ</b>${esc(sel.typ)}</span><span class="t"><b>Stanoviště</b>${esc(sel.stred)}</span>${sel.spz?`<span class="t"><b>SPZ</b>${esc(sel.spz)}</span>`:''}${sel.opr?`<span class="t"><b>Řidičák</b>${esc(sel.opr)}</span>`:''}${sel.pozn?`<span class="t"><b>Pozn.</b>${esc(sel.pozn)}</span>`:''}</div>`:''}
+  const od=_msFrom(st.cistOd,st.cistCas),doo=_msFrom(st.cistDoDatum,st.cistDoCas);
+  const chips=cisternySorted().map(i=>{const c=CISTERNY[i];const on=st.cisterny.includes(i);return `<div class="person ${on?'sel':''}" onclick="togCist(${i})">${fmtL(c.obj)} · ${esc(c.typ)} · ${esc(c.stred)}${c.dispo?'':' ⛔'}</div>`;}).join("");
+  const selDet=st.cisterny.map(i=>{const c=CISTERNY[i];const k=_cistKonflikty(i,od,doo);return `<div class="bc" style="margin:6px 0 0"><span class="t"><b>Vybráno</b>${fmtL(c.obj)} · ${esc(c.typ)} (${esc(c.stred)})</span>${c.pozn?`<span class="t"><b>Pozn.</b>${esc(c.pozn)}</span>`:''}${c.dispo?'':'<span class="t" style="background:#fde9e9;border-color:#f3c2c2"><b>Stav</b>mimo provoz</span>'}${k.length?`<span class="t" style="background:#fde9e9;border-color:#f3c2c2;color:#a32626"><b>⚠️ Kolize</b>${esc(k.map(x=>(x.co||'událost')+' '+_fmtCas(x.od)+'–'+_fmtCas(x.do)).join('; '))}</span>`:''}</div>`;}).join("");
+  det=`<div class="fld" style="margin-top:10px"><label>Cisterny (lze vybrat víc)${st.cisterny.length?` · ${st.cisterny.length}`:''}</label><div class="people" style="max-height:200px;overflow:auto">${chips}</div>${selDet}</div>
     <div class="fld"><label>Místo přistavení</label><input value="${esc(st.cistMisto||'')}" oninput="st.cistMisto=this.value" placeholder="Kam cisternu přistavit (obec, ulice, objekt)…"></div>
     <div class="two"><div class="fld"><label>Od – datum</label><input type="date" value="${esc(st.cistOd||'')}" onchange="st.cistOd=this.value;render()"></div>
     <div class="fld"><label>Od – čas</label>${casSelect('cistCas')}</div></div>
     <div class="two"><div class="fld"><label>Do – datum</label><input type="date" value="${esc(st.cistDoDatum||'')}" onchange="st.cistDoDatum=this.value;render()"></div>
-    <div class="fld"><label>Do – čas</label>${casSelect('cistDoCas')}</div></div>
-    ${(function(){const od=_msFrom(st.cistOd,st.cistCas),doo=_msFrom(st.cistDoDatum,st.cistDoCas);const k=(st.cisterna!=null)?_cistKonflikty(+st.cisterna,od,doo):[];return k.length?`<div style="background:#fde9e9;border:1px solid #f3c2c2;border-radius:8px;padding:8px;font-size:12.5px;color:#a32626"><b>⚠️ Kolize:</b> cisterna je v daném čase už rezervovaná — ${k.map(x=>esc((x.co||'událost')+' '+_fmtCas(x.od)+'–'+_fmtCas(x.do))).join('; ')}.</div>`:'';})()}`;
+    <div class="fld"><label>Do – čas</label>${casSelect('cistDoCas')}</div></div>`;
  }
  return `<div class="fld"><label>Náhradní zásobování cisternou</label>${toggle}</div>${det}`;
 }
@@ -411,9 +411,9 @@ document.getElementById("prehled").innerHTML=STR.map(([nm,p,bd])=>`
 // ---- WIZARD ----
 const KROKY=["1. Co se stalo?","2. Kde?","3. Podrobnosti","4. Lidé"];
 let st={krok:1,podminka:null,zavaznost:null,stredisko:null,typ:null,objekt:null,objektStred:"",objJiny:false,adresa:"",
-popis:"",nahlasil:"",tel:"",ukoly:[{resitel:null,popis:"",tdatum:"",tcas:"",upozorneni:[]}],info:[],cistAno:null,cisterna:null,cistMisto:"",cistOd:"",cistCas:"",cistDoDatum:"",cistDoCas:"",udDatum:"",kolOpen:false,kolVzorky:[],hotovo:false};
+popis:"",nahlasil:"",tel:"",ukoly:[{resitel:null,popis:"",tdatum:"",tcas:"",upozorneni:[]}],info:[],cistAno:null,cisterny:[],cistMisto:"",cistOd:"",cistCas:"",cistDoDatum:"",cistDoCas:"",udDatum:"",kolOpen:false,kolVzorky:[],hotovo:false};
 
-function otevri(){st={krok:1,podminka:null,zavaznost:null,stredisko:null,typ:null,objekt:null,objektStred:"",objJiny:false,adresa:"",dotcene:[],popis:"",nahlasil:"",tel:"",ukoly:[{resitel:null,popis:"",tdatum:"",tcas:"",upozorneni:[]}],info:[],cistAno:null,cisterna:null,cistMisto:"",cistOd:"",cistCas:"",cistDoDatum:"",cistDoCas:"",udDatum:"",kolOpen:false,kolVzorky:[],hotovo:false};
+function otevri(){st={krok:1,podminka:null,zavaznost:null,stredisko:null,typ:null,objekt:null,objektStred:"",objJiny:false,adresa:"",dotcene:[],popis:"",nahlasil:"",tel:"",ukoly:[{resitel:null,popis:"",tdatum:"",tcas:"",upozorneni:[]}],info:[],cistAno:null,cisterny:[],cistMisto:"",cistOd:"",cistCas:"",cistDoDatum:"",cistDoCas:"",udDatum:"",kolOpen:false,kolVzorky:[],hotovo:false};
 st.udDatum=dnesISO();_loadCistRez();document.getElementById("ov").classList.add("show");render();}
 function zavri(){document.getElementById("ov").classList.remove("show");}
 
@@ -621,10 +621,11 @@ function acSaveEvent(){
     const objLbl=st.objekt?(st.objekt+((st.objektStred&&st.objektStred!==st.stredisko)?" (stř. "+st.objektStred+")":"")):"";
     const kontext=[st.stredisko,objLbl,st.adresa].filter(Boolean).join(" · ");
     // rezervace cisterny (pokud zvolena)
-    const cistData=(st.cistAno&&st.cisterna!=null)?{
-      idx:+st.cisterna, obj:CISTERNY[st.cisterna].obj, typ:CISTERNY[st.cisterna].typ, stred:CISTERNY[st.cisterna].stred,
-      misto:st.cistMisto||"", od:_msFrom(st.cistOd,st.cistCas), do:_msFrom(st.cistDoDatum,st.cistDoCas)
-    }:null;
+    const _cOd=_msFrom(st.cistOd,st.cistCas), _cDo=_msFrom(st.cistDoDatum,st.cistDoCas);
+    const cistData=(st.cistAno&&st.cisterny.length)?st.cisterny.map(function(i){return {
+      idx:i, obj:CISTERNY[i].obj, typ:CISTERNY[i].typ, stred:CISTERNY[i].stred,
+      misto:st.cistMisto||"", od:_cOd, do:_cDo
+    };}):null;
     // událost
     const evRef=db.ref("aqua_udalosti").push();
     const eventId=evRef.key;
@@ -734,6 +735,22 @@ function _ukolRadek(u){
     <div style="font-size:11.5px;color:#6b7a8d">řešitel: ${esc(u.resitel_jmeno||u.resitel||"—")}${u.termin_txt?` · termín ${esc(u.termin_txt)}`:""}</div>
     <div style="font-size:11px;color:#9aa7b8">${tl.map(esc).join(" → ")}</div></div>`;
 }
+// chronologický průběh události (založení, cisterny, úkoly zadáno/přijato/splněno, uzavření)
+function _udProbeh(ev,ukoly){
+  const it=[];
+  if(ev.ts)it.push([ev.ts,"🟦","Událost založena — "+(ev.zadal_jmeno||"?")+(ev.nahlasil?" · nahlásil: "+ev.nahlasil:"")]);
+  _cistArr(ev).forEach(function(c){ if(c.od)it.push([c.od,"🚚",fmtL(c.obj)+" "+(c.typ||"")+(c.misto?" → "+c.misto:"")+" (do "+(c.do?_fmtCas(c.do):"?")+")"]); });
+  (ukoly||[]).forEach(function(u){
+    if(u.vznik_ts)it.push([u.vznik_ts,"📋","Úkol zadán: "+(u.popis||"")+(u.resitel_jmeno?" → "+u.resitel_jmeno:"")]);
+    if(u.potvrzeno_ts)it.push([u.potvrzeno_ts,"✅",(u.resitel_jmeno||"Řešitel")+" přijal/a úkol: "+(u.popis||"")]);
+    if(u.splneno_ts)it.push([u.splneno_ts,"✔️",(u.resitel_jmeno||"Řešitel")+" splnil/a úkol: "+(u.popis||"")]);
+  });
+  if(ev.uzavreno&&ev.uzavreno_ts)it.push([ev.uzavreno_ts,"🔒","Událost uzavřena — "+(ev.uzavrel_jmeno||"")+(ev.uzavreno_pozn?" · "+ev.uzavreno_pozn:"")]);
+  it.sort(function(a,b){return a[0]-b[0];});
+  if(!it.length)return '<div style="font-size:12px;color:#9aa7b8">Zatím žádný průběh.</div>';
+  return it.map(function(x){return `<div style="display:flex;gap:8px;font-size:12px;color:#33485e;padding:3px 0;border-bottom:1px dashed #eef2f6"><span>${x[1]}</span><span style="color:#9aa7b8;white-space:nowrap">${_fmtCas(x[0])}</span><span>${esc(x[2])}</span></div>`;}).join("");
+}
+function _udTog(id){ const d=document.getElementById('prub-'+id),a=document.getElementById('prubA-'+id); if(!d)return; const show=d.style.display==='none'; d.style.display=show?'block':'none'; if(a)a.textContent=show?'📜 Průběh ▴':'📜 Průběh ▾'; }
 function _udalostKarta(ev,ukoly){
   const zl=(ev.zavaznost&&ZAV[ev.zavaznost])?ZAV[ev.zavaznost]:null;
   const zlB=zl?`<span style="background:${zl[1]};color:#fff;border-radius:7px;padding:1px 8px;font-size:11px;font-weight:800">${zl[0]}</span>`:"";
@@ -744,8 +761,8 @@ function _udalostKarta(ev,ukoly){
     : `<span style="font-size:11.5px;color:${late?'#e23b3b':'#6b7a8d'};font-weight:700">${done}/${total} splněno${late?` · ${late} po termínu`:""}</span>`;
   const nahl=ev.nahlasil?`<div style="font-size:12px;color:#6b7a8d">nahlásil: ${esc(ev.nahlasil)}${ev.tel?` · ${esc(ev.tel)}`:""}</div>`:"";
   let cistLine="";
-  if(ev.cist){ const c=ev.cist;
-    cistLine=`<div style="font-size:12px;color:#33485e;margin-top:2px">🚚 ${esc(fmtL(c.obj))} · ${esc(c.typ||"")}${c.misto?` → ${esc(c.misto)}`:""}${(c.od||c.do)?` · ${c.od?_fmtCas(c.od):"?"}–${c.do?_fmtCas(c.do):"?"}`:""}${!ev.uzavreno?` <a onclick="upravCisternu('${ev.id}')" style="color:#0b5cae;cursor:pointer;font-weight:700">✏️ upravit</a>`:""}</div>`; }
+  { const arr=_cistArr(ev); if(arr.length){ const c0=arr[0];
+    cistLine=`<div style="font-size:12px;color:#33485e;margin-top:2px">🚚 ${arr.map(c=>esc(fmtL(c.obj)+" · "+(c.typ||""))).join(", ")}${c0.misto?` → ${esc(c0.misto)}`:""}${(c0.od||c0.do)?` · ${c0.od?_fmtCas(c0.od):"?"}–${c0.do?_fmtCas(c0.do):"?"}`:""}${!ev.uzavreno?` <a onclick="upravCisternu('${ev.id}')" style="color:#0b5cae;cursor:pointer;font-weight:700">✏️ upravit</a>`:""}</div>`; } }
   let footer;
   if(ev.uzavreno){
     footer=`<div style="margin-top:8px;font-size:12px;color:#2faf5a;font-weight:700">🔒 Uzavřeno — ${esc(ev.uzavrel_jmeno||"")} · ${_fmtCas(ev.uzavreno_ts)}${ev.uzavreno_pozn?` · ${esc(ev.uzavreno_pozn)}`:""}</div>`;
@@ -764,6 +781,8 @@ function _udalostKarta(ev,ukoly){
     ${nahl}
     ${cistLine}
     ${ukoly.length?`<div style="margin-top:6px">${ukoly.map(_ukolRadek).join("")}</div>`:""}
+    <div id="prubA-${ev.id}" onclick="_udTog('${ev.id}')" style="cursor:pointer;margin-top:8px;font-size:12px;font-weight:800;color:#0b5cae;user-select:none">📜 Průběh ▾</div>
+    <div id="prub-${ev.id}" style="display:none;margin-top:4px;border-top:1px solid #eef2f6;padding-top:6px">${_udProbeh(ev,ukoly)}</div>
     ${footer}</div>`;
 }
 function _udNactiVse(cb){
@@ -856,7 +875,7 @@ function vyzviUzavreni(id){
 // Úprava rezervace cisterny u existující (otevřené) události
 function upravCisternu(id){
   firebase.database().ref("aqua_udalosti/"+id).get().then(function(s){
-    const ev=s.val()||{}, c=ev.cist||{};
+    const ev=s.val()||{}, arr=_cistArr(ev), c=arr[0]||{};
     if(ev.uzavreno){ alert("Událost je uzavřená — rezervaci nelze měnit."); return; }
     const od=c.od?new Date(c.od):null, doo=c.do?new Date(c.do):null;
     const dISO=d=>d?(d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")):"";
@@ -865,7 +884,7 @@ function upravCisternu(id){
     ov.style.cssText="position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px";
     ov.innerHTML='<div style="background:#fff;border-radius:14px;max-width:460px;width:100%;padding:18px;box-shadow:0 10px 40px rgba(0,0,0,.3);max-height:86vh;overflow:auto">'
       +'<h3 style="margin:0 0 4px;color:#0b3a66">Upravit cisternu</h3>'
-      +'<p style="margin:0 0 10px;font-size:13px;color:#555">'+esc(fmtL(c.obj||0))+' · '+esc(c.typ||"")+'</p>'
+      +'<p style="margin:0 0 10px;font-size:13px;color:#555">'+esc(arr.map(function(x){return fmtL(x.obj)+" · "+(x.typ||"");}).join(", "))+'</p>'
       +'<div class="fld"><label>Místo přistavení</label><input id="ucMisto" value="'+esc(c.misto||"")+'"></div>'
       +'<div class="two"><div class="fld"><label>Od – datum</label><input type="date" id="ucOdD" value="'+dISO(od)+'"></div><div class="fld"><label>Od – čas</label><input type="time" id="ucOdT" step="600" value="'+tHM(od)+'"></div></div>'
       +'<div class="two"><div class="fld"><label>Do – datum</label><input type="date" id="ucDoD" value="'+dISO(doo)+'"></div><div class="fld"><label>Do – čas</label><input type="time" id="ucDoT" step="600" value="'+tHM(doo)+'"></div></div>'
@@ -879,7 +898,9 @@ function upravCisternu(id){
       const doMs=_msFrom(ov.querySelector("#ucDoD").value, ov.querySelector("#ucDoT").value);
       if(!odMs||!doMs)return alert("Vyplň datum i čas Od i Do.");
       if(doMs<=odMs)return alert("„Do\" musí být po „Od\".");
-      firebase.database().ref("aqua_udalosti/"+id+"/cist").update({misto:ov.querySelector("#ucMisto").value, od:odMs, do:doMs}).then(function(){ close(); openUdalosti(); });
+      const misto=ov.querySelector("#ucMisto").value;
+      const novy=arr.map(function(x){return Object.assign({},x,{misto:misto,od:odMs,do:doMs});});
+      firebase.database().ref("aqua_udalosti/"+id+"/cist").set(novy).then(function(){ close(); openUdalosti(); });
     };
   });
 }
@@ -924,7 +945,7 @@ function zarizZamit(id){ if(!confirm("Opravdu odebrat toto zařízení? (přesta
 
 // ===== Cisterny – obsazenost =====
 // Odznak v menu = počet cisteren právě v akci (aktivní rezervace teď)
-function acCistBadge(){ try{ if(!(window.firebase&&firebase.database))return; firebase.database().ref("aqua_udalosti").get().then(function(s){ const now=Date.now(); const used=new Set(); s.forEach(function(c){ const e=c.val()||{}; const x=e.cist; if(x&&!e.uzavreno&&x.idx!=null&&x.od!=null&&x.do!=null&&x.od<=now&&now<=x.do) used.add(x.idx); }); const b=document.getElementById("bdgCist"); if(b){ b.textContent=used.size; b.style.display=used.size?"":"none"; } }).catch(function(){}); }catch(_){} }
+function acCistBadge(){ try{ if(!(window.firebase&&firebase.database))return; firebase.database().ref("aqua_udalosti").get().then(function(s){ const now=Date.now(); const used=new Set(); s.forEach(function(c){ const e=c.val()||{}; if(e.uzavreno)return; _cistArr(e).forEach(function(x){ if(x.idx!=null&&x.od!=null&&x.do!=null&&x.od<=now&&now<=x.do) used.add(x.idx); }); }); const b=document.getElementById("bdgCist"); if(b){ b.textContent=used.size; b.style.display=used.size?"":"none"; } }).catch(function(){}); }catch(_){} }
 function openCisterny(){
   zavriPlan();
   document.getElementById("seznamHead").textContent="Cisterny";
@@ -933,7 +954,7 @@ function openCisterny(){
   if(!(window.firebase&&firebase.database)){ body.innerHTML='<p class="hint">Databáze není dostupná.</p>'; return; }
   body.innerHTML='<p class="hint">Načítám…</p>';
   firebase.database().ref("aqua_udalosti").get().then(function(s){
-    const rez=[]; s.forEach(function(c){ const e=c.val()||{}; if(e.cist&&!e.uzavreno&&e.cist.idx!=null) rez.push(Object.assign({eventId:c.key,co:e.co},e.cist)); });
+    const rez=[]; s.forEach(function(c){ const e=c.val()||{}; if(e.uzavreno)return; _cistArr(e).forEach(function(x){ if(x.idx!=null) rez.push(Object.assign({eventId:c.key,co:e.co},x)); }); });
     _cistRez=rez; const now=Date.now();
     body.innerHTML=CISTERNY.map(function(c,i){
       const mine=rez.filter(r=>r.idx===i&&r.od!=null&&r.do!=null).sort((a,b)=>a.od-b.od);
@@ -974,7 +995,7 @@ function krok(d){
   if(st.krok===1&&!st.podminka)return alert("Vyber, co se stalo.");
   if(st.krok===2){if(jeZmenaPlanu()){if(!st.odber)return alert("Vyber konkrétní odběr z plánu.");}else{const tp=PODM_TYP[st.podminka];if(tp){if(!st.stredisko||!st.objekt)return alert("Vyber pracoviště a konkrétní "+tp+".");}else if(!st.stredisko||!st.typ)return alert("Vyber středisko a typ objektu.");}}
   if(st.krok===4){
-   if(st.cistAno&&st.cisterna!=null){const od=_msFrom(st.cistOd,st.cistCas),doo=_msFrom(st.cistDoDatum,st.cistDoCas);if(!od||!doo)return alert("U cisterny vyplň datum i čas Od i Do.");if(doo<=od)return alert("U cisterny musí být „Do\" po „Od\".");}
+   if(st.cistAno&&st.cisterny.length){const od=_msFrom(st.cistOd,st.cistCas),doo=_msFrom(st.cistDoDatum,st.cistDoCas);if(!od||!doo)return alert("U cisterny vyplň datum i čas Od i Do.");if(doo<=od)return alert("U cisterny musí být „Do\" po „Od\".");}
    acSaveEvent();st.hotovo=true;render();return;}
  }
  st.krok+=d;if(st.krok<1)st.krok=1;if(st.krok===3&&!st.zavaznost)st.zavaznost=st.zavDef||"stredni";render();
@@ -989,7 +1010,7 @@ function hotovoHTML(){
  ${st.dotcene.length?`<div class="sumline"><b>Dotčené vodovody:</b> ${st.dotcene.map(esc).join(", ")}</div>`:""}
  <div class="sumline"><b>Popis:</b> ${esc(st.popis||"—")}</div>
  ${st.kolVzorky.length?`<div class="sumline"><b>Kolize – vzorky k přesunu (${st.kolVzorky.length}):</b> ${st.kolVzorky.slice().sort((a,b)=>PLAN[a].datum<PLAN[b].datum?-1:1).map(i=>fmtDatumCz(PLAN[i].datum)+" "+esc(PLAN[i].misto)).join("; ")}</div>`:""}
- ${st.cistAno&&st.cisterna!=null?`<div class="sumline"><b>Cisterna:</b> ${fmtL(CISTERNY[st.cisterna].obj)} · ${esc(CISTERNY[st.cisterna].typ)} (${esc(CISTERNY[st.cisterna].stred)})${st.cistMisto?` → ${esc(st.cistMisto)}`:""}${(function(){const od=_msFrom(st.cistOd,st.cistCas),doo=_msFrom(st.cistDoDatum,st.cistDoCas);if(!od&&!doo)return"";return ` · ${od?_fmtCas(od):"?"} – ${doo?_fmtCas(doo):"?"}`;})()}</div>`:(st.cistAno?`<div class="sumline"><b>Cisterna:</b> ano (cisterna nevybrána)</div>`:"")}
+ ${st.cistAno&&st.cisterny.length?`<div class="sumline"><b>Cisterny:</b> ${st.cisterny.map(i=>esc(fmtL(CISTERNY[i].obj)+" · "+CISTERNY[i].typ+" ("+CISTERNY[i].stred+")")).join("; ")}${st.cistMisto?` → ${esc(st.cistMisto)}`:""}${(function(){const od=_msFrom(st.cistOd,st.cistCas),doo=_msFrom(st.cistDoDatum,st.cistDoCas);if(!od&&!doo)return"";return ` · ${od?_fmtCas(od):"?"} – ${doo?_fmtCas(doo):"?"}`;})()}</div>`:(st.cistAno?`<div class="sumline"><b>Cisterna:</b> ano (cisterna nevybrána)</div>`:"")}
  <div class="sumline"><b>Zadal:</b> ${UZIVATEL}${(jePodnet()&&st.nahlasil)?` · nahlásil: ${esc(st.nahlasil)}${st.tel?(" · "+esc(st.tel)):""}`:""}</div>
  ${st.ukoly.map((u,i)=>(u.resitel||u.popis||u.tdatum||u.tcas||u.upozorneni.length)?`<div class="sumline"><b>Úkol ${i+1}:</b> ${u.resitel?esc(lidLbl(u.resitel)):"—"}${u.popis?` – ${esc(u.popis)}`:""}${(u.tdatum||u.tcas)?` · termín ${esc(u.tdatum)} ${esc(u.tcas)}`:""}${u.upozorneni.length?` · upozornit: ${u.upozorneni.map(z=>esc(lidLbl(z))).join(", ")}`:""}</div>`:"").join("")}
  <div class="sumline"><b>Informováni:</b> ${st.info.map(z=>esc(lidLbl(z))).join(", ")||"—"}</div>
