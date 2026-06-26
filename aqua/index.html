@@ -140,7 +140,7 @@ padding:24px;z-index:50;overflow:auto}
     <a id="navZariz" onclick="openZarizeni()" style="display:none">Zařízení</a>
     <a onclick="alert('Sekce Dokumenty – metodické pokyny (mimka).')">Dokumenty</a>
     <a id="btnPush" onclick="acEnablePush()">🔔 Povolit notifikace</a>
-    <a onclick="acSdilet()">🔗 Sdílet appku</a>
+    <a id="btnSdilet" onclick="acSdilet()" style="display:none">🔗 Sdílet appku</a>
   </nav>
   <div class="vhos"><b>VHOS</b><i>a.s.</i></div>
 </header>
@@ -893,7 +893,7 @@ function upravCisternu(id){
 }
 // ===== Schvalování zařízení (jen správce) =====
 function acCheckPending(){ try{ if(!(window.firebase&&firebase.database))return; firebase.database().ref("aqua_push_tokens/"+devId()).get().then(function(s){ const v=s.val()||{}; const bar=document.getElementById("acPendBar"); if(bar) bar.style.display=(s.exists()&&v.schvaleno===false)?"":"none"; }).catch(function(){}); }catch(_){} }
-function acInitGate(){ try{ const a=document.getElementById("navZariz"); if(a&&jsemAdmin())a.style.display=""; acCheckPending(); }catch(_){} }
+function acInitGate(){ try{ const a=document.getElementById("navZariz"); if(a&&jsemAdmin())a.style.display=""; const s=document.getElementById("btnSdilet"); if(s&&jsemAdmin())s.style.display=""; acCheckPending(); }catch(_){} }
 function openZarizeni(){
   if(!jsemAdmin()){ alert("Schvalování zařízení je jen pro správce."); return; }
   zavriPlan();
