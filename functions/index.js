@@ -113,7 +113,7 @@ exports.aquaNotify = functions.database
 
 // ===== 2) Hlídání termínů úkolů (plánovač) =====
 const PRE_LEAD_MS = 60 * 60 * 1000;        // a) připomenutí 1 h před termínem
-const CONFIRM_GRACE_MS = 2 * 60 * 60 * 1000; // c) 2 h na potvrzení
+const CONFIRM_GRACE_MS = 15 * 60 * 1000; // c) 15 min na potvrzení
 
 exports.aquaUkolyCheck = functions.pubsub
   .schedule("every 15 minutes")
