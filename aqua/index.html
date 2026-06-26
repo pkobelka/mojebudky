@@ -140,6 +140,7 @@ padding:24px;z-index:50;overflow:auto}
     <a id="navZariz" onclick="openZarizeni()" style="display:none">Zařízení</a>
     <a onclick="alert('Sekce Dokumenty – metodické pokyny (mimka).')">Dokumenty</a>
     <a id="btnPush" onclick="acEnablePush()">🔔 Povolit notifikace</a>
+    <a onclick="acSdilet()">🔗 Sdílet appku</a>
   </nav>
   <div class="vhos"><b>VHOS</b><i>a.s.</i></div>
 </header>
@@ -1009,6 +1010,14 @@ function esc(s){return (s==null?"":String(s)).replace(/[&<>"']/g,c=>({'&':'&amp;
 function _acHashRoute(){ if((location.hash||"").indexOf("moje-ukoly")>=0){ setTimeout(openMojeUkoly,300); } }
 window.addEventListener("load",_acHashRoute);
 window.addEventListener("hashchange",_acHashRoute);
+function acSdilet(){
+  const url="https://pkobelka.github.io/mojebudky/aqua/";
+  if(navigator.share){
+    navigator.share({title:"AquaControl",text:"AquaControl – přehled událostí a vzorkování",url:url}).catch(function(){});
+  } else {
+    navigator.clipboard.writeText(url).then(function(){ alert("Odkaz zkopírován:\n"+url); }).catch(function(){ prompt("Zkopíruj odkaz:",url); });
+  }
+}
 window.addEventListener("load",acBadgeStartup);
 window.addEventListener("load",acInitGate);
 window.addEventListener("load",acCistBadge);
