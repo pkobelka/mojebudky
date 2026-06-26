@@ -140,6 +140,7 @@ padding:24px;z-index:50;overflow:auto}
     <a id="navZariz" onclick="openZarizeni()" style="display:none">Zařízení</a>
     <a onclick="alert('Sekce Dokumenty – metodické pokyny (mimka).')">Dokumenty</a>
     <a id="btnPush" onclick="acEnablePush()">🔔 Povolit notifikace</a>
+    <a id="btnKdo" onclick="acZmenOsobu()" style="display:none"></a>
     <a id="btnSdilet" onclick="acSdilet()" style="display:none">🔗 Sdílet appku</a>
   </nav>
   <div class="vhos"><b>VHOS</b><i>a.s.</i></div>
@@ -1033,6 +1034,17 @@ function esc(s){return (s==null?"":String(s)).replace(/[&<>"']/g,c=>({'&':'&amp;
 function _acHashRoute(){ if((location.hash||"").indexOf("moje-ukoly")>=0){ setTimeout(openMojeUkoly,300); } }
 window.addEventListener("load",_acHashRoute);
 window.addEventListener("hashchange",_acHashRoute);
+function acZmenOsobu(){
+  acPickPerson().then(function(p){
+    if(p){ localStorage.setItem("ac_person",p); acInitGate(); acRefreshBtnKdo(); }
+  });
+}
+function acRefreshBtnKdo(){
+  const p=localStorage.getItem("ac_person")||"";
+  const b=document.getElementById("btnKdo"); if(!b)return;
+  if(p){ b.textContent="👤 "+lidLbl(p); b.style.display=""; }
+  else { b.textContent="👤 Kdo jsi?"; b.style.display=""; }
+}
 function acSdilet(){
   const url="https://pkobelka.github.io/mojebudky/aqua/";
   if(navigator.share){
@@ -1044,6 +1056,15 @@ function acSdilet(){
 window.addEventListener("load",acBadgeStartup);
 window.addEventListener("load",acInitGate);
 window.addEventListener("load",acCistBadge);
+// Při prvním spuštění (bez vybrané osoby) zobraz výběr automaticky
+window.addEventListener("load",function(){
+  acRefreshBtnKdo();
+  if(!localStorage.getItem("ac_person")){
+    setTimeout(function(){
+      acPickPerson().then(function(p){ if(p){ localStorage.setItem("ac_person",p); acInitGate(); acRefreshBtnKdo(); } });
+    },800);
+  }
+});
 </script>
 
 <!-- Push notifikace (FCM) -->
