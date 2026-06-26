@@ -400,12 +400,12 @@ function krok2plan(){
 
 
 // ---- přehled objektů ----
-document.getElementById("prehled").innerHTML=STR.map(([nm,p,bd])=>`
+document.getElementById("prehled").innerHTML=STR.map(([nm,p,bd],si)=>`
 <div class="card-s"><h3>${nm}</h3><div class="row5">`+KAT.map(([kn,kc],i)=>`
 <div class="objt" onclick="openSeznam('${nm}','${kn}')">
   <div class="top" style="background:${kc}"></div>
   <div class="num" style="color:${kc}">${p[i]}</div><div class="lab">${kn}</div>
-  ${bd[i]>0?`<div class="bdg">${bd[i]}</div>`:""}
+  <div class="bdg" id="tbd-${si}-${i}" style="display:none"></div>
 </div>`).join("")+`</div></div>`).join("");
 
 // ---- WIZARD ----
@@ -624,7 +624,7 @@ function acSaveEvent(){
     const eventId=evRef.key;
     evRef.set({
       co: st.podminka||st.typ||"Mimořádná událost", kde: kontext,
-      stredisko: st.stredisko||"", objekt: st.objekt||"", adresa: st.adresa||"",
+      stredisko: st.stredisko||"", typ: st.typ||"Ostatní", objekt: st.objekt||"", adresa: st.adresa||"",
       zavaznost: st.zavaznost||"", popis: st.popis||"", dotcene: st.dotcene||[],
       nahlasil: st.nahlasil||"", tel: st.tel||"", cist: cistData,
       zadal: zadalKod, zadal_jmeno: UZIVATEL, ts: now
@@ -773,6 +773,19 @@ function _udNactiVse(cb){
 function acRefreshBadge(evs){
   try{ const open=evs.filter(ev=>!ev.uzavreno).length;
     const b=document.getElementById("bdgUd"); if(b){ b.textContent=open; b.style.display=open?"":"none"; } }catch(_){}
+  // badge na dlaždicích — počet otevřených událostí per středisko × typ
+  try{
+    const cnt={};
+    evs.filter(ev=>!ev.uzavreno).forEach(ev=>{
+      const si=STR.findIndex(([nm])=>nm===ev.stredisko);
+      const ti=TYPY.findIndex(t=>t===ev.typ);
+      if(si>=0&&ti>=0){ const k=si+"-"+ti; cnt[k]=(cnt[k]||0)+1; }
+    });
+    STR.forEach((_,si)=>KAT.forEach((_,ti)=>{
+      const el=document.getElementById("tbd-"+si+"-"+ti); if(!el)return;
+      const n=cnt[si+"-"+ti]||0; el.textContent=n; el.style.display=n?"":"none";
+    }));
+  }catch(_){}
 }
 function openUdalosti(){
   zavriPlan();
