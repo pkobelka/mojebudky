@@ -983,7 +983,7 @@ async function _zobrazAktivitaSpravcu() {
 
   const vsechnyUdalosti = [];
   Object.values(aktData).forEach(e => {
-    if (e && e.loginId && e.ts) vsechnyUdalosti.push({ loginId: String(e.loginId), ts: e.ts, typ: 'edit', jmeno: e.jmeno || '' });
+    if (e && e.loginId && e.ts) vsechnyUdalosti.push({ loginId: String(e.loginId), ts: e.ts, typ: 'edit', jmeno: e.jmeno || '', budka_cislo: e.budka_cislo || '', budka_nazev: e.budka_nazev || '', zprava: e.zprava || '' });
   });
   Object.values(prihlData).forEach(e => {
     if (e && e.loginId && e.ts) vsechnyUdalosti.push({ loginId: String(e.loginId), ts: e.ts, typ: 'login', jmeno: e.jmeno || '' });
@@ -1035,7 +1035,7 @@ async function _zobrazAktivitaSpravcu() {
     container.innerHTML = sorted.map((a, i) => {
       const rank    = i < 3 ? `<span class="akt-medal">${medals[i]}</span>` : `<span class="akt-rank">${i + 1}.</span>`;
       const detaily = [a.edity ? `${a.edity} editací` : '', a.prihlaseni ? `${a.prihlaseni} přihlášení` : ''].filter(Boolean).join(' · ');
-      return `<div class="akt-radek">
+      return `<div class="akt-radek" data-loginid="${a.id}" style="cursor:pointer">
         ${rank}
         <div class="akt-info">
           <div class="akt-jmeno">${a.jmeno || '— ID ' + a.id}</div>
@@ -1045,8 +1045,32 @@ async function _zobrazAktivitaSpravcu() {
           <div class="akt-celkem">${a.celkem}</div>
           <div class="akt-datum">${_fmtDatumAkt(a.posledni)}</div>
         </div>
-      </div>`;
+      </div>
+      <div class="akt-edity-detail" id="akt-detail-${a.id}" hidden></div>`;
     }).join('');
+
+    container.querySelectorAll('.akt-radek[data-loginid]').forEach(row => {
+      row.addEventListener('click', () => {
+        const id = row.dataset.loginid;
+        const detail = document.getElementById(`akt-detail-${id}`);
+        if (!detail) return;
+        if (!detail.hidden) { detail.hidden = true; return; }
+        const now = Date.now();
+        const cutoff = aktPeriod === 0 ? 0 : now - aktPeriod * 86400000;
+        const edity = vsechnyUdalosti
+          .filter(u => u.loginId === id && u.typ === 'edit' && u.ts >= cutoff)
+          .sort((a, b) => b.ts - a.ts);
+        if (!edity.length) { detail.innerHTML = '<div class="akt-edit-item" style="color:var(--text-muted)">Žádné editace v tomto období.</div>'; detail.hidden = false; return; }
+        detail.innerHTML = edity.map(u => {
+          const d = new Date(u.ts);
+          const cas = `${d.getDate()}. ${d.getMonth()+1}. ${d.getFullYear()} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+          const budka = u.budka_cislo ? `<span class="akt-edit-budka">Budka č. ${u.budka_cislo}${u.budka_nazev ? ' – ' + u.budka_nazev : ''}</span>` : '';
+          const zprava = u.zprava ? `<span class="akt-edit-zprava">${u.zprava}</span>` : '';
+          return `<div class="akt-edit-item">${budka}${zprava}<span class="akt-edit-cas">${cas}</span></div>`;
+        }).join('');
+        detail.hidden = false;
+      });
+    });
   }
 
   renderLeaderboard();
