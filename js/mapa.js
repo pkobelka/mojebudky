@@ -142,7 +142,8 @@ document.addEventListener('click', function(e) {
   // idx=0: aktuální src z img (může být Firebase base64), vyšší: statické soubory
   function _getSrc(i) {
     if (i === 0) return img.src;
-    return `img/budky/${cislo}_${i}.jpg`;
+    const ext = img.src.endsWith('.jpeg') ? 'jpeg' : 'jpg';
+    return `img/budky/${cislo}_${i}.${ext}`;
   }
 
   const o = document.createElement('div');
