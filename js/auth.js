@@ -868,8 +868,8 @@ async function _zobrazPrehledSpravcu() {
       </div>
       <div class="prehled-filtry">
         <button class="prehled-filtr prehled-filtr--aktivni" data-filtr="vse">Všichni (${vsichniSpravci.length})</button>
-        <button class="prehled-filtr" data-filtr="telefon">📞 S telefonem</button>
-        <button class="prehled-filtr" data-filtr="email">📧 S e-mailem</button>
+        <button class="prehled-filtr" data-filtr="telefon">📞 S telefonem (${vsichniSpravci.filter(s=>s.telefon).length})</button>
+        <button class="prehled-filtr" data-filtr="email">📧 S e-mailem (${vsichniSpravci.filter(s=>s.email).length})</button>
         <button class="prehled-filtr" data-filtr="notif">🔔 S notifikacemi (${vsichniSpravci.filter(s=>s.maNotif).length})</button>
       </div>
       <div class="prehled-kopirovat">
