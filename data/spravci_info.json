@@ -2492,5 +2492,15 @@
     "telefon": "",
     "email": "p.kobelka@gmail.com",
     "osloveni": "Petr-admin"
+  },
+  "201966": {
+    "jmeno": "Jan",
+    "prijmeni": "ZEMSKÝ ML.",
+    "spravce": "Jan",
+    "budka_cislo": 201,
+    "budka_nazev": "Jan",
+    "telefon": "724 284 966",
+    "email": "",
+    "osloveni": "Honzo"
   }
 }

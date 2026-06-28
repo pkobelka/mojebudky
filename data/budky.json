@@ -2602,6 +2602,18 @@
     "foto_extra": 0
   },
   {
+    "cislo": 201,
+    "nazev": "Jan",
+    "typ": "32mm",
+    "instalace": "20.6.2026",
+    "lat": 48.8863854,
+    "lng": 17.1948809,
+    "ptak": null,
+    "stav": "aktivni",
+    "historie": null,
+    "foto_extra": 0
+  },
+  {
     "cislo": 204,
     "nazev": "Děda",
     "typ": "32mm",
