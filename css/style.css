@@ -1092,6 +1092,13 @@ html, body {
 .akt-datum { font-size: 0.8rem; color: var(--text-muted); margin-top: 2px; }
 .btn-aktivita-spravcu { background: none; border: none; cursor: pointer; font-size: 1.2rem; padding: 4px 8px; border-radius: 8px; transition: background 0.15s; vertical-align: middle; }
 .btn-aktivita-spravcu:hover { background: rgba(255,255,255,0.1); }
+.akt-radek:hover { background: rgba(255,255,255,0.04); }
+.akt-edity-detail { background: rgba(0,0,0,0.18); border-left: 3px solid var(--orange); margin: 0 8px 4px 8px; border-radius: 0 8px 8px 0; padding: 6px 4px; }
+.akt-edit-item { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; padding: 5px 10px; font-size: 0.84rem; border-bottom: 1px solid rgba(255,255,255,0.05); }
+.akt-edit-item:last-child { border-bottom: none; }
+.akt-edit-budka { font-weight: 600; color: var(--text-light); white-space: nowrap; }
+.akt-edit-zprava { color: var(--text-muted); flex: 1; }
+.akt-edit-cas { color: var(--text-muted); font-size: 0.78rem; white-space: nowrap; margin-left: auto; }
 
 /* ── ONLINE POPUP (kdo je online) ─────────────────────────────────────── */
 .online-popup { position: fixed; z-index: 2000; background: var(--panel-bg); border: 1px solid var(--panel-border); border-radius: 12px; padding: 10px 14px; min-width: 220px; box-shadow: 0 8px 32px rgba(0,0,0,0.5); }
