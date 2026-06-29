@@ -30,8 +30,15 @@ function pluralSpravcu(n) {
 
 function najdiSvatekSpravce(svarekJmeno) {
   if (!svarekJmeno || !spravciJmena.length) return [];
+  // Podpora pro více jmen (např. "Petr a Pavel") — hledej každé zvlášť
+  const jmena = svarekJmeno.split(' a ').map(j => j.trim()).filter(Boolean);
+  const hledej = new Set();
+  jmena.forEach(jmeno => {
+    const kanon = KANONICKY[jmeno] || jmeno;
+    hledej.add(kanon); hledej.add(jmeno);
+    (PREZDIVKY[kanon] || []).forEach(p => hledej.add(p));
+  });
   const kanon = KANONICKY[svarekJmeno] || svarekJmeno;
-  const hledej = new Set([kanon, svarekJmeno, ...(PREZDIVKY[kanon] || [])]);
   const pasujici = spravciJmena.filter(s => hledej.has(s.jmeno));
   // Deduplikuj – správce s více budkami má v 6místném loginId stejný 3místný suffix
   if (Object.keys(_boxManagerKey).length > 0) {
