@@ -30,30 +30,14 @@
     "telefon": "",
     "email": ""
   },
-  "004112": {
-    "jmeno": "Josef",
-    "prijmeni": "JENIŠ",
-    "spravce": "",
+  "004": {
+    "jmeno": "",
+    "prijmeni": "",
+    "spravce": "Skřepský",
     "budka_cislo": 4,
     "budka_nazev": "",
-    "telefon": "604 239 112",
-    "email": "",
-    "osloveni": "Plíšku",
-    "datum_narozeni": "1964-02-05",
-    "budky": [
-      {
-        "cislo": 4,
-        "nazev": ""
-      },
-      {
-        "cislo": 9,
-        "nazev": "Plíšek 2"
-      },
-      {
-        "cislo": 12,
-        "nazev": "Plíšek 1"
-      }
-    ]
+    "telefon": "",
+    "email": ""
   },
   "005484": {
     "jmeno": "Josef",
@@ -132,7 +116,17 @@
     "telefon": "604 239 112",
     "email": "",
     "osloveni": "Plíšku",
-    "datum_narozeni": "1952-12-12"
+    "datum_narozeni": "1952-12-12",
+    "budky": [
+      {
+        "cislo": 9,
+        "nazev": "Plíšek 2"
+      },
+      {
+        "cislo": 12,
+        "nazev": "Plíšek 1"
+      }
+    ]
   },
   "010488": {
     "jmeno": "Jirka",
