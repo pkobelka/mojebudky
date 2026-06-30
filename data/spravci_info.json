@@ -1001,6 +1001,10 @@
         "nazev": ""
       },
       {
+        "cislo": 181,
+        "nazev": "Na Smuteční vrbě"
+      },
+      {
         "cislo": 186,
         "nazev": "Na Lípě"
       }
@@ -1153,14 +1157,14 @@
     "osloveni": "Jardo",
     "datum_narozeni": "1945-05-05"
   },
-  "090": {
+  "090998": {
     "jmeno": "Dalibor",
     "prijmeni": "ŠEBEK",
     "spravce": "Dalibor",
     "budka_cislo": 90,
     "budka_nazev": "",
-    "telefon": "",
-    "email": "",
+    "telefon": "724 068 998",
+    "email": "dsebek@seznam.cz",
     "osloveni": "Bore"
   },
   "091006": {
@@ -1301,23 +1305,25 @@
     "email": "lukas.sasin@zemsky.cz",
     "osloveni": "Luky"
   },
-  "102": {
-    "jmeno": "",
-    "prijmeni": "",
-    "spravce": "obec",
+  "102998": {
+    "jmeno": "Dalibor",
+    "prijmeni": "ŠEBEK",
+    "spravce": "Dalibor",
     "budka_cislo": 102,
     "budka_nazev": "",
-    "telefon": "",
-    "email": ""
+    "telefon": "724 068 998",
+    "email": "dsebek@seznam.cz",
+    "osloveni": "Bore"
   },
-  "103": {
-    "jmeno": "",
-    "prijmeni": "",
-    "spravce": "obec",
+  "103998": {
+    "jmeno": "Dalibor",
+    "prijmeni": "ŠEBEK",
+    "spravce": "Dalibor",
     "budka_cislo": 103,
     "budka_nazev": "",
-    "telefon": "",
-    "email": ""
+    "telefon": "724 068 998",
+    "email": "dsebek@seznam.cz",
+    "osloveni": "Bore"
   },
   "104560": {
     "jmeno": "Jana",
@@ -1329,23 +1335,25 @@
     "email": "",
     "osloveni": "Jani"
   },
-  "105": {
-    "jmeno": "",
-    "prijmeni": "",
-    "spravce": "obec",
+  "105998": {
+    "jmeno": "Dalibor",
+    "prijmeni": "ŠEBEK",
+    "spravce": "Dalibor",
     "budka_cislo": 105,
     "budka_nazev": "",
-    "telefon": "",
-    "email": ""
+    "telefon": "724 068 998",
+    "email": "dsebek@seznam.cz",
+    "osloveni": "Bore"
   },
-  "106": {
-    "jmeno": "",
-    "prijmeni": "",
-    "spravce": "obec",
+  "106998": {
+    "jmeno": "Dalibor",
+    "prijmeni": "ŠEBEK",
+    "spravce": "Dalibor",
     "budka_cislo": 106,
     "budka_nazev": "",
-    "telefon": "",
-    "email": ""
+    "telefon": "724 068 998",
+    "email": "dsebek@seznam.cz",
+    "osloveni": "Bore"
   },
   "107060": {
     "jmeno": "Josef",
@@ -1494,50 +1502,55 @@
     "email": "",
     "osloveni": "Milane"
   },
-  "119": {
-    "jmeno": "",
-    "prijmeni": "",
-    "spravce": "obec",
+  "119998": {
+    "jmeno": "Dalibor",
+    "prijmeni": "ŠEBEK",
+    "spravce": "Dalibor",
     "budka_cislo": 119,
     "budka_nazev": "",
-    "telefon": "",
-    "email": ""
+    "telefon": "724 068 998",
+    "email": "dsebek@seznam.cz",
+    "osloveni": "Bore"
   },
-  "120": {
-    "jmeno": "",
-    "prijmeni": "",
-    "spravce": "obec",
+  "120998": {
+    "jmeno": "Dalibor",
+    "prijmeni": "ŠEBEK",
+    "spravce": "Dalibor",
     "budka_cislo": 120,
     "budka_nazev": "",
-    "telefon": "",
-    "email": ""
+    "telefon": "724 068 998",
+    "email": "dsebek@seznam.cz",
+    "osloveni": "Bore"
   },
-  "121": {
-    "jmeno": "",
-    "prijmeni": "",
-    "spravce": "obec",
+  "121998": {
+    "jmeno": "Dalibor",
+    "prijmeni": "ŠEBEK",
+    "spravce": "Dalibor",
     "budka_cislo": 121,
     "budka_nazev": "",
-    "telefon": "",
-    "email": ""
+    "telefon": "724 068 998",
+    "email": "dsebek@seznam.cz",
+    "osloveni": "Bore"
   },
-  "122": {
-    "jmeno": "",
-    "prijmeni": "",
-    "spravce": "obec",
+  "122998": {
+    "jmeno": "Dalibor",
+    "prijmeni": "ŠEBEK",
+    "spravce": "Dalibor",
     "budka_cislo": 122,
     "budka_nazev": "",
-    "telefon": "",
-    "email": ""
+    "telefon": "724 068 998",
+    "email": "dsebek@seznam.cz",
+    "osloveni": "Bore"
   },
-  "123": {
-    "jmeno": "",
-    "prijmeni": "",
-    "spravce": "obec",
+  "123998": {
+    "jmeno": "Dalibor",
+    "prijmeni": "ŠEBEK",
+    "spravce": "Dalibor",
     "budka_cislo": 123,
     "budka_nazev": "",
-    "telefon": "",
-    "email": ""
+    "telefon": "724 068 998",
+    "email": "dsebek@seznam.cz",
+    "osloveni": "Bore"
   },
   "124998": {
     "jmeno": "Dalibor",
@@ -1547,7 +1560,53 @@
     "budka_nazev": "",
     "telefon": "724 068 998",
     "email": "dsebek@seznam.cz",
-    "osloveni": "Bore"
+    "osloveni": "Bore",
+    "budky": [
+      {
+        "cislo": 90,
+        "nazev": ""
+      },
+      {
+        "cislo": 102,
+        "nazev": ""
+      },
+      {
+        "cislo": 103,
+        "nazev": ""
+      },
+      {
+        "cislo": 105,
+        "nazev": ""
+      },
+      {
+        "cislo": 106,
+        "nazev": ""
+      },
+      {
+        "cislo": 119,
+        "nazev": ""
+      },
+      {
+        "cislo": 120,
+        "nazev": ""
+      },
+      {
+        "cislo": 121,
+        "nazev": ""
+      },
+      {
+        "cislo": 122,
+        "nazev": ""
+      },
+      {
+        "cislo": 123,
+        "nazev": ""
+      },
+      {
+        "cislo": 124,
+        "nazev": ""
+      }
+    ]
   },
   "125023": {
     "jmeno": "Martin",
@@ -2159,14 +2218,15 @@
     "email": "",
     "osloveni": "Michale"
   },
-  "181": {
-    "jmeno": "",
-    "prijmeni": "",
+  "181504": {
+    "jmeno": "Martin",
+    "prijmeni": "NOVOTNÝ 🦉",
     "spravce": "Martin",
     "budka_cislo": 181,
     "budka_nazev": "Na Smuteční vrbě",
-    "telefon": "",
-    "email": ""
+    "telefon": "777 676 504",
+    "email": "",
+    "osloveni": "Martine"
   },
   "182055": {
     "jmeno": "Katka",
