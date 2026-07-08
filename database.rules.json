@@ -15,14 +15,17 @@
     "push_tokens": {
       "$id": { ".read": true, ".write": true }
     },
-    "aqua_push_tokens": {
+    "aquactrl_push_tokens": {
       "$id": { ".read": true, ".write": true }
     },
-    "aqua_outbox": {
+    "aquactrl_outbox": {
       "$id": { ".read": true, ".write": true }
     },
-    "aqua_udalosti": { ".read": true, ".write": true },
-    "aqua_ukoly":    { ".read": true, ".write": true, ".indexOn": ["resitel", "stav"] },
+    "aquactrl_udalosti": { ".read": true, ".write": true },
+    "aquactrl_ukoly":    { ".read": true, ".write": true, ".indexOn": ["resitel", "stav"] },
+    "aquactrl_zarizeni": { ".read": true, ".write": true },
+    "aquactrl_login_email": { ".read": "auth != null", ".write": "auth != null" },
+    "aquactrl_presence": { ".read": true, ".write": true },
     "zpravy_spravci": {
       "$loginId": { ".read": true, ".write": true }
     },
