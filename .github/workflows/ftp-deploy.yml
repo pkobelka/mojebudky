@@ -1,0 +1,35 @@
+name: Deploy na WEDOS FTP (_test)
+
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - functions/**
+      - '*.py'
+      - PLAN.md
+      - data/*.csv
+      - .github/workflows/**
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Nahraj na FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          server-dir: /www/domains/mojebudky.cz/www/_test/
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/.github/**
+            functions/**
+            *.py
+            PLAN.md
+            data/*.csv
