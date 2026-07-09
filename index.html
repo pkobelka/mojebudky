@@ -52,6 +52,7 @@
         <li><a href="#mapa" id="nav-mapa">Mapa Budek</a></li>
         <li id="navLiAktuality"><a href="#aktuality">Z deníku správců...</a></li>
         <li><a href="#" id="navDesatero">Desatero správce</a></li>
+        <li><a href="#" id="navNavodMobile">❓ Návod pro správce</a></li>
 
         <li><a href="#partneri">Podporovatelé</a></li>
         <li><a href="#" class="nav-podpora-link" id="navPodporaLink">💛 Podpořit projekt</a></li>
@@ -70,6 +71,7 @@
             ✉ Napište nám
             <span class="napsat-tip">Dotaz, nápad nebo zájem o partnerství?<br><strong>info@mojebudky.cz</strong></span>
           </button>
+          <button type="button" class="btn-navod" id="btnNavod" aria-label="Návod pro správce">❓ Návod pro správce</button>
           <button type="button" class="btn-login" id="btnPrihlasit">Přihlášení<span class="btn-login-suffix"> pro správce</span></button>
         </div>
         <button class="nav-hamburger" id="navHamburger" aria-label="Otevřít menu" aria-expanded="false">
@@ -352,6 +354,26 @@
   </div>
 </div>
 
+<!-- Návod pro správce -->
+<div id="modalNavod" class="modal-overlay" role="dialog" aria-modal="true" aria-label="Návod pro správce" hidden>
+  <div class="modal-box" style="max-width:560px;width:94%">
+    <button class="modal-zavrit" id="navodZavrit" aria-label="Zavřít">×</button>
+    <div class="modal-logo-wrap"><img src="img/logo.svg" alt="" aria-hidden="true" width="48"></div>
+    <h2 class="modal-nadpis">Návod pro správce</h2>
+    <p class="modal-uvitani">Jsi nový správce a nevíš, kde začít? Projdi si tento postup krok za krokem.</p>
+    <ol class="navod-list">
+      <li><strong>Přihlas se</strong> svým ID a heslem, které jsi dostal/a SMS-kou.</li>
+      <li><strong>Odsouhlas Desatero</strong> – objeví se hned po prvním přihlášení, stačí potvrdit.</li>
+      <li><strong>Doplň si profil</strong> ("Karta správce" v menu): jméno, telefon, fotku a hlavně e-mail – budeš ho potřebovat, kdyby sis někdy zapomněl/a heslo.</li>
+      <li><strong>Povol push notifikace</strong> (tlačítko přímo v profilu) – dostaneš upozornění, když ti admin napíše.</li>
+      <li><strong>Přidej si MojeBudky na plochu telefonu</strong> – Android/Chrome: objeví se nabídka „Přidat na plochu", stačí potvrdit. iPhone/Safari: klepni na ikonu Sdílet → „Přidat na plochu".</li>
+      <li><strong>Zkontroluj a doplň svou budku</strong> ("Editovat budku"): kdo v ní bydlí, foto, poznámka, datum kontroly/čištění. Šipkami u roku (◀ ▶) se můžeš vrátit i do předchozích let a doplnit chybějící historii.</li>
+      <li><strong>Máš dotaz?</strong> Napiš adminovi přímo z menu ("Napsat adminovi"), odpověď najdeš v "Zprávy od admina".</li>
+      <li>Heslo si můžeš kdykoliv změnit v menu ("Změnit heslo").</li>
+    </ol>
+  </div>
+</div>
+
 <!-- Uvítací splash screen -->
 <div id="splashScreen" class="splash-overlay" role="dialog" aria-label="Uvítání">
   <div class="splash-box">
@@ -489,9 +511,6 @@
       .then(reg => { window._swReg = reg; })
       .catch(() => {});
   }
-
-  // PWA install prompt vypnut - na webu nenabízíme "Přidat na plochu"
-  window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); });
 
   // ── Kinematické titulky v teaser bloku ───────────────────────────────────
   (function () {
