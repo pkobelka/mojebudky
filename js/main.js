@@ -144,6 +144,14 @@ async function nactiStatistiky() {
     const cas = `${ted.getDate()}.${ted.getMonth()+1}. ${String(ted.getHours()).padStart(2,'0')}:${String(ted.getMinutes()).padStart(2,'0')}`;
     document.getElementById('stat-aktualizace').textContent = cas;
 
+    fetch('data/verze.json?v=' + Date.now())
+      .then(r => r.json())
+      .then(v => {
+        const el = document.getElementById('stat-aktualizace');
+        if (el && v.verze && v.verze !== 'dev') el.textContent = `${v.cas} (verze ${v.verze})`;
+      })
+      .catch(() => {});
+
     nactiAktuality(data.aktuality);
     nactiPartnery(data.partneri);
     nactiPodekovani(data.podekovani);
