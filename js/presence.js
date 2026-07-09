@@ -27,6 +27,9 @@
     logRef = db.ref('navstevnost_log').push();
     logRef.set({ ts: firebase.database.ServerValue.TIMESTAMP, jmeno: 'Anonym', admin: false });
     logRef.onDisconnect().update({ ts_end: firebase.database.ServerValue.TIMESTAMP });
+
+    // Celkový (nikdy nemazaný) počet návštěv – navstevnost_log drží jen posledních 30 dní
+    db.ref('navstevnost_celkem').transaction(cur => (cur || 0) + 1);
   });
 
   db.ref('presence').on('value', snap => {
@@ -141,5 +144,29 @@
       if (v && v.ts && v.ts < limitTs) child.ref.remove();
     });
     return zaznamy.reverse(); // nejnovější první
+  };
+
+  // Skutečná návštěvnost (celkem / dnes / včera / předevčírem) – volá se z main.js
+  window._nactiZivouNavstevnost = async function () {
+    const ted = new Date();
+    const zacatekDnes = new Date(ted.getFullYear(), ted.getMonth(), ted.getDate()).getTime();
+    const zacatekVcera = zacatekDnes - 24 * 60 * 60 * 1000;
+    const zacatekPredvcirem = zacatekDnes - 2 * 24 * 60 * 60 * 1000;
+
+    const [logSnap, celkemSnap] = await Promise.all([
+      db.ref('navstevnost_log').orderByChild('ts').startAt(zacatekPredvcirem).once('value'),
+      db.ref('navstevnost_celkem').once('value')
+    ]);
+
+    let dnes = 0, vcera = 0, predvcirem = 0;
+    logSnap.forEach(child => {
+      const v = child.val();
+      if (!v || !v.ts) return;
+      if (v.ts >= zacatekDnes) dnes++;
+      else if (v.ts >= zacatekVcera) vcera++;
+      else if (v.ts >= zacatekPredvcirem) predvcirem++;
+    });
+
+    return { celkem: celkemSnap.val() || 0, dnes, vcera, predvcirem };
   };
 })();

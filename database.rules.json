@@ -9,7 +9,8 @@
     "spravci":           { ".read": true, ".write": true },
     "spravce_aktivita":  { ".read": true, ".write": true },
     "prihlaseni":        { ".read": true, ".write": true },
-    "navstevnost_log":   { ".read": true, ".write": true },
+    "navstevnost_log":   { ".read": true, ".write": true, ".indexOn": ["ts"] },
+    "navstevnost_celkem": { ".read": true, ".write": true },
     "push_broadcast": { ".read": true, ".write": true },
     "push_history":   { ".read": true, ".write": true },
     "push_tokens": {

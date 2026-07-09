@@ -158,6 +158,14 @@ async function nactiStatistiky() {
     if (elCelkem) elCelkem.textContent = nav.celkem.toLocaleString('cs-CZ');
     if (elDnes)   elDnes.textContent   = nav.dnes;
     if (elVcera)  elVcera.textContent  = nav.vcera;
+
+    if (window._nactiZivouNavstevnost) {
+      window._nactiZivouNavstevnost().then(live => {
+        if (elCelkem) elCelkem.textContent = live.celkem.toLocaleString('cs-CZ');
+        if (elDnes)   elDnes.textContent   = live.dnes;
+        if (elVcera)  elVcera.textContent  = live.vcera;
+      }).catch(e => console.error('Chyba načítání živé návštěvnosti:', e));
+    }
   } catch(e) {
     console.error('Chyba načítání statistik:', e);
   }
