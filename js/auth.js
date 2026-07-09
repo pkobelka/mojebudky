@@ -2836,6 +2836,18 @@ document.addEventListener('DOMContentLoaded', () => {
   const kontaktZavrit  = document.getElementById('kontaktZavrit');
   const kontaktOdeslat = document.getElementById('kontaktOdeslat');
 
+  // ── Návod pro správce (tlačítko "❓ Návod pro správce") ──
+  const btnNavod    = document.getElementById('btnNavod');
+  const modalNavod   = document.getElementById('modalNavod');
+  const navodZavrit  = document.getElementById('navodZavrit');
+
+  if (modalNavod) {
+    btnNavod?.addEventListener('click', () => { modalNavod.hidden = false; });
+    document.getElementById('navNavodMobile')?.addEventListener('click', e => { e.preventDefault(); modalNavod.hidden = false; });
+    navodZavrit?.addEventListener('click', () => { modalNavod.hidden = true; });
+    modalNavod.addEventListener('click', e => { if (e.target === modalNavod) modalNavod.hidden = true; });
+  }
+
   if (btnNapsat && modalKontakt) {
     btnNapsat.addEventListener('click', () => { modalKontakt.hidden = false; setTimeout(() => document.getElementById('kontaktJmeno')?.focus(), 80); });
     kontaktZavrit?.addEventListener('click', () => { modalKontakt.hidden = true; });
