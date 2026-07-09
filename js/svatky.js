@@ -36,7 +36,7 @@ const SVATKY = {
   "21.6":"Alois","22.6":"Pavla","23.6":"Zdeňka","24.6":"Jan","25.6":"Ivan",
   "26.6":"Adriana","27.6":"Ladislav","28.6":"Lubomír","29.6":"Petr a Pavel","30.6":"Pavel",
   "1.7":"Jaroslava","2.7":"Patricie","3.7":"Radomír","4.7":"Prokop","5.7":"Cyril a Metoděj",
-  "6.7":"Mistr Jan Hus","7.7":"Bohuslava","8.7":"Nora","9.7":"Drahomíra","10.7":"Libuše",
+  "6.7":"Mistr Jan Hus","7.7":"Bohuslava","8.7":"Nora","9.7":"Drahoslava","10.7":"Libuše",
   "11.7":"Olga","12.7":"Bořek","13.7":"Markéta","14.7":"Karolína","15.7":"Jindřich",
   "16.7":"Luboš","17.7":"Martina","18.7":"Drahota","19.7":"Čeněk","20.7":"Ilja",
   "21.7":"Vítězslav","22.7":"Magdalena","23.7":"Libor","24.7":"Kristýna","25.7":"Jakub",
