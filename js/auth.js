@@ -286,7 +286,7 @@ async function _zobrazAdminPanel(loginId) {
     <button class="admin-dropdown-item" data-akce="zmenitHeslo">🔑 Změnit heslo</button>
     ${!jeAdmin ? `<button class="admin-dropdown-item" data-akce="napisAdminovi">✉️ Napsat adminovi</button>
     <button class="admin-dropdown-item" data-akce="zpravyOdAdmina">📨 Zprávy od admina <span class="admin-badge" id="zpravyOdAdminaBadge" hidden>0</span></button>` : ''}
-    ${jeAdmin ? `<div class="admin-dropdown-oddelovac"></div><button class="admin-dropdown-item admin-item-zadosti" data-akce="zadosti">📬 Žádosti správců <span class="admin-badge" id="adminBadge" hidden>0</span></button><button class="admin-dropdown-item" data-akce="prehledSpravcu">👥 Přehled správců</button><button class="admin-dropdown-item" data-akce="aktivitaSpravcu">🏆 Aktivita správců</button><button class="admin-dropdown-item" data-akce="pushHistorie">📩 Push notifikace</button><button class="admin-dropdown-item" data-akce="historieNavstev">📊 Online historie</button><button class="admin-dropdown-item" data-akce="resetBeta">🧹 Reset beta testu</button>` : ''}
+    ${jeAdmin ? `<div class="admin-dropdown-oddelovac"></div><button class="admin-dropdown-item admin-item-zadosti" data-akce="zadosti">📬 Žádosti správců <span class="admin-badge" id="adminBadge" hidden>0</span></button><button class="admin-dropdown-item" data-akce="prehledSpravcu">👥 Přehled správců</button><button class="admin-dropdown-item" data-akce="aktivitaSpravcu">🏆 Aktivita správců</button><button class="admin-dropdown-item" data-akce="pushHistorie">📩 Push notifikace</button><button class="admin-dropdown-item" data-akce="historieNavstev">📊 Online historie</button><button class="admin-dropdown-item" data-akce="navstevnostDenne">📅 Návštěvnost po dnech</button><button class="admin-dropdown-item" data-akce="resetBeta">🧹 Reset beta testu</button>` : ''}
     <div class="admin-dropdown-oddelovac"></div>
     <button class="admin-dropdown-item odhlasit" data-akce="odhlasit">🚪 Odhlásit se</button>
   `;
@@ -405,6 +405,12 @@ async function _zobrazAdminPanel(loginId) {
 
     if (akce === 'historieNavstev') {
       _zobrazHistoriiNavstev();
+      dropdown.classList.remove('open');
+      return;
+    }
+
+    if (akce === 'navstevnostDenne') {
+      _zobrazNavstevnostDenne();
       dropdown.classList.remove('open');
       return;
     }
@@ -1254,6 +1260,63 @@ async function _zobrazHistoriiNavstev() {
       </tbody>
     </table>
     <div style="font-size:0.78rem;color:var(--text-muted);padding:10px 8px 0">${zaznamy.length} záznamů · záznamy se uchovávají 30 dní</div>`;
+}
+
+async function _zobrazNavstevnostDenne() {
+  const existujici = document.getElementById('modalNavstevnostDenne');
+  if (existujici) { existujici.remove(); return; }
+
+  const modal = document.createElement('div');
+  modal.id = 'modalNavstevnostDenne';
+  modal.className = 'modal-overlay';
+  modal.innerHTML = `
+    <div class="modal-box" style="max-width:480px;max-height:80vh;overflow-y:auto">
+      <div class="modal-hlavicka">
+        <span>📅 Návštěvnost po dnech</span>
+        <button class="modal-close" onclick="document.getElementById('modalNavstevnostDenne').remove()">✕</button>
+      </div>
+      <div id="navstevnostDenneObsah" style="padding:12px 16px;color:var(--text-muted);font-style:italic">Načítám…</div>
+    </div>`;
+  document.body.appendChild(modal);
+  modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
+
+  if (typeof window._nactiNavstevnostDenne !== 'function') {
+    document.getElementById('navstevnostDenneObsah').textContent = 'Chyba: stránka je zastaralá — stiskni Ctrl+Shift+R pro tvrdý reload.';
+    return;
+  }
+  let dny = [];
+  try {
+    dny = await window._nactiNavstevnostDenne();
+  } catch(e) {
+    document.getElementById('navstevnostDenneObsah').textContent = 'Nepodařilo se načíst data: ' + (e && e.message || String(e));
+    return;
+  }
+
+  const obsah = document.getElementById('navstevnostDenneObsah');
+  if (!dny.length) { obsah.textContent = 'Zatím žádné záznamy — sbírá se od zavedení této funkce.'; return; }
+
+  const celkem = dny.reduce((s, d) => s + d.pocet, 0);
+  const _fmtDatum = (klic) => {
+    const [r, m, den] = klic.split('-');
+    return `${parseInt(den,10)}. ${parseInt(m,10)}. ${r}`;
+  };
+
+  obsah.innerHTML = `
+    <table style="width:100%;border-collapse:collapse;font-size:0.9rem">
+      <thead>
+        <tr style="border-bottom:2px solid var(--panel-border);color:var(--text-muted);font-size:0.78rem;text-transform:uppercase">
+          <th style="text-align:left;padding:6px 8px">Den</th>
+          <th style="text-align:right;padding:6px 8px">Počet návštěv</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${dny.map(d => `<tr style="border-bottom:1px solid var(--panel-border)">
+          <td style="padding:7px 8px">${_fmtDatum(d.datum)}</td>
+          <td style="padding:7px 8px;text-align:right;font-weight:700">${d.pocet}</td>
+        </tr>`).join('')}
+      </tbody>
+    </table>
+    <div style="font-size:0.85rem;color:var(--text-muted);padding:10px 8px 0">Celkem za ${dny.length} ${dny.length === 1 ? 'den' : dny.length < 5 ? 'dny' : 'dní'}: <strong>${celkem}</strong> návštěv · sbírá se od zavedení této funkce, nikdy se nemaže</div>`;
 }
 
 async function _zobrazResetBeta() {

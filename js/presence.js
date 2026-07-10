@@ -30,6 +30,11 @@
 
     // Celkový (nikdy nemazaný) počet návštěv – navstevnost_log drží jen posledních 30 dní
     db.ref('navstevnost_celkem').transaction(cur => (cur || 0) + 1);
+
+    // Trvalá denní historie (nikdy nemazaná) – pro přehledy a např. podklady k žádostem o grant
+    const ted = new Date();
+    const dnesKey = `${ted.getFullYear()}-${String(ted.getMonth()+1).padStart(2,'0')}-${String(ted.getDate()).padStart(2,'0')}`;
+    db.ref('navstevnost_denne/' + dnesKey).transaction(cur => (cur || 0) + 1);
   });
 
   db.ref('presence').on('value', snap => {
@@ -168,5 +173,14 @@
     });
 
     return { celkem: celkemSnap.val() || 0, dnes, vcera, predvcirem };
+  };
+
+  // Trvalá denní historie návštěv (od zavedení, nikdy nemazaná) – pro admin přehled
+  window._nactiNavstevnostDenne = async function () {
+    const snap = await db.ref('navstevnost_denne').once('value');
+    const dny = [];
+    snap.forEach(child => { dny.push({ datum: child.key, pocet: child.val() || 0 }); });
+    dny.sort((a, b) => b.datum.localeCompare(a.datum)); // nejnovější první
+    return dny;
   };
 })();
