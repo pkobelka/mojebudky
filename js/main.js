@@ -895,14 +895,30 @@ function inicializujSplash() {
 
   localStorage.setItem('mb_visit_count', navstev + 1);
 
-  splash.addEventListener('click', () => {
+  function zavriSplash() {
+    if (!splash.isConnected) return;
     splash.classList.add('fade-out');
-    setTimeout(() => splash.remove(), 1400);
-  });
-  setTimeout(() => {
-    splash.classList.add('fade-out');
-    setTimeout(() => splash.remove(), 1400);
-  }, 4000);
+    setTimeout(() => {
+      splash.remove();
+      if (navstev === 0) setTimeout(ukazUvitaciToast, 600);
+    }, 1400);
+  }
+
+  splash.addEventListener('click', zavriSplash);
+  setTimeout(zavriSplash, 4000);
+}
+
+function ukazUvitaciToast() {
+  if (localStorage.getItem('mb_uvod_toast_zobrazen')) return;
+  localStorage.setItem('mb_uvod_toast_zobrazen', '1');
+  if (typeof _zobrazToast !== 'function') return;
+  _zobrazToast(
+    '👋 Vítejte na mém novém webu!<br>Teprve ho rozjíždíme, takže něco ještě nemusí úplně hladce fungovat.' +
+    '<br>Budu moc rád za jakoukoli připomínku nebo nápad —' +
+    ' <a href="#" onclick="document.getElementById(\'btnNapsat\').click();return false;" style="color:inherit;text-decoration:underline;pointer-events:auto">napište mi</a>. 💌',
+    9000,
+    true
+  );
 }
 
 document.addEventListener('DOMContentLoaded', () => {
