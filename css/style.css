@@ -432,6 +432,7 @@ html, body {
 .nav-hamburger { display: none; flex-direction: column; justify-content: center; gap: 5px; background: none; border: none; cursor: pointer; padding: 6px; margin-left: 6px; min-width: 44px; min-height: 44px; touch-action: manipulation; }
 .nav-napsat-mobile { display: none; }
 .nav-podpora-mobile { display: none; }
+.nav-navod-mobile { display: none; }
 .nav-hamburger span { display: block; width: 22px; height: 2px; background: var(--text-light); border-radius: 2px; transition: all 0.25s; }
 .nav-hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
 .nav-hamburger.open span:nth-child(2) { opacity: 0; }
@@ -558,6 +559,20 @@ html, body {
   .search-box input { width: 180px; }
 }
 
+/* ── NAV HAMBURGER 2600px – řádek odkazů se nevejde ani na běžné širokoúhlé monitory, hamburger je spolehlivější pro všechny ── */
+@media (max-width: 2600px) {
+  .search-box { display: none; }
+  .btn-napsat { display: none; }
+  .nav-hamburger { display: flex; margin-left: auto; }
+  .nav-links { display: none; position: fixed; top: 68px; left: 0; right: 0; background: var(--nav-bg); flex-direction: column; padding: 8px 0 12px; box-shadow: 0 6px 20px rgba(0,0,0,0.5); z-index: 1100; gap: 0; }
+  .nav-links.open { display: flex; }
+  .nav-links li { width: 100%; }
+  .nav-links a { display: block; padding: 14px 20px; font-size: 1.1rem; border: none; border-bottom: 1px solid rgba(255,255,255,0.07); border-radius: 0 !important; }
+  .nav-napsat-mobile { display: block; }
+  .nav-podpora-mobile { display: block; }
+  .nav-navod-mobile { display: block; }
+}
+
 /* ── LAPTOP 1100px – stack layout, hamburger nav ── */
 @media (max-width: 1100px) {
   #app { height: auto; min-height: 100vh; overflow: visible; }
@@ -575,6 +590,7 @@ html, body {
   .nav-links a { display: block; padding: 14px 20px; font-size: 1.1rem; border: none; border-bottom: 1px solid rgba(255,255,255,0.07); border-radius: 0 !important; }
   .nav-napsat-mobile { display: block; }
   .nav-podpora-mobile { display: block; }
+  .nav-navod-mobile { display: block; }
   .nav-search-mobile-btn { display: flex; font-size: 1.5rem; padding: 6px 10px; min-width: 44px; min-height: 44px; align-items: center; justify-content: center; }
   #mobileSearchOverlay.open { display: flex !important; }
   .info-bar { flex-wrap: wrap; gap: 2px; font-size: 0.9rem; }
@@ -633,6 +649,7 @@ html, body {
   .nav-hamburger { display: flex; margin-left: auto; }
   .nav-napsat-mobile { display: block; }
   .nav-podpora-mobile { display: block; }
+  .nav-navod-mobile { display: block; }
   .nav-links { display: none; position: fixed; top: 58px; left: 0; right: 0; background: var(--nav-bg); flex-direction: column; padding: 8px 0 12px; box-shadow: 0 6px 20px rgba(0,0,0,0.5); z-index: 1100; gap: 0; }
   .nav-links.open { display: flex; }
   .nav-links li { width: 100%; }
