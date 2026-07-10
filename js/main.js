@@ -133,7 +133,7 @@ function tickCas() {
 
 async function nactiStatistiky() {
   try {
-    const res = await fetch('data/statistiky.json?v=20260709a');
+    const res = await fetch('data/statistiky.json?v=' + (window.MB_VERZE || Date.now()));
     const data = await res.json();
 
     document.getElementById('stat-osidlenych').textContent = data.osidlenych;
