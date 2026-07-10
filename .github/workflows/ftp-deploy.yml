@@ -21,6 +21,7 @@ jobs:
       - name: Vygeneruj číslo verze
         run: |
           echo "{\"verze\": \"${GITHUB_SHA::7}\", \"cas\": \"$(TZ='Europe/Prague' date '+%-d.%-m.%Y %H:%M')\"}" > data/verze.json
+          chmod 644 data/verze.json
 
       - name: Nahraj na FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
