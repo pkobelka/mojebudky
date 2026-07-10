@@ -911,14 +911,44 @@ function inicializujSplash() {
 function ukazUvitaciToast() {
   if (localStorage.getItem('mb_uvod_toast_zobrazen')) return;
   localStorage.setItem('mb_uvod_toast_zobrazen', '1');
-  if (typeof _zobrazToast !== 'function') return;
-  _zobrazToast(
-    '👋 Vítejte na mém novém webu!<br>Teprve ho rozjíždíme, takže něco ještě nemusí úplně hladce fungovat.' +
-    '<br>Budu moc rád za jakoukoli připomínku nebo nápad —' +
-    ' <a href="#" onclick="document.getElementById(\'btnNapsat\').click();return false;" style="color:inherit;text-decoration:underline;pointer-events:auto">napište mi</a>. 💌',
-    9000,
-    true
-  );
+
+  // Slovo po slově (několik "kusů" je celý odkaz/zalomení, aby se nerozbilo HTML)
+  const KUSY = [
+    '👋 Vítejte', 'na', 'mém', 'novém', 'webu!', '<br>',
+    'Teprve', 'ho', 'rozjíždíme,', 'takže', 'něco', 'ještě', 'nemusí', 'úplně', 'hladce', 'fungovat.', '<br>',
+    'Budu', 'moc', 'rád', 'za', 'jakoukoli', 'připomínku', 'nebo', 'nápad', '—',
+    '<a href="#" onclick="document.getElementById(\'btnNapsat\').click();return false;" style="color:inherit;text-decoration:underline;pointer-events:auto">napište mi</a>.',
+    '💌'
+  ];
+  const DOBA_SLOVO = 130;
+  const DOBA_DRZENI = 6000;
+
+  const existujici = document.getElementById('adminToast');
+  if (existujici) existujici.remove();
+
+  const toast = document.createElement('div');
+  toast.id = 'adminToast';
+  toast.className = 'admin-toast';
+  document.body.appendChild(toast);
+  setTimeout(() => toast.classList.add('admin-toast--show'), 50);
+
+  let i = 0;
+  let sestaveno = '';
+  function dalsiKus() {
+    if (!toast.isConnected) return;
+    if (i < KUSY.length) {
+      sestaveno += (sestaveno && KUSY[i] !== '<br>' ? ' ' : '') + KUSY[i];
+      toast.innerHTML = sestaveno;
+      i++;
+      setTimeout(dalsiKus, DOBA_SLOVO);
+    } else {
+      setTimeout(() => {
+        toast.classList.remove('admin-toast--show');
+        setTimeout(() => toast.remove(), 500);
+      }, DOBA_DRZENI);
+    }
+  }
+  dalsiKus();
 }
 
 document.addEventListener('DOMContentLoaded', () => {
