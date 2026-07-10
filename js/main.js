@@ -920,8 +920,8 @@ function ukazUvitaciToast() {
     '<a href="#" onclick="document.getElementById(\'btnNapsat\').click();return false;" style="color:inherit;text-decoration:underline;pointer-events:auto">napište mi</a>.',
     '💌'
   ];
-  const DOBA_SLOVO = 130;
-  const DOBA_DRZENI = 6000;
+  const DOBA_SLOVO = 260;
+  const DOBA_DRZENI = 9000;
 
   const existujici = document.getElementById('adminToast');
   if (existujici) existujici.remove();
