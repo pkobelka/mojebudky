@@ -120,8 +120,7 @@ function aktualizujListu() {
     : '';
 
   const onlineText = window._lastOnlineText || '🟢 …';
-  bar.innerHTML = `<span class="bar-left">${cal}${sva}${narozBar}&nbsp;|&nbsp;<span id="onlineBar" class="bar-online">${onlineText}</span></span>
-    <span class="bar-right">⏰ <span id="liveCas">${formatCas(d)}</span></span>`;
+  bar.innerHTML = `<span class="bar-left">${cal}&nbsp;|&nbsp;⏰ <span id="liveCas">${formatCas(d)}</span>${sva}${narozBar}&nbsp;|&nbsp;<span id="onlineBar" class="bar-online">${onlineText}</span></span>`;
 }
 
 function tickCas() {
