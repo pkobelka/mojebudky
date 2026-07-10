@@ -787,6 +787,8 @@ html, body {
 .admin-toast { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -40%); background: linear-gradient(135deg, #d4f5d4 0%, #a8e6a8 60%, #7dd67d 100%); border: 3px solid #3aaa3a; border-radius: 28px; color: #1a4a1a; font-size: 2.1rem; font-weight: 700; padding: 48px 80px; box-shadow: 0 16px 60px rgba(0,0,0,0.55); z-index: 2000; text-align: center; opacity: 0; transition: opacity 0.5s, transform 0.5s; pointer-events: none; max-width: 90vw; line-height: 1.6; }
 .admin-toast--show { opacity: 1; transform: translate(-50%, -50%); }
 .toast-posledni { display: block; font-size: 0.48em; font-weight: 500; opacity: 0.72; margin-top: 6px; }
+.uvod-toast-slovo { opacity: 0; transition: opacity 0.35s ease; }
+.uvod-toast-slovo--viditelne { opacity: 1; }
 
 /* ── PUSH FOREGROUND BANNER ── */
 .push-banner { position: fixed; top: 70px; right: 16px; z-index: 3000; opacity: 0; transform: translateY(-12px); transition: opacity 0.3s, transform 0.3s; pointer-events: none; max-width: 340px; }

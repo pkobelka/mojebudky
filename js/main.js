@@ -926,21 +926,28 @@ function ukazUvitaciToast() {
   const existujici = document.getElementById('adminToast');
   if (existujici) existujici.remove();
 
+  // Celý text (i s okoukem plné velikosti) je v DOM hned od začátku – jen jsou
+  // slova zprůhledněná a postupně se "vybarvují", aby se okno neroztahovalo.
+  const html = KUSY.map(kus => kus === '<br>'
+    ? '<br>'
+    : `<span class="uvod-toast-slovo">${kus}</span>`
+  ).join(' ');
+
   const toast = document.createElement('div');
   toast.id = 'adminToast';
   toast.className = 'admin-toast';
+  toast.innerHTML = html;
   document.body.appendChild(toast);
   setTimeout(() => toast.classList.add('admin-toast--show'), 50);
 
+  const slova = toast.querySelectorAll('.uvod-toast-slovo');
   let i = 0;
-  let sestaveno = '';
-  function dalsiKus() {
+  function dalsiSlovo() {
     if (!toast.isConnected) return;
-    if (i < KUSY.length) {
-      sestaveno += (sestaveno && KUSY[i] !== '<br>' ? ' ' : '') + KUSY[i];
-      toast.innerHTML = sestaveno;
+    if (i < slova.length) {
+      slova[i].classList.add('uvod-toast-slovo--viditelne');
       i++;
-      setTimeout(dalsiKus, DOBA_SLOVO);
+      setTimeout(dalsiSlovo, DOBA_SLOVO);
     } else {
       setTimeout(() => {
         toast.classList.remove('admin-toast--show');
@@ -948,7 +955,7 @@ function ukazUvitaciToast() {
       }, DOBA_DRZENI);
     }
   }
-  dalsiKus();
+  dalsiSlovo();
 }
 
 document.addEventListener('DOMContentLoaded', () => {
