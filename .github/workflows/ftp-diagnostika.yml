@@ -1,0 +1,16 @@
+name: Diagnostika FTP (jen čtení)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  seznam:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Vypiš obsah img/budky na _test serveru
+        run: |
+          echo "Počet souborů na serveru v _test/img/budky/:"
+          curl -s --list-only "ftp://${{ secrets.FTP_USERNAME }}:${{ secrets.FTP_PASSWORD }}@${{ secrets.FTP_SERVER }}/img/budky/" | tee /tmp/vzdalene.txt | wc -l
+          echo "---"
+          echo "Prvních 20 souborů:"
+          head -20 /tmp/vzdalene.txt
