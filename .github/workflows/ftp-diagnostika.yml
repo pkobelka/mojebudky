@@ -6,14 +6,20 @@ on:
 jobs:
   seznam:
     runs-on: ubuntu-latest
+    env:
+      FTP_U: ${{ secrets.FTP_USERNAME }}
+      FTP_P: ${{ secrets.FTP_PASSWORD }}
+      FTP_S: ${{ secrets.FTP_SERVER }}
     steps:
       - name: Vypiš obsah serveru (kořen, img, img/budky)
         run: |
           echo "=== Kořen účtu (/) ==="
-          curl -v --list-only "ftp://${{ secrets.FTP_USERNAME }}:${{ secrets.FTP_PASSWORD }}@${{ secrets.FTP_SERVER }}/" 2>&1 | tail -60
+          curl -v --list-only -u "${FTP_U}:${FTP_P}" "ftp://${FTP_S}/" 2>&1 | tail -60
           echo ""
           echo "=== img/ ==="
-          curl -v --list-only "ftp://${{ secrets.FTP_USERNAME }}:${{ secrets.FTP_PASSWORD }}@${{ secrets.FTP_SERVER }}/img/" 2>&1 | tail -60
+          curl -v --list-only -u "${FTP_U}:${FTP_P}" "ftp://${FTP_S}/img/" 2>&1 | tail -60
           echo ""
           echo "=== img/budky/ ==="
-          curl -v --list-only "ftp://${{ secrets.FTP_USERNAME }}:${{ secrets.FTP_PASSWORD }}@${{ secrets.FTP_SERVER }}/img/budky/" 2>&1 | tail -60
+          curl -s --list-only -u "${FTP_U}:${FTP_P}" "ftp://${FTP_S}/img/budky/" | tee /tmp/vzdalene.txt | wc -l
+          echo "Prvních 10:"
+          head -10 /tmp/vzdalene.txt
