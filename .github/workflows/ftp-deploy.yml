@@ -22,9 +22,6 @@ jobs:
         run: |
           sed -i "s/__MB_VERZE__/${GITHUB_SHA::7}/; s/__MB_CAS__/$(TZ='Europe/Prague' date '+%-d.%-m.%Y %H:%M')/; s/__MB_BUILD__/${GITHUB_SHA::7}/g" index.html
 
-      - name: Dočasně přesměruj _test na ostrý web
-        run: cp nastroje/test-redirect.html index.html
-
       - name: Nahraj na FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
