@@ -1,26 +1,26 @@
 #!/usr/bin/env python3
 """
-Rozešle přihlašovací SMS správcům přes Twilio.
+Rozešle přihlašovací SMS správcům přes SMSbrana.cz (SMS Connect HTTP API).
 
 Použití:
-    pip install twilio
     python3 rozeslat_sms.py hesla.csv
 
 CSV musí obsahovat sloupce: ID (nebo číslo budky) a Heslo (plaintext).
 Telefony a jména se načtou z data/spravci_info.json.
 
-NIKDY nekomitovat hesla.csv ani tento skript s vyplněnými tokeny!
+NIKDY nekomitovat hesla.csv ani tento skript s vyplněnými přihlašovacími údaji!
 """
-import csv, json, re, sys, time, unicodedata
+import csv, hashlib, json, re, sys, time, unicodedata, urllib.request, urllib.parse, uuid
+import xml.etree.ElementTree as ET
+from datetime import datetime
 from pathlib import Path
 
-# ── TWILIO KONFIGURACE ─────────────────────────────────────────────
-# Vyplň po registraci na twilio.com (Console → Account Info)
-TWILIO_ACCOUNT_SID = ''   # např. 'ACxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
-TWILIO_AUTH_TOKEN  = ''   # např. '0xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
-TWILIO_FROM        = ''   # kupené číslo nebo Messaging Service SID
-#   Číslo ve formátu '+12015551234' nebo MessagingServiceSid 'MGxxx'
-#   Pro ČR doporučuji Messaging Service (lepší doručitelnost)
+# ── SMSBRANA.CZ KONFIGURACE ────────────────────────────────────────
+# Vyplň z portálu SMSbrána.cz → Nastavení → SMS Connect (HTTP)
+SMSBRANA_LOGIN = ''   # např. 'MojeBudky_h1'
+SMSBRANA_HESLO = ''   # heslo k SMS Connectu (NE heslo k portálu!)
+
+SMSBRANA_URL = 'https://api.smsbrana.cz/smsconnect/http.php'
 
 # Text SMS — {osloveni}, {id}, {heslo} budou nahrazeny
 SMS_SABLONA = (
@@ -31,8 +31,34 @@ SMS_SABLONA = (
     "Petr Kobelka"
 )
 
-# Prodleva mezi SMS (sekundy) — Twilio free tier: 1 SMS/s
-PRODLEVA = 1.2
+# Prodleva mezi SMS (sekundy)
+PRODLEVA = 0.5
+
+def odesli_sms(telefon, text):
+    """Odešle SMS přes SMSbrana.cz SMS Connect (AUTH_HASH). Vrátí (ok, info)."""
+    cas = datetime.now().strftime('%Y-%m-%dT%H:%M:%S')
+    sul = uuid.uuid4().hex[:10]
+    hash_ = hashlib.md5((SMSBRANA_HESLO + cas + sul).encode('utf-8')).hexdigest()
+    params = {
+        'action': 'send_sms',
+        'login': SMSBRANA_LOGIN,
+        'time': cas,
+        'sul': sul,
+        'hash': hash_,
+        'number': telefon.lstrip('+'),
+        'message': text,
+    }
+    url = SMSBRANA_URL + '?' + urllib.parse.urlencode(params)
+    try:
+        with urllib.request.urlopen(url, timeout=15) as resp:
+            body = resp.read().decode('utf-8')
+        root = ET.fromstring(body)
+        err = root.findtext('err', default='?')
+        if err == '0':
+            return True, root.findtext('sms_id', default='')
+        return False, f'err={err}'
+    except Exception as e:
+        return False, str(e)
 
 # ── POMOCNÉ FUNKCE ────────────────────────────────────────────────
 
@@ -75,17 +101,14 @@ def detekuj_sloupce(headers):
 # ── HLAVNÍ LOGIKA ─────────────────────────────────────────────────
 
 def main():
-    if not TWILIO_ACCOUNT_SID or not TWILIO_AUTH_TOKEN or not TWILIO_FROM:
-        print('⛔  Vyplň TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN a TWILIO_FROM v tomto skriptu.')
+    if not SMSBRANA_LOGIN or not SMSBRANA_HESLO:
+        print('⛔  Vyplň SMSBRANA_LOGIN a SMSBRANA_HESLO v tomto skriptu.')
         sys.exit(1)
 
     csv_path = sys.argv[1] if len(sys.argv) > 1 else 'hesla.csv'
     if not Path(csv_path).exists():
         print(f'⛔  Soubor {csv_path} nenalezen.')
         sys.exit(1)
-
-    from twilio.rest import Client
-    client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
 
     info = nacti_info()
 
@@ -158,26 +181,16 @@ def main():
                 heslo=heslo
             )
 
-            try:
-                params = {
-                    'body': zprava,
-                    'to':   telefon,
-                }
-                if TWILIO_FROM.startswith('MG'):
-                    params['messaging_service_sid'] = TWILIO_FROM
-                else:
-                    params['from_'] = TWILIO_FROM
-
-                msg = client.messages.create(**params)
-                print(f'  ✓ [{i}] {jmeno} → {telefon}  (SID: {msg.sid[:12]}…)')
-                log.write(f'{kanonId};{jmeno};{telefon};odesláno {msg.sid}\n')
+            ok, info_sms = odesli_sms(telefon, zprava)
+            if ok:
+                print(f'  ✓ [{i}] {jmeno} → {telefon}  (sms_id: {info_sms})')
+                log.write(f'{kanonId};{jmeno};{telefon};odesláno {info_sms}\n')
                 odeslano += 1
-                time.sleep(PRODLEVA)
-
-            except Exception as e:
-                print(f'  ✗ [{i}] {jmeno} → {telefon}  CHYBA: {e}')
-                log.write(f'{kanonId};{jmeno};{telefon};CHYBA: {e}\n')
+            else:
+                print(f'  ✗ [{i}] {jmeno} → {telefon}  CHYBA: {info_sms}')
+                log.write(f'{kanonId};{jmeno};{telefon};CHYBA: {info_sms}\n')
                 chyba += 1
+            time.sleep(PRODLEVA)
 
     print()
     print(f'✓ Odesláno:   {odeslano}')
