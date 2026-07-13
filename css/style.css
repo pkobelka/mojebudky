@@ -1092,7 +1092,8 @@ html, body {
   .logo-text { display: none; }
   .logo-autor { display: none; }
   .nav-logo { padding: 3px 6px; gap: 6px; border: none; background: none; }
-  .btn-login { font-size: 0.78rem; padding: 6px 8px; max-width: 120px; overflow: hidden; text-overflow: ellipsis; }
+  .btn-login { font-size: 0.78rem; padding: 6px 8px; }
+  .btn-login.prihlaseny { max-width: 120px; overflow: hidden !important; text-overflow: ellipsis; white-space: nowrap; }
   .stats-grid { grid-template-columns: 1fr 1fr; gap: 4px; padding: 6px; }
   .stat-value { font-size: 1.6rem; }
   .stat-label { font-size: 0.7rem; }
