@@ -2,6 +2,16 @@
   "rules": {
     ".read": false,
     ".write": false,
+
+    "aquactrl_udalosti":    { ".read": "auth != null", ".write": "auth != null" },
+    "aquactrl_ukoly":       { ".read": "auth != null", ".write": "auth != null", ".indexOn": ["resitel", "stav"] },
+    "aquactrl_absence":     { ".read": "auth != null", ".write": "auth != null" },
+    "aquactrl_zarizeni":    { ".read": "auth != null", ".write": "auth != null" },
+    "aquactrl_presence":    { ".read": "auth != null", ".write": "auth != null" },
+    "aquactrl_push_tokens": { ".read": "auth != null", ".write": "auth != null" },
+    "aquactrl_outbox":      { ".read": "auth != null", ".write": "auth != null" },
+    "aquactrl_login_email": { ".read": "auth != null", ".write": "auth.token.admin === true" },
+
     "presence":          { ".read": true, ".write": true },
     "aktivita":          { ".read": true, ".write": true },
     "budky_edit":        { ".read": true, ".write": true },
@@ -17,17 +27,6 @@
     "push_tokens": {
       "$id": { ".read": true, ".write": true }
     },
-    "aquactrl_push_tokens": {
-      "$id": { ".read": true, ".write": true }
-    },
-    "aquactrl_outbox": {
-      "$id": { ".read": true, ".write": true }
-    },
-    "aquactrl_udalosti": { ".read": true, ".write": true },
-    "aquactrl_ukoly":    { ".read": true, ".write": true, ".indexOn": ["resitel", "stav"] },
-    "aquactrl_zarizeni": { ".read": true, ".write": true },
-    "aquactrl_login_email": { ".read": "auth != null", ".write": "auth != null" },
-    "aquactrl_presence": { ".read": true, ".write": true },
     "zpravy_spravci": {
       "$loginId": { ".read": true, ".write": true }
     },
