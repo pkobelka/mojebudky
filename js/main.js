@@ -946,6 +946,7 @@ function ukazUvitaciToast() {
     if (!toast.isConnected) return;
     if (i < slova.length) {
       slova[i].classList.add('uvod-toast-slovo--viditelne');
+      slova[i].scrollIntoView({ block: 'nearest' });
       i++;
       setTimeout(dalsiSlovo, DOBA_SLOVO);
     } else {
