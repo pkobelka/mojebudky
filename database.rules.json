@@ -3,9 +3,25 @@
     ".read": false,
     ".write": false,
 
-    "aquactrl_udalosti":    { ".read": "auth != null", ".write": "auth != null" },
-    "aquactrl_ukoly":       { ".read": "auth != null", ".write": "auth != null", ".indexOn": ["resitel", "stav"] },
-    "aquactrl_absence":     { ".read": "auth != null", ".write": "auth != null" },
+    "aquactrl_udalosti": {
+      ".read": "auth != null",
+      "$id": {
+        ".write": "auth != null && ( auth.token.admin === true || (newData.exists() && (data.exists() || newData.child('zadal').val() === auth.token.person)) )"
+      }
+    },
+    "aquactrl_ukoly": {
+      ".read": "auth != null",
+      ".indexOn": ["resitel", "stav"],
+      "$id": {
+        ".write": "auth != null && ( auth.token.admin === true || (!data.exists() && newData.child('zadal').val() === auth.token.person) || (data.exists() && (data.child('zadal').val() === auth.token.person || data.child('resitel').val() === auth.token.person)) )"
+      }
+    },
+    "aquactrl_absence": {
+      ".read": "auth != null",
+      "$kdo": {
+        ".write": "auth != null && (auth.token.person === $kdo || auth.token.admin === true)"
+      }
+    },
     "aquactrl_zarizeni":    { ".read": "auth != null", ".write": "auth != null" },
     "aquactrl_presence":    { ".read": "auth != null", ".write": "auth != null" },
     "aquactrl_push_tokens": { ".read": "auth != null", ".write": "auth != null" },
