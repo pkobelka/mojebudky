@@ -165,3 +165,22 @@ exports.aquaUkolyCheck = functions.pubsub
     console.log(`aquaUkolyCheck: ${sends.length} upozornění, odesláno ${sentTotal} push.`);
     return null;
   });
+
+// ===== 3) Automatické přidělení identity (person claim) při prvním přihlášení =====
+// Když v Firebase Auth vznikne účet, podle e-mailu v aquactrl_login_email nastaví
+// custom claim `person` (a `admin` pro TŘ). Díky tomu má každý uživatel ověřenou
+// identitu hned od prvního přihlášení, bez ručního spouštění sync_person_claims.py.
+const ADMIN_CODES = ["TŘ"];
+exports.aquaSetPersonClaim = functions.auth.user().onCreate(async (user) => {
+  const email = String(user.email || "").trim().toLowerCase();
+  if (!email) return null;
+  const key = email.replace(/\./g, ",");
+  const snap = await admin.database().ref("aquactrl_login_email/" + key).get();
+  if (!snap.exists()) return null; // není to uživatel AquaCtrlu
+  const code = String(snap.val());
+  const claims = { person: code };
+  if (ADMIN_CODES.includes(code)) claims.admin = true;
+  await admin.auth().setCustomUserClaims(user.uid, claims);
+  console.log(`aquaSetPersonClaim: ${email} -> person=${code}`);
+  return null;
+});
