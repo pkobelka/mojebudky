@@ -23,11 +23,12 @@ SMSBRANA_HESLO = ''   # heslo k SMS Connectu (NE heslo k portálu!)
 SMSBRANA_URL = 'https://api.smsbrana.cz/smsconnect/http.php'
 
 # Text SMS — {osloveni}, {id}, {heslo} budou nahrazeny
+# Bez diakritiky a emoji: vejde se do jedné SMS (GSM7, 160 znaků) místo dvou (UCS-2, 70 znaku/cast)
 SMS_SABLONA = (
-    "Ahoj {osloveni}! 🏡 Tvůj přístup do MojeBudky.cz:\n"
+    "Ahoj {osloveni}! Tvuj pristup do MojeBudky.cz:\n"
     "ID: {id}\n"
     "Heslo: {heslo}\n"
-    "👉 mojebudky.cz\n"
+    "mojebudky.cz\n"
     "Petr Kobelka"
 )
 
