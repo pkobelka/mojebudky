@@ -63,6 +63,15 @@
     if (bar) { bar.style.cursor = jeAdmin ? 'pointer' : ''; bar.title = titulek; }
   });
 
+  // Živý poslech celkového počtu návštěv – jednorázové .once('value') hned po
+  // načtení stránky se může "přebít" s transakcí z .info/connected výše (SDK
+  // krátce vidí jen lokální optimistickou hodnotu), takže se místo toho
+  // přihlásíme na změny a zobrazení se samo opraví, jakmile dorazí server.
+  db.ref('navstevnost_celkem').on('value', snap => {
+    const el = document.getElementById('navst-celkem');
+    if (el) el.textContent = (snap.val() || 0).toLocaleString('cs-CZ');
+  });
+
   document.addEventListener('click', e => {
     const el  = document.getElementById('onlinePocet');
     const mob = document.getElementById('onlineMobile');
