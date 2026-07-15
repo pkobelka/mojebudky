@@ -20,7 +20,7 @@ jobs:
 
       - name: Vygeneruj číslo verze a vynuť čerstvou cache
         run: |
-          sed -i "s/__MB_VERZE__/${GITHUB_SHA::7}/; s/__MB_CAS__/$(TZ='Europe/Prague' date '+%-d.%-m.%Y %H:%M')/; s/__MB_BUILD__/${GITHUB_SHA::7}/g" index.html
+          sed -i "s/__MB_VERZE__/${{ github.run_number }}/; s/__MB_CAS__/$(TZ='Europe/Prague' date '+%-d.%-m.%Y %H:%M')/; s/__MB_BUILD__/${GITHUB_SHA::7}/g" index.html
 
       - name: Nahraj na FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
