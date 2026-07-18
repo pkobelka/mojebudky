@@ -28,6 +28,15 @@
     "aquactrl_outbox":      { ".read": "auth != null", ".write": "auth != null" },
     "aquactrl_login_email": { ".read": "auth != null", ".write": "auth.token.admin === true" },
 
+    "florian_kandidati":   { ".read": true, ".write": true },
+    "florian_domereni":    { ".read": true, ".write": true },
+    "florian_foto":        { ".read": true, ".write": true },
+    "florian_ukoly":       { ".read": true, ".write": true },
+    "florian_lide":        { ".read": true, ".write": true },
+    "florian_push_tokens": { ".read": true, ".write": true },
+    "florian_zarizeni":    { ".read": true, ".write": true },
+    "florian_outbox":      { ".read": true, ".write": true },
+
     "presence":          { ".read": true, ".write": true },
     "aktivita":          { ".read": true, ".write": true },
     "budky_edit":        { ".read": true, ".write": true },

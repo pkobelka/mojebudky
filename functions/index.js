@@ -111,6 +111,61 @@ exports.aquaNotify = functions.database
     return null;
   });
 
+// ===== 1b) Florián – push při vzniku úkolu (trigger: nový /florian_outbox/{id}) =====
+// Sesterská appka Florián (mapa požárních hydrantů) sdílí stejný Firebase projekt.
+// Vlastní tokeny (florian_push_tokens) i vlastní frontu (florian_outbox), aby se
+// nemíchala s AquaCtrlem. Logika je shodná s aquaNotify.
+const FLORIAN_URL = "https://pkobelka.github.io/florian/";
+exports.florianNotify = functions.database
+  .ref("/florian_outbox/{id}")
+  .onCreate(async (snap) => {
+    const data = snap.val() || {};
+    const title = String(data.title || "Florián");
+    const body = String(data.body || "");
+    const targets = Array.isArray(data.targets) ? data.targets : [];
+
+    // prázdné targets = broadcast všem; jinak jen osobám z targets (podle pole `person` u tokenu)
+    const tokensSnap = await admin.database().ref("florian_push_tokens").get();
+    const tokens = [];
+    tokensSnap.forEach((c) => {
+      const v = c.val() || {};
+      if (!v.token) return;
+      if (v.schvaleno === false) return;
+      if (!targets.length || (v.person && targets.includes(v.person))) {
+        tokens.push({ key: c.key, token: v.token });
+      }
+    });
+
+    if (!tokens.length) {
+      await snap.ref.update({ status: "no-recipients", sent: 0, done_ts: Date.now() });
+      return null;
+    }
+
+    const pushId = String(Date.now());
+    const messages = tokens.map((t) => ({
+      token: t.token,
+      webpush: { headers: { Urgency: "high" }, fcmOptions: { link: FLORIAN_URL } },
+      data: { push_id: pushId, title, body, url: FLORIAN_URL },
+    }));
+    const resp = await admin.messaging().sendEach(messages);
+
+    const dels = [];
+    resp.responses.forEach((r, i) => {
+      if (!r.success) {
+        const code = r.error && r.error.code;
+        if (code === "messaging/registration-token-not-registered" || code === "messaging/invalid-argument") {
+          dels.push(admin.database().ref("florian_push_tokens/" + tokens[i].key).remove());
+        }
+      }
+    });
+    await Promise.all(dels);
+
+    await snap.ref.update({
+      status: "sent", sent: resp.successCount, fail: resp.failureCount, done_ts: Date.now(),
+    });
+    return null;
+  });
+
 // ===== 2) Hlídání termínů úkolů (plánovač) =====
 const PRE_LEAD_MS = 60 * 60 * 1000;        // a) připomenutí 1 h před termínem
 const CONFIRM_GRACE_MS = 15 * 60 * 1000; // c) 15 min na potvrzení
