@@ -1,0 +1,24 @@
+name: Přidat lidi do týmu Florián (florian_lide)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  seed-florian-lide:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Nastav Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Instaluj závislosti
+        run: pip install firebase-admin
+
+      - name: Ulož service account key
+        run: echo '${{ secrets.FIREBASE_SERVICE_ACCOUNT }}' > service-account-key.json
+
+      - name: Přidej lidi do týmu
+        run: python seed_florian_lide.py
