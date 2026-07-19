@@ -1,0 +1,34 @@
+name: Povolit přihlášení do Floriána (florian_login_email)
+
+on:
+  workflow_dispatch:
+    inputs:
+      email:
+        description: 'Jeden e-mail k povolení (nepovinné; prázdné = doplní seznam ze skriptu)'
+        required: false
+        default: ''
+
+jobs:
+  seed-florian-login-email:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Nastav Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Instaluj závislosti
+        run: pip install firebase-admin
+
+      - name: Ulož service account key
+        run: echo '${{ secrets.FIREBASE_SERVICE_ACCOUNT }}' > service-account-key.json
+
+      - name: Povol e-maily
+        run: |
+          if [ -n "${{ github.event.inputs.email }}" ]; then
+            python seed_florian_login_email.py pridej "${{ github.event.inputs.email }}"
+          else
+            python seed_florian_login_email.py
+          fi

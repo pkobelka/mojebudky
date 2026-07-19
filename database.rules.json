@@ -36,6 +36,7 @@
     "florian_push_tokens": { ".read": true, ".write": true },
     "florian_zarizeni":    { ".read": true, ".write": true },
     "florian_outbox":      { ".read": true, ".write": true },
+    "florian_login_email": { ".read": "auth != null", ".write": "auth.token.admin === true" },
 
     "presence":          { ".read": true, ".write": true },
     "aktivita":          { ".read": true, ".write": true },
