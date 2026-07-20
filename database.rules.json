@@ -37,6 +37,8 @@
     "florian_zarizeni":    { ".read": "auth != null", ".write": "auth != null" },
     "florian_outbox":      { ".read": "auth != null", ".write": "auth != null" },
     "florian_login_email": { ".read": "auth != null", ".write": "auth.token.admin === true" },
+    "florian_revize":      { ".read": "auth != null", ".write": "auth.token.admin === true" },
+    "florian_config":      { ".read": "auth != null", ".write": "auth.token.admin === true" },
 
     "presence":          { ".read": true, ".write": true },
     "aktivita":          { ".read": true, ".write": true },
