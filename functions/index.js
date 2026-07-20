@@ -239,3 +239,79 @@ exports.aquaSetPersonClaim = functions.auth.user().onCreate(async (user) => {
   console.log(`aquaSetPersonClaim: ${email} -> person=${code}`);
   return null;
 });
+
+// ===== 3) Florián – denní kontrola blížícího se konce revize hydrantů =====
+// Platnost revize = 365 dní. Když efektivní datum revize spadá do okna
+// [0, práh] dní do konce, pošle push odpovědnému pracovišti/středisku (+ vedení).
+// Práh = florian_config/rev_warn (dní, default 30). Efektivní datum =
+// florian_domereni[id].datumRevize (živá editace) || florian_revize[id].d (základ z GISu).
+// Pošle jen JEDNOU pro dané datum revize (florian_config/rev_notified/{id}).
+// Vlastní odeslání řeší florianNotify přes frontu florian_outbox.
+const FLORIAN_REV_VALID_DAYS = 365;
+function florStrediskoOf(prac) { return String(prac || "").split(", pracoviště ")[0]; }
+function florRevTargets(prac, lide) {
+  const out = [];
+  const tStred = florStrediskoOf(prac);
+  Object.keys(lide || {}).forEach((pid) => {
+    const p = lide[pid] || {};
+    const r = p.role;
+    let send;
+    if (r === "Admin" || r === "TŘ" || r === "PŘ") send = true;                 // vedení = vše
+    else if (r === "Vedoucí střediska") send = prac ? (florStrediskoOf(p.pracoviste) === tStred) : true;
+    else send = prac ? (p.pracoviste === prac) : true;                           // vedoucí pracoviště + technik
+    if (send) out.push(pid);
+  });
+  return out;
+}
+function florParseCzDate(s) {
+  const m = String(s || "").trim().match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})$/);
+  return m ? new Date(+m[3], +m[2] - 1, +m[1]) : null;
+}
+function florPlurDen(n) { n = Math.abs(n); if (n === 1) return "den"; if (n >= 2 && n <= 4) return "dny"; return "dní"; }
+
+exports.florianRevizeCheck = functions.pubsub
+  .schedule("every day 07:00")
+  .timeZone("Europe/Prague")
+  .onRun(async () => {
+    const db = admin.database();
+    const [revSnap, domSnap, lideSnap, warnSnap, notSnap] = await Promise.all([
+      db.ref("florian_revize").get(),
+      db.ref("florian_domereni").get(),
+      db.ref("florian_lide").get(),
+      db.ref("florian_config/rev_warn").get(),
+      db.ref("florian_config/rev_notified").get(),
+    ]);
+    const revize = revSnap.val() || {};
+    if (!Object.keys(revize).length) { console.log("florianRevizeCheck: florian_revize prázdné, končím"); return null; }
+    const domereni = domSnap.val() || {};
+    const lide = lideSnap.val() || {};
+    let warn = parseInt(warnSnap.val(), 10); if (!(warn > 0)) warn = 30;
+    const notified = notSnap.val() || {};
+
+    const now = Date.now();
+    const notifUpd = {};
+    let queued = 0;
+
+    for (const id of Object.keys(revize)) {
+      const r = revize[id] || {};
+      const dom = domereni[id] || {};
+      const dateStr = (dom.datumRevize && String(dom.datumRevize).trim()) || (r.d && String(r.d).trim()) || "";
+      const d = florParseCzDate(dateStr);
+      if (!d) continue;
+      const daysLeft = FLORIAN_REV_VALID_DAYS - Math.floor((now - d.getTime()) / 86400000);
+      if (daysLeft < 0 || daysLeft > warn) continue;            // jen okno [0, práh]
+      const prev = notified[id];
+      if (prev && prev.date === dateStr) continue;              // pro toto datum už posláno
+      const prac = r.s || "";
+      const targets = florRevTargets(prac, lide);
+      if (!targets.length) continue;
+      const label = (r.u || ("hydrant " + id)) + (r.o ? (" (" + r.o + ")") : "");
+      const body = "🚦 Blíží se konec revize: " + label + " — zbývá " + daysLeft + " " + florPlurDen(daysLeft);
+      await db.ref("florian_outbox").push({ title: "🚦 Revize hydrantu", body: body, targets: targets, kind: "revize", hid: id, ts: Date.now() });
+      notifUpd[id] = { date: dateStr, daysLeft: daysLeft, ts: Date.now() };
+      queued++;
+    }
+    if (Object.keys(notifUpd).length) await db.ref("florian_config/rev_notified").update(notifUpd);
+    console.log("florianRevizeCheck: práh " + warn + " dní, zařazeno " + queued + " upozornění");
+    return null;
+  });
