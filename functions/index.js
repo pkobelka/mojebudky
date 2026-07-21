@@ -239,3 +239,102 @@ exports.aquaSetPersonClaim = functions.auth.user().onCreate(async (user) => {
   console.log(`aquaSetPersonClaim: ${email} -> person=${code}`);
   return null;
 });
+
+// ===== 4) Florián – denní kontrola revizí hydrantů =====
+// Denní přehled blížících se / prošlých revizí požárních hydrantů. Data:
+//   florian_revize/{id} = { d:datum revize (DD.MM.RRRR), s:středisko, o:obec, u:adresa, typ }
+//   živá editace florian_domereni/{id}.datumRevize má přednost před florian_revize/{id}.d
+//   práh „blíží se konec" = florian_config/rev_warn (fallback 30), platnost revize 365 dní
+// Příjemci (dle role v florian_lide) a rozsah přehledu:
+//   Admin, PŘ           -> celý přehled (všechny hydranty)
+//   Vedoucí střediska   -> jen hydranty ze svého střediska (vč. pracovišť pod ním)
+//   Vedoucí pracoviště  -> jen hydranty ze svého pracoviště
+//   ostatní (Technik…)  -> denní přehled nedostávají
+// Rozesílka jde přes frontu florian_outbox -> florianNotify (stejné tokeny/mechanika).
+const FL_REV_VALID_DAYS = 365;
+const FL_REV_DEFAULT_WARN = 30;
+function flStrediskoOf(prac) {
+  return String(prac || "").split(", pracoviště ")[0];
+}
+function flParseCzDate(s) {
+  const m = String(s || "").trim().match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})$/);
+  if (!m) return null;
+  const d = new Date(Number(m[3]), Number(m[2]) - 1, Number(m[1]));
+  return isNaN(d.getTime()) ? null : d.getTime();
+}
+exports.florianRevizeCheck = functions.pubsub
+  .schedule("every day 07:00")
+  .timeZone("Europe/Prague")
+  .onRun(async () => {
+    const [revSnap, domSnap, warnSnap, lideSnap] = await Promise.all([
+      admin.database().ref("florian_revize").get(),
+      admin.database().ref("florian_domereni").get(),
+      admin.database().ref("florian_config/rev_warn").get(),
+      admin.database().ref("florian_lide").get(),
+    ]);
+    if (!revSnap.exists()) {
+      console.log("florianRevizeCheck: žádná revizní data (florian_revize prázdné)");
+      return null;
+    }
+    const dom = domSnap.val() || {};
+    let warn = parseInt(warnSnap.val(), 10);
+    if (!(warn > 0)) warn = FL_REV_DEFAULT_WARN;
+    const now = Date.now();
+    const DAY = 24 * 60 * 60 * 1000;
+
+    // dotčené hydranty (po termínu nebo do prahu)
+    const items = []; // { dni, stred, adresa }
+    revSnap.forEach((c) => {
+      const r = c.val() || {};
+      const id = c.key;
+      const raw = (dom[id] && dom[id].datumRevize) || r.d; // živá editace má přednost
+      const t = flParseCzDate(raw);
+      if (t == null) return; // bez platného data neřešíme
+      const dni = Math.round((t + FL_REV_VALID_DAYS * DAY - now) / DAY);
+      if (dni > warn) return; // revize je v pořádku
+      items.push({ dni, stred: r.s || "", adresa: [r.o, r.u].filter(Boolean).join(" ") });
+    });
+    if (!items.length) {
+      console.log(`florianRevizeCheck: nic k hlášení (práh ${warn} d)`);
+      return null;
+    }
+
+    const lide = lideSnap.val() || {};
+    let sent = 0;
+    for (const pid of Object.keys(lide)) {
+      const p = lide[pid] || {};
+      const role = p.role;
+      let inScope;
+      if (role === "Admin" || role === "PŘ") {
+        inScope = () => true;
+      } else if (role === "Vedoucí střediska") {
+        inScope = (it) => flStrediskoOf(it.stred) === flStrediskoOf(p.pracoviste);
+      } else if (role === "Vedoucí pracoviště") {
+        inScope = (it) => it.stred === p.pracoviste;
+      } else {
+        continue; // Technik apod. – denní přehled nedostává
+      }
+      const mine = items.filter(inScope);
+      if (!mine.length) continue;
+
+      const overdue = mine.filter((x) => x.dni < 0).sort((a, b) => a.dni - b.dni);
+      const soon = mine.filter((x) => x.dni >= 0).sort((a, b) => a.dni - b.dni);
+      const parts = [];
+      if (overdue.length) parts.push(overdue.length + " po termínu");
+      if (soon.length) parts.push(soon.length + " do " + warn + " dní");
+      const sample = overdue.concat(soon).slice(0, 5).map((x) =>
+        (x.dni < 0 ? ("po termínu o " + (-x.dni) + " d") : ("zbývá " + x.dni + " d")) +
+        (x.adresa ? (" · " + x.adresa) : ""));
+      const body = parts.join(" · ") + (sample.length ? ("\n" + sample.join("\n")) : "");
+
+      await admin.database().ref("florian_outbox").push({
+        title: "🚦 Revize hydrantů – denní přehled",
+        body,
+        targets: [pid],
+        ts: Date.now(),
+      });
+      sent++;
+    }
+    console.log(`florianRevizeCheck: ${items.length} dotčených, odesláno ${sent} přehledů (práh ${warn} d).`);
+    return null;
+  });
