@@ -3,14 +3,15 @@
 Rozešle přihlašovací SMS správcům přes SMSbrana.cz (SMS Connect HTTP API).
 
 Použití:
-    python3 rozeslat_sms.py hesla.csv
+    python3 rozeslat_sms.py hesla.csv              # ostré odeslání
+    python3 rozeslat_sms.py hesla.csv --nanecisto  # jen náhled, nic se neodešle
 
 CSV musí obsahovat sloupce: ID (nebo číslo budky) a Heslo (plaintext).
 Telefony a jména se načtou z data/spravci_info.json.
 
 NIKDY nekomitovat hesla.csv ani tento skript s vyplněnými přihlašovacími údaji!
 """
-import csv, hashlib, json, re, sys, time, unicodedata, urllib.request, urllib.parse, uuid
+import contextlib, csv, hashlib, io, json, re, sys, time, unicodedata, urllib.request, urllib.parse, uuid
 import xml.etree.ElementTree as ET
 from datetime import datetime
 from pathlib import Path
@@ -102,14 +103,25 @@ def detekuj_sloupce(headers):
 # ── HLAVNÍ LOGIKA ─────────────────────────────────────────────────
 
 def main():
-    if not SMSBRANA_LOGIN or not SMSBRANA_HESLO:
+    args = sys.argv[1:]
+    # Režim nanečisto: nic se neodešle, jen se vypíše, komu by co odešlo.
+    DRY = any(a in ('--nanecisto', '--dry-run', '-n') for a in args)
+    pozicni = [a for a in args if not a.startswith('-')]
+    csv_path = pozicni[0] if pozicni else 'hesla.csv'
+
+    if not DRY and (not SMSBRANA_LOGIN or not SMSBRANA_HESLO):
         print('⛔  Vyplň SMSBRANA_LOGIN a SMSBRANA_HESLO v tomto skriptu.')
+        print('    Tip: nejdřív si vyzkoušej běh nanečisto:')
+        print(f'         python3 rozeslat_sms.py {csv_path} --nanecisto')
         sys.exit(1)
 
-    csv_path = sys.argv[1] if len(sys.argv) > 1 else 'hesla.csv'
     if not Path(csv_path).exists():
         print(f'⛔  Soubor {csv_path} nenalezen.')
         sys.exit(1)
+
+    if DRY:
+        print('🧪 REŽIM NANEČISTO — nic se NEodešle, jen náhled párování a textu SMS.')
+        print()
 
     info = nacti_info()
 
@@ -142,12 +154,16 @@ def main():
     print(f'📋 CSV: {csv_path}  |  ID ve sloupci {chr(65+id_col)}, Heslo ve sloupci {chr(65+heslo_col)}')
     print()
 
-    # Log soubor
+    # Log soubor (jen při ostrém odeslání; nanečisto jen vypisuje na obrazovku)
     log_path = 'sms_log.txt'
     odeslano = chyba = preskoceno = 0
+    ukazka_hotova = False
 
-    with open(log_path, 'w', encoding='utf-8') as log:
-        log.write('ID;Jméno;Telefon;Stav\n')
+    # V režimu nanečisto se nezakládá žádný soubor (aby se nikam neuložily telefony).
+    log_cm = open(log_path, 'w', encoding='utf-8') if not DRY else contextlib.nullcontext(io.StringIO())
+    with log_cm as log:
+        if not DRY:
+            log.write('ID;Jméno;Telefon;Stav\n')
 
         for i, row in enumerate(rows[1:], 1):
             if not row or len(row) <= max(id_col, heslo_col):
@@ -159,21 +175,38 @@ def main():
 
             kanonId = najdi_id(raw_id)
             if not kanonId:
-                print(f'  [{i}] ID {raw_id} — nenalezeno v JSON, přeskočeno')
-                log.write(f'{raw_id};;;přeskočeno – ID nenalezeno\n')
+                print(f'  ✗ [{i}] ID {raw_id} — nenalezeno v seznamu správců, přeskočeno')
+                if not DRY: log.write(f'{raw_id};;;přeskočeno – ID nenalezeno\n')
                 preskoceno += 1
                 continue
 
             zaznam = info[kanonId]
             jmeno    = zaznam.get('jmeno', raw_id)
+            prijmeni = zaznam.get('prijmeni', '')
             osloveni = zaznam.get('osloveni', jmeno)
             tel_raw  = zaznam.get('telefon', '')
             telefon  = normalizuj_telefon(tel_raw) if tel_raw else None
 
             if not telefon:
-                print(f'  [{i}] {jmeno} ({kanonId}) — chybí telefon, přeskočeno')
-                log.write(f'{kanonId};{jmeno};;přeskočeno – chybí telefon\n')
+                print(f'  ✗ [{i}] {jmeno} {prijmeni} ({kanonId}) — chybí telefon, přeskočeno')
+                if not DRY: log.write(f'{kanonId};{jmeno};;přeskočeno – chybí telefon\n')
                 preskoceno += 1
+                continue
+
+            if DRY:
+                # Heslo maskujeme (první + poslední znak), ať se nikde nezobrazuje celé.
+                heslo_mask = (heslo[0] + '•' * (len(heslo) - 2) + heslo[-1]) if len(heslo) > 2 else '••'
+                jmeno_full = f'{jmeno} {prijmeni}'.strip()
+                id_info = f'{raw_id} → {kanonId}' if raw_id != kanonId else kanonId
+                print(f'  ✓ [{i}] {jmeno_full:28} | ID {id_info:16} | {telefon:15} | heslo {heslo_mask}')
+                if not ukazka_hotova:
+                    ukazka = SMS_SABLONA.format(osloveni=osloveni, id=kanonId, heslo=heslo_mask)
+                    print('        ┌─ náhled textu SMS (heslo zamaskováno) ─────')
+                    for radek in ukazka.split('\n'):
+                        print(f'        │ {radek}')
+                    print('        └────────────────────────────────────────────')
+                    ukazka_hotova = True
+                odeslano += 1
                 continue
 
             zprava = SMS_SABLONA.format(
@@ -194,13 +227,21 @@ def main():
             time.sleep(PRODLEVA)
 
     print()
-    print(f'✓ Odesláno:   {odeslano}')
-    print(f'✗ Chyba:      {chyba}')
-    print(f'  Přeskočeno: {preskoceno}')
-    print(f'  Log:        {log_path}')
-    if chyba:
+    if DRY:
+        print('🧪 NANEČISTO — nic nebylo odesláno.')
+        print(f'   Odeslalo by se:  {odeslano}')
+        print(f'   Přeskočeno:      {preskoceno}')
         print()
-        print('Chybné záznamy jsou v sms_log.txt — lze spustit znovu jen pro ně.')
+        print('   Když sedí, spusť ostré odeslání (bez --nanecisto a s vyplněnou SMS bránou):')
+        print(f'         python3 rozeslat_sms.py {csv_path}')
+    else:
+        print(f'✓ Odesláno:   {odeslano}')
+        print(f'✗ Chyba:      {chyba}')
+        print(f'  Přeskočeno: {preskoceno}')
+        print(f'  Log:        {log_path}')
+        if chyba:
+            print()
+            print('Chybné záznamy jsou v sms_log.txt — lze spustit znovu jen pro ně.')
 
 if __name__ == '__main__':
     main()
