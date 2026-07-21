@@ -1672,7 +1672,7 @@ function _zobrazProfilSpravce(loginId, info, budkaText) {
 
       <div class="profil-header">
         <div class="profil-foto-wrap">
-          <img id="profilFotoNahled" src="${d.foto || 'img/Favikon.png'}" class="profil-foto profil-foto--klikatelna" alt="Foto správce" title="Kliknout pro změnu fotky">
+          <img id="profilFotoNahled" src="${d.foto || 'img/logo.svg'}" class="profil-foto profil-foto--klikatelna" alt="Foto správce" title="Kliknout pro změnu fotky">
           <button type="button" class="profil-foto-btn" id="profilFotoBtn" title="Nahrát nebo vyfotit">📷</button>
           <input type="file" id="profilFotoInputGalerie" accept="image/*" style="position:absolute;opacity:0;pointer-events:none;width:0;height:0">
           <input type="file" id="profilFotoInputKamera" accept="image/*" capture="environment" style="position:absolute;opacity:0;pointer-events:none;width:0;height:0">
