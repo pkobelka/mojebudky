@@ -70,6 +70,16 @@ def _norm(s):
     s = ''.join(c for c in s if not unicodedata.combining(c))
     return re.sub(r'[^a-z0-9]', '', s)
 
+def bez_diakritiky(s):
+    """Odstraní diakritiku, ale zachová velikost písmen i mezery (Péťo → Peto).
+
+    Drží celou SMS v GSM7 (160 znaků = 1 SMS). Bez toho jediná háčkovaná
+    litera v oslovení překlopí zprávu do UCS-2 (jen 70 znaků/část), takže
+    se rozpadne na 2 části a stojí dvakrát tolik.
+    """
+    return ''.join(c for c in unicodedata.normalize('NFKD', str(s))
+                   if not unicodedata.combining(c))
+
 def normalizuj_telefon(t):
     """Převede české číslo na +420xxxxxxxxx."""
     t = re.sub(r'[\s\-\(\)\/]', '', str(t))
@@ -183,7 +193,8 @@ def main():
             zaznam = info[kanonId]
             jmeno    = zaznam.get('jmeno', raw_id)
             prijmeni = zaznam.get('prijmeni', '')
-            osloveni = zaznam.get('osloveni', jmeno)
+            # Oslovení odháčkujeme, ať SMS zůstane v GSM7 (1 část, ne 2).
+            osloveni = bez_diakritiky(zaznam.get('osloveni', jmeno))
             tel_raw  = zaznam.get('telefon', '')
             telefon  = normalizuj_telefon(tel_raw) if tel_raw else None
 
