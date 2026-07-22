@@ -566,6 +566,7 @@
       setTimeout(() => input.focus(), 100);
     });
     zavrit.addEventListener('click', () => overlay.classList.remove('open'));
+    document.addEventListener('keydown', e => { if (e.key === 'Escape' && overlay.classList.contains('open')) overlay.classList.remove('open'); });
 
     async function spustHledani() {
       const q = input.value.trim();

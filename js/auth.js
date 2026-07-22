@@ -1458,11 +1458,16 @@ function _zobrazZadosti() {
       <div class="profil-form" id="zadostiObsah"><div style="color:var(--text-muted)">Načítám…</div></div>
     </div>`;
   document.body.appendChild(modal);
-  document.getElementById('zadostiZavrit').addEventListener('click', () => modal.remove());
-  modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
+  const _zavriZadosti = () => { modal.remove(); document.removeEventListener('keydown', _escZadosti); };
+  const _escZadosti = e => { if (e.key === 'Escape') _zavriZadosti(); };
+  document.getElementById('zadostiZavrit').addEventListener('click', _zavriZadosti);
+  modal.addEventListener('click', e => { if (e.target === modal) _zavriZadosti(); });
+  document.addEventListener('keydown', _escZadosti);
 
-  db.ref('admin_requests').once('value', snap => {
+  db.ref('admin_requests').once('value', async snap => {
     const data = snap.val() || {};
+    // Dohledání budky a celého jména podle loginId (zprávy samy budku neukládají)
+    const info = await _nactiSpravciInfo().catch(() => ({})) || {};
     const container = document.getElementById('zadostiObsah');
     let html = '';
 
@@ -1470,8 +1475,17 @@ function _zobrazZadosti() {
       const cas = z.ts ? new Date(z.ts).toLocaleString('cs-CZ') : '';
       const emailInfo = z.email && z.email !== '(neuvedeno)' ? ` · ${z.email}` : '';
       const mozeOdpovedet = !vyrizena && z.loginId && z.loginId !== 'navstevnik';
+      // Kdo a odkud píše – dohledání z dat správců podle loginId
+      const si = z.loginId ? info[z.loginId] : null;
+      const celeJmeno = si ? ((((si.jmeno || '') + ' ' + (si.prijmeni || '')).trim()) || z.jmeno || z.loginId) : (z.jmeno || z.loginId);
+      const budkaCislo = si
+        ? (Array.isArray(si.budky) && si.budky.length ? si.budky.map(b => b.cislo).join(', ')
+           : (si.budka_cislo != null ? String(si.budka_cislo) : ''))
+        : '';
+      const budkaInfo = budkaCislo ? ` <span class="zadost-budka">🏠 budka č. ${budkaCislo}</span>` : '';
+      const idInfo = z.loginId && z.loginId !== 'navstevnik' ? ` <span class="zadost-idlabel">ID ${z.loginId}</span>` : '';
       return `<div class="zadost-item${vyrizena ? ' zadost-item--vyrizena' : ''}" data-typ="${typ}" data-klic="${klic}">
-        <strong>${z.jmeno || z.loginId}</strong>${emailInfo} <span class="zadost-cas">${cas}</span>${vyrizena ? ' <span style="color:#6dcc6d;font-size:0.82rem">✓ vyřízeno</span>' : ''}<br>
+        <strong>${celeJmeno}</strong>${budkaInfo}${idInfo}${emailInfo} <span class="zadost-cas">${cas}</span>${vyrizena ? ' <span style="color:#6dcc6d;font-size:0.82rem">✓ vyřízeno</span>' : ''}<br>
         <span class="zadost-detail zadost-zprava-text">${z.text ? z.text.replace(/</g,'&lt;') : ''}</span><br>
         ${!vyrizena ? `<div class="zadost-btn-row">
           ${mozeOdpovedet ? `<button class="zadost-btn-odpovedet" data-loginid="${z.loginId}" data-jmeno="${z.jmeno || z.loginId}" data-klic="${klic}">💬 Odpovědět</button>` : ''}

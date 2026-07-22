@@ -67,6 +67,9 @@ html, body {
 .search-box input::placeholder { color: var(--text-muted); }
 .search-box button { background: none; border: none; color: var(--text-muted); padding: 8px 12px; cursor: pointer; font-size: 1.1rem; min-width: 44px; min-height: 44px; touch-action: manipulation; }
 .search-box button:hover { color: var(--text-light); }
+/* Vyhledávací overlay (tlačítko 🔍) musí jít otevřít na všech šířkách včetně PC –
+   dřív se pravidlo pro zobrazení nastavovalo jen do 1100px, takže na PC klik nic neudělal. */
+#mobileSearchOverlay.open { display: flex !important; }
 .btn-login { background: var(--orange); color: white; text-decoration: none; padding: 10px 22px; border-radius: 8px; font-size: 1.1rem; font-weight: 600; white-space: nowrap; transition: background 0.2s; border: none; cursor: pointer; }
 .btn-login:hover { background: var(--orange-dark); }
 
@@ -101,6 +104,9 @@ html, body {
 .modal-uvitani strong { color: var(--accent-gold); }
 .modal-zavrit { position: absolute; top: 0.9rem; right: 1.2rem; background: none; border: none; color: var(--text-muted); font-size: 2rem; line-height: 1; cursor: pointer; }
 .modal-zavrit:hover { color: var(--text-light); }
+/* Křížek na kartě/žádostech správce – zelené pozadí hlavičky, tlumená barva byla skoro neviditelná */
+.profil-box .modal-zavrit { top: 12px; right: 12px; width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; color: #fff; background: rgba(0,0,0,0.32); border-radius: 50%; z-index: 5; }
+.profil-box .modal-zavrit:hover { background: rgba(0,0,0,0.5); color: #fff; }
 .modal-logo-wrap { margin-bottom: 1.2rem; }
 .modal-logo-wrap img { filter: brightness(1.3); width: 80px; }
 .modal-nadpis { color: var(--accent-gold); font-size: 1.9rem; margin-bottom: 0.5rem; }
@@ -952,6 +958,8 @@ html, body {
 .popup-spravce-stav { font-size: 0.85rem; font-weight: normal; margin-left: 4px; }
 .popup-aktivni-datum { color: var(--text-muted); font-size: 0.83rem; }
 .zadost-cas { color: var(--text-muted); font-size: 0.82rem; }
+.zadost-budka { color: var(--accent-gold); font-size: 0.82rem; font-weight: 600; white-space: nowrap; }
+.zadost-idlabel { color: var(--text-muted); font-size: 0.8rem; white-space: nowrap; }
 .zadost-btn-ok { margin-top: 8px; background: #2d7a2d; border: none; border-radius: 6px; color: #fff; padding: 6px 16px; font-size: 0.9rem; cursor: pointer; min-height: 44px; touch-action: manipulation; }
 .zadost-btn-ok:hover { background: #3aaa3a; }
 
