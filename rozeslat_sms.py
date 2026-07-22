@@ -32,7 +32,7 @@ SMS_SABLONA = (
     "Ahoj {osloveni}! Tvuj pristup do MojeBudky.cz:\n"
     "ID: {id}\n"
     "Heslo: {heslo}\n"
-    "mojebudky.cz\n"
+    "www.mojebudky.cz\n"
     "Petr Kobelka"
 )
 
