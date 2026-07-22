@@ -3,8 +3,11 @@
 Rozešle přihlašovací SMS správcům přes SMSbrana.cz (SMS Connect HTTP API).
 
 Použití:
-    python3 rozeslat_sms.py hesla.csv              # ostré odeslání
+    python3 rozeslat_sms.py hesla.csv              # ostré odeslání přes SMS Connect API
     python3 rozeslat_sms.py hesla.csv --nanecisto  # jen náhled, nic se neodešle
+    python3 rozeslat_sms.py hesla.csv --pro-web     # vygeneruje pro_web.csv pro webovou
+                                                    #   „CSV rozesílku" na SMSbrana.cz
+                                                    #   (nic neodesílá, netřeba SMS Connect)
 
 CSV musí obsahovat sloupce: ID (nebo číslo budky) a Heslo (plaintext).
 Telefony a jména se načtou z data/spravci_info.json.
@@ -110,14 +113,115 @@ def detekuj_sloupce(headers):
             heslo_col = i
     return id_col, heslo_col
 
+# ── REŽIM PRO WEB (CSV rozesílka na SMSbrana.cz) ──────────────────
+
+def rezim_pro_web(csv_path, vystup='pro_web.csv', jeden_radek=False):
+    """Vygeneruje CSV pro hromadnou „CSV rozesílku" na webu SMSbrana.cz.
+
+    Nic neodesílá a nepotřebuje SMS Connect údaje — jen připraví soubor,
+    který se pak nahraje ve webovém dialogu (krok 1/3).
+
+    Formát dle uploaderu:
+      • jeden řádek = jedna SMS
+      • 'telefon;text'  (středník odděluje číslo od textu)
+      • telefon v mezinárodním formátu +420xxxxxxxxx
+      • kódování windows-1250 (výchozí v dialogu)
+
+    Text je vícedřádkový (kvůli čitelnosti), proto se pole s textem uzavírá
+    do uvozovek (standardní CSV). Kdyby to importér nezvládl, spusť s
+    přepínačem --jeden-radek, který text zploští do jednoho řádku.
+    """
+    info = nacti_info()
+
+    num_idx = {}
+    for k in info:
+        try: num_idx[int(k)] = k
+        except ValueError: pass
+
+    def najdi_id(raw):
+        raw = raw.strip()
+        if raw in info: return raw
+        try: return num_idx.get(int(raw))
+        except ValueError: return None
+
+    with open(csv_path, newline='', encoding='utf-8-sig') as f:
+        content = f.read()
+    sep = ';' if content.count(';') >= content.count(',') else ','
+    rows = list(csv.reader(content.splitlines(), delimiter=sep))
+    if not rows:
+        print('CSV je prázdné.'); sys.exit(1)
+
+    id_col, heslo_col = detekuj_sloupce(rows[0])
+    if id_col is None or heslo_col is None:
+        print(f'Nalezená záhlaví: {rows[0]}')
+        print('⛔  Nenalezen sloupec ID nebo Heslo. Zkontroluj záhlaví CSV.')
+        sys.exit(1)
+
+    pripraveno = preskoceno = 0
+    with open(vystup, 'w', newline='', encoding='cp1250', errors='replace') as out:
+        w = csv.writer(out, delimiter=';')
+        for i, row in enumerate(rows[1:], 1):
+            if not row or len(row) <= max(id_col, heslo_col):
+                continue
+            raw_id = row[id_col].strip()
+            heslo  = row[heslo_col].strip()
+            if not raw_id or not heslo:
+                continue
+
+            kanonId = najdi_id(raw_id)
+            if not kanonId:
+                print(f'  ✗ [{i}] ID {raw_id} — nenalezeno v seznamu správců, přeskočeno')
+                preskoceno += 1
+                continue
+
+            zaznam   = info[kanonId]
+            osloveni = bez_diakritiky(zaznam.get('osloveni', zaznam.get('jmeno', raw_id)))
+            telefon  = normalizuj_telefon(zaznam.get('telefon', '') or '')
+            if not telefon:
+                jm = zaznam.get('jmeno', raw_id)
+                print(f'  ✗ [{i}] {jm} ({kanonId}) — chybí telefon, přeskočeno')
+                preskoceno += 1
+                continue
+
+            text = SMS_SABLONA.format(osloveni=osloveni, id=kanonId, heslo=heslo)
+            if jeden_radek:
+                text = text.replace('\n', ' ')
+            w.writerow([telefon, text])
+            pripraveno += 1
+
+    print()
+    print(f'✓ Připraveno k nahrání: {pripraveno} SMS  →  {vystup}')
+    if preskoceno:
+        print(f'  Přeskočeno:          {preskoceno} (chybí telefon / neznámé ID)')
+    print()
+    print('Nahraj soubor na SMSbrana.cz → „CSV rozesílka" (krok 1/3):')
+    print('   • Kódování:  windows-1250')
+    print('   • Oddělovač: středník (;) nebo Automaticky')
+    print('   • Nejdřív otestuj na svém čísle — SMSbrana to sama doporučuje.')
+    print()
+    print(f'⚠️  {vystup} obsahuje telefony i hesla v plaintextu — po nahrání ho smaž.')
+
 # ── HLAVNÍ LOGIKA ─────────────────────────────────────────────────
 
 def main():
     args = sys.argv[1:]
     # Režim nanečisto: nic se neodešle, jen se vypíše, komu by co odešlo.
     DRY = any(a in ('--nanecisto', '--dry-run', '-n') for a in args)
+    # Režim pro web: vygeneruje CSV pro hromadnou rozesílku na SMSbrana.cz.
+    PRO_WEB = any(a in ('--pro-web', '--web') for a in args)
+    JEDEN_RADEK = any(a in ('--jeden-radek', '--flat') for a in args)
     pozicni = [a for a in args if not a.startswith('-')]
     csv_path = pozicni[0] if pozicni else 'hesla.csv'
+
+    if PRO_WEB:
+        if not Path(csv_path).exists():
+            print(f'⛔  Soubor {csv_path} nenalezen.')
+            sys.exit(1)
+        print('🌐 REŽIM PRO WEB — generuji CSV pro hromadnou rozesílku na SMSbrana.cz.')
+        print('   Nic se neodesílá, SMS Connect údaje nejsou potřeba.')
+        print()
+        rezim_pro_web(csv_path, jeden_radek=JEDEN_RADEK)
+        return
 
     if not DRY and (not SMSBRANA_LOGIN or not SMSBRANA_HESLO):
         print('⛔  Vyplň SMSBRANA_LOGIN a SMSBRANA_HESLO v tomto skriptu.')
