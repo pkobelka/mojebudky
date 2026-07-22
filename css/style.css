@@ -821,6 +821,11 @@ html, body {
 .profil-id-wrap { font-size: 0.95rem; color: var(--text-muted); }
 .profil-id { color: var(--accent-gold); font-weight: 700; letter-spacing: 1px; }
 .profil-form { padding: 28px 36px; display: flex; flex-direction: column; gap: 20px; }
+
+/* Žádosti správců — dlouhý seznam zpráv jde srolovat uvnitř boxu.
+   Bez toho box přeroste obrazovku (overflow:hidden) a spodek zpráv se ořízne. */
+#modalZadosti .profil-box { max-height: 90vh; display: flex; flex-direction: column; }
+#modalZadosti .profil-form { flex: 1 1 auto; min-height: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; }
 .profil-row { display: flex; gap: 16px; flex-wrap: wrap; }
 .profil-field { display: flex; flex-direction: column; gap: 8px; flex: 1; min-width: 120px; }
 .profil-field--wide { min-width: 180px; flex: 2; }
