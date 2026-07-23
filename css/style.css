@@ -1238,6 +1238,14 @@ body { background: linear-gradient(180deg, #f3f9ec 0%, #e9f3df 100%); }
 .search-box button:hover { color: #1c5c10; }
 .btn-napsat { background: #eef4e8; color: #2e4a22; border-color: #d6e6c8; font-size: 1.1rem; padding: 12px 20px; }
 .btn-napsat:hover { background: #e0eed4; color: #1c5c10; }
+/* Návod pro správce – ve světlém navbaru měl světlý text a mizel (stejná úprava jako btn-napsat) */
+.btn-navod { background: #eef4e8; color: #2e4a22; border-color: #d6e6c8; font-size: 1.05rem; padding: 12px 18px; }
+.btn-navod:hover { background: #e0eed4; color: #1c5c10; }
+/* Lupa (🔍) na desktopu – byla malá a nenápadná; teď plnohodnotné světlé tlačítko */
+@media (min-width: 1101px) {
+  .nav-search-mobile-btn { display: flex; align-items: center; justify-content: center; background: #eef4e8; color: #2e4a22; border: 1px solid #d6e6c8; border-radius: 10px; font-size: 1.4rem; min-width: 50px; min-height: 50px; padding: 0 14px; cursor: pointer; transition: background 0.2s; }
+  .nav-search-mobile-btn:hover { background: #e0eed4; }
+}
 .btn-login { font-size: 1.15rem !important; padding: 12px 26px !important; }
 .nav-hamburger span { background: #2e4a22; }
 
