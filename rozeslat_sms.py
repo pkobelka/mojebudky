@@ -71,16 +71,22 @@ def _norm(s):
     return re.sub(r'[^a-z0-9]', '', s)
 
 def normalizuj_telefon(t):
-    """Převede české číslo na +420xxxxxxxxx."""
+    """Převede české (+420) i slovenské (+421) číslo na mezinárodní formát.
+
+    Devítimístné číslo začínající 9 je slovenské mobilní (+421),
+    ostatní devítimístná bereme jako česká (+420).
+    """
     t = re.sub(r'[\s\-\(\)\/]', '', str(t))
     if t.startswith('00420'):
         t = '+420' + t[5:]
-    elif t.startswith('420') and len(t) == 12:
+    elif t.startswith('00421'):
+        t = '+421' + t[5:]
+    elif t.startswith(('420', '421')) and len(t) == 12:
         t = '+' + t
     elif t.startswith('+'):
         pass
     elif len(t) == 9:
-        t = '+420' + t
+        t = ('+421' if t[0] == '9' else '+420') + t
     return t if re.fullmatch(r'\+\d{9,15}', t) else None
 
 def nacti_info():
@@ -156,8 +162,9 @@ def main():
 
     # Log soubor (jen při ostrém odeslání; nanečisto jen vypisuje na obrazovku)
     log_path = 'sms_log.txt'
-    odeslano = chyba = preskoceno = 0
+    odeslano = chyba = preskoceno = duplicit = 0
     ukazka_hotova = False
+    poslane_telefony = set()   # jeden telefon = jedna SMS (i kdyby byl v CSV vícekrát)
 
     # V režimu nanečisto se nezakládá žádný soubor (aby se nikam neuložily telefony).
     log_cm = open(log_path, 'w', encoding='utf-8') if not DRY else contextlib.nullcontext(io.StringIO())
@@ -192,6 +199,15 @@ def main():
                 if not DRY: log.write(f'{kanonId};{jmeno};;přeskočeno – chybí telefon\n')
                 preskoceno += 1
                 continue
+
+            # Dedup: na jedno číslo pošli jen jednu SMS (i kdyby ho CSV mělo víckrát,
+            # např. správce s více budkami).
+            if telefon in poslane_telefony:
+                print(f'  ⃔ [{i}] {jmeno} {prijmeni} ({kanonId}) → {telefon} — duplicitní telefon, přeskočeno')
+                if not DRY: log.write(f'{kanonId};{jmeno};{telefon};přeskočeno – duplicitní telefon\n')
+                duplicit += 1
+                continue
+            poslane_telefony.add(telefon)
 
             if DRY:
                 # Heslo maskujeme (první + poslední znak), ať se nikde nezobrazuje celé.
@@ -230,6 +246,7 @@ def main():
     if DRY:
         print('🧪 NANEČISTO — nic nebylo odesláno.')
         print(f'   Odeslalo by se:  {odeslano}')
+        print(f'   Duplicitní tel.: {duplicit}')
         print(f'   Přeskočeno:      {preskoceno}')
         print()
         print('   Když sedí, spusť ostré odeslání (bez --nanecisto a s vyplněnou SMS bránou):')
@@ -237,6 +254,7 @@ def main():
     else:
         print(f'✓ Odesláno:   {odeslano}')
         print(f'✗ Chyba:      {chyba}')
+        print(f'  Duplicitní: {duplicit}')
         print(f'  Přeskočeno: {preskoceno}')
         print(f'  Log:        {log_path}')
         if chyba:
