@@ -718,7 +718,12 @@ function inicializujFullscreenMapu() {
     }
   }
 
-  navMapa.addEventListener('click', e => { e.preventDefault(); rozbalMapu(); });
+  navMapa.addEventListener('click', e => {
+    e.preventDefault();
+    // Nejdřív posuň k mapě (jinak se rozbalí mimo obrazovku a vypadá to, že se nic nestalo)
+    document.querySelector('.map-wrapper')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    rozbalMapu();
+  });
 
   if (mapWrapper) {
     const hint = document.createElement('div');
