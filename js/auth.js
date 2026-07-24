@@ -1571,7 +1571,12 @@ function _zobrazZadosti() {
           await db.ref(`admin_requests/zpravy/${btnOdeslatOdpoved.dataset.klic}/vyrizeno`).set(true);
           wrap.innerHTML = '<span style="color:#4caf50">✓ Odpověď odeslána!</span>';
           btnOdeslatOdpoved.closest('.zadost-item')?.querySelectorAll('.zadost-btn-odpovedet,.zadost-btn-ok').forEach(b => b.disabled = true);
-        } catch { btnOdeslatOdpoved.disabled = false; }
+        } catch (err) {
+          btnOdeslatOdpoved.disabled = false;
+          let m = wrap.querySelector('.odpov-chyba');
+          if (!m) { m = document.createElement('div'); m.className = 'odpov-chyba'; m.style.cssText = 'color:#ff7070;font-size:0.85rem;margin-top:6px'; wrap.appendChild(m); }
+          m.textContent = '⚠ Nepodařilo se odeslat: ' + (err && err.message ? err.message : err);
+        }
         return;
       }
 
