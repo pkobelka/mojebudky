@@ -248,7 +248,7 @@ exports.aquaSetPersonClaim = functions.auth.user().onCreate(async (user) => {
 // Příjemci (dle role v florian_lide) a rozsah přehledu:
 //   Admin, PŘ           -> celý přehled (všechny hydranty)
 //   Vedoucí střediska   -> jen hydranty ze svého střediska (vč. pracovišť pod ním)
-//   Vedoucí pracoviště  -> jen hydranty ze svého pracoviště
+//   Vedoucí pracoviště, Mistr -> jen hydranty ze svého pracoviště
 //   ostatní (Technik…)  -> denní přehled nedostávají
 // Rozesílka jde přes frontu florian_outbox -> florianNotify (stejné tokeny/mechanika).
 const FL_REV_VALID_DAYS = 365;
@@ -309,8 +309,8 @@ exports.florianRevizeCheck = functions.pubsub
         inScope = () => true;
       } else if (role === "Vedoucí střediska") {
         inScope = (it) => flStrediskoOf(it.stred) === flStrediskoOf(p.pracoviste);
-      } else if (role === "Vedoucí pracoviště") {
-        inScope = (it) => it.stred === p.pracoviste;
+      } else if (role === "Vedoucí pracoviště" || role === "Mistr") {
+        inScope = (it) => it.stred === p.pracoviste; // Mistr = jako Vedoucí pracoviště (své pracoviště)
       } else {
         continue; // Technik apod. – denní přehled nedostává
       }
