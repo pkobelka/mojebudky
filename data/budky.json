@@ -2624,7 +2624,8 @@
     "ptak": null,
     "stav": "aktivni",
     "historie": null,
-    "foto_extra": 0
+    "foto_extra": 1,
+    "foto": "img/budky/203.jpg"
   },
   {
     "cislo": 204,
