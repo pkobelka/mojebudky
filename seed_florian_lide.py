@@ -23,6 +23,7 @@ PEOPLE = [
     ('Petr Kobelka',  'Admin',   ''),
     ('Tomáš Zvejška', 'PŘ',      ''),
     ('Dana Mikulková', 'Technik', ''),
+    ('Daniel Polák',  'GIS',     ''),  # správce GIS – vidí vše, nahrává změny do GISu
 ]
 
 
