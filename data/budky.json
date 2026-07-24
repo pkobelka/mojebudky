@@ -2615,6 +2615,19 @@
     "foto": "img/budky/201.jpeg"
   },
   {
+    "cislo": 203,
+    "nazev": null,
+    "typ": "32mm",
+    "instalace": "11.4.2026",
+    "lat": 49.63696,
+    "lng": 16.67571,
+    "ptak": null,
+    "stav": "aktivni",
+    "historie": null,
+    "foto_extra": 1,
+    "foto": "img/budky/203.jpg"
+  },
+  {
     "cislo": 204,
     "nazev": "Děda",
     "typ": "32mm",
@@ -2637,6 +2650,19 @@
     "stav": "aktivni",
     "historie": null,
     "foto_extra": 0
+  },
+  {
+    "cislo": 206,
+    "nazev": null,
+    "typ": "32mm",
+    "instalace": "8.3.2026",
+    "lat": 49.82437,
+    "lng": 14.63034,
+    "ptak": null,
+    "stav": "aktivni",
+    "historie": null,
+    "foto_extra": 1,
+    "foto": "img/budky/206.jpg"
   },
   {
     "cislo": 207,
