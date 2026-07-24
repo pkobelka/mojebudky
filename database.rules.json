@@ -36,6 +36,7 @@
     "florian_push_tokens": { ".read": "auth != null", ".write": "auth != null" },
     "florian_zarizeni":    { ".read": "auth != null", ".write": "auth != null" },
     "florian_outbox":      { ".read": "auth != null", ".write": "auth != null" },
+    "florian_gis_requests":{ ".read": "auth != null", ".write": "auth != null" },
     "florian_login_email": { ".read": "auth != null", ".write": "auth.token.admin === true" },
     "florian_revize":      { ".read": "auth != null", ".write": "auth.token.admin === true" },
     "florian_config":      { ".read": "auth != null", ".write": "auth.token.admin === true" },
