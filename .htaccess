@@ -1,0 +1,9 @@
+# MojeBudky.cz – hlavičky cache
+# index.html se nikdy necachuje, ať uživatel vždy dostane aktuální verzi stránky
+# (a s ní i aktuální ?v= odkazy na CSS/JS). CSS/JS se můžou cachovat běžně –
+# mají v adrese ?v=<build>, takže se po nasazení stejně načtou čerstvé.
+<IfModule mod_headers.c>
+  <FilesMatch "\.html$">
+    Header set Cache-Control "no-cache, must-revalidate"
+  </FilesMatch>
+</IfModule>
