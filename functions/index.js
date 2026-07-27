@@ -166,6 +166,69 @@ exports.florianNotify = functions.database
     return null;
   });
 
+// ===== 1c) MojeBudky – push adminovi při nové zprávě z webu =====
+// Trigger: nový záznam v /admin_requests/zpravy/{id}. Sem píše jak veřejný
+// formulář "Napište nám" (loginId: "navstevnik"), tak správci přes "Napsat
+// adminovi" (jejich loginId). Pošle push jen na admin zařízení (Petr), aby
+// nemusel hlídat přeplněný e-mail. Formát zprávy shodný se send_push.py.
+const MB_URL = "https://pkobelka.github.io/mojebudky/";
+const MB_ICON = MB_URL + "img/icon-192.png";
+const MB_ADMIN_IDS = ["055496", "057496", "602356"]; // admin účty (vše Petr)
+
+exports.budkyZpravaNotify = functions.database
+  .ref("/admin_requests/zpravy/{id}")
+  .onCreate(async (snap) => {
+    const z = snap.val() || {};
+    const jmeno = String(z.jmeno || "Někdo").trim();
+    const odKoho = (z.loginId && z.loginId !== "navstevnik")
+      ? `${jmeno} (správce ${z.loginId})`
+      : `${jmeno} (návštěvník webu)`;
+    let text = String(z.text || "").replace(/\s+/g, " ").trim();
+    if (text.length > 140) text = text.slice(0, 138) + "…";
+    const title = "📨 Nová zpráva z webu";
+    const body = `${odKoho}: ${text}`;
+
+    // tokeny admina – pošli na všechna jeho zařízení s povolenými notifikacemi
+    const tokensSnap = await admin.database().ref("push_tokens").get();
+    const tokens = [];
+    tokensSnap.forEach((c) => {
+      if (!MB_ADMIN_IDS.includes(c.key)) return;
+      const v = c.val() || {};
+      if (v.token) tokens.push({ key: c.key, token: v.token });
+    });
+    if (!tokens.length) {
+      console.log("budkyZpravaNotify: admin nemá uložený push token – nic neodesláno.");
+      return null;
+    }
+
+    const pushId = String(Date.now());
+    const messages = tokens.map((t) => ({
+      token: t.token,
+      notification: { title, body },
+      webpush: {
+        headers: { Urgency: "high" },
+        notification: { title, body, icon: MB_ICON, badge: MB_ICON },
+        fcmOptions: { link: MB_URL },
+      },
+      data: { push_id: pushId, typ: "admin_zprava" },
+    }));
+    const resp = await admin.messaging().sendEach(messages);
+
+    // pročisti jen skutečně mrtvé tokeny (ne přechodné chyby)
+    const dels = [];
+    resp.responses.forEach((r, i) => {
+      if (!r.success) {
+        const code = r.error && r.error.code;
+        if (code === "messaging/registration-token-not-registered" || code === "messaging/invalid-argument") {
+          dels.push(admin.database().ref("push_tokens/" + tokens[i].key).remove());
+        }
+      }
+    });
+    await Promise.all(dels);
+    console.log(`budkyZpravaNotify: odesláno ${resp.successCount}/${tokens.length} push (od: ${odKoho}).`);
+    return null;
+  });
+
 // ===== 2) Hlídání termínů úkolů (plánovač) =====
 const PRE_LEAD_MS = 60 * 60 * 1000;        // a) připomenutí 1 h před termínem
 const CONFIRM_GRACE_MS = 15 * 60 * 1000; // c) 15 min na potvrzení
