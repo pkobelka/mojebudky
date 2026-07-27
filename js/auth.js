@@ -2926,6 +2926,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (modalNavod) {
     btnNavod?.addEventListener('click', () => { modalNavod.hidden = false; });
     document.getElementById('navNavodMobile')?.addEventListener('click', e => { e.preventDefault(); modalNavod.hidden = false; });
+    document.getElementById('odkazNavodStats')?.addEventListener('click', e => { e.preventDefault(); modalNavod.hidden = false; });
     navodZavrit?.addEventListener('click', () => { modalNavod.hidden = true; });
     modalNavod.addEventListener('click', e => { if (e.target === modalNavod) modalNavod.hidden = true; });
   }
