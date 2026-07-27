@@ -120,8 +120,11 @@ function aktualizujListu() {
     : '';
 
   const onlineText = window._lastOnlineText || '🟢 …';
+  const casBuildu = (window.MB_CAS && !window.MB_CAS.startsWith('__MB_CAS'))
+    ? ` · ${window.MB_CAS}`
+    : '';
   const verze = (window.MB_VERZE && !window.MB_VERZE.startsWith('__MB_VERZE'))
-    ? `&nbsp;|&nbsp;<span class="bar-verze" title="Verze aplikace">🏷️ verze ${window.MB_VERZE}</span>`
+    ? `&nbsp;|&nbsp;<span class="bar-verze" title="Verze aplikace a čas nasazení">🏷️ verze ${window.MB_VERZE}${casBuildu}</span>`
     : '';
   bar.innerHTML = `<span class="bar-left">${cal}&nbsp;|&nbsp;⏰ <span id="liveCas">${formatCas(d)}</span>${sva}${narozBar}&nbsp;|&nbsp;<span id="onlineBar" class="bar-online">${onlineText}</span>${verze}</span>`;
 }
