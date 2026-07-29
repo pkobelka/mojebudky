@@ -462,6 +462,7 @@ html, body {
 #modalNavod { align-items: flex-start; overflow-y: auto; padding: 40px 12px; }
 #modalNavod .modal-box { margin: 0 auto; }
 
+.navod-kroky-nadpis { text-align: left; color: var(--text-light); font-size: 1.08rem; font-weight: 700; margin: 1.6rem 0 0.8rem; }
 .navod-list { text-align: left; padding-left: 1.3rem; margin: 0; display: flex; flex-direction: column; gap: 0.9rem; color: var(--text-muted); font-size: 1.02rem; line-height: 1.6; }
 .navod-list strong { color: var(--accent-gold); }
 
@@ -677,9 +678,11 @@ html, body {
   .nav-links li { width: 100%; }
   .nav-links a { display: block; padding: 14px 20px; font-size: 1.1rem; border-bottom: 1px solid rgba(255,255,255,0.07); }
   /* Info bar: skryj hodiny a bar-right, jen datum + svátek */
-  .info-bar { padding: 5px 10px; font-size: 0.82rem; flex-wrap: wrap; overflow: hidden; }
+  .info-bar { padding: 5px 10px; font-size: 0.82rem; flex-wrap: wrap; overflow: visible; }
   .info-bar .bar-right { display: none; }
   .info-bar-cas { display: none; }
+  /* Verze na mobilu: vlastní řádek, ať se neustřihne mimo obrazovku */
+  .info-bar .bar-verze { display: block; width: 100%; margin-top: 3px; opacity: 0.9; }
   /* Mapa: první a plná výška viewportu */
   .map-wrapper { order: -1; height: calc(100svh - 90px); min-height: 280px; flex-shrink: 0; background: #a8d4f0; }
   #map { height: 100% !important; min-height: unset; }
