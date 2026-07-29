@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cyklistický kvíz pro Nikolu Drábka 🚴</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --zluta: #ffcc00;
+    --ruzova: #ff5da2;
+    --cervena: #e63329;
+    --tmava: #1b2a41;
+    --tmava2: #24344d;
+    --svetla: #f4f6fb;
+    --zelena: #2ecc71;
+    --seda: #8a99b0;
+  }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+    background: linear-gradient(160deg, #1b2a41 0%, #24344d 60%, #2c1d3a 100%);
+    color: var(--svetla);
+    min-height: 100vh;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 20px 14px 60px;
+  }
+  .wrap {
+    width: 100%;
+    max-width: 640px;
+  }
+  .card {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 20px;
+    padding: 28px 24px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+    backdrop-filter: blur(6px);
+  }
+
+  /* ÚVOD */
+  .hero { text-align: center; }
+  .medaile { font-size: 64px; line-height: 1; margin-bottom: 6px; }
+  .hero h1 { font-size: 30px; line-height: 1.2; margin-bottom: 6px; }
+  .hero h1 .grad {
+    background: linear-gradient(90deg, var(--zluta), var(--ruzova), var(--cervena));
+    -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .hero .podtit { color: var(--seda); font-size: 16px; margin-bottom: 20px; }
+  .jmeno-box {
+    background: rgba(255,255,255,0.05);
+    border-radius: 14px;
+    padding: 14px 16px;
+    margin: 0 auto 22px;
+    font-size: 15px;
+    line-height: 1.5;
+  }
+  .jmeno-box b { color: var(--zluta); }
+  .dresy { display: flex; justify-content: center; gap: 10px; margin: 18px 0 24px; }
+  .dres { width: 34px; height: 40px; border-radius: 6px 6px 3px 3px; position: relative; }
+  .dres::after { content:""; position:absolute; top:-6px; left:50%; transform:translateX(-50%); width:20px; height:10px; border-radius:10px 10px 0 0; background:inherit; }
+  .dres.zluta{background:var(--zluta);} .dres.ruzova{background:var(--ruzova);} .dres.cervena{background:var(--cervena);}
+
+  .btn {
+    display: inline-block;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+    font-weight: 700;
+    padding: 15px 28px;
+    border-radius: 999px;
+    background: linear-gradient(90deg, var(--zluta), #ffb300);
+    color: #3a2a00;
+    transition: transform .12s ease, box-shadow .12s ease;
+    box-shadow: 0 8px 22px rgba(255,179,0,0.35);
+  }
+  .btn:hover { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(255,179,0,0.5); }
+  .btn:active { transform: translateY(0); }
+  .btn.sekundar {
+    background: rgba(255,255,255,0.1); color: var(--svetla);
+    box-shadow: none; font-size: 16px; padding: 12px 22px;
+  }
+
+  /* PROGRESS */
+  .topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; font-size: 14px; color: var(--seda); }
+  .topbar .skore b { color: var(--zluta); }
+  .progress { height: 8px; background: rgba(255,255,255,0.08); border-radius: 999px; overflow: hidden; margin-bottom: 22px; }
+  .progress > i { display:block; height:100%; width:0; background: linear-gradient(90deg,var(--zluta),var(--ruzova)); transition: width .4s ease; }
+
+  .otazka { font-size: 21px; line-height: 1.35; font-weight: 700; margin-bottom: 20px; }
+  .odpovedi { display: flex; flex-direction: column; gap: 12px; }
+  .odp {
+    text-align: left;
+    background: rgba(255,255,255,0.06);
+    border: 2px solid rgba(255,255,255,0.08);
+    color: var(--svetla);
+    padding: 15px 16px;
+    border-radius: 14px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background .15s, border-color .15s, transform .1s;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .odp:hover:not(.disabled) { background: rgba(255,255,255,0.12); transform: translateX(3px); }
+  .odp .pism {
+    flex: 0 0 30px; height: 30px; border-radius: 8px;
+    background: rgba(255,255,255,0.12);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 15px;
+  }
+  .odp.spravne { border-color: var(--zelena); background: rgba(46,204,113,0.18); }
+  .odp.spravne .pism { background: var(--zelena); color: #06381d; }
+  .odp.spatne { border-color: var(--cervena); background: rgba(230,51,41,0.16); }
+  .odp.spatne .pism { background: var(--cervena); color: #fff; }
+  .odp.disabled { cursor: default; }
+  .odp.zbledni { opacity: .5; }
+
+  .feedback {
+    margin-top: 18px;
+    background: rgba(255,255,255,0.05);
+    border-left: 4px solid var(--zluta);
+    padding: 14px 16px;
+    border-radius: 10px;
+    font-size: 15px;
+    line-height: 1.5;
+    display: none;
+  }
+  .feedback.show { display: block; animation: fadeup .3s ease; }
+  .feedback .hl { font-weight: 700; }
+  .feedback.ok .hl { color: var(--zelena); }
+  .feedback.no .hl { color: var(--cervena); }
+  @keyframes fadeup { from { opacity:0; transform: translateY(8px);} to {opacity:1; transform:none;} }
+
+  .dalsi-radek { margin-top: 20px; text-align: right; min-height: 10px; }
+
+  /* VÝSLEDEK */
+  .vysledek { text-align: center; }
+  .vysledek .emoji { font-size: 66px; }
+  .vysledek h2 { font-size: 26px; margin: 8px 0; }
+  .kruh {
+    width: 150px; height: 150px; border-radius: 50%;
+    margin: 16px auto 10px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    background: conic-gradient(var(--zluta) var(--deg,0deg), rgba(255,255,255,0.08) 0deg);
+    position: relative;
+  }
+  .kruh::before { content:""; position:absolute; inset:12px; border-radius:50%; background:#1e2c44; }
+  .kruh .cislo { position: relative; font-size: 34px; font-weight: 800; }
+  .kruh .cislo small { font-size: 16px; color: var(--seda); font-weight: 600; }
+  .hodnoceni { font-size: 17px; line-height: 1.5; margin: 10px 0 22px; color: #dbe3f0; }
+  .hodnoceni .titul { display:block; font-size: 20px; font-weight: 800; color: var(--zluta); margin-bottom: 4px; }
+
+  .foot { text-align: center; color: var(--seda); font-size: 13px; margin-top: 22px; }
+  .foot b { color: #b9c4d6; }
+  .hidden { display: none; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="card">
+
+    <!-- ÚVODNÍ OBRAZOVKA -->
+    <div id="uvod" class="hero">
+      <div class="medaile">🚴‍♂️🏆</div>
+      <h1>Velký cyklistický kvíz<br><span class="grad">o slavných závodech</span></h1>
+      <p class="podtit">Tour de France · Giro d'Italia · Vuelta a další</p>
+      <div class="jmeno-box">
+        Připraveno pro <b>Nikolu Drábka</b> 🇨🇿<br>
+        mistra republiky v družstvech &amp; stříbrného v jednotlivcích,<br>
+        jezdce v barvách <b>Dukly Praha</b>. Hodně štěstí, šampione!
+      </div>
+      <div class="dresy" title="Dresy vedoucích jezdců Grand Tours">
+        <div class="dres zluta"></div>
+        <div class="dres ruzova"></div>
+        <div class="dres cervena"></div>
+      </div>
+      <button class="btn" onclick="start()">Spustit kvíz 🚀</button>
+      <p class="foot" style="margin-top:16px;">15 otázek · u každé se dozvíš zajímavost</p>
+    </div>
+
+    <!-- OBRAZOVKA OTÁZEK -->
+    <div id="hra" class="hidden">
+      <div class="topbar">
+        <span>Otázka <b id="cisloOt">1</b>/<span id="celkem">15</span></span>
+        <span class="skore">Skóre: <b id="skoreTxt">0</b></span>
+      </div>
+      <div class="progress"><i id="progressBar"></i></div>
+      <div class="otazka" id="otazkaTxt"></div>
+      <div class="odpovedi" id="odpovedi"></div>
+      <div class="feedback" id="feedback"></div>
+      <div class="dalsi-radek" id="dalsiRadek"></div>
+    </div>
+
+    <!-- VÝSLEDEK -->
+    <div id="konec" class="hidden vysledek">
+      <div class="emoji" id="konecEmoji">🎉</div>
+      <h2>Hotovo!</h2>
+      <div class="kruh" id="kruh"><span class="cislo"><span id="konecSkore">0</span><small>/15</small></span></div>
+      <div class="hodnoceni" id="hodnoceni"></div>
+      <button class="btn" onclick="restart()">Hrát znovu 🔄</button>
+      <p class="foot">Držíme palce na trati, Nikolo! 🚴‍♂️💨</p>
+    </div>
+
+  </div>
+  <p class="foot">Kvíz o nejslavnějších cyklistických závodech světa</p>
+</div>
+
+<script>
+const otazky = [
+  {
+    q: "Který závod je považovaný za nejslavnější a nejprestižnější cyklistický závod na světě?",
+    o: ["Giro d'Italia", "Tour de France", "Vuelta a España", "Paříž–Roubaix"],
+    spravne: 1,
+    fakt: "Tour de France se poprvé jela už v roce 1903 a každý červenec ji sledují stovky milionů diváků. Vítězství na „Staré dámě\" je snem každého profesionála."
+  },
+  {
+    q: "Jakou barvu má dres pro vedoucího jezdce Tour de France?",
+    o: ["Zelenou", "Růžovou", "Žlutou", "Červenou"],
+    spravne: 2,
+    fakt: "Žlutý dres (maillot jaune) má barvu podle novin L'Auto, které závod založily – tiskly se na žlutém papíře."
+  },
+  {
+    q: "Kolik etap má obvykle moderní Tour de France?",
+    o: ["14 etap", "18 etap", "21 etap", "25 etap"],
+    spravne: 2,
+    fakt: "Tour má 21 etap rozložených do tří týdnů a jezdci najedou zhruba 3 300–3 500 km. Mezi tím mají jen 2 dny volna."
+  },
+  {
+    q: "Jakou barvu má dres vedoucího jezdce na Giro d'Italia?",
+    o: ["Růžovou", "Žlutou", "Modrou", "Bílou"],
+    spravne: 0,
+    fakt: "Růžový dres (maglia rosa) je podle růžového papíru sportovních novin La Gazzetta dello Sport, které Giro pořádají."
+  },
+  {
+    q: "Jak se říká trojici Tour de France, Giro d'Italia a Vuelta a España dohromady?",
+    o: ["Monumenty", "Grand Tours", "Klasiky", "Světový pohár"],
+    spravne: 1,
+    fakt: "Grand Tours jsou tři třítýdenní etapové závody. Vyhrát všechny tři v jednom roce se povedlo jen výjimečně – je to jeden z nejtěžších sportovních výkonů vůbec."
+  },
+  {
+    q: "Ve které zemi se jede závod Vuelta a España?",
+    o: ["Itálie", "Francie", "Španělsko", "Belgie"],
+    spravne: 2,
+    fakt: "Vuelta se jede ve Španělsku, obvykle v srpnu a září. Vedoucí jezdec nosí červený dres (maillot rojo)."
+  },
+  {
+    q: "Kdo drží rekord v počtu 5 vítězství na Tour de France (a sdílí ho s dalšími legendami)?",
+    o: ["Mark Cavendish", "Eddy Merckx", "Chris Froome", "Peter Sagan"],
+    spravne: 1,
+    fakt: "Pětkrát vyhráli Tour Eddy Merckx, Jacques Anquetil, Bernard Hinault a Miguel Indurain. Belgičan Merckx bývá označován za nejlepšího cyklistu historie – přezdívalo se mu „Kanibal\"."
+  },
+  {
+    q: "Slavné stoupání na Tour de France Alpe d'Huez je proslulé čím?",
+    o: ["21 zatáčkami (serpentinami)", "Dlažebními kostkami", "Tím, že vede tunelem", "Sjezdem k moři"],
+    spravne: 0,
+    fakt: "Alpe d'Huez má 21 očíslovaných serpentin a stoupá přes 1 000 výškových metrů. Ve dnech závodu tam fandí i milion diváků."
+  },
+  {
+    q: "Jak se nazývá časově měřená etapa, kdy jezdec jede sám na čas proti hodinám?",
+    o: ["Sprint", "Časovka", "Prolog masa", "Peloton"],
+    spravne: 1,
+    fakt: "Časovka (individuální) je „souboj proti hodinám\". Existuje i časovka družstev, kde jede celý tým společně. Aerodynamika a tempo rozhodují o vteřinách."
+  },
+  {
+    q: "Jaká je přibližně průměrná rychlost vítěze celé Tour de France?",
+    o: ["asi 25 km/h", "asi 40 km/h", "asi 55 km/h", "asi 70 km/h"],
+    spravne: 1,
+    fakt: "Průměr vítěze bývá kolem 40 km/h – a to včetně brutálních horských etap! V rovinatých etapách letí peloton klidně přes 50 km/h a ve sprintu i přes 70 km/h."
+  },
+  {
+    q: "Který jednodenní závod má přezdívku „Peklo severu\" kvůli jízdě po dlažebních kostkách?",
+    o: ["Milán–San Remo", "Paříž–Roubaix", "Kolem Lombardie", "Amstel Gold Race"],
+    spravne: 1,
+    fakt: "Paříž–Roubaix se jede po starých dlažebních kostkách (pavé). Prach, bahno a otřesy z něj dělají jeden z nejtěžších jednodenních závodů světa."
+  },
+  {
+    q: "Jak se říká slavnému balíku jezdců, kteří jedou natěsno v jedné velké skupině?",
+    o: ["Karavana", "Peloton", "Štafeta", "Formace"],
+    spravne: 1,
+    fakt: "Peloton jede pohromadě hlavně kvůli aerodynamice – vpředu se dře a vzadu se šetří až 40 % sil. Proto je taktika a práce týmu tak důležitá."
+  },
+  {
+    q: "Nejvyšší bod v historii Tour de France leží ve výšce přes 2 700 m. Jak takovým vrcholům říkáme?",
+    o: ["Sprinterská prémie", "Horská prémie (kategorie HC)", "Bonusová zatáčka", "Cílová rovinka"],
+    spravne: 1,
+    fakt: "Nejtěžší kopce mají kategorii HC (hors catégorie = „mimo kategorii\"). Nejvýše se na Tour jelo přes Col de l'Iseran (2 770 m). Na Giru se nejvyšší vrchol každého ročníku jmenuje Cima Coppi."
+  },
+  {
+    q: "Jak se říká jezdci, který obětuje vlastní výsledek a pomáhá svému lídrovi (vozí lahve, chrání ho ve větru)?",
+    o: ["Kapitán", "Domestik", "Sprinter", "Vrchař"],
+    spravne: 1,
+    fakt: "Domestik (z francouzského domestique) je týmový pomocník. Bez obětavých domestiků by žádný lídr Tour nevyhrál – cyklistika je týmový sport, i když vítěz je jeden."
+  },
+  {
+    q: "Jakou barvu má dres mistra světa, který smí jeho držitel nosit celý rok?",
+    o: ["Zlatou", "Duhovou (barevné pruhy)", "Stříbrnou", "Černou"],
+    spravne: 1,
+    fakt: "Mistr světa nosí duhový dres (maillot arc-en-ciel) s pruhy modrá–červená–černá–žlutá–zelená. Je to jeden z nejcennějších dresů v celé cyklistice."
+  }
+];
+
+let index = 0;
+let skore = 0;
+let odpovezeno = false;
+
+const el = id => document.getElementById(id);
+
+function start() {
+  el('uvod').classList.add('hidden');
+  el('konec').classList.add('hidden');
+  el('hra').classList.remove('hidden');
+  el('celkem').textContent = otazky.length;
+  index = 0; skore = 0;
+  el('skoreTxt').textContent = '0';
+  zobrazOtazku();
+}
+
+function zobrazOtazku() {
+  odpovezeno = false;
+  const ot = otazky[index];
+  el('cisloOt').textContent = index + 1;
+  el('progressBar').style.width = ((index) / otazky.length * 100) + '%';
+  el('otazkaTxt').textContent = ot.q;
+  el('feedback').className = 'feedback';
+  el('feedback').innerHTML = '';
+  el('dalsiRadek').innerHTML = '';
+
+  const box = el('odpovedi');
+  box.innerHTML = '';
+  const pismena = ['A','B','C','D'];
+  ot.o.forEach((text, i) => {
+    const d = document.createElement('button');
+    d.className = 'odp';
+    d.innerHTML = '<span class="pism">' + pismena[i] + '</span><span>' + text + '</span>';
+    d.onclick = () => odpoved(i, d);
+    box.appendChild(d);
+  });
+}
+
+function odpoved(vybrano, prvek) {
+  if (odpovezeno) return;
+  odpovezeno = true;
+  const ot = otazky[index];
+  const vsechny = document.querySelectorAll('#odpovedi .odp');
+  vsechny.forEach((b, i) => {
+    b.classList.add('disabled');
+    if (i === ot.spravne) b.classList.add('spravne');
+    else if (i === vybrano) b.classList.add('spatne');
+    else b.classList.add('zbledni');
+  });
+
+  const spravne = vybrano === ot.spravne;
+  const fb = el('feedback');
+  if (spravne) {
+    skore++;
+    el('skoreTxt').textContent = skore;
+    fb.className = 'feedback show ok';
+    fb.innerHTML = '<span class="hl">✅ Správně!</span> ' + ot.fakt;
+  } else {
+    fb.className = 'feedback show no';
+    fb.innerHTML = '<span class="hl">❌ Není to ono.</span> Správná odpověď: <b>' +
+      ['A','B','C','D'][ot.spravne] + ') ' + ot.o[ot.spravne] + '</b>. ' + ot.fakt;
+  }
+
+  const posledni = index === otazky.length - 1;
+  const btn = document.createElement('button');
+  btn.className = 'btn sekundar';
+  btn.textContent = posledni ? 'Zobrazit výsledek 🏁' : 'Další otázka →';
+  btn.onclick = dalsi;
+  el('dalsiRadek').appendChild(btn);
+  el('progressBar').style.width = ((index + 1) / otazky.length * 100) + '%';
+}
+
+function dalsi() {
+  index++;
+  if (index < otazky.length) {
+    zobrazOtazku();
+  } else {
+    ukazKonec();
+  }
+}
+
+function ukazKonec() {
+  el('hra').classList.add('hidden');
+  el('konec').classList.remove('hidden');
+  el('konecSkore').textContent = skore;
+  const proc = skore / otazky.length;
+  el('kruh').style.setProperty('--deg', (proc * 360) + 'deg');
+
+  let emoji, titul, text;
+  if (proc === 1) {
+    emoji = '🏆'; titul = 'Šampion trati!';
+    text = 'Perfektní! Všech ' + otazky.length + ' správně. Znáš cyklistiku jako své boty do pedálů. Klobouk dolů, Nikolo!';
+  } else if (proc >= 0.8) {
+    emoji = '🥇'; titul = 'Zlatý dres!';
+    text = 'Skvělý výsledek! Vyznáš se v cyklistice na výbornou. Pár detailů dopilovat a je z tebe expert.';
+  } else if (proc >= 0.6) {
+    emoji = '🥈'; titul = 'Stupně vítězů!';
+    text = 'Pěkné! Máš dobrý přehled o slavných závodech. Ještě trénink a příště hraješ o zlato.';
+  } else if (proc >= 0.4) {
+    emoji = '🥉'; titul = 'V pelotonu!';
+    text = 'Dobrý základ! Něco už víš, ale je co objevovat. Dej si to znovu a poposkočíš dopředu.';
+  } else {
+    emoji = '🚴'; titul = 'Start ze zadu!';
+    text = 'Nevadí – i mistři jednou začínali. Přečti si zajímavosti u otázek a zkus to znovu, půjde to nahoru!';
+  }
+  el('konecEmoji').textContent = emoji;
+  el('hodnoceni').innerHTML = '<span class="titul">' + titul + '</span>' + text;
+}
+
+function restart() { start(); }
+</script>
+</body>
+</html>
