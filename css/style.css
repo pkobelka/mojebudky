@@ -954,6 +954,7 @@ html, body {
 .prehled-kontakt { font-size: 0.9rem; color: var(--accent-gold); text-decoration: none; }
 .prehled-kontakt:hover { text-decoration: underline; }
 .prehled-prazdny { font-size: 0.85rem; color: var(--text-muted); font-style: italic; }
+.prehled-notif-detail { font-size: 0.82rem; color: #7dd444; margin: 2px 0; }
 .zh-error { color: #ff9090; font-size: 0.9rem; margin-top: 10px; padding: 8px 10px; background: rgba(255,80,80,0.1); border-radius: 6px; }
 .zh-pravidla { background: rgba(255,200,0,0.07); border: 1px solid rgba(255,200,0,0.2); border-radius: 8px; padding: 10px 14px; margin-bottom: 16px; }
 .zh-pravidla-nadpis { color: var(--accent-gold); font-size: 0.85rem; font-weight: 700; margin-bottom: 4px; }

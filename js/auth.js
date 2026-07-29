@@ -844,16 +844,38 @@ async function _zobrazPrehledSpravcu() {
   ]);
   const pushTokeny = tokensSnap ? (tokensSnap.val() || {}) : {};
 
+  // Datum potvrzení notifikací (z ts, což je epoch v ms)
+  const _formatNotifDatum = ts => {
+    if (!ts) return '';
+    const d = new Date(ts);
+    if (isNaN(d)) return '';
+    return `${d.getDate()}. ${d.getMonth() + 1}. ${d.getFullYear()} ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
+  };
+  // Zařízení z user-agent řetězce
+  const _zarizeniZUA = ua => {
+    if (!ua) return '';
+    if (/iPhone|iPod/.test(ua))      return '📱 iPhone';
+    if (/iPad/.test(ua))             return '📱 iPad';
+    if (/Android/.test(ua))          return '📱 Android';
+    if (/Windows/.test(ua))          return '💻 Windows';
+    if (/Macintosh|Mac OS/.test(ua)) return '💻 Mac';
+    if (/Linux/.test(ua))            return '💻 Linux';
+    return '❔ neznámé';
+  };
+
   // Sestavit seznam pouze ze spravci_info.json (bez Firebase — fotky by způsobily zaseknutí)
   const vsichniSpravci = Object.entries(info || {}).map(([id, s]) => {
     const budkyList = s.budky ? s.budky : [{ cislo: s.budka_cislo, nazev: s.budka_nazev || '' }];
+    const tok = pushTokeny[id];
     return {
       id,
       jmeno:    s.jmeno    || '—',
       prijmeni: s.prijmeni || '',
       telefon:  s.telefon  || '',
       email:    s.email    || '',
-      maNotif:  !!(pushTokeny[id] && pushTokeny[id].token),
+      maNotif:  !!(tok && tok.token),
+      notifDatum:    tok ? _formatNotifDatum(tok.ts) : '',
+      notifZarizeni: tok ? _zarizeniZUA(tok.ua)      : '',
       budkaCisla: budkyList.map(b => String(b.cislo)),
       budkaNazvy: budkyList.map(b => (b.nazev || '').toLowerCase()),
       budkyText:  budkyList.map(b => b.cislo + (b.nazev ? ' – ' + b.nazev : '')).join(', '),
@@ -910,6 +932,7 @@ async function _zobrazPrehledSpravcu() {
     container.innerHTML = filtered.map(s => `
       <div class="prehled-radek">
         <div class="prehled-jmeno">${s.jmeno} ${s.prijmeni} <span class="prehled-id">· ID ${s.id} · 🏠 ${s.budkyText}</span> <span title="${s.maNotif ? 'Notifikace povoleny' : 'Notifikace nepovoleny'}" style="font-size:0.9rem">${s.maNotif ? '🔔' : '🔕'}</span></div>
+        ${s.maNotif && (s.notifDatum || s.notifZarizeni) ? `<div class="prehled-notif-detail">🔔 povoleno${s.notifDatum ? ' ' + s.notifDatum : ''}${s.notifZarizeni ? ' · ' + s.notifZarizeni : ''}</div>` : ''}
         ${s.telefon ? `<a class="prehled-kontakt" href="tel:${s.telefon}">📞 ${s.telefon}</a>` : '<span class="prehled-prazdny">bez telefonu</span>'}
         ${s.email   ? `<a class="prehled-kontakt" href="mailto:${s.email}">📧 ${s.email}</a>` : '<span class="prehled-prazdny">bez e-mailu</span>'}
       </div>`).join('');
