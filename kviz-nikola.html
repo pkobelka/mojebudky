@@ -102,6 +102,8 @@
   }
   .btn.tezky { background: linear-gradient(90deg, #ff6a6a, #d32f2f); color: #fff; box-shadow: 0 8px 22px rgba(211,47,47,0.4); }
   .btn.tezky:hover { box-shadow: 0 12px 28px rgba(211,47,47,0.55); }
+  .btn.pecky { background: linear-gradient(90deg, #b06bff, #7a2ff0); color: #fff; box-shadow: 0 8px 22px rgba(122,47,240,0.42); }
+  .btn.pecky:hover { box-shadow: 0 12px 28px rgba(122,47,240,0.58); }
   .urovne { display: flex; flex-direction: column; gap: 12px; align-items: stretch; max-width: 320px; margin: 0 auto; }
   .urovne .btn { width: 100%; }
   .konec-akce { display: flex; flex-direction: column; gap: 10px; align-items: stretch; max-width: 320px; margin: 4px auto 0; }
@@ -257,8 +259,9 @@
       <div class="urovne">
         <button class="btn puls" onclick="start(1)">Level 1 · Lehčí 🟢🚴</button>
         <button class="btn tezky" onclick="start(2)">Level 2 · Těžší 🔴🚵</button>
+        <button class="btn pecky" onclick="start(3)">Level 3 · Pecky 🟣🔥</button>
       </div>
-      <p class="foot" style="margin-top:16px;">2 úrovně · 15 otázek v každé · u každé se dozvíš zajímavost</p>
+      <p class="foot" style="margin-top:16px;">3 úrovně · 15 otázek v každé · u každé se dozvíš zajímavost</p>
     </div>
 
     <!-- OBRAZOVKA OTÁZEK -->
@@ -485,6 +488,99 @@ const otazkyTezke = [
   }
 ];
 
+const otazkyProfi = [
+  {
+    q: "Který jezdec jako jediný vyhrál v jednom roce Giro, Tour i mistrovství světa v silnici (tzv. Trojkorunu 1987)?",
+    o: ["Bernard Hinault", "Stephen Roche", "Greg LeMond", "Miguel Indurain"],
+    spravne: 1,
+    fakt: "Ir Stephen Roche zvládl v roce 1987 Trojkorunu – Giro, Tour i MS. Kromě něj to dokázal jen Eddy Merckx (1974)."
+  },
+  {
+    q: "Kdo drží současný absolutní hodinový rekord na dráze (přes 56 km za jednu hodinu, od roku 2022)?",
+    o: ["Filippo Ganna", "Wout van Aert", "Victor Campenaerts", "Bradley Wiggins"],
+    spravne: 0,
+    fakt: "Ital Filippo Ganna zajel v roce 2022 hodinovku 56,792 km. Hodinový rekord platí za jednu z nejtěžších zkoušek vůbec – hodinu naplno na dráze."
+  },
+  {
+    q: "Co se v pelotonu myslí pojmem „bonk\" (u nás „hlaďák\")?",
+    o: ["Defekt zadního kola", "Náhlé vyčerpání zásob cukru v těle", "Pád v zatáčce", "Trest od komisařů"],
+    spravne: 1,
+    fakt: "„Bonk\" (hunger knock) je stav, kdy dojdou zásoby glykogenu a tělo náhle odmítne. Proto jezdci jedí i za jízdy – klidně 100 g sacharidů za hodinu."
+  },
+  {
+    q: "Slavné stoupání „Poggio\" rozhoduje v samém závěru které z monumentálních klasik?",
+    o: ["Kolem Flander", "Milán–San Remo", "Il Lombardia", "Paříž–Roubaix"],
+    spravne: 1,
+    fakt: "Poggio di Sanremo je krátký kopeček pár kilometrů před cílem Milán–San Rema. Právě tady se často láme nejdelší jednodenní klasika (téměř 300 km)."
+  },
+  {
+    q: "Jak se říká taktice, kdy silný tým rozjede tempo v diagonále a v bočním větru „roztrhá\" peloton?",
+    o: ["Echelon (vějíř)", "Leadout", "Kontra", "Prolog"],
+    spravne: 0,
+    fakt: "Ve vějíři (echelon) se jezdci kryjí před bočním větrem po diagonále přes silnici. Kdo se do vějíře nevejde, zůstane „ve větru\" a rychle ztrácí."
+  },
+  {
+    q: "Nejvýše položená silnice, kudy kdy vedla Tour de France (Cime de la Bonette), je zhruba v jaké výšce?",
+    o: ["1 500 m", "2 100 m", "2 800 m", "3 400 m"],
+    spravne: 2,
+    fakt: "Cime de la Bonette má kolem 2 800 m. Ve výškách nad 2 000 m je citelně méně kyslíku, což z těchto stoupání dělá extrémní zkoušku."
+  },
+  {
+    q: "Co je typické pro dráhovou disciplínu „keirin\"?",
+    o: ["Jezdci startují za motorovým vodičem (dernym)", "Jede se pozpátku", "V zatáčkách se nesmí šlapat", "Vyhrává nejpomalejší"],
+    spravne: 0,
+    fakt: "Keirin pochází z Japonska: jezdci nejdřív drží tempo za motorkou (dernym), ta pak v posledních kolech odjede a vypukne zběsilý sprint. Je to olympijská disciplína."
+  },
+  {
+    q: "Kolik převodů a jaké brzdy mají dráhová kola sprinterů a stíhačů na velodromu?",
+    o: ["Jediný pevný převod, žádné brzdy", "Dva převody a jednu brzdu", "Klasických 22 převodů", "Elektronické řazení a kotouče"],
+    spravne: 0,
+    fakt: "Dráhová kola mají jediný pevný převod (fixed) – bez volnoběhu a bez brzd. Brzdí se protitlakem do pedálů. Přesně na takovém kole jede Nikola stíhací závod. 🚴"
+  },
+  {
+    q: "Který český jezdec vyhrál v roce 2022 horskou etapu na Giru d'Italia?",
+    o: ["Roman Kreuziger", "Zdeněk Štybar", "Jan Hirt", "Leopold König"],
+    spravne: 2,
+    fakt: "Jan Hirt vyhrál v roce 2022 horskou etapu na Giru – jeden z největších českých silničních úspěchů. Kreuziger, Štybar i König ale mají také skvělou kariéru."
+  },
+  {
+    q: "Co znamená na Tour de France přezdívka „lanterne rouge\"?",
+    o: ["Nejrychlejší sprinter", "Úplně poslední jezdec celkového pořadí", "Vedoucí vrchař", "Šéf týmu"],
+    spravne: 1,
+    fakt: "„Lanterne rouge\" (červená lucerna jako na konci vlaku) je poslední jezdec Tour. Bývá kupodivu docela populární – dojet celou Tour je samo o sobě obří výkon."
+  },
+  {
+    q: "Čím se hlavně liší časovkářské (TT) kolo od klasického silničního?",
+    o: ["Aero rám a nástavce řídítek pro co nejmenší odpor vzduchu", "Nemá vůbec převody", "Je schválně těžší", "Má široké pláště do bláta"],
+    spravne: 0,
+    fakt: "Časovkářská kola mají aero rám, plný zadní disk a nástavce, na kterých jezdec leží co nejníž. Na časovce se bojuje hlavně proti odporu vzduchu."
+  },
+  {
+    q: "V jakém sportu byl slovinská hvězda Primož Roglič juniorským mistrem světa, než přesedlal na kolo?",
+    o: ["Krasobruslení", "Skoky na lyžích", "Plavání", "Veslování"],
+    spravne: 1,
+    fakt: "Primož Roglič byl juniorský mistr světa ve skocích na lyžích! Na kolo přešel až kolem 22 let a stal se z něj vícenásobný vítěz Grand Tours."
+  },
+  {
+    q: "Které asturské stoupání na Vueltě je pověstné sklonem přes 20 % a přezdívá se mu „španělské peklo\"?",
+    o: ["Alto de l'Angliru", "Puerto de Navacerrada", "Lagos de Covadonga", "Sierra Nevada"],
+    spravne: 0,
+    fakt: "Alto de l'Angliru má úseky přes 23 %. Jezdci tu šplhají skoro krokem a potřebují extrémně lehké převody – jeden z nejtěžších kopců v cyklistice."
+  },
+  {
+    q: "Co je to v horských etapách „gruppetto\" (nebo „autobus\")?",
+    o: ["Skupina sprinterů a slabších vrchařů, kteří spolu hlídají časový limit", "První pomoc na trati", "Skupina novinářů", "Nejrychlejší únik dne"],
+    spravne: 0,
+    fakt: "„Gruppetto\" je skupina, do které se v horách stáhnou sprinteři a domestici. Společně si rozloží tempo tak, aby dojeli do časového limitu a mohli pokračovat."
+  },
+  {
+    q: "Belgická klasika s prudkými dlážděnými kopci („bergy\") jako Koppenberg a Muur se jmenuje jak?",
+    o: ["Kolem Flander (Ronde van Vlaanderen)", "Paříž–Roubaix", "Lutych–Bastogne–Lutych", "Gent–Wevelgem"],
+    spravne: 0,
+    fakt: "Ronde van Vlaanderen (Kolem Flander) je svátek belgické cyklistiky – krátké, ale brutálně strmé dlážděné kopce jako Koppenberg a Muur rozhodují o vítězi."
+  }
+];
+
 let uroven = 1;
 let otazky = otazkyLehke;
 
@@ -539,7 +635,7 @@ function konfety() {
 
 function start(u) {
   if (u) uroven = u;
-  otazky = (uroven === 2) ? otazkyTezke : otazkyLehke;
+  otazky = (uroven === 3) ? otazkyProfi : (uroven === 2) ? otazkyTezke : otazkyLehke;
   el('uvod').classList.add('hidden');
   el('konec').classList.add('hidden');
   el('hra').classList.remove('hidden');
@@ -639,14 +735,18 @@ function ukazKonec() {
     text = 'Nevadí – i mistři jednou začínali. Přečti si zajímavosti u otázek a zkus to znovu, půjde to nahoru!';
   }
   el('konecEmoji').textContent = emoji;
-  const urovenText = uroven === 2 ? '🔴 Level 2 · Těžší' : '🟢 Level 1 · Lehčí';
+  const urovenText = uroven === 3 ? '🟣 Level 3 · Pecky' : uroven === 2 ? '🔴 Level 2 · Těžší' : '🟢 Level 1 · Lehčí';
   el('hodnoceni').innerHTML = '<span class="uroven-znak">' + urovenText + '</span>'
     + '<span class="titul">' + titul + '</span>' + text;
-  el('prepniLevel').textContent = uroven === 2 ? 'Zkusit Level 1 · Lehčí 🟢' : 'Zkusit Level 2 · Těžší 🔴';
+  const prep = el('prepniLevel');
+  prep.className = 'btn';
+  if (uroven === 1) { prep.textContent = 'Zkusit Level 2 · Těžší 🔴'; prep.classList.add('tezky'); }
+  else if (uroven === 2) { prep.textContent = 'Zkusit Level 3 · Pecky 🟣🔥'; prep.classList.add('pecky'); }
+  else { prep.textContent = 'Zkusit Level 1 · Lehčí 🟢'; }
   if (proc >= 0.6) konfety();
 }
 
-function prepniLevel() { start(uroven === 2 ? 1 : 2); }
+function prepniLevel() { start(uroven === 3 ? 1 : uroven + 1); }
 function restart() { start(uroven); }
 </script>
 </body>
