@@ -539,7 +539,16 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging-compat.js"></script>
-<script>window.MB_VERZE = "__MB_VERZE__"; window.MB_CAS = "__MB_CAS__";</script>
+<script>
+  window.MB_VERZE = "__MB_VERZE__"; window.MB_CAS = "__MB_CAS__";
+  // Záložní verze pro hosting, který při nasazení nenahrazuje placeholdery
+  // (GitHub Pages / Firebase Hosting servírují soubory z gitu „tak jak jsou").
+  // Toto ručně zvyš při každé změně, ať správci vždy poznají aktuální verzi.
+  if (!window.MB_VERZE || window.MB_VERZE.indexOf("__MB_VERZE") === 0) {
+    window.MB_VERZE = "2026.07.29-1";
+    window.MB_CAS = "29. 7. 2026";
+  }
+</script>
 <script src="js/svatky.js?v=__MB_BUILD__"></script>
 <script src="js/mapa.js?v=__MB_BUILD__"></script>
 <script src="js/main.js?v=__MB_BUILD__"></script>
