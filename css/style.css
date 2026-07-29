@@ -465,6 +465,18 @@ html, body {
 .navod-list { text-align: left; padding-left: 1.3rem; margin: 0; display: flex; flex-direction: column; gap: 0.9rem; color: var(--text-muted); font-size: 1.02rem; line-height: 1.6; }
 .navod-list strong { color: var(--accent-gold); }
 
+/* ── Návod: sekce o PWA aplikaci ── */
+.navod-pwa { text-align: left; margin-top: 1.6rem; padding: 1.1rem 1.2rem; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.12); border-radius: 10px; }
+.navod-pwa-nadpis { color: var(--accent-gold); font-size: 1.15rem; font-weight: 700; margin: 0 0 0.6rem; }
+.navod-pwa-uvod { color: var(--text-muted); font-size: 1.0rem; line-height: 1.6; margin: 0 0 0.9rem; }
+.navod-pwa-uvod strong { color: var(--text-light); }
+.navod-pwa-podnadpis { color: var(--text-light); font-size: 1.02rem; font-weight: 700; margin: 0.9rem 0 0.4rem; }
+.navod-pwa-list { text-align: left; padding-left: 1.2rem; margin: 0; display: flex; flex-direction: column; gap: 0.55rem; color: var(--text-muted); font-size: 0.98rem; line-height: 1.55; }
+.navod-pwa-list strong { color: var(--accent-gold); }
+.navod-pwa-list em { color: var(--text-light); font-style: normal; font-weight: 600; }
+.navod-pwa-tip { color: var(--text-muted); font-size: 0.94rem; line-height: 1.5; margin: 1rem 0 0; padding-top: 0.7rem; border-top: 1px solid rgba(255,255,255,0.1); }
+.navod-pwa-tip strong { color: var(--text-light); }
+
 /* ── NÁVŠTĚVNOST v pravém panelu ── */
 .navstevnost-panel { }
 .navstevnost-title { color: var(--text-muted); font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px; }
