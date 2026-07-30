@@ -705,6 +705,7 @@ function inicializujFullscreenMapu() {
 
   function rozbalMapu() {
     mainContent.classList.add('mapa-fullscreen');
+    document.body.classList.add('mapa-cele');
     btnZpet.style.display = 'block';
     if (btnZpetTR) btnZpetTR.style.display = 'block';
     mainContent.style.height = spocitejVyskyMapy() + 'px';
@@ -716,6 +717,7 @@ function inicializujFullscreenMapu() {
 
   function sbalMapu() {
     mainContent.classList.remove('mapa-fullscreen');
+    document.body.classList.remove('mapa-cele');
     mainContent.style.height = '';
     btnZpet.style.display = 'none';
     if (btnZpetTR) btnZpetTR.style.display = 'none';
@@ -739,6 +741,19 @@ function inicializujFullscreenMapu() {
       ? '⛶ Klepněte 2× na mapu pro zobrazení na celé obrazovce'
       : '⛶ Klikni 2× kdekoliv do mapy pro zobrazení na celé ploše';
     mapWrapper.appendChild(hint);
+
+    // Viditelné tlačítko (hlavně pro mobil): mapa na celou obrazovku
+    const btnCele = document.createElement('button');
+    btnCele.id = 'btn-mapa-cele';
+    btnCele.type = 'button';
+    btnCele.setAttribute('aria-label', 'Zobrazit mapu na celou obrazovku');
+    btnCele.innerHTML = '⛶ Celá obrazovka';
+    mapWrapper.appendChild(btnCele);
+    btnCele.addEventListener('click', e => {
+      e.stopPropagation();
+      document.querySelector('.map-wrapper')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      rozbalMapu();
+    });
 
     // Při první návštěvě zobraz hint automaticky na 4 sekundy
     if (!localStorage.getItem('mb_hintSeen')) {

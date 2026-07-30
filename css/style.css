@@ -1409,3 +1409,35 @@ a.uvod-cta-text:hover { background: rgba(255,255,255,0.22); transform: translate
   .sekce-dvojsloupec { grid-template-columns: 1fr; }
   .map-wrapper { height: 60vh; min-height: 360px; }
 }
+
+/* ── Mobil: mapa na celou obrazovku (schová statistiky a horní lišty) ── */
+#btn-mapa-cele { display: none; }
+@media (max-width: 600px) {
+  /* Viditelné tlačítko na spuštění celoobrazovkové mapy */
+  #btn-mapa-cele {
+    display: inline-flex; align-items: center; gap: 6px;
+    position: absolute; top: 10px; right: 10px; z-index: 1200;
+    background: rgba(28, 92, 16, 0.94); color: #eef4e8;
+    border: 1px solid rgba(255, 255, 255, 0.4); border-radius: 999px;
+    padding: 9px 15px; font-size: 0.9rem; font-weight: 700;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4); cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  body.mapa-cele #btn-mapa-cele { display: none; }
+
+  /* Výchozí (ne-fullscreen) výška mapy o něco vyšší, ať je použitelná i bez fullscreenu */
+  .map-wrapper { height: 72vh; min-height: 420px; }
+
+  /* Fullscreen: schovej horní lišty a statistiky, mapu roztáhni přes celý displej.
+     Mapa se stane pevnou (fixed) vrstvou – spolehlivě vyplní displej bez ohledu
+     na výšky rodičů i pořadí sekcí v DOM. */
+  body.mapa-cele { overflow: hidden; }
+  body.mapa-cele .navbar,
+  body.mapa-cele .info-bar,
+  body.mapa-cele .online-mobile-bar,
+  body.mapa-cele .sekce-stats { display: none !important; }
+  body.mapa-cele .map-wrapper {
+    position: fixed !important; inset: 0 !important;
+    height: auto !important; min-height: 0 !important; z-index: 1100 !important;
+  }
+}
