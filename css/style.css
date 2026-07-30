@@ -1315,6 +1315,9 @@ a.uvod-cta-text:hover { background: rgba(255,255,255,0.22); transform: translate
 /* Video přehrávač promo intra */
 .uvod-teaser-video { background: linear-gradient(135deg, #0a1f04 0%, #1a4a08 55%, #0c2804 100%); padding: 22px 22px 16px; text-align: center; }
 .uvod-video { width: 100%; max-width: 860px; aspect-ratio: 16 / 9; display: block; margin: 0 auto; border-radius: 10px; background: #000; box-shadow: 0 6px 30px rgba(0,0,0,0.45); }
+.uvod-videos { display: flex; gap: 18px; align-items: flex-start; justify-content: center; flex-wrap: wrap; }
+.uvod-videos-item { flex: 1 1 380px; min-width: 0; max-width: 560px; }
+.uvod-videos-item .uvod-video { max-width: 100%; }
 .uvod-teaser-video-title { color: rgba(255,255,255,0.5); font-size: 0.9rem; font-style: italic; margin: 12px 0 2px; padding: 0 16px; line-height: 1.5; }
 @media (max-width:600px) { .uvod-teaser-video { padding: 14px 12px 10px; } .uvod-teaser-video-title { font-size: 0.82rem; } }
 .uvod-teaser-text { padding: 28px 32px; text-align: center; }
