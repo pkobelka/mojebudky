@@ -28,4 +28,6 @@ hesla.csv
 *.mp4
 *.avi
 *.mov
+# výjimka: promo video pro web (verzované, servíruje ho GitHub Pages)
+!promo_intro_2026.mp4
 __pycache__/
