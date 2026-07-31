@@ -738,7 +738,7 @@ function inicializujFullscreenMapu() {
     hint.className = 'map-hint';
     const isMobile = window.innerWidth < 600;
     hint.textContent = isMobile
-      ? '⛶ Klepněte 2× na mapu pro zobrazení na celé obrazovce'
+      ? '⛶ Tlačítkem „Celá obrazovka" zobrazíš mapu přes celý displej'
       : '⛶ Klikni 2× kdekoliv do mapy pro zobrazení na celé ploše';
     mapWrapper.appendChild(hint);
 
@@ -775,23 +775,8 @@ function inicializujFullscreenMapu() {
       setTimeout(() => { if (map) map.doubleClickZoom.enable(); }, 600);
     });
 
-    // Mobil: dvojité klepnutí přes touchend (dblclick na touch nefunguje)
-    let _lastTap = 0;
-    mapWrapper.addEventListener('touchend', e => {
-      if (mainContent.classList.contains('mapa-fullscreen')) return;
-      if (!e.target.closest('.leaflet-container')) return;
-      const now = Date.now();
-      if (now - _lastTap < 320) {
-        e.preventDefault();
-        const map = window._getMapInstance && window._getMapInstance();
-        if (map) map.doubleClickZoom.disable();
-        rozbalMapu();
-        setTimeout(() => { if (map) map.doubleClickZoom.enable(); }, 600);
-        _lastTap = 0;
-      } else {
-        _lastTap = now;
-      }
-    }, { passive: false });
+    // Na mobilu se celá obrazovka spouští jen viditelným tlačítkem „Celá obrazovka"
+    // (žádné dvojité klepnutí do mapy – to mátlo a bralo běžné přiblížení/posun).
   }
 
   btnZpet.addEventListener('click', e => { e.stopPropagation(); sbalMapu(); });

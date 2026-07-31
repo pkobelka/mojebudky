@@ -1428,8 +1428,9 @@ a.uvod-cta-text:hover { background: rgba(255,255,255,0.22); transform: translate
   }
   body.mapa-cele #btn-mapa-cele { display: none; }
 
-  /* Výchozí (ne-fullscreen) výška mapy o něco vyšší, ať je použitelná i bez fullscreenu */
-  .map-wrapper { height: 72vh; min-height: 420px; }
+  /* Výchozí (ne-fullscreen) výška mapy – rozumná, ať se dá stránka pohodlně scrollovat
+     (velkou mapu má na starosti tlačítko „Celá obrazovka") */
+  .map-wrapper { height: 56vh; min-height: 320px; }
 
   /* Fullscreen: schovej horní lišty a statistiky, mapu roztáhni přes celý displej.
      Mapa se stane pevnou (fixed) vrstvou – spolehlivě vyplní displej bez ohledu
