@@ -7,3 +7,20 @@
     Header set Cache-Control "no-cache, must-revalidate"
   </FilesMatch>
 </IfModule>
+
+# Video soubory – správný MIME typ + explicitně povolit přístup.
+# (Hosting jinak může vracet 403 Zakázáno na .mp4, i když se .jpg/.html servírují.)
+<IfModule mod_mime.c>
+  AddType video/mp4 .mp4
+  AddType video/webm .webm
+  AddType video/ogg .ogv
+</IfModule>
+<FilesMatch "\.(mp4|webm|ogv|ogg)$">
+  <IfModule mod_authz_core.c>
+    Require all granted
+  </IfModule>
+  <IfModule !mod_authz_core.c>
+    Order allow,deny
+    Allow from all
+  </IfModule>
+</FilesMatch>
