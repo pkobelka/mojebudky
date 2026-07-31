@@ -1385,6 +1385,31 @@ a.uvod-cta-text:hover { background: rgba(255,255,255,0.22); transform: translate
 .aktuality-dalsi-btn:hover { background: #e6f4de; border-color: #7ab85a; }
 .sekce-denik .pribeh-druh { color: #1c5c10; }
 .sekce-denik .pribeh-popis { color: #3a4a30; opacity: 1; }
+
+/* ── Výzva: pomozte pokrýt budkami celou mapu ── */
+.sekce-vyzva-mapa { background: transparent; }
+.vyzva-mapa-box {
+  max-width: 820px; margin: 0 auto; text-align: center;
+  background: linear-gradient(135deg, #ffffff 0%, #eef7e4 100%);
+  border: 1px solid #d6e6c8; border-top: 4px solid #1c5c10;
+  border-radius: 16px; padding: 34px 28px;
+  box-shadow: 0 4px 20px rgba(28, 92, 16, 0.10);
+}
+.vyzva-mapa-ikona { font-size: 2.6rem; line-height: 1; margin-bottom: 8px; }
+.vyzva-mapa-nadpis { color: #1c5c10; font-size: 1.6rem; margin: 0 0 12px; }
+.vyzva-mapa-text { color: #3a4a30; line-height: 1.75; font-size: 1.06rem; margin: 0 auto 22px; max-width: 680px; }
+.vyzva-mapa-btn {
+  display: inline-block; background: #1c5c10; color: #eef4e8; text-decoration: none;
+  font-weight: 700; padding: 13px 26px; border-radius: 999px; font-size: 1.02rem;
+  box-shadow: 0 3px 14px rgba(28, 92, 16, 0.28); transition: background .2s, transform .1s;
+}
+.vyzva-mapa-btn:hover { background: #164a0c; transform: translateY(-1px); }
+@media (max-width: 600px) {
+  .vyzva-mapa-box { padding: 26px 18px; }
+  .vyzva-mapa-nadpis { font-size: 1.35rem; }
+  .vyzva-mapa-text { font-size: 1rem; }
+  .vyzva-mapa-btn { display: block; }
+}
 .sekce-denik .pribeh-datum { color: #7d8e6a; }
 .sekce-denik .aktualita-link { color: #2a8018; }
 .sekce-denik .aktualita-link:hover { color: #b07d10; }
