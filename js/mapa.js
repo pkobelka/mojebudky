@@ -1,8 +1,21 @@
 let mapInstance = null;
 const markersByCislo = {};
 let budkyData = [];
+let clusterGroup = null; // shlukování překrývajících se budek
 window._markersByCislo = markersByCislo;
 window._getMapInstance = () => mapInstance;
+
+// Ikona shluku: jedna neutrální bublina s počtem budek. Velikost roste s počtem.
+function _vytvorClusterIkonu(cluster) {
+  const n = cluster.getChildCount();
+  const size = n < 10 ? 38 : n < 50 ? 46 : 54;
+  return L.divIcon({
+    html: `<div class="budka-cluster"><span>${n}</span></div>`,
+    className: '',
+    iconSize: [size, size],
+    iconAnchor: [size / 2, size / 2]
+  });
+}
 
 // Vrátí { latestEdit, allEditsDict } z raw Firebase uzlu budky_edit/{cislo}.
 // Podporuje starý plochý formát i nový formát {rok: {...}}.
@@ -647,6 +660,13 @@ function focusBudka(cislo) {
   const marker = markersByCislo[cislo];
   if (!marker || !mapInstance) return;
   _scrollNaMapu();
+  // Když je budka schovaná ve shluku, nejdřív ho rozbal (přiblíží / rozevře vějíř)
+  if (clusterGroup && typeof clusterGroup.zoomToShowLayer === 'function') {
+    clusterGroup.zoomToShowLayer(marker, () => {
+      setTimeout(() => marker.openPopup(), 200);
+    });
+    return;
+  }
   mapInstance.setView(marker.getLatLng(), 16);
   setTimeout(() => marker.openPopup(), 400);
 }
@@ -783,6 +803,15 @@ async function inicializujMapu() {
     const spravciList = await resSpravci.json();
     const spravci = Object.fromEntries(spravciList.map(s => [s.cislo, s.jmeno]));
 
+    // Cluster vrstva – shlukuje jen budky, které se opravdu vizuálně překrývají
+    clusterGroup = L.markerClusterGroup({
+      maxClusterRadius: 45,          // malý poloměr → jen skutečný překryv
+      showCoverageOnHover: false,    // bez oblasti při najetí (klidnější)
+      spiderfyOnMaxZoom: true,       // budky na stejném místě se rozevřou do vějíře
+      zoomToBoundsOnClick: true,     // klik na bublinu přiblíží a rozpadne shluk
+      iconCreateFunction: _vytvorClusterIkonu
+    });
+
     budky.forEach(b => {
       if (!b.lat || !b.lng) return;
       const bData = { ...b, spravce: spravci[b.cislo] || null };
@@ -805,10 +834,12 @@ async function inicializujMapu() {
       });
 
       markersByCislo[b.cislo] = marker;
-      marker.addTo(mapInstance);
+      clusterGroup.addLayer(marker);
       if (!window._budkyDataMap) window._budkyDataMap = {};
       window._budkyDataMap[b.cislo] = bData;
     });
+
+    mapInstance.addLayer(clusterGroup);
 
     // Nastav počáteční měřítko/tier a překresli podle úrovně zoomu
     _aktualizujZoomVzhled(true);

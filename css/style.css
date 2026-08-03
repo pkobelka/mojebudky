@@ -429,6 +429,9 @@ html, body {
 .budka-otaznik { position: absolute; top: -4px; right: -6px; background: #b8860b; color: #fff; font-size: 0.85rem; font-weight: 900; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid #fff; box-shadow: 0 1px 4px rgba(0,0,0,0.4); line-height: 1; }
 .budka-marker img { display: block; }
 .budka-marker svg { display: block; }
+/* Shluk překrývajících se budek — jedna neutrální bublina s počtem */
+.budka-cluster { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: rgba(20,71,20,0.9); color: #fff; font-weight: 800; font-size: 15px; line-height: 1; border: 3px solid rgba(255,255,255,0.92); box-shadow: 0 2px 7px rgba(0,0,0,0.4); cursor: pointer; transition: transform 0.15s; }
+.leaflet-marker-icon:hover > .budka-cluster { transform: scale(1.1); }
 .legenda-polozka svg { display: block; flex-shrink: 0; }
 /* Zoom +/- ovládání – vlastní styl, ať je vždy vidět (nezávisle na Leaflet CSS z CDN) a větší pro dotyk */
 .leaflet-control-zoom { border: none !important; box-shadow: 0 2px 8px rgba(0,0,0,0.3); border-radius: 8px; overflow: hidden; }
