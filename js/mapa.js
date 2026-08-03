@@ -372,12 +372,18 @@ const BIRD_SVG = {
   </svg>`
 };
 
+// Ikona osídlené budky jako inline SVG — nezávislá na externím souboru
+// (hosting občas neservíroval img/obydleno.svg, marker pak byl jen rámeček).
+function obydlenoSvg(size) {
+  return `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}"><circle cx="100" cy="100" r="98" fill="#3a9a3a"/><rect x="93" y="152" width="14" height="36" rx="2" fill="#b5651d"/><rect x="96" y="152" width="4" height="36" rx="1" fill="#d4843a" opacity="0.4"/><rect x="38" y="143" width="124" height="11" rx="1" fill="#c96420"/><line x1="38" y1="148" x2="162" y2="148" stroke="#1a1a1a" stroke-width="2" opacity="0.2"/><path d="M32,48 L168,48 L156,143 L44,143 Z" fill="#7B3810"/><path d="M32,48 L168,48 L163,62 L37,62 Z" fill="#3d1505" opacity="0.3"/><rect x="22" y="33" width="156" height="18" rx="2" fill="#c96420"/><rect x="22" y="33" width="156" height="7" rx="2" fill="#e07830" opacity="0.4"/><rect x="32" y="48" width="136" height="3" fill="#1a1a1a" opacity="0.2"/><ellipse cx="86" cy="108" rx="20" ry="28" fill="#f5c800" transform="rotate(-8,86,108)"/><ellipse cx="114" cy="108" rx="20" ry="28" fill="#f5c800" transform="rotate(8,114,108)"/><rect x="92" y="88" width="16" height="42" rx="8" fill="#1a1f2e"/><ellipse cx="100" cy="80" rx="22" ry="20" fill="#1a1f2e"/><ellipse cx="83" cy="84" rx="9" ry="7" fill="#ffffff" opacity="0.9"/><ellipse cx="117" cy="84" rx="9" ry="7" fill="#ffffff" opacity="0.9"/><circle cx="91" cy="78" r="5" fill="#1a1f2e"/><circle cx="109" cy="78" r="5" fill="#1a1f2e"/><circle cx="92" cy="77" r="2" fill="#ffffff"/><circle cx="110" cy="77" r="2" fill="#ffffff"/><path d="M96,90 L104,90 L100,97 Z" fill="#ff9999"/><ellipse cx="86" cy="136" rx="10" ry="13" fill="#f8f4ee"/><ellipse cx="100" cy="138" rx="10" ry="13" fill="#f0ece5"/><ellipse cx="114" cy="136" rx="10" ry="13" fill="#f8f4ee"/><ellipse cx="86" cy="136" rx="10" ry="13" fill="#d4c8b8" opacity="0.2"/></svg>`;
+}
+
 function vytvorIkonu(b) {
   const stav = b.stav;
   const nezjisteno = stav === 'osidlena' && (!b.ptak || b.ptak === 'nezjisteno');
   if (nezjisteno) {
     return L.divIcon({
-      html: `<div class="budka-marker budka-nezjisteno"><img src="img/obydleno.svg?v=2" width="44" height="44" alt=""><span class="budka-otaznik">?</span></div>`,
+      html: `<div class="budka-marker budka-nezjisteno">${obydlenoSvg(44)}<span class="budka-otaznik">?</span></div>`,
       iconSize: [44, 44],
       iconAnchor: [22, 44],
       popupAnchor: [0, -46],
@@ -386,7 +392,7 @@ function vytvorIkonu(b) {
   }
   if (stav === 'osidlena') {
     return L.divIcon({
-      html: `<div class="budka-marker budka-osidlena"><img src="img/obydleno.svg?v=2" width="44" height="44" alt=""></div>`,
+      html: `<div class="budka-marker budka-osidlena">${obydlenoSvg(44)}</div>`,
       iconSize: [44, 44],
       iconAnchor: [22, 44],
       popupAnchor: [0, -46],
@@ -621,7 +627,7 @@ function pridejLegend(map) {
     const div = L.DomUtil.create('div', 'mapa-legenda');
     div.innerHTML = `
       <div class="legenda-polozka">
-        <img src="img/obydleno.svg?v=2" width="28" height="28" alt="">
+        ${obydlenoSvg(28)}
         <span>Osídlená budka</span>
       </div>
       <div class="legenda-polozka">
