@@ -403,31 +403,50 @@ exports.florianRevizeCheck = functions.pubsub
   });
 
 // ===== 5) Florián – přihlášení jiného zařízení (tabletu) přes QR =====
-// Callable: správce (admin) vybere e-mail povoleného uživatele a dostane
-// jednorázový přihlašovací odkaz (email-link). Ten se v appce vykreslí jako QR
-// a uživatel ho sejme tabletem -> otevře Floriána a přihlásí se. Odkaz vzniká
-// jen na serveru (klient ho neumí vyrobit), proto to zvládne správce i bez
-// přístupu do cizí schránky. Bezpečnost: jen admin, jen e-mail z allowlistu
-// florian_login_email; odkaz je jednorázový a časově omezený (jako z e-mailu).
-exports.florianPairingLink = functions.https.onCall(async (data, context) => {
-  if (!context.auth) {
-    throw new functions.https.HttpsError("unauthenticated", "Musíš být přihlášený.");
-  }
-  if (context.auth.token.admin !== true) {
-    throw new functions.https.HttpsError("permission-denied", "Jen správce může vytvořit QR přihlášení.");
-  }
-  const email = String((data && data.email) || "").trim().toLowerCase();
-  if (!email || email.indexOf("@") < 1) {
-    throw new functions.https.HttpsError("invalid-argument", "Neplatný e-mail.");
-  }
-  const key = email.replace(/\./g, ",");
-  const snap = await admin.database().ref("florian_login_email/" + key).get();
-  if (!snap.exists()) {
-    throw new functions.https.HttpsError("failed-precondition", "Tenhle e-mail nemá přístup (není v allowlistu florian_login_email).");
-  }
-  // fle = e-mail do URL, aby se tablet po naskenování nemusel ptát na e-mail
-  const url = FLORIAN_URL + "?fle=" + encodeURIComponent(email);
-  const link = await admin.auth().generateSignInWithEmailLink(email, { url, handleCodeInApp: true });
-  console.log(`florianPairingLink: odkaz vytvořen pro ${email} (admin ${context.auth.token.email || context.auth.uid}).`);
-  return { link, email };
-});
+// Správce (admin) vybere e-mail povoleného uživatele a dostane jednorázový
+// přihlašovací odkaz (email-link). Ten se v appce vykreslí jako QR a uživatel
+// ho sejme tabletem -> otevře Floriána a přihlásí se. Odkaz vzniká jen na
+// serveru (klient ho neumí vyrobit), proto to zvládne správce i bez přístupu
+// do cizí schránky.
+//
+// Realizováno jako DATABÁZOVÝ TRIGGER (ne callable): náš CI service account
+// nemá roles/functions.admin, takže volaným (onCall/https) funkcím neumí
+// nastavit invoker IAM a klient by je nemohl zavolat. DB-triggered funkce
+// invoker nepotřebují (stejně jako ostatní funkce v tomto projektu).
+//
+// Tok: appka zapíše  florian_pairing/{uid}/req = { email, ts }
+//   -> tato funkce ověří e-mail v allowlistu florian_login_email, vyrobí odkaz
+//      a zapíše  florian_pairing/{uid}/res = { link, email } | { err }.
+// Bezpečnost: zápis do req smí přes DB pravidla jen ten admin
+//   (auth.uid == uid && auth.token.admin === true); odkaz je čitelný jen jemu
+//   (leží pod jeho uid). Samotný odkaz umí vyrobit jedině server (admin SDK).
+exports.florianPairingLink = functions.database
+  .ref("/florian_pairing/{uid}/req")
+  .onWrite(async (change, context) => {
+    const req = change.after.val();
+    if (!req) return null; // smazání requestu neřešíme
+    const uid = context.params.uid;
+    const resRef = admin.database().ref("florian_pairing/" + uid + "/res");
+    const email = String((req && req.email) || "").trim().toLowerCase();
+    try {
+      if (!email || email.indexOf("@") < 1) {
+        await resRef.set({ err: "invalid-argument", ts: Date.now() });
+        return null;
+      }
+      const key = email.replace(/\./g, ",");
+      const snap = await admin.database().ref("florian_login_email/" + key).get();
+      if (!snap.exists()) {
+        await resRef.set({ err: "failed-precondition", ts: Date.now() });
+        return null;
+      }
+      // fle = e-mail do URL, aby se tablet po naskenování nemusel ptát na e-mail
+      const url = FLORIAN_URL + "?fle=" + encodeURIComponent(email);
+      const link = await admin.auth().generateSignInWithEmailLink(email, { url, handleCodeInApp: true });
+      await resRef.set({ link, email, ts: Date.now() });
+      console.log(`florianPairingLink: odkaz vytvořen pro ${email} (uid ${uid}).`);
+    } catch (e) {
+      console.error("florianPairingLink error:", e);
+      try { await resRef.set({ err: "internal", ts: Date.now() }); } catch (_) { /* ignore */ }
+    }
+    return null;
+  });
