@@ -19,14 +19,16 @@ messaging.onBackgroundMessage(payload => {
   const body    = payload.notification?.body  || '';
   const pushId  = payload.data?.push_id  || '';
   const loginId = payload.data?.login_id || '';
-  const baseUrl = 'https://pkobelka.github.io/mojebudky/';
+  // Odvoď základní URL z místa, kde běží service worker (funguje na
+  // GitHub Pages i na vlastní doméně mojebudky.cz bez natvrdo psané cesty).
+  const baseUrl = self.registration.scope;
   const clickUrl = (pushId && loginId)
     ? `${baseUrl}?pr=${pushId}&u=${encodeURIComponent(loginId)}`
     : baseUrl;
   return self.registration.showNotification(title, {
     body,
-    icon:    '/mojebudky/img/icon-192.png',
-    badge:   '/mojebudky/img/icon-192.png',
+    icon:    `${baseUrl}img/icon-192.png`,
+    badge:   `${baseUrl}img/icon-192.png`,
     vibrate: [200, 100, 200],
     data:    { url: clickUrl }
   });
@@ -34,6 +36,6 @@ messaging.onBackgroundMessage(payload => {
 
 self.addEventListener('notificationclick', e => {
   e.notification.close();
-  const url = e.notification.data?.url || 'https://pkobelka.github.io/mojebudky/';
+  const url = e.notification.data?.url || self.registration.scope;
   e.waitUntil(clients.openWindow(url));
 });
