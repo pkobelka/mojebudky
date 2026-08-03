@@ -420,7 +420,12 @@ exports.florianRevizeCheck = functions.pubsub
 // Bezpečnost: zápis do req smí přes DB pravidla jen ten admin
 //   (auth.uid == uid && auth.token.admin === true); odkaz je čitelný jen jemu
 //   (leží pod jeho uid). Samotný odkaz umí vyrobit jedině server (admin SDK).
-exports.florianPairingLink = functions.database
+//
+// NÁZEV: nesmí se jmenovat jako dřívější callable florianPairingLink – Firebase
+// nedovolí změnit typ funkce (callable -> background) pod stejným jménem. Nový
+// název = nová funkce; starou callable odstraní deploy s --force. Klient název
+// nepoužívá (píše jen do florian_pairing/{uid}/req), takže na appku to nemá vliv.
+exports.florianPairingReq = functions.database
   .ref("/florian_pairing/{uid}/req")
   .onWrite(async (change, context) => {
     const req = change.after.val();
@@ -443,9 +448,9 @@ exports.florianPairingLink = functions.database
       const url = FLORIAN_URL + "?fle=" + encodeURIComponent(email);
       const link = await admin.auth().generateSignInWithEmailLink(email, { url, handleCodeInApp: true });
       await resRef.set({ link, email, ts: Date.now() });
-      console.log(`florianPairingLink: odkaz vytvořen pro ${email} (uid ${uid}).`);
+      console.log(`florianPairingReq: odkaz vytvořen pro ${email} (uid ${uid}).`);
     } catch (e) {
-      console.error("florianPairingLink error:", e);
+      console.error("florianPairingReq error:", e);
       try { await resRef.set({ err: "internal", ts: Date.now() }); } catch (_) { /* ignore */ }
     }
     return null;
