@@ -377,7 +377,7 @@ function vytvorIkonu(b) {
   const nezjisteno = stav === 'osidlena' && (!b.ptak || b.ptak === 'nezjisteno');
   if (nezjisteno) {
     return L.divIcon({
-      html: `<div class="budka-marker budka-nezjisteno"><img src="img/obydleno.svg" width="44" height="44" alt=""><span class="budka-otaznik">?</span></div>`,
+      html: `<div class="budka-marker budka-nezjisteno"><img src="img/obydleno.svg?v=2" width="44" height="44" alt=""><span class="budka-otaznik">?</span></div>`,
       iconSize: [44, 44],
       iconAnchor: [22, 44],
       popupAnchor: [0, -46],
@@ -386,7 +386,7 @@ function vytvorIkonu(b) {
   }
   if (stav === 'osidlena') {
     return L.divIcon({
-      html: `<div class="budka-marker budka-osidlena"><img src="img/obydleno.svg" width="44" height="44" alt=""></div>`,
+      html: `<div class="budka-marker budka-osidlena"><img src="img/obydleno.svg?v=2" width="44" height="44" alt=""></div>`,
       iconSize: [44, 44],
       iconAnchor: [22, 44],
       popupAnchor: [0, -46],
@@ -405,7 +405,7 @@ function vytvorIkonu(b) {
 // --- Zoom-závislé zobrazení markerů ---------------------------------------
 // Nízký zoom → malé body; od ZOOM_DETAIL → plné ikony budek. Mezi tím se
 // velikost plynule zvětšuje (CSS proměnná --budka-scale na kontejneru mapy).
-const ZOOM_DETAIL = 11;
+const ZOOM_DETAIL = 10;
 let _zoomTier = null; // 'dot' | 'full'
 
 function _dotColor(b) {
@@ -621,7 +621,7 @@ function pridejLegend(map) {
     const div = L.DomUtil.create('div', 'mapa-legenda');
     div.innerHTML = `
       <div class="legenda-polozka">
-        <img src="img/obydleno.svg" width="28" height="28" alt="">
+        <img src="img/obydleno.svg?v=2" width="28" height="28" alt="">
         <span>Osídlená budka</span>
       </div>
       <div class="legenda-polozka">
