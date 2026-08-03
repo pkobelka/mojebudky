@@ -405,7 +405,7 @@ function vytvorIkonu(b) {
 // --- Zoom-závislé zobrazení markerů ---------------------------------------
 // Nízký zoom → malé body; od ZOOM_DETAIL → plné ikony budek. Mezi tím se
 // velikost plynule zvětšuje (CSS proměnná --budka-scale na kontejneru mapy).
-const ZOOM_DETAIL = 13;
+const ZOOM_DETAIL = 11;
 let _zoomTier = null; // 'dot' | 'full'
 
 function _dotColor(b) {

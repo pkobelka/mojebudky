@@ -1474,3 +1474,15 @@ a.uvod-cta-text:hover { background: rgba(255,255,255,0.22); transform: translate
     height: auto !important; min-height: 0 !important; z-index: 1100 !important;
   }
 }
+
+/* Fullscreen mapa přes celý viewport – platí i na desktopu (dřív jen mobil ≤600px):
+   skryje horní lišty i sekci se statistikami a roztáhne mapu přes celou plochu monitoru. */
+body.mapa-cele { overflow: hidden; }
+body.mapa-cele .navbar,
+body.mapa-cele .info-bar,
+body.mapa-cele .online-mobile-bar,
+body.mapa-cele .sekce-stats { display: none !important; }
+body.mapa-cele .map-wrapper {
+  position: fixed !important; inset: 0 !important;
+  height: auto !important; min-height: 0 !important; z-index: 1100 !important;
+}
