@@ -401,3 +401,33 @@ exports.florianRevizeCheck = functions.pubsub
     console.log(`florianRevizeCheck: ${items.length} dotčených, odesláno ${sent} přehledů (práh ${warn} d).`);
     return null;
   });
+
+// ===== 5) Florián – přihlášení jiného zařízení (tabletu) přes QR =====
+// Callable: správce (admin) vybere e-mail povoleného uživatele a dostane
+// jednorázový přihlašovací odkaz (email-link). Ten se v appce vykreslí jako QR
+// a uživatel ho sejme tabletem -> otevře Floriána a přihlásí se. Odkaz vzniká
+// jen na serveru (klient ho neumí vyrobit), proto to zvládne správce i bez
+// přístupu do cizí schránky. Bezpečnost: jen admin, jen e-mail z allowlistu
+// florian_login_email; odkaz je jednorázový a časově omezený (jako z e-mailu).
+exports.florianPairingLink = functions.https.onCall(async (data, context) => {
+  if (!context.auth) {
+    throw new functions.https.HttpsError("unauthenticated", "Musíš být přihlášený.");
+  }
+  if (context.auth.token.admin !== true) {
+    throw new functions.https.HttpsError("permission-denied", "Jen správce může vytvořit QR přihlášení.");
+  }
+  const email = String((data && data.email) || "").trim().toLowerCase();
+  if (!email || email.indexOf("@") < 1) {
+    throw new functions.https.HttpsError("invalid-argument", "Neplatný e-mail.");
+  }
+  const key = email.replace(/\./g, ",");
+  const snap = await admin.database().ref("florian_login_email/" + key).get();
+  if (!snap.exists()) {
+    throw new functions.https.HttpsError("failed-precondition", "Tenhle e-mail nemá přístup (není v allowlistu florian_login_email).");
+  }
+  // fle = e-mail do URL, aby se tablet po naskenování nemusel ptát na e-mail
+  const url = FLORIAN_URL + "?fle=" + encodeURIComponent(email);
+  const link = await admin.auth().generateSignInWithEmailLink(email, { url, handleCodeInApp: true });
+  console.log(`florianPairingLink: odkaz vytvořen pro ${email} (admin ${context.auth.token.email || context.auth.uid}).`);
+  return { link, email };
+});
