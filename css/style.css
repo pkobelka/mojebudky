@@ -417,8 +417,12 @@ html, body {
 /* ── MAPA ── */
 .mapa-legenda { background: rgba(255,255,255,0.95); border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.25); padding: 10px 14px; font-family: 'Segoe UI', system-ui, sans-serif; font-size: 0.8rem; color: #3a2008; display: flex; flex-direction: column; gap: 7px; min-width: 140px; }
 .legenda-polozka { display: flex; align-items: center; gap: 9px; }
-.budka-marker { display: flex; align-items: flex-end; justify-content: center; transition: transform 0.15s; cursor: pointer; }
-.budka-marker:hover { transform: scale(1.25); }
+.legenda-dot { width: 14px; height: 14px; border-radius: 50%; background: var(--dot-color, #e06820); border: 2px solid #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.4); display: inline-block; flex-shrink: 0; margin: 0 7px; }
+.budka-marker { display: flex; align-items: flex-end; justify-content: center; transition: transform 0.15s; cursor: pointer; transform: scale(var(--budka-scale, 1)); transform-origin: bottom center; }
+.budka-marker:hover { transform: scale(calc(var(--budka-scale, 1) * 1.25)); }
+/* Body na nízkém zoomu — plynule se zvětšují, u ZOOM_DETAIL se přepnou na plné ikony */
+.budka-dot { width: 14px; height: 14px; border-radius: 50%; background: var(--dot-color, #e06820); border: 2px solid #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.45); cursor: pointer; transition: transform 0.15s; transform: scale(var(--budka-scale, 1)); transform-origin: center center; }
+.budka-dot:hover { transform: scale(calc(var(--budka-scale, 1) * 1.35)); }
 .budka-aktivni { filter: drop-shadow(1px 3px 4px rgba(0,0,0,0.5)); }
 .budka-osidlena { filter: drop-shadow(0 2px 6px rgba(58,154,58,0.6)); }
 .budka-nezjisteno { position: relative; filter: drop-shadow(0 2px 6px rgba(184,134,11,0.6)); }
