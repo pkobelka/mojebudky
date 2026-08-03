@@ -755,6 +755,9 @@ async function inicializujMapu() {
 
     mapEl.addEventListener('click', aktivujMapu, { once: true });
 
+    // Umožni aktivovat mapu zvenčí (fullscreen) – aby pinch zoomoval mapu, ne stránku
+    window._mapaAktivovat = aktivujMapu;
+
     document.addEventListener('touchstart', e => {
       if (!mapWrapper.contains(e.target)) deaktivujMapu();
     }, { passive: true });

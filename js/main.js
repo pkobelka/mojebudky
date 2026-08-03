@@ -709,6 +709,9 @@ function inicializujFullscreenMapu() {
     btnZpet.style.display = 'block';
     if (btnZpetTR) btnZpetTR.style.display = 'block';
     mainContent.style.height = spocitejVyskyMapy() + 'px';
+    // Ve fullscreenu rovnou aktivuj mapu, aby pinch zoomoval mapu (ne stránku)
+    // a zoom ovládání nemizelo kvůli zoomu celé stránky
+    if (typeof window._mapaAktivovat === 'function') window._mapaAktivovat();
     if (typeof mapInstance !== 'undefined' && mapInstance) {
       setTimeout(() => mapInstance.invalidateSize(), 50);
       setTimeout(() => mapInstance.invalidateSize(), 300);
