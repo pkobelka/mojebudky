@@ -596,7 +596,7 @@
 <script src="js/presence.js?v=__MB_BUILD__"></script>
 <script>
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/mojebudky/firebase-messaging-sw.js')
+    navigator.serviceWorker.register('firebase-messaging-sw.js')
       .then(reg => { window._swReg = reg; })
       .catch(() => {});
   }

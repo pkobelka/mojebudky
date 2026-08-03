@@ -457,7 +457,7 @@ function _nastavFaviconBadge(count) {
     link.type = 'image/png';
     link.href = canvas.toDataURL('image/png');
   };
-  img.src = document.querySelector("link[rel='icon'][type='image/svg+xml']")?.href || '/mojebudky/img/favicon.svg';
+  img.src = document.querySelector("link[rel='icon'][type='image/svg+xml']")?.href || 'img/favicon.svg';
 }
 
 // Kombinovaný čítač pro navbar badge (admin žádosti + zprávy správci)

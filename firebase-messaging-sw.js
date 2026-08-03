@@ -25,8 +25,8 @@ messaging.onBackgroundMessage(payload => {
     : baseUrl;
   return self.registration.showNotification(title, {
     body,
-    icon:    '/mojebudky/img/icon-192.png',
-    badge:   '/mojebudky/img/icon-192.png',
+    icon:    'img/icon-192.png',
+    badge:   'img/icon-192.png',
     vibrate: [200, 100, 200],
     data:    { url: clickUrl }
   });
