@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  seed-volby-obce:
+  seed-volby:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -14,11 +14,11 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Instaluj zavislosti
+      - name: Instaluj závislosti
         run: pip install firebase-admin
 
-      - name: Uloz service account key
+      - name: Ulož service account key
         run: echo '${{ secrets.FIREBASE_SERVICE_ACCOUNT }}' > service-account-key.json
 
-      - name: Naplni volby_obce
+      - name: Seed volby_obce
         run: python seed_volby_obce.py
