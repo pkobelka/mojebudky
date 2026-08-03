@@ -92,6 +92,12 @@
       ".read": "auth != null",
       ".write": "auth.token.admin === true"
     },
+    "florian_pairing": {
+      "$uid": {
+        ".read": "auth != null && auth.uid === $uid",
+        ".write": "auth != null && auth.uid === $uid && auth.token.admin === true"
+      }
+    },
     "presence": {
       ".read": true,
       ".write": true
