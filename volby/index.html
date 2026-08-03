@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="cs"><head>
+<meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Volby 2026 – Obce okresu Svitavy (VHOS)</title>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<style>
+:root{--zelena:#2f6b3c;--zelena-tmava:#234f2d;--svetla:#f4f1ea;--karta:#fff;--sedaramecek:#e7e2d6;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--svetla);color:#222;padding:18px 14px 60px;}
+.wrap{max-width:1000px;margin:0 auto;}
+.top{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;}
+header h1{color:var(--zelena-tmava);font-size:1.5rem;}
+header p{color:#666;margin-top:4px;font-size:.92rem;}
+.userbox{font-size:.82rem;color:#557;display:flex;gap:8px;align-items:center;}
+.btn{border:1px solid var(--zelena);background:var(--zelena);color:#fff;border-radius:8px;padding:8px 14px;font-size:.86rem;font-weight:600;cursor:pointer;}
+.btn.ghost{background:#fff;color:var(--zelena);}
+.btn.small{padding:5px 10px;font-size:.8rem;}
+.stav{background:#eef5ec;border:1px solid #cfe3ca;color:#3f6b46;border-radius:10px;padding:8px 12px;font-size:.82rem;margin:12px 0;}
+.toolbar{position:sticky;top:0;background:var(--svetla);padding:10px 0;z-index:5;}
+.search{width:100%;padding:11px 14px;border:1px solid var(--sedaramecek);border-radius:10px;font-size:1rem;background:#fff;}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;}
+.chips.sub{margin-top:6px;}
+.chip{border:1px solid var(--sedaramecek);background:#fff;border-radius:999px;padding:6px 12px;font-size:.83rem;cursor:pointer;color:#444;}
+.chip.on{background:var(--zelena);color:#fff;border-color:var(--zelena);}
+.chip.sub.on{background:var(--zelena-tmava);}
+.pocet{font-size:.82rem;color:#888;margin:8px 2px;}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px;}
+.grouphdr{grid-column:1/-1;font-weight:700;color:var(--zelena-tmava);margin:16px 2px 2px;font-size:1.05rem;border-bottom:2px solid #dfe6da;padding-bottom:5px;display:flex;align-items:center;gap:8px;}
+.grouphdr .cnt{font-weight:600;color:#8a9382;font-size:.82rem;}
+.grouphdr.npg{color:#8a8272;border-color:#e6e0d4;}
+.obec{background:var(--karta);border:1px solid #eee;border-radius:12px;padding:12px 14px;cursor:pointer;transition:box-shadow .12s,transform .12s;}
+.obec.np{background:#faf9f5;border-style:dashed;}
+.obec:hover{box-shadow:0 6px 18px rgba(0,0,0,.09);transform:translateY(-1px);}
+.obec h3{font-size:1.02rem;color:var(--zelena-tmava);}
+.badges{display:flex;flex-wrap:wrap;gap:4px;margin-top:7px;}
+.b{font-size:.7rem;padding:2px 8px;border-radius:999px;background:#eef3ec;color:#3f6b46;}
+.b.prac{background:#e8eef7;color:#385a86;}
+.b.mimo{background:#fbe7e2;color:#a8482f;}
+.b.np{background:#efece4;color:#8a8272;}
+.b.over{background:#fdf3d6;color:#8a6d1f;}
+.b.ok{background:#e2f0e0;color:#2f6b3c;}
+.modal{position:fixed;inset:0;background:rgba(20,25,20,.55);display:none;align-items:flex-start;justify-content:center;padding:24px 14px;z-index:50;overflow:auto;}
+.modal.show{display:flex;}
+.modalbox{background:#fff;border-radius:16px;max-width:640px;width:100%;margin:auto;padding:22px 22px 26px;box-shadow:0 20px 60px rgba(0,0,0,.3);position:relative;}
+.modalbox h2{color:var(--zelena-tmava);font-size:1.4rem;padding-right:34px;}
+.close{position:absolute;top:12px;right:14px;border:none;background:#f0ece2;color:#555;width:32px;height:32px;border-radius:50%;font-size:1.2rem;cursor:pointer;line-height:1;}
+.mbadges{display:flex;flex-wrap:wrap;gap:5px;margin:10px 0 4px;}
+.sekce{margin-top:14px;font-weight:700;color:var(--zelena-tmava);font-size:.9rem;border-top:2px solid #eef1ea;padding-top:10px;}
+.sekce .obd{font-weight:600;color:#7a8a72;font-size:.78rem;}
+.r{display:flex;gap:8px;margin:8px 0;font-size:.95rem;border-bottom:1px solid #f2efe7;padding-bottom:8px;align-items:center;}
+.r b{color:#555;min-width:120px;flex:0 0 120px;}
+.r span{color:#222;word-break:break-word;}
+.r input{flex:1;padding:6px 8px;border:1px solid var(--sedaramecek);border-radius:6px;font-size:.92rem;}
+.r a{color:var(--zelena);}
+.prazdne{color:#b7b0a0;font-style:italic;}
+.zast{margin:2px 0 0 0;padding-left:18px;}
+.zast li{margin:2px 0;}
+.zdroj{margin-top:12px;font-size:.74rem;color:#a99;}
+.mtools{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px;}
+.msg{font-size:.82rem;margin-top:8px;color:#557;}
+/* login overlay */
+.login{position:fixed;inset:0;background:linear-gradient(160deg,#e8efe6,#f4f1ea);display:flex;align-items:center;justify-content:center;padding:20px;z-index:100;}
+.loginbox{background:#fff;border-radius:16px;max-width:430px;width:100%;padding:28px 24px;box-shadow:0 16px 50px rgba(0,0,0,.15);text-align:center;}
+.loginbox h2{color:var(--zelena-tmava);margin-bottom:6px;}
+.loginbox p{color:#666;font-size:.9rem;margin-bottom:14px;}
+.loginbox input{width:100%;padding:11px 12px;border:1px solid var(--sedaramecek);border-radius:9px;margin-bottom:10px;font-size:1rem;}
+.loginbox .btn{width:100%;margin-bottom:8px;}
+.small2{font-size:.78rem;color:#889;margin-top:8px;cursor:pointer;text-decoration:underline;}
+.hidden{display:none!important;}
+footer{text-align:center;margin-top:30px;font-size:.78rem;color:#aaa;}
+.hint{font-size:.74rem;color:#b3ab99;margin-top:8px;}
+</style></head><body>
+
+<div class="login" id="login">
+  <div class="loginbox">
+    <h2>Volby 2026 – VHOS</h2>
+    <p id="loginInfo">Přihlas se pracovním e-mailem (stejně jako do Floriána). Přijde ti odkaz, kterým se přihlásíš.</p>
+    <input id="email" type="email" placeholder="tvůj e-mail" autocomplete="email" />
+    <button class="btn" id="sendLink">Poslat přihlašovací odkaz</button>
+    <div class="small2" id="pasteTog">Mám odkaz z e-mailu – vložit ručně</div>
+    <div id="pasteWrap" class="hidden" style="margin-top:10px">
+      <input id="pasteLink" placeholder="vlož celý odkaz z e-mailu" />
+      <button class="btn ghost" id="pasteBtn">Přihlásit vloženým odkazem</button>
+    </div>
+    <div class="msg" id="loginMsg"></div>
+  </div>
+</div>
+
+<div class="wrap hidden" id="app">
+<div class="top">
+<header><h1>🗳️ Volby 2026 – Obce okresu Svitavy</h1>
+<p>Vsechny obce okresu Svitavy. Modre = pracoviste VHOS. 2022–2026 = soucasne · 2026–2030 = po volbach.</p></header>
+<div class="userbox"><span id="who"></span><button class="btn ghost small" id="logout">Odhlásit</button></div>
+</div>
+<div class="stav" id="stav"></div>
+<div class="toolbar">
+<input class="search" id="q" placeholder="Hledat obec, starostu nebo zastupitele..." />
+<div class="chips" id="provChips"></div>
+<div class="chips sub" id="pracChips"></div>
+</div>
+<div class="pocet" id="pocet"></div>
+<div class="grid" id="grid"></div>
+<footer>Data: volby.cz KV2022 + weby obci · uzivatelske upravy ulozeny ve Firebase (moje-budky)</footer>
+</div>
+
+<div class="modal" id="modal"><div class="modalbox"><button class="close" id="mclose">&times;</button><div id="mbody"></div></div></div>
+
+<script>
+var CFG={apiKey:"AIzaSyBEAhZNxq3REoy1vExIrnNEXlyFXHzP4uI",authDomain:"moje-budky.firebaseapp.com",databaseURL:"https://moje-budky-default-rtdb.firebaseio.com",projectId:"moje-budky",storageBucket:"moje-budky.firebasestorage.app",messagingSenderId:"325649258561",appId:"1:325649258561:web:b5571c3278d98405320ec0"};
+firebase.initializeApp(CFG);
+var AUTH=firebase.auth(), FDB=firebase.database();
+var LOGIN_URL=location.origin+location.pathname;
+function leKey(email){return String(email||'').trim().toLowerCase().replace(/\./g,',');}
+function esc(s){return (s||"").replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];});}
+
+var OBCE=[], _USER=null, _CUR=null, _EDIT=false;
+var PRAC=["Moravská Třebová","Svitavy","Polička","Litomyšl","Jevíčko"];
+var fProv="Vše", fPrac="Vše";
+
+/* ---------- LOGIN ---------- */
+function showLogin(msg){document.getElementById("login").classList.remove("hidden");document.getElementById("app").classList.add("hidden");if(msg)document.getElementById("loginInfo").innerHTML=msg;}
+function showApp(){document.getElementById("login").classList.add("hidden");document.getElementById("app").classList.remove("hidden");}
+document.getElementById("sendLink").addEventListener("click",function(){
+  var email=(document.getElementById("email").value||"").trim();
+  var out=document.getElementById("loginMsg");
+  if(!email){out.textContent="Vyplň e-mail.";return;}
+  out.textContent="Odesílám…";
+  AUTH.sendSignInLinkToEmail(email,{url:LOGIN_URL,handleCodeInApp:true}).then(function(){
+    localStorage.setItem("volby_email",email);
+    out.innerHTML="✅ Odkaz poslán na "+esc(email)+". Otevři ho na tomhle zařízení.";
+  }).catch(function(e){out.textContent="⚠️ "+(e&&e.message?e.message:e);});
+});
+document.getElementById("pasteTog").addEventListener("click",function(){document.getElementById("pasteWrap").classList.toggle("hidden");});
+document.getElementById("pasteBtn").addEventListener("click",function(){
+  var link=(document.getElementById("pasteLink").value||"").trim();
+  var email=(document.getElementById("email").value||"").trim()||localStorage.getItem("volby_email")||"";
+  var out=document.getElementById("loginMsg");
+  if(!link||!AUTH.isSignInWithEmailLink(link)){out.textContent="To nevypadá jako přihlašovací odkaz.";return;}
+  if(!email){out.textContent="Vyplň nahoře e-mail, na který odkaz přišel.";return;}
+  out.textContent="Přihlašuji…";
+  AUTH.signInWithEmailLink(email,link).then(function(){localStorage.removeItem("volby_email");}).catch(function(e){out.textContent="⚠️ "+(e&&e.message?e.message:e);});
+});
+document.getElementById("logout").addEventListener("click",function(){AUTH.signOut();});
+
+if(AUTH.isSignInWithEmailLink(window.location.href)){
+  var em=localStorage.getItem("volby_email")||window.prompt("Potvrď svůj e-mail pro přihlášení:");
+  if(em){AUTH.signInWithEmailLink(em,window.location.href).then(function(){localStorage.removeItem("volby_email");history.replaceState(null,"",location.pathname);}).catch(function(e){alert("Přihlášení selhalo: "+(e&&e.message?e.message:e));});}
+}
+AUTH.onAuthStateChanged(function(user){
+  if(!user){_USER=null;showLogin();return;}
+  FDB.ref("florian_login_email/"+leKey(user.email)).get().then(function(s){
+    if(s.exists()){_USER=user;document.getElementById("who").textContent=user.email;showApp();loadData();}
+    else{showLogin("E-mail <b>"+esc(user.email)+"</b> zatím nemá přístup. Ozvi se Petru Kobelkovi, ať tě přidá (stejný seznam jako Florián).");AUTH.signOut();}
+  }).catch(function(){showLogin("Nepodařilo se ověřit přístup, zkus to znovu.");});
+});
+
+/* ---------- DATA ---------- */
+function loadData(){
+  FDB.ref("volby_obce").on("value",function(snap){
+    var v=snap.val()||{};
+    OBCE=Object.keys(v).map(function(k){return v[k];});
+    var P={"Moravská Třebová":0,"Svitavy":1,"Polička":2,"Litomyšl":3,"Jevíčko":4};
+    OBCE.sort(function(a,b){
+      if(!!a.provozovano!==!!b.provozovano)return a.provozovano?-1:1;
+      var pa=P[a.pracoviste]==null?9:P[a.pracoviste], pb=P[b.pracoviste]==null?9:P[b.pracoviste];
+      if(pa!==pb)return pa-pb;
+      return (a.nazev||"").localeCompare(b.nazev||"","cs");
+    });
+    if(!OBCE.length){document.getElementById("stav").innerHTML="⚠️ Data zatím nejsou ve Firebase. Spusť GitHub akci <b>Seed Volby (volby_obce)</b>, pak se sem načtou.";}
+    initProv();initPrac();render();
+    updateStav();
+  });
+}
+function updateStav(){
+  if(!OBCE.length)return;
+  var nProv=OBCE.filter(function(o){return o.provozovano;}).length;
+  var sZast=OBCE.reduce(function(a,o){return a+(o.pocet_zast||(o.zastupitelstvo?o.zastupitelstvo.length:0));},0);
+  var over=OBCE.filter(function(o){return o.overeno;}).length;
+  document.getElementById("stav").innerHTML=
+    "Vsech "+OBCE.length+" obci ("+nProv+" provozuje VHOS + "+(OBCE.length-nProv)+" neprovozovanych). "+
+    "Obdobi 2022–2026 z voleb 2022 ("+sZast+" zastupitelu). Overeno starostu: "+over+" obci. Klikni na obec pro detail a upravy.";
+}
+
+/* ---------- FILTRY ---------- */
+function provOK(o){return fProv==="Vše"||(fProv==="Provozované"&&o.provozovano)||(fProv==="Neprovozované"&&!o.provozovano);}
+function initProv(){
+  var box=document.getElementById("provChips");box.innerHTML="";
+  var opts=[["Vše",OBCE.length],["Provozované",OBCE.filter(function(o){return o.provozovano;}).length],["Neprovozované",OBCE.filter(function(o){return !o.provozovano;}).length]];
+  opts.forEach(function(p){var c=document.createElement("div");c.className="chip"+(p[0]===fProv?" on":"");c.textContent=p[0]+" ("+p[1]+")";
+    c.addEventListener("click",function(){fProv=p[0];if(fProv==="Neprovozované")fPrac="Vše";initProv();initPrac();render();});box.appendChild(c);});
+}
+function initPrac(){
+  var box=document.getElementById("pracChips");box.innerHTML="";
+  if(fProv==="Neprovozované")return;
+  ["Vše"].concat(PRAC).forEach(function(p){var c=document.createElement("div");c.className="chip sub"+(p===fPrac?" on":"");
+    var n=p==="Vše"?OBCE.filter(function(o){return o.provozovano;}).length:OBCE.filter(function(o){return o.pracoviste===p;}).length;
+    c.textContent=(p==="Vše"?"Všechna pracoviště":p)+" ("+n+")";
+    c.addEventListener("click",function(){fPrac=p;if(fProv==="Neprovozované")fProv="Vše";initProv();initPrac();render();});box.appendChild(c);});
+}
+
+/* ---------- RENDER ---------- */
+function badgesHTML(o){var mimo=o.okres!=="Svitavy";
+  return (o.provozovano?"<span class='b prac'>"+esc(o.pracoviste)+"</span>":"<span class='b np'>neprovozováno</span>")+
+    (mimo?"<span class='b mimo'>okres "+esc(o.okres)+"</span>":"")+
+    (o.overeno?"<span class='b ok'>✔ ověřeno</span>":(o.jistota==="nízká"?"<span class='b over'>starosta ověřit</span>":""));}
+function groupHdr(g,provoz){var h=document.createElement("div");h.className="grouphdr"+(provoz?"":" npg");
+  var n=OBCE.filter(function(o){return o.provozovano===provoz;}).length;
+  h.innerHTML=(provoz?"🔧 Provozované VHOS":"Neprovozované")+" <span class='cnt'>("+n+" obcí)</span>";g.appendChild(h);}
+function matchZast(o,q){return (o.zastupitelstvo||[]).some(function(z){return z.toLowerCase().indexOf(q)>=0;});}
+function render(){
+  var q=document.getElementById("q").value.trim().toLowerCase();
+  var list=OBCE.filter(function(o){
+    if(!provOK(o))return false;
+    if(fPrac!=="Vše"&&o.pracoviste!==fPrac)return false;
+    if(q&&!(o.nazev.toLowerCase().indexOf(q)>=0||(o.starosta||"").toLowerCase().indexOf(q)>=0||matchZast(o,q)))return false;
+    return true;
+  });
+  document.getElementById("pocet").textContent=list.length+" obcí";
+  var g=document.getElementById("grid");g.innerHTML="";var last=null;
+  list.forEach(function(o){
+    if(o.provozovano!==last){last=o.provozovano;groupHdr(g,o.provozovano);}
+    var d=document.createElement("div");d.className="obec"+(o.provozovano?"":" np");
+    d.innerHTML="<h3>"+esc(o.nazev)+"</h3><div class='badges'>"+badgesHTML(o)+"</div>"+
+      "<div class='hint'>"+((o.zastupitelstvo&&o.zastupitelstvo.length)?o.zastupitelstvo.length+" zastupitelů · ":"")+"klikni pro detail</div>";
+    d.addEventListener("click",function(){openModal(o);});g.appendChild(d);
+  });
+}
+
+/* ---------- MODAL + EDITACE ---------- */
+function link(val,kind){
+  if(!val)return "<span class='prazdne'>— k doplnění —</span>";
+  if(kind==="email")return "<a href='mailto:"+esc(val)+"'>"+esc(val)+"</a>";
+  if(kind==="tel")return "<a href='tel:"+esc(val.replace(/\s/g,''))+"'>"+esc(val)+"</a>";
+  if(kind==="web"){var u=val.indexOf("http")===0?val:"https://"+val;return "<a href='"+esc(u)+"' target='_blank' rel='noopener'>"+esc(val)+"</a>";}
+  return esc(val);
+}
+function zastList(val,e){return (val&&val.length)?"<ul class='zast'>"+val.map(function(x){return "<li>"+esc(x)+"</li>";}).join("")+"</ul>":"<span class='prazdne'>"+e+"</span>";}
+function viewRow(lbl,val,kind){return "<div class='r'><b>"+lbl+"</b><span>"+link(val,kind)+"</span></div>";}
+function editRow(lbl,id,val){return "<div class='r'><b>"+lbl+"</b><input id='"+id+"' value=\""+esc(val||"")+"\" /></div>";}
+function openModal(o){_CUR=o;_EDIT=false;renderModal();document.getElementById("modal").classList.add("show");}
+function renderModal(){
+  var o=_CUR;var z22=o.zastupitelstvo||[], z26=o.zastupitelstvo_2026||[];
+  var head="<h2>"+esc(o.nazev)+"</h2><div class='mbadges'>"+badgesHTML(o)+"</div>";
+  var contact;
+  if(_EDIT){
+    contact=editRow("Starosta","e_starosta",o.starosta)+editRow("Místostarosta","e_mistostarosta",o.mistostarosta)+
+      editRow("E-mail","e_email",o.email)+editRow("Telefon","e_tel",o.tel)+editRow("Web","e_web",o.web)+editRow("Adresa úřadu","e_adresa",o.adresa);
+  }else{
+    contact=viewRow("Starosta",o.starosta)+viewRow("Místostarosta",o.mistostarosta);
+  }
+  var body=head+
+    "<div class='sekce'>Současnost <span class='obd'>· období 2022–2026</span></div>"+
+    contact+
+    "<div class='r'><b>Zastupitelstvo"+(z22.length?" ("+z22.length+")":"")+"</b><span>"+zastList(z22,"— k doplnění —")+"</span></div>";
+  if(!_EDIT){
+    body+=viewRow("E-mail",o.email,"email")+viewRow("Telefon",o.tel,"tel")+viewRow("Web",o.web,"web")+viewRow("Adresa úřadu",o.adresa);
+  }
+  body+="<div class='sekce'>Po volbách <span class='obd'>· období 2026–2030</span></div>"+
+    "<div class='r'><b>Zastupitelstvo"+(z26.length?" ("+z26.length+")":"")+"</b><span>"+zastList(z26,"— doplní se po volbách 2026 —")+"</span></div>";
+  // nástroje
+  if(_EDIT){
+    body+="<div class='mtools'><button class='btn' id='saveBtn'>💾 Uložit</button><button class='btn ghost' id='cancelBtn'>Zrušit</button></div>";
+  }else{
+    body+="<div class='mtools'><button class='btn' id='editBtn'>✏️ Upravit</button>"+
+      "<button class='btn ghost' id='overBtn'>"+(o.overeno?"✔ Ověřeno (zrušit)":"Označit starostu ověřeno")+"</button></div>"+
+      (o.overil?"<div class='zdroj'>ověřil: "+esc(o.overil)+"</div>":"");
+  }
+  body+="<div class='msg' id='mmsg'></div>"+
+    "<div class='zdroj'>zastupitelstvo 2022–2026: volby.cz KV2022"+(o.zdroj?" | kontakt: "+esc(o.zdroj):"")+"</div>";
+  document.getElementById("mbody").innerHTML=body;
+  if(_EDIT){
+    document.getElementById("saveBtn").addEventListener("click",saveEdit);
+    document.getElementById("cancelBtn").addEventListener("click",function(){_EDIT=false;renderModal();});
+  }else{
+    document.getElementById("editBtn").addEventListener("click",function(){_EDIT=true;renderModal();});
+    document.getElementById("overBtn").addEventListener("click",toggleOvereno);
+  }
+}
+function saveEdit(){
+  var o=_CUR;var g=function(id){return (document.getElementById(id).value||"").trim();};
+  var upd={starosta:g("e_starosta"),mistostarosta:g("e_mistostarosta"),email:g("e_email"),tel:g("e_tel"),web:g("e_web"),adresa:g("e_adresa"),
+    upravil:_USER.email,upravil_ts:Date.now()};
+  document.getElementById("mmsg").textContent="Ukládám…";
+  FDB.ref("volby_obce/"+o.kod).update(upd).then(function(){
+    Object.assign(o,upd);_EDIT=false;renderModal();
+  }).catch(function(e){document.getElementById("mmsg").textContent="⚠️ "+(e&&e.message?e.message:e);});
+}
+function toggleOvereno(){
+  var o=_CUR;var nv=!o.overeno;
+  var upd=nv?{overeno:true,overil:_USER.email,overeno_ts:Date.now()}:{overeno:false,overil:null,overeno_ts:null};
+  document.getElementById("mmsg").textContent="Ukládám…";
+  FDB.ref("volby_obce/"+o.kod).update(upd).then(function(){Object.assign(o,upd);renderModal();}).catch(function(e){document.getElementById("mmsg").textContent="⚠️ "+(e&&e.message?e.message:e);});
+}
+document.getElementById("mclose").addEventListener("click",function(){document.getElementById("modal").classList.remove("show");});
+document.getElementById("modal").addEventListener("click",function(e){if(e.target.id==="modal")e.currentTarget.classList.remove("show");});
+document.addEventListener("keydown",function(e){if(e.key==="Escape")document.getElementById("modal").classList.remove("show");});
+document.getElementById("q").addEventListener("input",render);
+</script>
+</body></html>
