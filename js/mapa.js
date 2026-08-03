@@ -803,14 +803,20 @@ async function inicializujMapu() {
     const spravciList = await resSpravci.json();
     const spravci = Object.fromEntries(spravciList.map(s => [s.cislo, s.jmeno]));
 
-    // Cluster vrstva – shlukuje jen budky, které se opravdu vizuálně překrývají
-    clusterGroup = L.markerClusterGroup({
-      maxClusterRadius: 45,          // malý poloměr → jen skutečný překryv
-      showCoverageOnHover: false,    // bez oblasti při najetí (klidnější)
-      spiderfyOnMaxZoom: true,       // budky na stejném místě se rozevřou do vějíře
-      zoomToBoundsOnClick: true,     // klik na bublinu přiblíží a rozpadne shluk
-      iconCreateFunction: _vytvorClusterIkonu
-    });
+    // Cluster vrstva – shlukuje jen budky, které se opravdu vizuálně překrývají.
+    // POJISTKA: když se plugin z jakéhokoli důvodu nenačte (cache, výpadek),
+    // markery přidáme přímo na mapu, ať budky NIKDY nezmizí.
+    if (typeof L.markerClusterGroup === 'function') {
+      clusterGroup = L.markerClusterGroup({
+        maxClusterRadius: 45,          // malý poloměr → jen skutečný překryv
+        showCoverageOnHover: false,    // bez oblasti při najetí (klidnější)
+        spiderfyOnMaxZoom: true,       // budky na stejném místě se rozevřou do vějíře
+        zoomToBoundsOnClick: true,     // klik na bublinu přiblíží a rozpadne shluk
+        iconCreateFunction: _vytvorClusterIkonu
+      });
+    } else {
+      console.warn('markercluster se nenačetl – budky budou bez shlukování');
+    }
 
     budky.forEach(b => {
       if (!b.lat || !b.lng) return;
@@ -834,12 +840,13 @@ async function inicializujMapu() {
       });
 
       markersByCislo[b.cislo] = marker;
-      clusterGroup.addLayer(marker);
+      if (clusterGroup) clusterGroup.addLayer(marker);
+      else marker.addTo(mapInstance);
       if (!window._budkyDataMap) window._budkyDataMap = {};
       window._budkyDataMap[b.cislo] = bData;
     });
 
-    mapInstance.addLayer(clusterGroup);
+    if (clusterGroup) mapInstance.addLayer(clusterGroup);
 
     // Nastav počáteční měřítko/tier a překresli podle úrovně zoomu
     _aktualizujZoomVzhled(true);
