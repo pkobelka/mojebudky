@@ -109,7 +109,7 @@ function _aktualizujMarkerZFirebase(cisloNum, kdoHnizdi, datumOsidleni, edit) {
   const bUp = { ...bData, stav: 'osidlena', ptak: kdoHnizdi };
   if (datumOsidleni) bUp.datum_osidleni = datumOsidleni;
   if (edit) bUp.fb_edit = edit;
-  marker.setIcon(vytvorIkonu(bUp));
+  marker.setIcon(_ikonaProBudku(bUp));
   marker.unbindTooltip();
   marker.bindTooltip(formatTooltip(bUp), {
     direction: 'top', offset: [0, -46], className: 'budka-tooltip-wrap', sticky: false
@@ -402,6 +402,58 @@ function vytvorIkonu(b) {
   });
 }
 
+// --- Zoom-závislé zobrazení markerů ---------------------------------------
+// Nízký zoom → malé body; od ZOOM_DETAIL → plné ikony budek. Mezi tím se
+// velikost plynule zvětšuje (CSS proměnná --budka-scale na kontejneru mapy).
+const ZOOM_DETAIL = 14;
+let _zoomTier = null; // 'dot' | 'full'
+
+function _dotColor(b) {
+  const nezjisteno = b.stav === 'osidlena' && (!b.ptak || b.ptak === 'nezjisteno');
+  if (b.stav === 'osidlena') return nezjisteno ? '#c8901a' : '#2f9e2f';
+  return '#e06820';
+}
+
+function vytvorIkonuDot(b) {
+  return L.divIcon({
+    html: `<div class="budka-dot" style="--dot-color:${_dotColor(b)}"></div>`,
+    iconSize: [14, 14],
+    iconAnchor: [7, 7],
+    popupAnchor: [0, -8],
+    className: ''
+  });
+}
+
+// Vybere ikonu podle aktuálního zoomu (body vs. plná ikona budky).
+function _ikonaProBudku(b) {
+  const zoom = mapInstance ? mapInstance.getZoom() : 6;
+  return zoom >= ZOOM_DETAIL ? vytvorIkonu(b) : vytvorIkonuDot(b);
+}
+
+// Plynulé zvětšování v rámci každé úrovně: body 0.6→1.2, budky 0.72→1.0.
+function _scaleProZoom(zoom) {
+  if (zoom >= ZOOM_DETAIL) {
+    const t = Math.max(0, Math.min(1, (zoom - ZOOM_DETAIL) / 2));
+    return 0.72 + t * 0.28;
+  }
+  const t = Math.max(0, Math.min(1, (zoom - 8) / (ZOOM_DETAIL - 8)));
+  return 0.6 + t * 0.6;
+}
+
+// Nastaví měřítko a při přechodu mezi body/budkami překreslí ikony markerů.
+function _aktualizujZoomVzhled(force) {
+  if (!mapInstance) return;
+  const zoom = mapInstance.getZoom();
+  mapInstance.getContainer().style.setProperty('--budka-scale', _scaleProZoom(zoom).toFixed(3));
+  const tier = zoom >= ZOOM_DETAIL ? 'full' : 'dot';
+  if (tier === _zoomTier && !force) return;
+  _zoomTier = tier;
+  Object.keys(markersByCislo).forEach(cislo => {
+    const b = (window._budkyDataMap || {})[Number(cislo)];
+    if (b) markersByCislo[cislo].setIcon(_ikonaProBudku(b));
+  });
+}
+
 function _stavInfo(b) {
   const nezjisteno = b.stav === 'osidlena' && (!b.ptak || b.ptak === 'nezjisteno');
   if (b.stav === 'osidlena')
@@ -571,6 +623,10 @@ function pridejLegend(map) {
       <div class="legenda-polozka">
         <img src="img/obydleno.svg" width="28" height="28" alt="">
         <span>Osídlená budka</span>
+      </div>
+      <div class="legenda-polozka">
+        <span class="legenda-dot" style="--dot-color:#e06820"></span>
+        <span>Budka — přibliž pro detail</span>
       </div>`;
     return div;
   };
@@ -721,7 +777,7 @@ async function inicializujMapu() {
     budky.forEach(b => {
       if (!b.lat || !b.lng) return;
       const bData = { ...b, spravce: spravci[b.cislo] || null };
-      const marker = L.marker([b.lat, b.lng], { icon: vytvorIkonu(b) });
+      const marker = L.marker([b.lat, b.lng], { icon: _ikonaProBudku(bData) });
 
       marker.bindTooltip(formatTooltip(bData), {
         direction: 'top',
@@ -744,6 +800,10 @@ async function inicializujMapu() {
       if (!window._budkyDataMap) window._budkyDataMap = {};
       window._budkyDataMap[b.cislo] = bData;
     });
+
+    // Nastav počáteční měřítko/tier a překresli podle úrovně zoomu
+    _aktualizujZoomVzhled(true);
+    mapInstance.on('zoomend', () => _aktualizujZoomVzhled());
 
     document.getElementById('stat-celkem').textContent = budky.length;
 
