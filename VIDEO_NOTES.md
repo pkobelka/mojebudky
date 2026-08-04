@@ -34,13 +34,20 @@ Větev: `claude/video-reseni-fbeois`.
 - #4 ~49–55 s (cíl)
 - #5 ~62–65 s (přidej se)
 
-## Co zbývá / úkol
+## Rozhodnutí: varianta B – jeden finální rebuild
 
-Uživatel dodá **text namluvení po větách** + u každé věty **cílový čas/scénu**
-(např. „má začít až u mapy ~9 s", „posunout o 2 s dřív"). Text se z disku obnovit nedá
-(předchozí session je pryč) a přepis přes AI model v tomto prostředí nejde – **proxy blokuje
-stažení modelu** (huggingface.co / azure / alphacephei = 403/000; povolené jen pypi/github/npm).
-Proto uživatel čte text z videa ručně.
+Domluveno (4. 8. 2026): video se poskládá znovu **naráz** tak, aby sedělo
+obraz + hlas + **nové fotky hotových budek**. Žádný mezikrok.
+
+Uživatel doma připraví a dodá:
+1. **Text namluvení po větách** + u každé věty **cílový čas/scénu**
+   (např. „má začít až u mapy ~9 s", „posunout o 2 s dřív").
+2. **Fotky hotových budek** (pošle do chatu) + kam ve videu patří,
+   jak dlouho každá (typ. 2–3 s) a případný popisek (č. budky, druh ptáka).
+
+Poznámka: text se z disku obnovit nedá (předchozí session je pryč) a přepis přes AI model
+v tomto prostředí nejde – **proxy blokuje stažení modelu** (huggingface.co / azure /
+alphacephei = 403/000; povolené jen pypi/github/npm). Proto uživatel čte text z videa ručně.
 
 ## Postup dokončení (až bude text + časy)
 
