@@ -1343,6 +1343,7 @@ a.uvod-cta-text:hover { background: rgba(255,255,255,0.22); transform: translate
 .uvod-videos { display: flex; gap: 18px; align-items: flex-start; justify-content: center; flex-wrap: wrap; }
 .uvod-videos-item { flex: 1 1 380px; min-width: 0; max-width: 560px; }
 .uvod-videos-item .uvod-video { max-width: 100%; }
+.uvod-videos--single .uvod-videos-item { flex: 1 1 100%; max-width: 860px; }
 .uvod-teaser-video-title { color: rgba(255,255,255,0.5); font-size: 0.9rem; font-style: italic; margin: 12px 0 2px; padding: 0 16px; line-height: 1.5; }
 @media (max-width:600px) { .uvod-teaser-video { padding: 14px 12px 10px; } .uvod-teaser-video-title { font-size: 0.82rem; } }
 .uvod-teaser-text { padding: 28px 32px; text-align: center; }
