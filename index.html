@@ -228,27 +228,48 @@
       <!-- Video teaser / partner výzva -->
       <div class="uvod-teaser">
         <div class="uvod-teaser-video">
-          <div class="uvod-videos">
+          <div class="uvod-videos uvod-videos--single">
             <div class="uvod-videos-item">
-              <video class="uvod-video" controls preload="none" playsinline
+              <video class="uvod-video" controls preload="metadata" playsinline
                      poster="promo_intro_2026.jpg"
-                     aria-label="Promo video projektu MojeBudky.cz – Náš příběh">
-                <source src="promo_intro_2026.mp4" type="video/mp4">
+                     aria-label="Promo video projektu MojeBudky.cz">
+                <source src="promo_2026.mp4?v=__MB_BUILD__" type="video/mp4">
                 Váš prohlížeč neumí přehrát vložené video.
-                <a href="promo_intro_2026.mp4">Stáhnout promo video (MP4)</a>.
+                <a href="promo_2026.mp4?v=__MB_BUILD__">Stáhnout promo video (MP4)</a>.
               </video>
-              <p class="uvod-teaser-video-title">🎬 Náš příběh – od jedné obyčejné garáže po stovky ptačích domovů</p>
+              <p class="uvod-teaser-video-title">🎬 MojeBudky.cz – od jedné obyčejné garáže po stovky ptačích domovů</p>
             </div>
-            <div class="uvod-videos-item">
-              <video class="uvod-video" controls preload="none" playsinline
-                     poster="promo_web_2026.jpg?v=__MB_BUILD__"
-                     aria-label="Ukázka aplikace MojeBudky.cz – živá mapa budek a jejich příběhy">
-                <source src="promo_web_2026.mp4?v=__MB_BUILD__" type="video/mp4">
-                Váš prohlížeč neumí přehrát vložené video.
-                <a href="promo_web_2026.mp4?v=__MB_BUILD__">Stáhnout video (MP4)</a>.
-              </video>
-              <p class="uvod-teaser-video-title">🗺️ Naše aplikace – živá mapa budek a jejich příběhy po celém Česku i Slovensku</p>
+          </div>
+          <!--
+            DOČASNĚ (zatím): původní dvě videa nešla přehrát, proto je nahrazeno
+            jedním funkčním promo videem (promo_2026.mp4). Až budou původní videa
+            opravená, stačí vrátit tento blok:
+
+            <div class="uvod-videos">
+              <div class="uvod-videos-item">
+                <video class="uvod-video" controls preload="none" playsinline
+                       poster="promo_intro_2026.jpg"
+                       aria-label="Promo video projektu MojeBudky.cz – Náš příběh">
+                  <source src="promo_intro_2026.mp4" type="video/mp4">
+                  Váš prohlížeč neumí přehrát vložené video.
+                  <a href="promo_intro_2026.mp4">Stáhnout promo video (MP4)</a>.
+                </video>
+                <p class="uvod-teaser-video-title">🎬 Náš příběh – od jedné obyčejné garáže po stovky ptačích domovů</p>
+              </div>
+              <div class="uvod-videos-item">
+                <video class="uvod-video" controls preload="none" playsinline
+                       poster="promo_web_2026.jpg?v=__MB_BUILD__"
+                       aria-label="Ukázka aplikace MojeBudky.cz – živá mapa budek a jejich příběhy">
+                  <source src="promo_web_2026.mp4?v=__MB_BUILD__" type="video/mp4">
+                  Váš prohlížeč neumí přehrát vložené video.
+                  <a href="promo_web_2026.mp4?v=__MB_BUILD__">Stáhnout video (MP4)</a>.
+                </video>
+                <p class="uvod-teaser-video-title">🗺️ Naše aplikace – živá mapa budek a jejich příběhy po celém Česku i Slovensku</p>
+              </div>
             </div>
+          -->
+          <div style="text-align:center;margin-top:8px">
+            <a href="promo_2026.mp4?v=__MB_BUILD__" download style="font-size:.9em">⬇️ Pokud se video nepřehraje, stáhněte si ho zde</a>
           </div>
         </div>
         <div class="uvod-teaser-text">
