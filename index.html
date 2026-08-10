@@ -230,20 +230,23 @@
         <div class="uvod-teaser-video">
           <div class="uvod-videos uvod-videos--single">
             <div class="uvod-videos-item">
-              <video class="uvod-video" controls preload="metadata" playsinline
-                     poster="promo_intro_2026.jpg"
-                     aria-label="Promo video projektu MojeBudky.cz">
-                <source src="promo_2026.mp4?v=__MB_BUILD__" type="video/mp4">
-                Váš prohlížeč neumí přehrát vložené video.
-                <a href="promo_2026.mp4?v=__MB_BUILD__">Stáhnout promo video (MP4)</a>.
-              </video>
+              <div class="uvod-video-embed">
+                <iframe src="https://www.youtube-nocookie.com/embed/FCqFrWlZ-J8?rel=0"
+                        title="Promo video projektu MojeBudky.cz"
+                        loading="lazy"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                        referrerpolicy="strict-origin-when-cross-origin"
+                        allowfullscreen></iframe>
+              </div>
               <p class="uvod-teaser-video-title">🎬 MojeBudky.cz – od jedné obyčejné garáže po stovky ptačích domovů</p>
             </div>
           </div>
           <!--
-            DOČASNĚ (zatím): původní dvě videa nešla přehrát, proto je nahrazeno
-            jedním funkčním promo videem (promo_2026.mp4). Až budou původní videa
-            opravená, stačí vrátit tento blok:
+            DOČASNĚ (zatím): původní dvě videa (promo_intro_2026.mp4 a
+            promo_web_2026.mp4) se na webu nepřehrávala – hosting WEDOS vrací na
+            .mp4 soubory 403 (i přes povolení v .htaccess). Proto je úvodní promo
+            vloženo přes YouTube (nezávislé na hostingu). Až se .mp4 na hostingu
+            zprovozní, stačí vrátit tento blok se dvěma videi:
 
             <div class="uvod-videos">
               <div class="uvod-videos-item">
@@ -269,7 +272,7 @@
             </div>
           -->
           <div style="text-align:center;margin-top:8px">
-            <a href="promo_2026.mp4?v=__MB_BUILD__" download style="font-size:.9em">⬇️ Pokud se video nepřehraje, stáhněte si ho zde</a>
+            <a href="https://youtu.be/FCqFrWlZ-J8" target="_blank" rel="noopener" style="font-size:.9em">▶️ Přehrát video přímo na YouTube</a>
           </div>
         </div>
         <div class="uvod-teaser-text">
