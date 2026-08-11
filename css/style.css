@@ -1385,6 +1385,67 @@ a.uvod-cta-text:hover { background: rgba(255,255,255,0.22); transform: translate
 .sekce-nadpis { text-align: center; color: #1c5c10; font-size: 2.1rem; font-weight: 800; margin-bottom: 8px; letter-spacing: 0.2px; }
 .sekce-podnadpis { text-align: center; color: #5a6e48; font-size: 1.12rem; margin-bottom: 34px; line-height: 1.5; }
 
+/* ── Fotogalerie ── */
+.sekce-galerie { background: #f7faf3; }
+.galerie-taby { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin-bottom: 26px; }
+.galerie-tab {
+  background: #ffffff; color: #3a4a30; border: 1px solid #d3e3c4;
+  border-radius: 999px; padding: 9px 20px; font-size: 1rem; font-weight: 600;
+  cursor: pointer; font-family: inherit; transition: background .15s, color .15s, border-color .15s, box-shadow .15s;
+}
+.galerie-tab:hover { border-color: #7fae5a; }
+.galerie-tab.is-active { background: #1c5c10; color: #fff; border-color: #1c5c10; box-shadow: 0 4px 14px rgba(28,92,16,.22); }
+.galerie-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; }
+.galerie-loading, .galerie-prazdno { grid-column: 1 / -1; text-align: center; color: #6b7d5a; padding: 40px 16px; line-height: 1.6; }
+.galerie-dlazdice {
+  position: relative; display: block; padding: 0; border: 0; cursor: zoom-in;
+  border-radius: 12px; overflow: hidden; background: #e7efdd; font-family: inherit;
+  box-shadow: 0 3px 12px rgba(60,90,40,.10); aspect-ratio: 4 / 3;
+  transition: transform .15s, box-shadow .15s;
+}
+.galerie-dlazdice:hover { transform: translateY(-3px); box-shadow: 0 8px 22px rgba(60,90,40,.22); }
+.galerie-dlazdice img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.galerie-badge {
+  position: absolute; top: 8px; right: 8px; background: rgba(0,0,0,.6); color: #fff;
+  font-size: .8rem; font-weight: 600; padding: 3px 8px; border-radius: 999px;
+}
+.galerie-popisek {
+  position: absolute; left: 0; right: 0; bottom: 0; padding: 18px 10px 8px;
+  background: linear-gradient(transparent, rgba(0,0,0,.72)); color: #fff;
+  font-size: .9rem; font-weight: 600; text-align: left; line-height: 1.3;
+}
+
+/* Lightbox galerie */
+.galerie-lightbox {
+  position: fixed; inset: 0; z-index: 100000; background: rgba(0,0,0,.9);
+  display: flex; align-items: center; justify-content: center; gap: 8px; padding: 16px;
+}
+.galerie-lightbox .glb-stred { display: flex; flex-direction: column; align-items: center; max-width: 92vw; max-height: 92vh; }
+.galerie-lightbox .glb-img { max-width: 92vw; max-height: 80vh; object-fit: contain; border-radius: 8px; box-shadow: 0 10px 40px rgba(0,0,0,.5); }
+.galerie-lightbox .glb-info { margin-top: 12px; display: flex; align-items: center; gap: 14px; flex-wrap: wrap; justify-content: center; color: #fff; }
+.galerie-lightbox .glb-nadpis { font-weight: 700; font-size: 1.05rem; }
+.galerie-lightbox .glb-pocitadlo { color: #cfe0bf; font-size: .95rem; }
+.galerie-lightbox .glb-mapa {
+  background: #1c5c10; color: #fff; border: 0; border-radius: 999px; padding: 8px 16px;
+  font-size: .95rem; font-weight: 600; cursor: pointer; font-family: inherit;
+}
+.galerie-lightbox .glb-mapa:hover { background: #26761a; }
+.galerie-lightbox .glb-zavrit {
+  position: absolute; top: 14px; right: 18px; background: none; border: 0; color: #fff;
+  font-size: 2.4rem; line-height: 1; cursor: pointer; z-index: 2;
+}
+.galerie-lightbox .glb-nav {
+  background: rgba(255,255,255,.12); border: 0; color: #fff; font-size: 2.2rem;
+  width: 52px; height: 52px; border-radius: 50%; cursor: pointer; flex: 0 0 auto;
+  display: flex; align-items: center; justify-content: center; transition: background .15s;
+}
+.galerie-lightbox .glb-nav:hover { background: rgba(255,255,255,.28); }
+@media (max-width: 600px) {
+  .galerie-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; }
+  .galerie-lightbox .glb-nav { width: 42px; height: 42px; font-size: 1.8rem; }
+  .galerie-lightbox { padding: 8px; gap: 2px; }
+}
+
 /* ── STATISTIKY ── */
 .sekce-stats .stats-grid { grid-template-columns: repeat(4, 1fr); max-width: 980px; margin: 0 auto 22px; gap: 18px; padding: 0; }
 .sekce-stats .stat-item { background: #ffffff; border: 1px solid #e0ead4; border-top: 4px solid var(--orange); border-radius: 14px; box-shadow: 0 4px 16px rgba(60,90,40,0.07); padding: 20px 14px; }

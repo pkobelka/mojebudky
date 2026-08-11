@@ -53,6 +53,7 @@
         <li><a href="#mapa" id="nav-mapa">Mapa Budek</a></li>
         <li><a href="https://www.google.com/maps/d/viewer?hl=cs&amp;mid=11Yq1MfrrWfRHxefxtGCFA0TCKSnNToXu&amp;ll=46.96772040177989%2C12.94753644912273&amp;z=6" target="_blank" rel="noopener noreferrer" onclick="var w=window.open(this.href,'_blank','noopener');return w?false:true;">Stará mapa (Google)</a></li>
         <li id="navLiAktuality"><a href="#aktuality">Z deníku správců...</a></li>
+        <li><a href="#galerie">Fotogalerie</a></li>
         <li><a href="#" id="navDesatero">Desatero správce</a></li>
         <li class="nav-navod-mobile"><a href="#" id="navNavodMobile">❓ Návod pro správce</a></li>
 
@@ -323,6 +324,21 @@
       <p class="sekce-podnadpis">Co se právě děje v našich budkách po celé zemi.</p>
       <div class="pribehy-list" id="aktualityList">
         <div style="padding:20px; color:#6b7d5a; font-size:0.95rem;">Načítám aktuality…</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Fotogalerie -->
+  <section class="sekce sekce-galerie" id="galerie" aria-label="Fotogalerie">
+    <div class="sekce-inner">
+      <h2 class="sekce-nadpis">Fotogalerie</h2>
+      <p class="sekce-podnadpis">Umístěné budky a další fotky z projektu.</p>
+      <div class="galerie-taby" role="tablist" aria-label="Kategorie fotogalerie">
+        <button class="galerie-tab is-active" data-tab="umistene" role="tab" aria-selected="true" type="button">🏡 Umístěné budky</button>
+        <button class="galerie-tab" data-tab="ostatni" role="tab" aria-selected="false" type="button">📷 Ostatní</button>
+      </div>
+      <div class="galerie-grid" id="galerieGrid" aria-live="polite">
+        <div class="galerie-loading">Načítám fotogalerii…</div>
       </div>
     </div>
   </section>
@@ -632,6 +648,7 @@
 <script src="js/svatky.js?v=__MB_BUILD__"></script>
 <script src="js/mapa.js?v=__MB_BUILD__"></script>
 <script src="js/main.js?v=__MB_BUILD__"></script>
+<script src="js/galerie.js?v=__MB_BUILD__"></script>
 <script src="js/auth.js?v=__MB_BUILD__"></script>
 <script src="js/presence.js?v=__MB_BUILD__"></script>
 <script>

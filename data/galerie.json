@@ -1,0 +1,1620 @@
+{
+  "generovano": "2026-08-11T11:53:29Z",
+  "umistene": [
+    {
+      "cislo": 2,
+      "nazev": "Holda",
+      "stav": "osidlena",
+      "fotky": [
+        "img/budky/2.jpg"
+      ]
+    },
+    {
+      "cislo": 3,
+      "nazev": "Pavel",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/3.jpg"
+      ]
+    },
+    {
+      "cislo": 5,
+      "nazev": "Vali + Viki",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/5.jpg",
+        "img/budky/5-1.jpg"
+      ]
+    },
+    {
+      "cislo": 6,
+      "nazev": "U Badyna",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/6.jpg",
+        "img/budky/6_1.jpg",
+        "img/budky/6_2.jpg",
+        "img/budky/6_.jpg"
+      ]
+    },
+    {
+      "cislo": 7,
+      "nazev": "Jirka",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/7.jpg"
+      ]
+    },
+    {
+      "cislo": 8,
+      "nazev": "Karel",
+      "stav": "osidlena",
+      "fotky": [
+        "img/budky/8.jpg"
+      ]
+    },
+    {
+      "cislo": 9,
+      "nazev": "Plíšek 2",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/9.jpg"
+      ]
+    },
+    {
+      "cislo": 10,
+      "nazev": "",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/10.jpg"
+      ]
+    },
+    {
+      "cislo": 11,
+      "nazev": "Štěpánek",
+      "stav": "osidlena",
+      "fotky": [
+        "img/budky/11.jpg"
+      ]
+    },
+    {
+      "cislo": 12,
+      "nazev": "Plíšek 1",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/12.jpg"
+      ]
+    },
+    {
+      "cislo": 13,
+      "nazev": "Lampoš",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/13.jpg"
+      ]
+    },
+    {
+      "cislo": 14,
+      "nazev": "Dia",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/14.jpg"
+      ]
+    },
+    {
+      "cislo": 15,
+      "nazev": "Theodorka",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/15.jpg",
+        "img/budky/15_1.jpg"
+      ]
+    },
+    {
+      "cislo": 16,
+      "nazev": "Janek",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/16.jpg"
+      ]
+    },
+    {
+      "cislo": 17,
+      "nazev": "Niki",
+      "stav": "osidlena",
+      "fotky": [
+        "img/budky/17.jpg",
+        "img/budky/17_1.jpg"
+      ]
+    },
+    {
+      "cislo": 18,
+      "nazev": "Tomášek",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/18.jpg"
+      ]
+    },
+    {
+      "cislo": 19,
+      "nazev": "Pavel",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/19.jpg"
+      ]
+    },
+    {
+      "cislo": 20,
+      "nazev": "Kristýnka + Marie",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/20.jpg"
+      ]
+    },
+    {
+      "cislo": 21,
+      "nazev": "ZŠ",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/21.jpg"
+      ]
+    },
+    {
+      "cislo": 22,
+      "nazev": "Sláveček+Anežka",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/22.jpg"
+      ]
+    },
+    {
+      "cislo": 23,
+      "nazev": "Ivetka",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/23.jpg",
+        "img/budky/23_1.jpg",
+        "img/budky/23_2.jpg"
+      ]
+    },
+    {
+      "cislo": 24,
+      "nazev": "Emily",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/24.jpg",
+        "img/budky/24_1.jpg"
+      ]
+    },
+    {
+      "cislo": 25,
+      "nazev": "Vosí budka",
+      "stav": "osidlena",
+      "fotky": [
+        "img/budky/25.jpg"
+      ]
+    },
+    {
+      "cislo": 26,
+      "nazev": "Adam",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/26.jpg"
+      ]
+    },
+    {
+      "cislo": 27,
+      "nazev": "Péťa",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/27.jpg",
+        "img/budky/27_1.jpg",
+        "img/budky/27_2.jpg"
+      ]
+    },
+    {
+      "cislo": 28,
+      "nazev": "Kristýnka",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/28.jpg",
+        "img/budky/28_1.jpg"
+      ]
+    },
+    {
+      "cislo": 29,
+      "nazev": "Laura",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/29.jpg"
+      ]
+    },
+    {
+      "cislo": 30,
+      "nazev": "Péťa",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/30.jpg"
+      ]
+    },
+    {
+      "cislo": 31,
+      "nazev": "Lubor",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/31.jpg"
+      ]
+    },
+    {
+      "cislo": 32,
+      "nazev": "Karel",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/32.jpg"
+      ]
+    },
+    {
+      "cislo": 33,
+      "nazev": "Crhuš",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/33.jpg"
+      ]
+    },
+    {
+      "cislo": 34,
+      "nazev": "Adík",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/34.jpg",
+        "img/budky/34_1.jpg"
+      ]
+    },
+    {
+      "cislo": 35,
+      "nazev": "Miro",
+      "stav": "osidlena",
+      "fotky": [
+        "img/budky/35.jpg"
+      ]
+    },
+    {
+      "cislo": 37,
+      "nazev": "",
+      "stav": "osidlena",
+      "fotky": [
+        "img/budky/37.jpg"
+      ]
+    },
+    {
+      "cislo": 38,
+      "nazev": "Vojtík",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/38.jpg"
+      ]
+    },
+    {
+      "cislo": 39,
+      "nazev": "Mateřská škola",
+      "stav": "osidlena",
+      "fotky": [
+        "img/budky/39.jpg",
+        "img/budky/39_1.jpg"
+      ]
+    },
+    {
+      "cislo": 40,
+      "nazev": "Lucka",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/40.jpg",
+        "img/budky/40_1.jpg",
+        "img/budky/40_2.jpg"
+      ]
+    },
+    {
+      "cislo": 41,
+      "nazev": "Laďa",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/41.jpg"
+      ]
+    },
+    {
+      "cislo": 42,
+      "nazev": "",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/42.jpg"
+      ]
+    },
+    {
+      "cislo": 43,
+      "nazev": "Anežka",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/43.jpg"
+      ]
+    },
+    {
+      "cislo": 44,
+      "nazev": "",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/44.jpg",
+        "img/budky/44_1.jpg"
+      ]
+    },
+    {
+      "cislo": 45,
+      "nazev": "",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/45.jpg"
+      ]
+    },
+    {
+      "cislo": 46,
+      "nazev": "Hela",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/46.jpg",
+        "img/budky/46_1.jpg"
+      ]
+    },
+    {
+      "cislo": 47,
+      "nazev": "",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/47.jpg"
+      ]
+    },
+    {
+      "cislo": 48,
+      "nazev": "U Kaplčky",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/48.jpg"
+      ]
+    },
+    {
+      "cislo": 49,
+      "nazev": "Jonášek",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/49.jpg",
+        "img/budky/49_1.jpg"
+      ]
+    },
+    {
+      "cislo": 50,
+      "nazev": "Janek",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/50.jpg"
+      ]
+    },
+    {
+      "cislo": 52,
+      "nazev": "U Sojky",
+      "stav": "osidlena",
+      "fotky": [
+        "img/budky/52.jpg"
+      ]
+    },
+    {
+      "cislo": 53,
+      "nazev": "",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/53.jpg",
+        "img/budky/53_1.jpg"
+      ]
+    },
+    {
+      "cislo": 54,
+      "nazev": "Šidlenka",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/54.jpg"
+      ]
+    },
+    {
+      "cislo": 55,
+      "nazev": "",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/55.jpg"
+      ]
+    },
+    {
+      "cislo": 57,
+      "nazev": "",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/57.jpg"
+      ]
+    },
+    {
+      "cislo": 58,
+      "nazev": "",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/58.jpg"
+      ]
+    },
+    {
+      "cislo": 59,
+      "nazev": "",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/59.jpg",
+        "img/budky/59_1.jpg"
+      ]
+    },
+    {
+      "cislo": 60,
+      "nazev": "Natálka",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/60.jpg",
+        "img/budky/60_2.jpg"
+      ]
+    },
+    {
+      "cislo": 61,
+      "nazev": "Erwin Thuis",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/61.jpg",
+        "img/budky/61_1.jpg"
+      ]
+    },
+    {
+      "cislo": 62,
+      "nazev": "Erwin Werkplaats",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/62.jpg",
+        "img/budky/62_1.jpg"
+      ]
+    },
+    {
+      "cislo": 63,
+      "nazev": "Adla",
+      "stav": "osidlena",
+      "fotky": [
+        "img/budky/63.jpg",
+        "img/budky/63_1.jpg"
+      ]
+    },
+    {
+      "cislo": 64,
+      "nazev": "Žabka",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/64.jpg",
+        "img/budky/64_1.jpg"
+      ]
+    },
+    {
+      "cislo": 66,
+      "nazev": "",
+      "stav": "osidlena",
+      "fotky": [
+        "img/budky/66.jpg"
+      ]
+    },
+    {
+      "cislo": 67,
+      "nazev": "Plastika",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/67.jpg",
+        "img/budky/67_1.jpg"
+      ]
+    },
+    {
+      "cislo": 68,
+      "nazev": "Hanička",
+      "stav": "osidlena",
+      "fotky": [
+        "img/budky/68.jpg",
+        "img/budky/68_1.jpg"
+      ]
+    },
+    {
+      "cislo": 69,
+      "nazev": "Srubec",
+      "stav": "osidlena",
+      "fotky": [
+        "img/budky/69.jpg",
+        "img/budky/69_1.jpg"
+      ]
+    },
+    {
+      "cislo": 71,
+      "nazev": "Martin",
+      "stav": "osidlena",
+      "fotky": [
+        "img/budky/71.jpg",
+        "img/budky/71_1.jpg"
+      ]
+    },
+    {
+      "cislo": 72,
+      "nazev": "Michal",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/72.jpg"
+      ]
+    },
+    {
+      "cislo": 73,
+      "nazev": "",
+      "stav": "osidlena",
+      "fotky": [
+        "img/budky/73.jpg",
+        "img/budky/73_1.jpg"
+      ]
+    },
+    {
+      "cislo": 74,
+      "nazev": "",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/74.jpg"
+      ]
+    },
+    {
+      "cislo": 75,
+      "nazev": "",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/75.jpg",
+        "img/budky/75_1.jpg"
+      ]
+    },
+    {
+      "cislo": 76,
+      "nazev": "Zdena",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/76.jpg"
+      ]
+    },
+    {
+      "cislo": 77,
+      "nazev": "Žofka",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/77.jpg"
+      ]
+    },
+    {
+      "cislo": 78,
+      "nazev": "Thea - Přemky",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/78.jpg",
+        "img/budky/78_1.jpg"
+      ]
+    },
+    {
+      "cislo": 79,
+      "nazev": "",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/79.jpg",
+        "img/budky/79_1.jpg"
+      ]
+    },
+    {
+      "cislo": 80,
+      "nazev": "Thea - Rozstání",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/80.jpg"
+      ]
+    },
+    {
+      "cislo": 82,
+      "nazev": "Chille",
+      "stav": "osidlena",
+      "fotky": [
+        "img/budky/82.jpg",
+        "img/budky/82_1.jpg"
+      ]
+    },
+    {
+      "cislo": 83,
+      "nazev": "Jasmínka",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/83.jpg"
+      ]
+    },
+    {
+      "cislo": 84,
+      "nazev": "",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/84.jpg"
+      ]
+    },
+    {
+      "cislo": 85,
+      "nazev": "",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/85.jpg",
+        "img/budky/85_1.jpg"
+      ]
+    },
+    {
+      "cislo": 86,
+      "nazev": "Mirka",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/86.jpg"
+      ]
+    },
+    {
+      "cislo": 87,
+      "nazev": "",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/87.jpg"
+      ]
+    },
+    {
+      "cislo": 88,
+      "nazev": "Bálkovi",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/88.jpg",
+        "img/budky/88(1).jpg",
+        "img/budky/88(2).jpg",
+        "img/budky/88_1.jpg"
+      ]
+    },
+    {
+      "cislo": 89,
+      "nazev": "",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/89.jpg",
+        "img/budky/89_1.jpg"
+      ]
+    },
+    {
+      "cislo": 90,
+      "nazev": "",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/90.jpg"
+      ]
+    },
+    {
+      "cislo": 91,
+      "nazev": "",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/91.jpg",
+        "img/budky/91_1.jpg"
+      ]
+    },
+    {
+      "cislo": 92,
+      "nazev": "",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/92.jpg"
+      ]
+    },
+    {
+      "cislo": 93,
+      "nazev": "",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/93.jpg"
+      ]
+    },
+    {
+      "cislo": 94,
+      "nazev": "",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/94.jpg"
+      ]
+    },
+    {
+      "cislo": 95,
+      "nazev": "",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/95.jpg"
+      ]
+    },
+    {
+      "cislo": 96,
+      "nazev": "",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/96.jpg"
+      ]
+    },
+    {
+      "cislo": 97,
+      "nazev": "",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/97.jpg",
+        "img/budky/97(1).jpg"
+      ]
+    },
+    {
+      "cislo": 98,
+      "nazev": "",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/98.jpg"
+      ]
+    },
+    {
+      "cislo": 99,
+      "nazev": "",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/99.jpg"
+      ]
+    },
+    {
+      "cislo": 100,
+      "nazev": "Ema-Emuška",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/100.jpg"
+      ]
+    },
+    {
+      "cislo": 101,
+      "nazev": "",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/101.jpg"
+      ]
+    },
+    {
+      "cislo": 102,
+      "nazev": "",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/102.jpg",
+        "img/budky/102_1.jpg"
+      ]
+    },
+    {
+      "cislo": 103,
+      "nazev": "",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/103.jpg",
+        "img/budky/103_1.jpg"
+      ]
+    },
+    {
+      "cislo": 105,
+      "nazev": "",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/105.jpg",
+        "img/budky/105_1.jpg"
+      ]
+    },
+    {
+      "cislo": 106,
+      "nazev": "",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/106.jpg",
+        "img/budky/106(1).jpg",
+        "img/budky/106_1.jpg"
+      ]
+    },
+    {
+      "cislo": 107,
+      "nazev": "",
+      "stav": "osidlena",
+      "fotky": [
+        "img/budky/107.jpg",
+        "img/budky/107_1.jpg"
+      ]
+    },
+    {
+      "cislo": 108,
+      "nazev": "Marek",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/108.jpg",
+        "img/budky/108_1.jpg"
+      ]
+    },
+    {
+      "cislo": 109,
+      "nazev": "PODLAS",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/109.jpg",
+        "img/budky/109_1.jpg"
+      ]
+    },
+    {
+      "cislo": 110,
+      "nazev": "Maty",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/110.jpg",
+        "img/budky/110_1.jpg"
+      ]
+    },
+    {
+      "cislo": 111,
+      "nazev": "Vojta",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/111.jpg",
+        "img/budky/111_1.jpg"
+      ]
+    },
+    {
+      "cislo": 112,
+      "nazev": "",
+      "stav": "osidlena",
+      "fotky": [
+        "img/budky/112.jpg"
+      ]
+    },
+    {
+      "cislo": 113,
+      "nazev": "",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/113.jpg",
+        "img/budky/113_1.jpg"
+      ]
+    },
+    {
+      "cislo": 114,
+      "nazev": "Tomík",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/114.jpg"
+      ]
+    },
+    {
+      "cislo": 115,
+      "nazev": "Kiki",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/115.jpg"
+      ]
+    },
+    {
+      "cislo": 116,
+      "nazev": "Karolína",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/116.jpg"
+      ]
+    },
+    {
+      "cislo": 117,
+      "nazev": "Julie",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/117.jpg"
+      ]
+    },
+    {
+      "cislo": 118,
+      "nazev": "Tadeáš",
+      "stav": "osidlena",
+      "fotky": [
+        "img/budky/118.jpg"
+      ]
+    },
+    {
+      "cislo": 119,
+      "nazev": "",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/119.jpg"
+      ]
+    },
+    {
+      "cislo": 120,
+      "nazev": "",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/120.jpg"
+      ]
+    },
+    {
+      "cislo": 121,
+      "nazev": "",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/121.jpg"
+      ]
+    },
+    {
+      "cislo": 122,
+      "nazev": "",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/122.jpg"
+      ]
+    },
+    {
+      "cislo": 123,
+      "nazev": "",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/123.jpg"
+      ]
+    },
+    {
+      "cislo": 124,
+      "nazev": "",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/124.jpg",
+        "img/budky/124_1.jpg"
+      ]
+    },
+    {
+      "cislo": 125,
+      "nazev": "Daminán",
+      "stav": "osidlena",
+      "fotky": [
+        "img/budky/125.jpg"
+      ]
+    },
+    {
+      "cislo": 126,
+      "nazev": "",
+      "stav": "osidlena",
+      "fotky": [
+        "img/budky/126.jpg"
+      ]
+    },
+    {
+      "cislo": 127,
+      "nazev": "Olda+Martin",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/127.jpg"
+      ]
+    },
+    {
+      "cislo": 128,
+      "nazev": "",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/128.jpg",
+        "img/budky/128_1(1).jpg",
+        "img/budky/128_1.jpg"
+      ]
+    },
+    {
+      "cislo": 129,
+      "nazev": "",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/129.jpg"
+      ]
+    },
+    {
+      "cislo": 131,
+      "nazev": "babi Draha",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/131.jpg",
+        "img/budky/131(1).jpg"
+      ]
+    },
+    {
+      "cislo": 132,
+      "nazev": "",
+      "stav": "osidlena",
+      "fotky": [
+        "img/budky/132.jpg",
+        "img/budky/132_1.jpg"
+      ]
+    },
+    {
+      "cislo": 133,
+      "nazev": "Oskar",
+      "stav": "osidlena",
+      "fotky": [
+        "img/budky/133.jpg",
+        "img/budky/133_1.jpg"
+      ]
+    },
+    {
+      "cislo": 134,
+      "nazev": "Hvězdička",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/134.jpg",
+        "img/budky/134_2.jpg"
+      ]
+    },
+    {
+      "cislo": 135,
+      "nazev": "",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/135.jpg",
+        "img/budky/135_1.jpg"
+      ]
+    },
+    {
+      "cislo": 136,
+      "nazev": "Chateau Lačnov",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/136.jpg"
+      ]
+    },
+    {
+      "cislo": 137,
+      "nazev": "",
+      "stav": "osidlena",
+      "fotky": [
+        "img/budky/137.jpg"
+      ]
+    },
+    {
+      "cislo": 138,
+      "nazev": "U starosty",
+      "stav": "osidlena",
+      "fotky": [
+        "img/budky/138.jpg"
+      ]
+    },
+    {
+      "cislo": 139,
+      "nazev": "Honzík",
+      "stav": "osidlena",
+      "fotky": [
+        "img/budky/139.jpg"
+      ]
+    },
+    {
+      "cislo": 140,
+      "nazev": "Adélka+Petr",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/140.jpg"
+      ]
+    },
+    {
+      "cislo": 141,
+      "nazev": "STAVOKA",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/141.jpg"
+      ]
+    },
+    {
+      "cislo": 142,
+      "nazev": "Péťa",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/142.jpg"
+      ]
+    },
+    {
+      "cislo": 143,
+      "nazev": "Adélka",
+      "stav": "osidlena",
+      "fotky": [
+        "img/budky/143.jpg",
+        "img/budky/143_1.jpg"
+      ]
+    },
+    {
+      "cislo": 144,
+      "nazev": "Markéta",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/144.jpg"
+      ]
+    },
+    {
+      "cislo": 145,
+      "nazev": "Na vrších",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/145.jpg"
+      ]
+    },
+    {
+      "cislo": 146,
+      "nazev": "Drahuška",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/146.jpg"
+      ]
+    },
+    {
+      "cislo": 147,
+      "nazev": "",
+      "stav": "osidlena",
+      "fotky": [
+        "img/budky/147.jpg"
+      ]
+    },
+    {
+      "cislo": 148,
+      "nazev": "",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/148.jpg"
+      ]
+    },
+    {
+      "cislo": 149,
+      "nazev": "Markéta",
+      "stav": "osidlena",
+      "fotky": [
+        "img/budky/149.jpg"
+      ]
+    },
+    {
+      "cislo": 150,
+      "nazev": "Jindřichovka",
+      "stav": "osidlena",
+      "fotky": [
+        "img/budky/150.jpg",
+        "img/budky/150_1.jpg"
+      ]
+    },
+    {
+      "cislo": 151,
+      "nazev": "Ivan",
+      "stav": "osidlena",
+      "fotky": [
+        "img/budky/151.jpg"
+      ]
+    },
+    {
+      "cislo": 152,
+      "nazev": "",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/152.jpg"
+      ]
+    },
+    {
+      "cislo": 153,
+      "nazev": "",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/153.jpg"
+      ]
+    },
+    {
+      "cislo": 154,
+      "nazev": "Všetulka",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/154.jpg",
+        "img/budky/154_1.jpg"
+      ]
+    },
+    {
+      "cislo": 155,
+      "nazev": "",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/155.jpg"
+      ]
+    },
+    {
+      "cislo": 156,
+      "nazev": "U Rebeky a Oskara",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/156.jpg",
+        "img/budky/156_1.jpg"
+      ]
+    },
+    {
+      "cislo": 157,
+      "nazev": "HUTIRA",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/157.jpg"
+      ]
+    },
+    {
+      "cislo": 158,
+      "nazev": "Jítťa",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/158.jpg"
+      ]
+    },
+    {
+      "cislo": 159,
+      "nazev": "Kubovka 63",
+      "stav": "osidlena",
+      "fotky": [
+        "img/budky/159.jpg",
+        "img/budky/159-2.jpg"
+      ]
+    },
+    {
+      "cislo": 160,
+      "nazev": "",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/160.jpg"
+      ]
+    },
+    {
+      "cislo": 161,
+      "nazev": "",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/161.jpg",
+        "img/budky/161_1.jpg"
+      ]
+    },
+    {
+      "cislo": 162,
+      "nazev": "",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/162.jpg"
+      ]
+    },
+    {
+      "cislo": 163,
+      "nazev": "",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/163.jpg"
+      ]
+    },
+    {
+      "cislo": 164,
+      "nazev": "",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/164.jpg",
+        "img/budky/164_1.jpg"
+      ]
+    },
+    {
+      "cislo": 165,
+      "nazev": "Kapka",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/165.jpg"
+      ]
+    },
+    {
+      "cislo": 167,
+      "nazev": "",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/167.jpg"
+      ]
+    },
+    {
+      "cislo": 168,
+      "nazev": "Tondova budka",
+      "stav": "osidlena",
+      "fotky": [
+        "img/budky/168.jpg"
+      ]
+    },
+    {
+      "cislo": 169,
+      "nazev": "",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/169.jpg"
+      ]
+    },
+    {
+      "cislo": 170,
+      "nazev": "",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/170.jpg"
+      ]
+    },
+    {
+      "cislo": 171,
+      "nazev": "",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/171.jpg"
+      ]
+    },
+    {
+      "cislo": 172,
+      "nazev": "",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/172.jpg"
+      ]
+    },
+    {
+      "cislo": 173,
+      "nazev": "Kolombo šel na sever",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/173.jpg"
+      ]
+    },
+    {
+      "cislo": 174,
+      "nazev": "",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/174.jpg"
+      ]
+    },
+    {
+      "cislo": 175,
+      "nazev": "Víťa",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/175.jpg"
+      ]
+    },
+    {
+      "cislo": 176,
+      "nazev": "",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/176.jpg"
+      ]
+    },
+    {
+      "cislo": 177,
+      "nazev": "Gábi",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/177.jpg"
+      ]
+    },
+    {
+      "cislo": 178,
+      "nazev": "Marie",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/178.jpg"
+      ]
+    },
+    {
+      "cislo": 179,
+      "nazev": "",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/179.jpg"
+      ]
+    },
+    {
+      "cislo": 180,
+      "nazev": "Ptáčenka",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/180.jpg"
+      ]
+    },
+    {
+      "cislo": 181,
+      "nazev": "Na Smutební vrbě",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/181.jpg"
+      ]
+    },
+    {
+      "cislo": 182,
+      "nazev": "Libuška",
+      "stav": "osidlena",
+      "fotky": [
+        "img/budky/182.jpg",
+        "img/budky/182_1.jpg"
+      ]
+    },
+    {
+      "cislo": 183,
+      "nazev": "",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/183.jpg"
+      ]
+    },
+    {
+      "cislo": 185,
+      "nazev": "Kostelec",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/185.jpg"
+      ]
+    },
+    {
+      "cislo": 186,
+      "nazev": "Na Lípě",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/186.jpg"
+      ]
+    },
+    {
+      "cislo": 189,
+      "nazev": "Dvořibudka",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/189.jpg"
+      ]
+    },
+    {
+      "cislo": 190,
+      "nazev": "Birdie",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/190.jpg",
+        "img/budky/190 1.jpg"
+      ]
+    },
+    {
+      "cislo": 191,
+      "nazev": "Ptáčí domeček na Salisově",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/191.jpg"
+      ]
+    },
+    {
+      "cislo": 192,
+      "nazev": "DOMITA",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/192.jpg"
+      ]
+    },
+    {
+      "cislo": 193,
+      "nazev": "Lucie",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/193.jpg",
+        "img/budky/193(1).jpg"
+      ]
+    },
+    {
+      "cislo": 194,
+      "nazev": "",
+      "stav": "osidlena",
+      "fotky": [
+        "img/budky/194.jpg"
+      ]
+    },
+    {
+      "cislo": 195,
+      "nazev": "Kryštůfek",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/195.jpg",
+        "img/budky/195-1.jpg",
+        "img/budky/195_1.jpg"
+      ]
+    },
+    {
+      "cislo": 196,
+      "nazev": "U Simony",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/196.jpg",
+        "img/budky/196_1.jpg"
+      ]
+    },
+    {
+      "cislo": 197,
+      "nazev": "",
+      "stav": "osidlena",
+      "fotky": [
+        "img/budky/197.jpg",
+        "img/budky/197(1).jpg"
+      ]
+    },
+    {
+      "cislo": 198,
+      "nazev": "",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/198.jpg"
+      ]
+    },
+    {
+      "cislo": 199,
+      "nazev": "Zábělá 358",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/199.jpg"
+      ]
+    },
+    {
+      "cislo": 201,
+      "nazev": "Jan",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/201.jpeg",
+        "img/budky/201_1.jpeg"
+      ]
+    },
+    {
+      "cislo": 203,
+      "nazev": "",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/203.jpg"
+      ]
+    },
+    {
+      "cislo": 204,
+      "nazev": "Děda",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/204.jpg",
+        "img/budky/204-1.jpg"
+      ]
+    },
+    {
+      "cislo": 205,
+      "nazev": "Budka pro Pavla",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/205.jpg",
+        "img/budky/205(1).jpg"
+      ]
+    },
+    {
+      "cislo": 206,
+      "nazev": "",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/206.jpg"
+      ]
+    },
+    {
+      "cislo": 207,
+      "nazev": "Tonča",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/207.jpg"
+      ]
+    },
+    {
+      "cislo": 208,
+      "nazev": "Manča",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/208.jpg"
+      ]
+    }
+  ],
+  "ostatni": []
+}
