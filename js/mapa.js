@@ -884,12 +884,17 @@ async function inicializujMapu() {
 
           Object.entries(edits).forEach(([cislo, editRaw]) => {
             const { latestEdit, allEditsDict } = _parseEditNode(editRaw);
+            const cisloNum = Number(cislo);
+            // Přejmenování budky správcem – nový název aplikuj VŠUDE (tooltip na mapě,
+            // karta správce i popup), ať se mapa neliší od detailu.
+            if (latestEdit && latestEdit.nazev && (window._budkyDataMap || {})[cisloNum]) {
+              window._budkyDataMap[cisloNum].nazev = latestEdit.nazev;
+            }
             if (latestEdit && latestEdit.kdo_hnizdi) {
-              _aktualizujMarkerZFirebase(Number(cislo), latestEdit.kdo_hnizdi, latestEdit.datum_osidleni || null, allEditsDict);
-            } else if (Object.keys(allEditsDict).length) {
-              // Has edit history (cisteni/kontrola) but no kdo_hnizdi — update fb_edit for history display only
+              _aktualizujMarkerZFirebase(cisloNum, latestEdit.kdo_hnizdi, latestEdit.datum_osidleni || null, allEditsDict);
+            } else if (Object.keys(allEditsDict).length || (latestEdit && latestEdit.nazev)) {
+              // Edit history (čištění/kontrola) nebo přejmenování bez kdo_hnizdi — přerenderuj popup/tooltip
               try {
-                const cisloNum = Number(cislo);
                 const bData = (window._budkyDataMap || {})[cisloNum];
                 const marker = markersByCislo[cisloNum];
                 if (bData && marker) {

@@ -82,6 +82,58 @@ async function _prihlasitPush(loginId) {
   }
 }
 
+// HTML bloku „notifikace" v kartě správce – podle stavu povolení a zařízení.
+function _notifikaceBlokHtml() {
+  const btnStyl = 'width:100%;margin-bottom:10px;padding:13px;background:linear-gradient(135deg,#1c5c10,#2a8018);color:#eef4e8;border:none;border-radius:10px;font-size:1rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;touch-action:manipulation';
+  const jeIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
+  const jeStandalone = (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) || window.navigator.standalone === true;
+
+  if (!('Notification' in window)) {
+    // iPhone/iPad v Safari (ne z plochy) – push funguje až po přidání na plochu
+    if (jeIOS && !jeStandalone) {
+      return `<div class="profil-notif-hint" style="width:100%;margin-bottom:10px;padding:11px 13px;background:rgba(230,180,60,0.12);border:1px solid rgba(230,180,60,0.35);border-radius:10px;font-size:0.9rem;line-height:1.5;color:#e6c060">
+        📲 Na iPhonu/iPadu notifikace fungují až po přidání webu na plochu:<br><b>Sdílet ⬆️ → Přidat na plochu</b>, pak web otevři přes tu novou ikonu a znovu se přihlas.
+      </div>`;
+    }
+    return '';
+  }
+
+  if (Notification.permission === 'granted') {
+    return `<button class="profil-btn-push" id="profilTestPush" style="${btnStyl}">
+      🔔 Poslat zkušební notifikaci
+    </button>`;
+  }
+
+  return `<button class="profil-btn-push" id="profilPovolPush" style="${btnStyl}">
+    🔔 Povolit notifikace${Notification.permission === 'denied' ? ' (zakázáno v nastavení)' : ''}
+  </button>`;
+}
+
+// Zkušební notifikace – vykreslí přes service worker skutečné systémové oznámení
+// na tomto zařízení (bez Firebase i bez GitHub tokenu). Slouží k rychlému ověření,
+// že notifikace na daném telefonu/PC opravdu fungují.
+async function _poslatTestNotifikaci(btn) {
+  const puvodni = btn ? btn.textContent : '';
+  try {
+    if (!('Notification' in window) || Notification.permission !== 'granted') {
+      if (btn) { btn.textContent = '⚠ Nejdřív povol notifikace'; setTimeout(() => btn.textContent = puvodni, 3500); }
+      return;
+    }
+    const reg = window._swReg || await navigator.serviceWorker.ready;
+    await reg.showNotification('MojeBudky.cz', {
+      body: 'Zkušební notifikace ✅ Když vidíš tuhle zprávu, notifikace na tomhle zařízení fungují.',
+      icon: 'img/icon-192.png',
+      badge: 'img/icon-192.png',
+      vibrate: [200, 100, 200],
+      data: { url: location.href },
+    });
+    if (btn) { btn.textContent = '✅ Odesláno — zkontroluj oznámení'; setTimeout(() => btn.textContent = puvodni, 4000); }
+  } catch (e) {
+    console.warn('Test notifikace:', e);
+    if (btn) { btn.textContent = '⚠ Nepodařilo se odeslat'; setTimeout(() => btn.textContent = puvodni, 3500); }
+  }
+}
+
 function _czToIso(s) {
   if (!s) return '';
   const m = s.match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})$/);
@@ -1782,10 +1834,7 @@ function _zobrazProfilSpravce(loginId, info, budkaText) {
       </div>
 
       <div class="profil-actions">
-        ${'Notification' in window && Notification.permission !== 'granted' ? `
-        <button class="profil-btn-push" id="profilPovolPush" style="width:100%;margin-bottom:10px;padding:13px;background:linear-gradient(135deg,#1c5c10,#2a8018);color:#eef4e8;border:none;border-radius:10px;font-size:1rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;touch-action:manipulation">
-          🔔 Povolit notifikace${Notification.permission === 'denied' ? ' (zakázáno v nastavení)' : ''}
-        </button>` : ''}
+        ${_notifikaceBlokHtml()}
         <button class="profil-btn-ulozit" id="profilUlozit">💾 Uložit změny</button>
         <span class="profil-ulozeno" id="profilUlozeno" hidden>✓ Uloženo!</span>
       </div>
@@ -1891,25 +1940,36 @@ function _zobrazProfilSpravce(loginId, info, budkaText) {
     await _spustitEmailVerif(email, jmeno);
   });
 
+  const testBtn = document.getElementById('profilTestPush');
+  if (testBtn) testBtn.addEventListener('click', () => _poslatTestNotifikaci(testBtn));
+
   const pushBtn = document.getElementById('profilPovolPush');
   if (pushBtn) {
     if (Notification.permission === 'denied') {
-      pushBtn.style.opacity = '0.55';
-      pushBtn.title = 'Notifikace jsou zakázány — povol je v Nastavení → Oznámení';
+      pushBtn.style.opacity = '0.7';
+      pushBtn.title = 'Notifikace jsou zakázány — povol je v Nastavení telefonu → Oznámení';
+      pushBtn.addEventListener('click', () => {
+        _zobrazToast('🔔 Notifikace máš zakázané v nastavení zařízení. Povol je: Nastavení → (Safari/Chrome) → Oznámení, pak se sem vrať.', 5000);
+      });
     } else {
-      pushBtn.addEventListener('click', async () => {
+      const povolHandler = async () => {
         pushBtn.disabled = true;
         pushBtn.textContent = '⏳ Čekám na povolení…';
         await _prihlasitPush(loginId);
         if (Notification.permission === 'granted') {
-          pushBtn.textContent = '✅ Notifikace povoleny!';
+          pushBtn.removeEventListener('click', povolHandler);
+          pushBtn.disabled = false;
+          pushBtn.textContent = '🔔 Poslat zkušební notifikaci';
           pushBtn.style.background = 'linear-gradient(135deg,#1a5c10,#3aaa3a)';
-          setTimeout(() => pushBtn.remove(), 3000);
+          pushBtn.addEventListener('click', () => _poslatTestNotifikaci(pushBtn));
+          // hned po povolení pošli první zkušební notifikaci, ať správce vidí, že to funguje
+          _poslatTestNotifikaci(pushBtn);
         } else {
           pushBtn.textContent = '🔔 Notifikace nebyly povoleny';
           pushBtn.disabled = false;
         }
-      });
+      };
+      pushBtn.addEventListener('click', povolHandler);
     }
   }
 
