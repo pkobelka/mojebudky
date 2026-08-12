@@ -338,7 +338,7 @@ async function _zobrazAdminPanel(loginId) {
     <button class="admin-dropdown-item" data-akce="zmenitHeslo">🔑 Změnit heslo</button>
     ${!jeAdmin ? `<button class="admin-dropdown-item" data-akce="napisAdminovi">✉️ Napsat adminovi</button>
     <button class="admin-dropdown-item" data-akce="zpravyOdAdmina">📨 Zprávy od admina <span class="admin-badge" id="zpravyOdAdminaBadge" hidden>0</span></button>` : ''}
-    ${jeAdmin ? `<div class="admin-dropdown-oddelovac"></div><button class="admin-dropdown-item admin-item-zadosti" data-akce="zadosti">📬 Žádosti správců <span class="admin-badge" id="adminBadge" hidden>0</span></button><button class="admin-dropdown-item" data-akce="prehledSpravcu">👥 Přehled správců</button><button class="admin-dropdown-item" data-akce="aktivitaSpravcu">🏆 Aktivita správců</button><button class="admin-dropdown-item" data-akce="pushHistorie">📩 Push notifikace</button><button class="admin-dropdown-item" data-akce="historieNavstev">📊 Online historie</button><button class="admin-dropdown-item" data-akce="navstevnostDenne">📅 Návštěvnost po dnech</button><button class="admin-dropdown-item" data-akce="resetBeta">🧹 Reset beta testu</button>` : ''}
+    ${jeAdmin ? `<div class="admin-dropdown-oddelovac"></div><button class="admin-dropdown-item admin-item-zadosti" data-akce="zadosti">📬 Žádosti správců <span class="admin-badge" id="adminBadge" hidden>0</span></button><button class="admin-dropdown-item" data-akce="prehledSpravcu">👥 Přehled správců</button><button class="admin-dropdown-item" data-akce="nastavitHeslo">🔑 Nastavit heslo správci</button><button class="admin-dropdown-item" data-akce="aktivitaSpravcu">🏆 Aktivita správců</button><button class="admin-dropdown-item" data-akce="pushHistorie">📩 Push notifikace</button><button class="admin-dropdown-item" data-akce="historieNavstev">📊 Online historie</button><button class="admin-dropdown-item" data-akce="navstevnostDenne">📅 Návštěvnost po dnech</button><button class="admin-dropdown-item" data-akce="resetBeta">🧹 Reset beta testu</button>` : ''}
     <div class="admin-dropdown-oddelovac"></div>
     <button class="admin-dropdown-item odhlasit" data-akce="odhlasit">🚪 Odhlásit se</button>
   `;
@@ -439,6 +439,12 @@ async function _zobrazAdminPanel(loginId) {
 
     if (akce === 'prehledSpravcu') {
       _zobrazPrehledSpravcu();
+      dropdown.classList.remove('open');
+      return;
+    }
+
+    if (akce === 'nastavitHeslo') {
+      _zobrazNastavitHesloSpravci();
       dropdown.classList.remove('open');
       return;
     }
@@ -883,6 +889,123 @@ function _zobrazZmenitHeslo(loginId) {
 
   [document.getElementById('zhStare'), document.getElementById('zhNove'), document.getElementById('zhNove2')]
     .forEach(el => el.addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('zhUlozit').click(); }));
+}
+
+// ── Admin: nastavit (resetovat) heslo libovolnému správci ──
+// Zapíše nové heslo do Firebase hesla/{id}, které má při přihlášení přednost
+// před statickým spravci.json. Admin nemusí znát staré heslo.
+async function _zobrazNastavitHesloSpravci() {
+  const existujici = document.getElementById('modalNastavitHeslo');
+  if (existujici) existujici.remove();
+
+  const info = (await _nactiSpravciInfo()) || {};
+  const _budkyText = s => (s.budky && s.budky.length)
+    ? s.budky.map(b => b.cislo).join(', ')
+    : (s.budka_cislo != null ? String(s.budka_cislo) : '—');
+  const optionsHTML = Object.entries(info)
+    .map(([id, s]) => ({ id, jmeno: `${s.jmeno || ''} ${s.prijmeni || ''}`.trim() || '—', budky: _budkyText(s) }))
+    .sort((a, b) => a.jmeno.localeCompare(b.jmeno, 'cs'))
+    .map(s => `<option value="${s.id}">${s.jmeno} · budka ${s.budky}</option>`)
+    .join('');
+
+  const modal = document.createElement('div');
+  modal.id = 'modalNastavitHeslo';
+  modal.className = 'modal-overlay';
+  modal.innerHTML = `
+    <div class="modal-box" style="max-width:440px;width:94%">
+      <button class="modal-zavrit" id="nhZavrit">×</button>
+      <div class="profil-header"><div class="profil-header-text">
+        <div class="profil-nadpis">🔑 Nastavit heslo správci</div>
+        <div class="profil-budka">Nastaví nové heslo bez znalosti starého.</div>
+      </div></div>
+      <div class="profil-form" style="padding:20px 24px">
+        <div class="profil-field profil-field--wide" style="margin-bottom:6px">
+          <label>Správce (napiš ID nebo vyber jméno)</label>
+          <input type="text" id="nhId" list="nhSeznam" inputmode="numeric" autocomplete="off" placeholder="Např. 021291">
+          <datalist id="nhSeznam">${optionsHTML}</datalist>
+        </div>
+        <div id="nhNalezen" style="min-height:20px;font-size:0.9rem;margin-bottom:12px"></div>
+        <div class="zh-pravidla">
+          <div class="zh-pravidla-nadpis">Pravidla pro heslo:</div>
+          <ul class="zh-pravidla-seznam">
+            <li>Délka: <strong>4–8 znaků</strong></li>
+            <li>Nepoužívej snadno zaměnitelné znaky: <strong>0</strong>, <strong>O</strong>, <strong>1</strong>, <strong>l</strong></li>
+          </ul>
+        </div>
+        <div class="profil-field profil-field--wide" style="margin-bottom:14px">
+          <label>Nové heslo (vidíš ho, ať ho můžeš předat)</label>
+          <input type="text" id="nhNove" maxlength="8" autocomplete="off">
+        </div>
+        <div class="profil-field profil-field--wide">
+          <label>Nové heslo znovu</label>
+          <input type="text" id="nhNove2" maxlength="8" autocomplete="off">
+        </div>
+        <div class="zh-error" id="nhError" hidden></div>
+      </div>
+      <div class="profil-actions">
+        <button class="profil-btn-ulozit" id="nhUlozit">🔑 Nastavit heslo</button>
+        <span class="profil-ulozeno" id="nhMsg" hidden></span>
+      </div>
+    </div>`;
+  document.body.appendChild(modal);
+  document.getElementById('nhZavrit').addEventListener('click', () => modal.remove());
+  modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
+  setTimeout(() => document.getElementById('nhId').focus(), 80);
+
+  const idInput   = document.getElementById('nhId');
+  const nalezenEl = document.getElementById('nhNalezen');
+  const _najdi = () => {
+    const id = idInput.value.trim();
+    const s = info[id];
+    if (s) {
+      nalezenEl.style.color = '#7dd444';
+      nalezenEl.textContent = `✓ ${`${s.jmeno || ''} ${s.prijmeni || ''}`.trim()} — budka ${_budkyText(s)}`;
+    } else if (id) {
+      nalezenEl.style.color = '#e5a050';
+      nalezenEl.textContent = 'ID není v seznamu správců (heslo přesto půjde nastavit).';
+    } else {
+      nalezenEl.textContent = '';
+    }
+  };
+  idInput.addEventListener('input', _najdi);
+
+  document.getElementById('nhUlozit').addEventListener('click', async () => {
+    const id    = idInput.value.trim();
+    const nove  = document.getElementById('nhNove').value;
+    const nove2 = document.getElementById('nhNove2').value;
+    const errEl = document.getElementById('nhError');
+    const msgEl = document.getElementById('nhMsg');
+    errEl.hidden = true;
+    const chyba = t => { errEl.textContent = t; errEl.hidden = false; };
+
+    const ZAKAZANE = /[0O1l]/;
+    if (!/^\d{1,6}$/.test(id)) return chyba('Zadej platné ID správce (1–6 číslic).');
+    if (nove.length < 4)       return chyba('Nové heslo musí mít alespoň 4 znaky.');
+    if (nove.length > 8)       return chyba('Nové heslo může mít nejvýš 8 znaků.');
+    if (ZAKAZANE.test(nove))   return chyba('Heslo obsahuje zakázaný znak (0, O, 1 nebo l).');
+    if (nove !== nove2)        return chyba('Hesla se neshodují.');
+
+    const s = info[id];
+    const jmeno = s ? `${s.jmeno || ''} ${s.prijmeni || ''}`.trim() : ('ID ' + id);
+    if (!confirm(`Nastavit nové heslo pro ${jmeno} (ID ${id})?`)) return;
+
+    const db = _getFirebaseDB();
+    if (!db) return chyba('Firebase není dostupná.');
+    try {
+      const novyHash = await sha256hex(nove);
+      await db.ref(`hesla/${id}`).set(novyHash);
+      msgEl.textContent = `✓ Heslo pro ${jmeno} nastaveno!`;
+      msgEl.hidden = false;
+      document.getElementById('nhUlozit').disabled = true;
+      _zobrazToast(`✓ Nové heslo nastaveno pro ${jmeno}. Nezapomeň mu ho předat.`, 6000);
+      setTimeout(() => modal.remove(), 2500);
+    } catch {
+      chyba('Nepodařilo se uložit. Zkus to znovu.');
+    }
+  });
+
+  [document.getElementById('nhNove'), document.getElementById('nhNove2')]
+    .forEach(el => el.addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('nhUlozit').click(); }));
 }
 
 async function _zobrazPrehledSpravcu() {
