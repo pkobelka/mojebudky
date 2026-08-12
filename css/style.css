@@ -1286,6 +1286,17 @@ body { background: linear-gradient(180deg, #f3f9ec 0%, #e9f3df 100%); }
 /* Návod pro správce – ve světlém navbaru měl světlý text a mizel (stejná úprava jako btn-napsat) */
 .btn-navod { background: #eef4e8; color: #2e4a22; border-color: #d6e6c8; font-size: 1.05rem; padding: 12px 18px; }
 .btn-navod:hover { background: #e0eed4; color: #1c5c10; }
+/* OPRAVA PŘETÉKÁNÍ NA TELEFONECH: blok „světlý navbar" výše nastavuje desktop
+   velikost loga (font-size 2.8rem, ikona 72px) jako base pravidla, která přebíjela
+   mobilní @media a roztahovala navbar přes okraj displeje na telefonech 361–600 px
+   (např. Samsung S21+ = 384px). Na telefonech proto text loga skrýt a ikonu zmenšit
+   (stejně jako už funguje u ≤360px). */
+@media (max-width: 600px) {
+  .navbar { height: 64px; }
+  .nav-logo-img { width: 40px; height: 53px; }
+  .logo-text, .logo-autor { display: none; }
+  .nav-links { top: 64px; }
+}
 /* Lupa (🔍) na desktopu – byla malá a nenápadná; teď plnohodnotné světlé tlačítko */
 @media (min-width: 1101px) {
   .nav-search-mobile-btn { display: flex; align-items: center; justify-content: center; background: #eef4e8; color: #2e4a22; border: 1px solid #d6e6c8; border-radius: 10px; font-size: 1.4rem; min-width: 50px; min-height: 50px; padding: 0 14px; cursor: pointer; transition: background 0.2s; }
