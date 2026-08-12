@@ -915,11 +915,11 @@ function inicializujSplash() {
     setTimeout(() => {
       splash.remove();
       if (navstev === 0) setTimeout(ukazUvitaciToast, 600);
-    }, 1400);
+    }, 600);
   }
 
   splash.addEventListener('click', zavriSplash);
-  setTimeout(zavriSplash, 4000);
+  setTimeout(zavriSplash, 2000);
 }
 
 function ukazUvitaciToast() {
