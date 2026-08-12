@@ -901,7 +901,9 @@ function inicializujSplash() {
     if (elP) elP.textContent = 'Pojď s námi sledovat ptačí život';
     if (elI) elI.textContent = '🤝 👏 👍';
   } else {
-    const nadpis = _SPLASH_TEXTY[Math.floor(Math.random() * _SPLASH_TEXTY.length)];
+    // Uvítací hesla bereme ze seznamu B (window.SLOGANY v index.html); _SPLASH_TEXTY je záloha.
+    const pool = (window.SLOGANY && window.SLOGANY.length) ? window.SLOGANY : _SPLASH_TEXTY;
+    const nadpis = pool[Math.floor(Math.random() * pool.length)];
     if (elN) elN.textContent = nadpis;
     if (elP) { elP.textContent = ''; elP.hidden = true; }
     if (elI) { elI.textContent = ''; elI.hidden = true; }
