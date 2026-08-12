@@ -915,22 +915,64 @@ async function _zobrazPrehledSpravcu() {
     return '❔ neznámé';
   };
 
+  const _budkySlovo = n => n === 1 ? 'budka' : (n >= 2 && n <= 4 ? 'budky' : 'budek');
+
+  // Jeden člověk může spravovat víc budek pod víc ID → seskupit záznamy podle OSOBY,
+  // ať počty (Všichni / S telefonem / …) ukazují skutečné lidi, ne registrace budek.
+  // Klíč: telefon (posledních 9 číslic) → e-mail → jméno+příjmení.
+  const _telKlic = t => { const d = (t || '').replace(/\D/g, ''); return d.length >= 9 ? d.slice(-9) : d; };
+  const _osobaKlic = s => {
+    const tel = _telKlic(s.telefon);
+    if (tel) return 'tel:' + tel;
+    const mail = (s.email || '').trim().toLowerCase();
+    if (mail) return 'mail:' + mail;
+    return 'jm:' + ((s.jmeno || '') + '|' + (s.prijmeni || '')).toLowerCase().trim();
+  };
+  const _skore = s => (s.prijmeni ? 2 : 0) + (s.telefon ? 1 : 0) + (s.email ? 1 : 0);
+
   // Sestavit seznam pouze ze spravci_info.json (bez Firebase — fotky by způsobily zaseknutí)
-  const vsichniSpravci = Object.entries(info || {}).map(([id, s]) => {
+  const _mapaOsob = new Map();
+  Object.entries(info || {}).forEach(([id, s]) => {
     const budkyList = s.budky ? s.budky : [{ cislo: s.budka_cislo, nazev: s.budka_nazev || '' }];
-    const tok = pushTokeny[id];
-    return {
+    const zaznam = {
       id,
-      jmeno:    s.jmeno    || '—',
+      jmeno:    s.jmeno    || '',
       prijmeni: s.prijmeni || '',
       telefon:  s.telefon  || '',
       email:    s.email    || '',
+      tok:      pushTokeny[id] || null,
+      budky:    budkyList,
+    };
+    const klic = _osobaKlic(zaznam);
+    if (!_mapaOsob.has(klic)) _mapaOsob.set(klic, []);
+    _mapaOsob.get(klic).push(zaznam);
+  });
+
+  const vsichniSpravci = Array.from(_mapaOsob.values()).map(zaznamy => {
+    // reprezentativní záznam pro jméno (nejvíc údajů, pak nejdelší jméno)
+    const rep = zaznamy.slice().sort((a, b) =>
+      _skore(b) - _skore(a) || (b.jmeno + b.prijmeni).length - (a.jmeno + a.prijmeni).length)[0];
+    // všechny budky napříč ID, bez duplicit, seřazené podle čísla
+    const budkyMap = new Map();
+    zaznamy.forEach(z => z.budky.forEach(b => {
+      if (b && b.cislo != null && !budkyMap.has(String(b.cislo))) budkyMap.set(String(b.cislo), b);
+    }));
+    const budky = Array.from(budkyMap.values()).sort((a, b) => Number(a.cislo) - Number(b.cislo));
+    // notifikace: kterýkoli z jeho tokenů (ber nejnovější)
+    const tok = zaznamy.map(z => z.tok).filter(Boolean).sort((a, b) => (b.ts || 0) - (a.ts || 0))[0] || null;
+    return {
+      id: rep.id,
+      pocetBudek: budky.length,
+      jmeno:    rep.jmeno    || '—',
+      prijmeni: rep.prijmeni || '',
+      telefon:  (zaznamy.find(z => z.telefon) || {}).telefon || '',
+      email:    (zaznamy.find(z => z.email) || {}).email || '',
       maNotif:  !!(tok && tok.token),
       notifDatum:    tok ? _formatNotifDatum(tok.ts) : '',
       notifZarizeni: tok ? _zarizeniZUA(tok.ua)      : '',
-      budkaCisla: budkyList.map(b => String(b.cislo)),
-      budkaNazvy: budkyList.map(b => (b.nazev || '').toLowerCase()),
-      budkyText:  budkyList.map(b => b.cislo + (b.nazev ? ' – ' + b.nazev : '')).join(', '),
+      budkaCisla: budky.map(b => String(b.cislo)),
+      budkaNazvy: budky.map(b => (b.nazev || '').toLowerCase()),
+      budkyText:  budky.map(b => b.cislo + (b.nazev ? ' – ' + b.nazev : '')).join(', '),
     };
   }).sort((a, b) => (a.jmeno + a.prijmeni).localeCompare(b.jmeno + b.prijmeni, 'cs'));
 
@@ -983,7 +1025,7 @@ async function _zobrazPrehledSpravcu() {
     if (!filtered.length) { container.innerHTML = '<div style="color:var(--text-muted);padding:16px">Žádný výsledek</div>'; return; }
     container.innerHTML = filtered.map(s => `
       <div class="prehled-radek">
-        <div class="prehled-jmeno">${s.jmeno} ${s.prijmeni} <span class="prehled-id">· ID ${s.id} · 🏠 ${s.budkyText}</span> <span title="${s.maNotif ? 'Notifikace povoleny' : 'Notifikace nepovoleny'}" style="font-size:0.9rem">${s.maNotif ? '🔔' : '🔕'}</span></div>
+        <div class="prehled-jmeno">${s.jmeno} ${s.prijmeni} <span class="prehled-id">· 🏠 ${s.budkyText}${s.pocetBudek > 1 ? ` · ${s.pocetBudek} ${_budkySlovo(s.pocetBudek)}` : ` · ID ${s.id}`}</span> <span title="${s.maNotif ? 'Notifikace povoleny' : 'Notifikace nepovoleny'}" style="font-size:0.9rem">${s.maNotif ? '🔔' : '🔕'}</span></div>
         ${s.maNotif && (s.notifDatum || s.notifZarizeni) ? `<div class="prehled-notif-detail">🔔 povoleno${s.notifDatum ? ' ' + s.notifDatum : ''}${s.notifZarizeni ? ' · ' + s.notifZarizeni : ''}</div>` : ''}
         ${s.telefon ? `<a class="prehled-kontakt" href="tel:${s.telefon}">📞 ${s.telefon}</a>` : '<span class="prehled-prazdny">bez telefonu</span>'}
         ${s.email   ? `<a class="prehled-kontakt" href="mailto:${s.email}">📧 ${s.email}</a>` : '<span class="prehled-prazdny">bez e-mailu</span>'}
