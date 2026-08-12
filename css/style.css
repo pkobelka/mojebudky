@@ -755,7 +755,7 @@ body.mapa-cele .leaflet-left { left: calc(env(safe-area-inset-left, 0px) + 8px);
   .podekovani-item { font-size: 1rem; }
   .footer-bar { gap: 8px; padding: 10px 12px; font-size: 0.88rem; }
   .footer-sep { display: none; }
-  .map-hint { font-size: 1rem; padding: 10px 16px; }
+  .map-hint { font-size: 1rem; padding: 10px 16px; white-space: normal; max-width: calc(100vw - 40px); text-align: center; }
   .btn-zpet-mapa { font-size: 1rem; padding: 10px 18px; top: auto; bottom: 56px; }
   .btn-zpet-mapa--tr { display: none !important; }
 
