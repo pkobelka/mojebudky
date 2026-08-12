@@ -521,7 +521,7 @@
 </div>
 <script>
 (function () {
-  var SLOGANY = [
+  window.SLOGANY = [
     'Lítej si v MojeBudky.',
     'Vítej zpátky mezi budkami.',
     'Ptačí zprávy přistály.',
@@ -624,7 +624,7 @@
     'Křídla připravena, přehled otevřen.'
   ];
   var el = document.getElementById('splashNadpis');
-  if (el) el.textContent = SLOGANY[Math.floor(Math.random() * SLOGANY.length)];
+  if (el) el.textContent = window.SLOGANY[Math.floor(Math.random() * window.SLOGANY.length)];
 })();
 </script>
 
