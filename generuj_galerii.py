@@ -38,9 +38,12 @@ GALERIE_DIR = os.path.join(ROOT, "img", "galerie")
 NAZVY_JSON = os.path.join(GALERIE_DIR, "nazvy.json")
 BUDKY_JSON = os.path.join(ROOT, "data", "budky.json")
 OUT_JSON = os.path.join(ROOT, "data", "galerie.json")
-# Stejná data ještě jako .js – hosting už u některých přípon vracel 403,
-# .js se ale načítá spolehlivě (běží na něm celý web).
-OUT_JS = os.path.join(ROOT, "data", "galerie.js")
+# Data pro web se zapisují přímo do index.html mezi značky GALERIE-DATA –
+# hosting opakovaně neservíroval nově nahrané soubory, kdežto index.html
+# dorazí vždy. data/galerie.json zůstává jako čitelná záloha dat.
+INDEX_HTML = os.path.join(ROOT, "index.html")
+ZNACKA_OD = "<!-- GALERIE-DATA-START -->"
+ZNACKA_DO = "<!-- GALERIE-DATA-END -->"
 
 IMG_EXT = (".jpg", ".jpeg", ".png")
 
@@ -108,6 +111,28 @@ def nacti_ostatni():
     return polozky
 
 
+def zapis_do_index(out):
+    """Přepíše blok s daty galerie v index.html (mezi značkami GALERIE-DATA)."""
+    with open(INDEX_HTML, encoding="utf-8") as f:
+        html = f.read()
+
+    od = html.find(ZNACKA_OD)
+    do = html.find(ZNACKA_DO)
+    if od == -1 or do == -1 or do < od:
+        raise SystemExit(
+            f"V {INDEX_HTML} chybí značky {ZNACKA_OD} / {ZNACKA_DO} – "
+            "data galerie nemám kam zapsat.")
+
+    # kompaktní zápis: index.html se neukládá do cache, ať je co nejmenší
+    data_js = "window.GALERIE_DATA=" + json.dumps(
+        out, ensure_ascii=False, separators=(",", ":")) + ";"
+    novy = f"{ZNACKA_OD}\n<script>{data_js}</script>\n"
+
+    html = html[:od] + novy + html[do:]
+    with open(INDEX_HTML, "w", encoding="utf-8") as f:
+        f.write(html)
+
+
 def main():
     if not os.path.isdir(BUDKY_DIR):
         raise SystemExit(f"Složka {BUDKY_DIR} neexistuje.")
@@ -151,17 +176,13 @@ def main():
     with open(OUT_JSON, "w", encoding="utf-8") as f:
         json.dump(out, f, ensure_ascii=False, indent=2)
 
-    with open(OUT_JS, "w", encoding="utf-8") as f:
-        f.write("/* Generováno generuj_galerii.py – needitovat ručně. */\n")
-        f.write("window.GALERIE_DATA = ")
-        json.dump(out, f, ensure_ascii=False, indent=2)
-        f.write(";\n")
+    zapis_do_index(out)
 
     poc_fotek = sum(len(x["fotky"]) for x in umistene)
     poc_ost = sum(len(x["fotky"]) for x in out["ostatni"])
     print(f"Hotovo: {len(umistene)} budek s fotkami, {poc_fotek} fotek celkem.")
     print(f"Ostatní: {len(out['ostatni'])} položek, {poc_ost} fotek.")
-    print(f"Zapsáno do {OUT_JSON} a {OUT_JS}")
+    print(f"Zapsáno do {OUT_JSON} a do {INDEX_HTML} (blok GALERIE-DATA)")
 
 
 if __name__ == "__main__":
