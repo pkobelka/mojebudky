@@ -3271,7 +3271,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const msg   = document.getElementById('kontaktMsg');
       if (!jmeno || !text) { msg.textContent = '⚠ Vyplňte jméno a zprávu.'; msg.hidden = false; return; }
       const db = _getFirebaseDB();
-      if (!db) { msg.textContent = '⚠ Nelze odeslat — zkuste info@mojebudky.cz'; msg.hidden = false; return; }
+      if (!db) { msg.textContent = '⚠ Nelze odeslat — zkuste p.kobelka@gmail.com'; msg.hidden = false; return; }
       kontaktOdeslat.disabled = true;
       try {
         await db.ref('admin_requests/zpravy').push({
@@ -3283,7 +3283,7 @@ document.addEventListener('DOMContentLoaded', () => {
         msg.hidden = false;
         setTimeout(() => { modalKontakt.hidden = true; msg.hidden = true; kontaktOdeslat.disabled = false; document.getElementById('kontaktJmeno').value = ''; document.getElementById('kontaktEmail').value = ''; document.getElementById('kontaktText').value = ''; }, 2500);
       } catch {
-        msg.textContent = '⚠ Nepodařilo se odeslat — zkuste info@mojebudky.cz';
+        msg.textContent = '⚠ Nepodařilo se odeslat — zkuste p.kobelka@gmail.com';
         msg.hidden = false;
         kontaktOdeslat.disabled = false;
       }

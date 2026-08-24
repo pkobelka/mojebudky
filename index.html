@@ -52,14 +52,14 @@
       <ul class="nav-links" id="navLinks" role="navigation" aria-label="Hlavní navigace">
         <li><a href="#mapa" id="nav-mapa">Mapa Budek</a></li>
         <li><a href="https://www.google.com/maps/d/viewer?hl=cs&amp;mid=11Yq1MfrrWfRHxefxtGCFA0TCKSnNToXu&amp;ll=46.96772040177989%2C12.94753644912273&amp;z=6" target="_blank" rel="noopener noreferrer" onclick="var w=window.open(this.href,'_blank','noopener');return w?false:true;">Stará mapa (Google)</a></li>
-        <li id="navLiAktuality"><a href="#aktuality">Z deníku správců...</a></li>
         <li><a href="#galerie">Fotogalerie</a></li>
+        <li id="navLiAktuality"><a href="#aktuality">Z deníku správců...</a></li>
         <li><a href="#" id="navDesatero">Desatero správce</a></li>
         <li class="nav-navod-mobile"><a href="#" id="navNavodMobile">❓ Návod pro správce</a></li>
 
         <li><a href="#partneri">Podporovatelé</a></li>
         <li><a href="#" class="nav-podpora-link" id="navPodporaLink">💛 Podpořit projekt</a></li>
-        <li class="nav-napsat-mobile"><a href="mailto:info@mojebudky.cz">✉ Napište nám</a></li>
+        <li class="nav-napsat-mobile"><a href="mailto:p.kobelka@gmail.com">✉ Napište nám</a></li>
         <li class="nav-podpora-mobile"><button type="button" onclick="document.getElementById('navPodporaLink').click(); document.getElementById('navHamburger').click();" style="display:block;width:100%;background:rgba(255,215,0,0.12);color:#f0d800;border:none;padding:14px 20px;font-size:1.1rem;font-weight:700;cursor:pointer;text-align:left;border-top:1px solid rgba(255,255,255,0.07);font-family:inherit;">💛 Podpořit projekt</button></li>
       </ul>
 
@@ -72,7 +72,7 @@
         <div id="authNavArea">
           <button type="button" class="btn-napsat" id="btnNapsat" aria-label="Napište nám">
             ✉ Napište nám
-            <span class="napsat-tip">Dotaz, nápad nebo zájem o partnerství?<br><strong>info@mojebudky.cz</strong></span>
+            <span class="napsat-tip">Dotaz, nápad nebo zájem o partnerství?<br><strong>p.kobelka@gmail.com</strong></span>
           </button>
           <button type="button" class="btn-navod" id="btnNavod" aria-label="Návod pro správce">❓ Návod pro správce</button>
           <button type="button" class="btn-login" id="btnPrihlasit">Přihlášení<span class="btn-login-suffix"> pro správce</span></button>
@@ -139,7 +139,7 @@
       </div>
 
       <p class="stats-poznamka">
-        ℹ️ Počet <strong>aktivních budek</strong> vychází z hlášení správců – tedy z toho, zda je či byla jejich budka obydlená. Pokud symbol vaší budky na mapě neodpovídá skutečnosti, můžete stav upravit sami po přihlášení, nebo nám ho nahlaste na <a href="mailto:info@mojebudky.cz">info@mojebudky.cz</a>. <a href="#" id="odkazNavodStats">Viz Návod pro správce →</a>
+        ℹ️ Počet <strong>aktivních budek</strong> vychází z hlášení správců – tedy z toho, zda je či byla jejich budka obydlená. Pokud symbol vaší budky na mapě neodpovídá skutečnosti, můžete stav upravit sami po přihlášení, nebo nám ho nahlaste na <a href="mailto:p.kobelka@gmail.com">p.kobelka@gmail.com</a>. <a href="#" id="odkazNavodStats">Viz Návod pro správce →</a>
       </p>
 
       <div class="sekce-dvojsloupec">
@@ -301,6 +301,21 @@
     </div>
   </section>
 
+  <!-- Fotogalerie -->
+  <section class="sekce sekce-galerie" id="galerie" aria-label="Fotogalerie">
+    <div class="sekce-inner">
+      <h2 class="sekce-nadpis">Fotogalerie</h2>
+      <p class="sekce-podnadpis">Umístěné budky a další fotky z projektu.</p>
+      <div class="galerie-taby" role="tablist" aria-label="Kategorie fotogalerie">
+        <button class="galerie-tab is-active" data-tab="umistene" role="tab" aria-selected="true" type="button">🏡 Umístěné budky</button>
+        <button class="galerie-tab" data-tab="ostatni" role="tab" aria-selected="false" type="button">📷 Ostatní</button>
+      </div>
+      <div class="galerie-grid" id="galerieGrid" aria-live="polite">
+        <div class="galerie-loading">Načítám fotogalerii…</div>
+      </div>
+    </div>
+  </section>
+
   <!-- Sekce: Výzva – pomozte pokrýt celou mapu budkami -->
   <section class="sekce sekce-vyzva-mapa" aria-label="Pomozte pokrýt budkami celou mapu">
     <div class="sekce-inner">
@@ -324,21 +339,6 @@
       <p class="sekce-podnadpis">Co se právě děje v našich budkách po celé zemi.</p>
       <div class="pribehy-list" id="aktualityList">
         <div style="padding:20px; color:#6b7d5a; font-size:0.95rem;">Načítám aktuality…</div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Fotogalerie -->
-  <section class="sekce sekce-galerie" id="galerie" aria-label="Fotogalerie">
-    <div class="sekce-inner">
-      <h2 class="sekce-nadpis">Fotogalerie</h2>
-      <p class="sekce-podnadpis">Umístěné budky a další fotky z projektu.</p>
-      <div class="galerie-taby" role="tablist" aria-label="Kategorie fotogalerie">
-        <button class="galerie-tab is-active" data-tab="umistene" role="tab" aria-selected="true" type="button">🏡 Umístěné budky</button>
-        <button class="galerie-tab" data-tab="ostatni" role="tab" aria-selected="false" type="button">📷 Ostatní</button>
-      </div>
-      <div class="galerie-grid" id="galerieGrid" aria-live="polite">
-        <div class="galerie-loading">Načítám fotogalerii…</div>
       </div>
     </div>
   </section>
@@ -397,7 +397,7 @@
   <footer class="footer-bar">
     <span class="footer-copy">© 2024–2026 MojeBudky.cz &nbsp;·&nbsp; <a href="https://www.petrkobelka.cz" class="footer-author" target="_blank" rel="noopener">Petr Kobelka</a></span>
     <span class="footer-sep" aria-hidden="true">|</span>
-    <a href="mailto:info@mojebudky.cz" class="footer-email">✉ info@mojebudky.cz</a>
+    <a href="mailto:p.kobelka@gmail.com" class="footer-email">✉ p.kobelka@gmail.com</a>
     <span class="footer-sep" aria-hidden="true">|</span>
     <a href="https://www.facebook.com/mojebudky" class="footer-fb" target="_blank" rel="noopener" aria-label="Facebook MojeBudky"><svg class="footer-fb-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.41c0-3.025 1.792-4.697 4.533-4.697 1.312 0 2.686.236 2.686.236v2.97h-1.513c-1.491 0-1.956.93-1.956 1.886v2.269h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"/></svg> facebook.com/mojebudky</a>
     <span class="footer-sep" aria-hidden="true">|</span>
@@ -433,7 +433,7 @@
     <div id="loginError" class="login-error" hidden>Neplatné ID nebo heslo.</div>
     <div id="loginLoading" class="login-loading" hidden>Ověřuji…</div>
     <a href="#" class="link-zapomnel" id="linkZapomnel">Zapomněl jsem heslo</a>
-    <div id="zapomnel-msg" class="zapomnel-msg" hidden>Pro obnovení hesla napište na: <strong>info@mojebudky.cz</strong></div>
+    <div id="zapomnel-msg" class="zapomnel-msg" hidden>Pro obnovení hesla napište na: <strong>p.kobelka@gmail.com</strong></div>
   </div>
 </div>
 
