@@ -335,8 +335,8 @@ html, body {
 /* ── PODPORA PROJEKTU ── */
 .nav-podpora-btn { background: rgba(255,215,0,0.15); color: #f0d800; border: 1px solid rgba(255,215,0,0.45); border-radius: 20px; padding: 9px 18px; font-size: 2.15rem; font-weight: 700; cursor: pointer; transition: all 0.2s; white-space: nowrap; font-family: inherit; }
 .nav-podpora-btn:hover { background: rgba(255,215,0,0.28); color: #ffe040; border-color: rgba(255,215,0,0.8); }
-.nav-podpora-link { color: #f0d800 !important; border-color: rgba(255,215,0,0.6) !important; }
-.nav-podpora-link:hover { background: rgba(255,215,0,0.15) !important; color: #ffe040 !important; border-color: rgba(255,215,0,0.9) !important; }
+.nav-podpora-link { color: #b06a00 !important; border-color: rgba(255,215,0,0.6) !important; }
+.nav-podpora-link:hover { background: #fff6df !important; color: #8a5200 !important; border-color: rgba(255,215,0,0.9) !important; }
 /* Modal podpora – světlé okno */
 .podpora-modal-box { background: linear-gradient(160deg, #fffdf0 0%, #fff8d6 100%); border: 2px solid #e8c840; border-radius: 24px; padding: 0; max-width: 696px; width: 94%; position: relative; box-shadow: 0 12px 60px rgba(0,0,0,0.55); overflow: hidden; }
 .podpora-modal-header { background: linear-gradient(135deg, #3a6010, #2a4a08); padding: 26px 38px; display: flex; align-items: center; gap: 17px; }
@@ -607,19 +607,19 @@ body.mapa-cele .leaflet-left { left: calc(env(safe-area-inset-left, 0px) + 8px);
   .search-box input { width: 180px; }
 }
 
-/* ── NAV HAMBURGER 2600px – řádek odkazů se nevejde ani na běžné širokoúhlé monitory, hamburger je spolehlivější pro všechny ── */
-@media (max-width: 2600px) {
-  .search-box { display: none; }
-  .btn-napsat { display: none; }
-  .nav-hamburger { display: flex; margin-left: auto; }
-  .nav-links { display: none; position: fixed; top: 68px; left: 0; right: 0; background: var(--nav-bg); flex-direction: column; padding: 8px 0 12px; box-shadow: 0 6px 20px rgba(0,0,0,0.5); z-index: 1100; gap: 0; }
-  .nav-links.open { display: flex; }
-  .nav-links li { width: 100%; }
-  .nav-links a { display: block; padding: 14px 20px; font-size: 1.1rem; border: none; border-bottom: 1px solid rgba(255,255,255,0.07); border-radius: 0 !important; }
-  .nav-napsat-mobile { display: block; }
-  .nav-podpora-mobile { display: block; }
-  .nav-navod-mobile { display: block; }
-}
+/* ── NAV HAMBURGER (vždy) – řádek odkazů se nevejde ani na širokoúhlé monitory,
+   hamburger je spolehlivější pro všechny. Dřív to bylo omezené na max-width:2600px,
+   takže po oddálení stránky (Ctrl+-) se řádek odkazů zase objevil a přetekl z okna. ── */
+.search-box { display: none; }
+.btn-napsat { display: none; }
+.nav-hamburger { display: flex; margin-left: auto; }
+.nav-links { display: none; position: fixed; top: 120px; left: 0; right: 0; background: #ffffff; flex-direction: column; padding: 8px 0 12px; box-shadow: 0 8px 24px rgba(40,70,30,0.18); z-index: 1100; gap: 0; }
+.nav-links.open { display: flex; }
+.nav-links li { width: 100%; }
+.nav-links a { display: block; padding: 14px 20px; font-size: 1.1rem; color: #2e4a22; border: none; border-bottom: 1px solid #eef4e8; border-radius: 0 !important; }
+.nav-napsat-mobile { display: block; }
+.nav-podpora-mobile { display: block; }
+.nav-navod-mobile { display: block; }
 
 /* ── LAPTOP 1100px – stack layout, hamburger nav ── */
 @media (max-width: 1100px) {
@@ -629,16 +629,6 @@ body.mapa-cele .leaflet-left { left: calc(env(safe-area-inset-left, 0px) + 8px);
   .panel-scroll { overflow-y: visible; }
   .map-wrapper { height: calc(55vh); min-height: 300px; }
   #map { height: 100% !important; min-height: 300px; }
-  .search-box { display: none; }
-  .btn-napsat { display: none; }
-  .nav-hamburger { display: flex; margin-left: auto; }
-  .nav-links { display: none; position: fixed; top: 68px; left: 0; right: 0; background: var(--nav-bg); flex-direction: column; padding: 8px 0 12px; box-shadow: 0 6px 20px rgba(0,0,0,0.5); z-index: 1100; gap: 0; }
-  .nav-links.open { display: flex; }
-  .nav-links li { width: 100%; }
-  .nav-links a { display: block; padding: 14px 20px; font-size: 1.1rem; border: none; border-bottom: 1px solid rgba(255,255,255,0.07); border-radius: 0 !important; }
-  .nav-napsat-mobile { display: block; }
-  .nav-podpora-mobile { display: block; }
-  .nav-navod-mobile { display: block; }
   .nav-search-mobile-btn { display: flex; font-size: 1.5rem; padding: 6px 10px; min-width: 44px; min-height: 44px; align-items: center; justify-content: center; }
   #mobileSearchOverlay.open { display: flex !important; }
   .info-bar { flex-wrap: wrap; gap: 2px; font-size: 0.9rem; }
@@ -698,10 +688,9 @@ body.mapa-cele .leaflet-left { left: calc(env(safe-area-inset-left, 0px) + 8px);
   .nav-napsat-mobile { display: block; }
   .nav-podpora-mobile { display: block; }
   .nav-navod-mobile { display: block; }
-  .nav-links { display: none; position: fixed; top: 58px; left: 0; right: 0; background: var(--nav-bg); flex-direction: column; padding: 8px 0 12px; box-shadow: 0 6px 20px rgba(0,0,0,0.5); z-index: 1100; gap: 0; }
-  .nav-links.open { display: flex; }
-  .nav-links li { width: 100%; }
-  .nav-links a { display: block; padding: 14px 20px; font-size: 1.1rem; border-bottom: 1px solid rgba(255,255,255,0.07); }
+  /* Vzhled rozbaleného menu je společný (světlý) výše; tady jen mobilní rozměry.
+     Dřív se tu znovu nastavovalo tmavé menu ze starého vzhledu navbaru. */
+  .nav-links a { padding: 12px 18px; font-size: 1.25rem; }
   /* Info bar: skryj hodiny a bar-right, jen datum + svátek */
   .info-bar { padding: 5px 10px; font-size: 0.82rem; flex-wrap: wrap; overflow: visible; }
   .info-bar .bar-right { display: none; }
@@ -1305,10 +1294,29 @@ body { background: linear-gradient(180deg, #f3f9ec 0%, #e9f3df 100%); }
 .btn-login { font-size: 1.15rem !important; padding: 12px 26px !important; }
 .nav-hamburger span { background: #2e4a22; }
 
-/* Mobilní menu světlé */
+
+/* Světlý navbar výše nastavuje velké desktopové logo jako base pravidlo, takže ho
+   @media výš nepřebijí. Na užších oknech (601–1100 px) proto logo zmenšit — jinak
+   spolu s tlačítky navbar přetéká ven z okna (od zhruba 800 px dolů). */
+@media (max-width: 700px) {
+  .nav-logo-img { width: 38px; height: 50px; }
+  .logo-text { font-size: 1.3rem; }
+  .btn-login { font-size: 0.95rem !important; padding: 9px 14px !important; }
+}
 @media (max-width: 1100px) {
-  .nav-links { background: #ffffff; box-shadow: 0 8px 24px rgba(40,70,30,0.18); top: 120px; }
-  .nav-links a { color: #2e4a22; border-bottom: 1px solid #eef4e8; }
+  .nav-logo-img { width: 44px; height: 58px; }
+  .logo-text { font-size: 1.6rem; }
+  .logo-autor { font-size: 0.7rem; }
+  .navbar { padding: 0 14px; }
+}
+
+/* Na širokých oknech ať rozbalené menu není přes celou šířku obrazovky —
+   úhledný panel zarovnaný pod hamburger vpravo. Na užších oknech zůstává
+   přes celou šířku. */
+@media (min-width: 901px) {
+  .nav-actions { margin-left: auto; }
+  .nav-links { left: auto; right: 16px; width: min(360px, 90vw); border-radius: 0 0 14px 14px; overflow: hidden; }
+  .nav-links a { font-size: 1.25rem; padding: 12px 20px; }
 }
 
 /* ── INFO BAR (světlý) ── */
