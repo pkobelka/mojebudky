@@ -1414,30 +1414,24 @@ a.uvod-cta-text:hover { background: rgba(255,255,255,0.22); transform: translate
 }
 .galerie-tab:hover { border-color: #7fae5a; }
 .galerie-tab.is-active { background: #1c5c10; color: #fff; border-color: #1c5c10; box-shadow: 0 4px 14px rgba(28,92,16,.22); }
-.galerie-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; }
+/* Seznam budek s fotkami – ne mřížka náhledů: 192 fotek naráz je na mobilu
+   zbytečná zátěž, fotka se stáhne až po kliknutí (lightbox). */
+.galerie-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 8px 14px; }
 .galerie-loading, .galerie-prazdno { grid-column: 1 / -1; text-align: center; color: #6b7d5a; padding: 40px 16px; line-height: 1.6; }
-.galerie-dlazdice {
-  position: relative; display: block; padding: 0; border: 0; cursor: zoom-in;
-  border-radius: 12px; overflow: hidden; background: #e7efdd; font-family: inherit;
-  box-shadow: 0 3px 12px rgba(60,90,40,.10); aspect-ratio: 4 / 3;
-  transition: transform .15s, box-shadow .15s;
+.galerie-radek {
+  display: flex; align-items: center; gap: 10px; width: 100%; text-align: left;
+  padding: 10px 14px; border: 1px solid #dfeacf; border-radius: 10px; background: #fff;
+  font-family: inherit; font-size: 1.05rem; color: #2e4a22; cursor: pointer;
+  transition: background .15s, border-color .15s, transform .1s;
 }
-.galerie-dlazdice:hover { transform: translateY(-3px); box-shadow: 0 8px 22px rgba(60,90,40,.22); }
-.galerie-dlazdice img { width: 100%; height: 100%; object-fit: cover; display: block; }
-/* Fotka se nenačetla (chybí na serveru) – místo zmizelé dlaždice ukázat
-   placeholder, ať je poznat, že chybí soubor, a ne že galerie je prázdná. */
-.galerie-dlazdice--chybi { cursor: default; background: #eef4e8; }
-.galerie-dlazdice--chybi img { display: none; }
-.galerie-dlazdice--chybi::before { content: "📷"; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 2rem; opacity: 0.4; }
-.galerie-badge {
-  position: absolute; top: 8px; right: 8px; background: rgba(0,0,0,.6); color: #fff;
-  font-size: .8rem; font-weight: 600; padding: 3px 8px; border-radius: 999px;
+.galerie-radek:hover { background: #f2f8ec; border-color: #a9cc8a; }
+.galerie-radek:active { transform: scale(.99); }
+.galerie-cislo {
+  flex-shrink: 0; min-width: 44px; padding: 3px 8px; border-radius: 7px;
+  background: #eaf4e2; color: #1c5c10; font-weight: 800; font-size: .95rem; text-align: center;
 }
-.galerie-popisek {
-  position: absolute; left: 0; right: 0; bottom: 0; padding: 18px 10px 8px;
-  background: linear-gradient(transparent, rgba(0,0,0,.72)); color: #fff;
-  font-size: .9rem; font-weight: 600; text-align: left; line-height: 1.3;
-}
+.galerie-nazev { flex: 1; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.galerie-pocet { flex-shrink: 0; color: #6b7d5a; font-size: .85rem; font-weight: 600; }
 
 /* Lightbox galerie */
 .galerie-lightbox {
@@ -1465,7 +1459,8 @@ a.uvod-cta-text:hover { background: rgba(255,255,255,0.22); transform: translate
 }
 .galerie-lightbox .glb-nav:hover { background: rgba(255,255,255,.28); }
 @media (max-width: 600px) {
-  .galerie-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; }
+  /* Na telefonu jeden sloupec – ať se vejde celý název budky, ne „Plíše…“. */
+  .galerie-grid { grid-template-columns: 1fr; gap: 8px; }
   .galerie-lightbox .glb-nav { width: 42px; height: 42px; font-size: 1.8rem; }
   .galerie-lightbox { padding: 8px; gap: 2px; }
 }

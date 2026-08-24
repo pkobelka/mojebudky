@@ -165,6 +165,11 @@
           </div>
           <div id="onlinePocet" class="online-pocet-panel">🟢 Online: <strong>…</strong></div>
           <button id="btnAktivitaSpravcu" class="btn-aktivita-spravcu" hidden title="Aktivita správců">🏆</button>
+          <div class="oblibene-pc">
+            <strong>☆ Uložit do oblíbených</strong>
+            <span>Windows / Linux: <kbd>Ctrl + D</kbd></span>
+            <span>Mac: <kbd>Cmd + D</kbd></span>
+          </div>
         </div>
       </div>
 
@@ -172,12 +177,22 @@
         📅 Poslední aktualizace: <span id="stat-aktualizace">…</span>
       </div>
 
-      <div id="pushNotifArea"></div>
-      <div class="oblibene-pc">
-        <strong>☆ Uložit do oblíbených</strong>
-        <span>Windows / Linux: <kbd>Ctrl + D</kbd></span>
-        <span>Mac: <kbd>Cmd + D</kbd></span>
+      <!-- Pozvánka do mapy – schválně hned nad mapou, ne až v úvodní sekci -->
+      <div class="uvod-mapa-cta">
+        <h3>📍 Prozkoumejte naši mapu ptačích domovů</h3>
+        <p>Na mapě pod tímto textem najdete přesné GPS lokace všech našich budek. Ale pozor, nečekejte žádné nudné body! Když na kteroukoliv budku kliknete, otevře se před vámi její vlastní příběh.</p>
+        <p><strong>Schválně se podívejte – budete sami překvapeni, co všechno v mapě najdete:</strong></p>
+        <ul>
+          <li>Kompletní informace o budce včetně poctivých fotek přímo z terénu.</li>
+          <li>Technické detaily: jaký má budka vletový otvor a pro které ptáčky je určená.</li>
+          <li>Příběh obyvatel: dozvíte se, který ptačí hrdina v ní letos nebo v minulých letech úspěšně vyvedl mladé.</li>
+          <li>Osobní přístup: uvidíte jméno konkrétního správce, který se o budku s láskou stará.</li>
+        </ul>
+        <a href="#mapa" class="uvod-cta-text">↓ Klikněte do mapy a objevujte ptačí svět bez hranic!</a>
       </div>
+
+
+      <div id="pushNotifArea"></div>
     </div>
   </section>
 
@@ -210,20 +225,6 @@
         <h2 class="uvod-blok-nadpis">Z garáže přes celé Česko až na Slovensko</h2>
         <p>Dnes už projekt vyrostl do rozměrů, které nám berou dech, a získal úžasný mezinárodní rozměr. Díky spoustě skvělých kamarádů a podporovatelů na Slovensku už naše hranice neplatí. Společně s naší komunitou správců se dnes staráme o více než dvě stovky poctivých dřevěných budek.</p>
         <p>Vidět ten obrovský zájem veřejnosti nám dává neuvěřitelnou sílu pokračovat dál. Naše vize je jasná: chceme postupně pokrýt celou mapu České i Slovenské republiky a vracet život do přírody všude, kde je to potřeba.</p>
-      </div>
-
-      <!-- Mapa CTA -->
-      <div class="uvod-mapa-cta">
-        <h3>📍 Prozkoumejte naši mapu ptačích domovů</h3>
-        <p>Na mapě výše najdete přesné GPS lokace všech našich budek. Ale pozor, nečekejte žádné nudné body! Když na kteroukoliv budku kliknete, otevře se před vámi její vlastní příběh.</p>
-        <p><strong>Schválně se podívejte – budete sami překvapeni, co všechno v mapě najdete:</strong></p>
-        <ul>
-          <li>Kompletní informace o budce včetně poctivých fotek přímo z terénu.</li>
-          <li>Technické detaily: jaký má budka vletový otvor a pro které ptáčky je určená.</li>
-          <li>Příběh obyvatel: dozvíte se, který ptačí hrdina v ní letos nebo v minulých letech úspěšně vyvedl mladé.</li>
-          <li>Osobní přístup: uvidíte jméno konkrétního správce, který se o budku s láskou stará.</li>
-        </ul>
-        <a href="#mapa" class="uvod-cta-text">↑ Klikněte do mapy a objevujte ptačí svět bez hranic!</a>
       </div>
 
       <!-- Video teaser / partner výzva -->
@@ -701,6 +702,7 @@
             foto: b.fotky[0],
             fotky: b.fotky,
             nadpis: b.nazev || ('Budka č. ' + b.cislo),
+            nazev: b.nazev || 'bez názvu',
             popis: 'č. ' + b.cislo + (b.nazev ? ' · ' + b.nazev : ''),
             pocet: b.fotky.length,
             cislo: b.cislo,
@@ -731,19 +733,20 @@
           : '<div class="galerie-prazdno">Zatím tu nejsou žádné fotky.</div>';
         return;
       }
+      // Seznam, ne mřížka náhledů: 192 fotek naráz je na mobilu zbytečná
+      // zátěž. Fotka se stáhne až po kliknutí (v lightboxu).
       var html = items.map(function (it, i) {
-        var badge = it.pocet > 1 ? '<span class="galerie-badge">📷 ' + it.pocet + '</span>' : '';
+        var pocet = it.pocet > 1 ? '<span class="galerie-pocet">📷 ' + it.pocet + '</span>' : '';
         return '' +
-          '<button class="galerie-dlazdice" data-idx="' + i + '" type="button" aria-label="Zvětšit: ' + esc(it.nadpis) + '">' +
-            '<img src="' + it.foto + '" alt="' + esc(it.alt) + '" loading="lazy" ' +
-                 'onerror="this.closest(\'.galerie-dlazdice\').classList.add(\'galerie-dlazdice--chybi\')">' +
-            badge +
-            '<span class="galerie-popisek">' + esc(it.popis) + '</span>' +
+          '<button class="galerie-radek" data-idx="' + i + '" type="button" aria-label="Ukázat fotku: ' + esc(it.nadpis) + '">' +
+            (it.cislo != null ? '<span class="galerie-cislo">' + it.cislo + '</span>' : '') +
+            '<span class="galerie-nazev">' + esc(it.nazev || it.nadpis) + '</span>' +
+            pocet +
           '</button>';
       }).join('');
       grid.innerHTML = html;
 
-      grid.querySelectorAll('.galerie-dlazdice').forEach(function (btn) {
+      grid.querySelectorAll('.galerie-radek').forEach(function (btn) {
         btn.addEventListener('click', function () {
           otevriLightbox(items, parseInt(btn.getAttribute('data-idx'), 10));
         });
@@ -778,6 +781,7 @@
       var akceEl = ov.querySelector('.glb-akce');
 
       function zobraz() {
+        img.onerror = function () { img.alt = 'Fotku se nepodařilo načíst.'; };
         img.src = item.fotky[fotoIdx];
         img.alt = item.alt;
         nadpisEl.textContent = item.nadpis;
