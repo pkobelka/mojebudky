@@ -15,8 +15,15 @@ Struktura výstupu:
       "fotky": ["img/budky/54.jpg", "img/budky/54_1.jpg"] },
     ...
   ],
-  "ostatni": []          # kurátorský výběr – doplní se ručně (viz README níže)
+  "ostatni": [
+    { "nazev": "Z dílny", "fotky": ["img/galerie/dilna/1.jpg", ...] },
+    ...
+  ]
 }
+
+Fotky do záložky „Ostatní" stačí nahrát do img/galerie/ — podsložka se bere
+jako album (jedna dlaždice s listováním), volný soubor jako samostatná fotka.
+Podrobnosti v img/galerie/README.md.
 
 Spuštění:  python3 generuj_galerii.py
 """
@@ -27,6 +34,8 @@ from datetime import datetime, timezone
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
 BUDKY_DIR = os.path.join(ROOT, "img", "budky")
+GALERIE_DIR = os.path.join(ROOT, "img", "galerie")
+NAZVY_JSON = os.path.join(GALERIE_DIR, "nazvy.json")
 BUDKY_JSON = os.path.join(ROOT, "data", "budky.json")
 OUT_JSON = os.path.join(ROOT, "data", "galerie.json")
 
@@ -47,6 +56,53 @@ def _sort_key(nazev):
     casti = [int(t) if t.isdigit() else t.lower()
              for t in re.split(r"(\d+)", nazev)]
     return (je_hlavni, casti)
+
+
+def _popisek(zaklad, nazvy):
+    """Popisek dlaždice: buď z nazvy.json, jinak z názvu souboru/složky."""
+    if zaklad in nazvy:
+        return nazvy[zaklad]
+    text = zaklad.replace("_", " ").replace("-", " ").strip()
+    return text[:1].upper() + text[1:]
+
+
+def nacti_ostatni():
+    """Záložka „Ostatní" — fotky z img/galerie/.
+
+    Podsložka = album (jedna dlaždice, uvnitř se listuje), volný soubor =
+    samostatná dlaždice. Hezčí popisky se dají nastavit v img/galerie/nazvy.json
+    ve tvaru {"dilna": "Z naší dílny"}.
+    """
+    if not os.path.isdir(GALERIE_DIR):
+        return []
+
+    nazvy = {}
+    if os.path.exists(NAZVY_JSON):
+        try:
+            with open(NAZVY_JSON, encoding="utf-8") as f:
+                nazvy = json.load(f)
+        except (ValueError, OSError) as e:
+            print(f"Varování: {NAZVY_JSON} se nepodařilo načíst ({e}) – popisky budou z názvů souborů.")
+
+    polozky = []
+    for jmeno in sorted(os.listdir(GALERIE_DIR), key=_sort_key):
+        cesta = os.path.join(GALERIE_DIR, jmeno)
+        if os.path.isdir(cesta):
+            soubory = sorted(
+                [s for s in os.listdir(cesta) if s.lower().endswith(IMG_EXT)],
+                key=_sort_key)
+            if not soubory:
+                continue
+            polozky.append({
+                "nazev": _popisek(jmeno, nazvy),
+                "fotky": [f"img/galerie/{jmeno}/{s}" for s in soubory],
+            })
+        elif jmeno.lower().endswith(IMG_EXT):
+            polozky.append({
+                "nazev": _popisek(os.path.splitext(jmeno)[0], nazvy),
+                "fotky": [f"img/galerie/{jmeno}"],
+            })
+    return polozky
 
 
 def main():
@@ -85,16 +141,17 @@ def main():
     out = {
         "generovano": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "umistene": umistene,
-        # Kurátorský výběr „Ostatní" (dílna, akce, výroba…). Doplňuj sem ručně
-        # položky ve tvaru: {"nazev": "Popisek", "fotky": ["img/galerie/xxx.jpg"]}
-        "ostatni": [],
+        # Záložka „Ostatní" (dílna, akce, výroba…) – načte se z img/galerie/
+        "ostatni": nacti_ostatni(),
     }
 
     with open(OUT_JSON, "w", encoding="utf-8") as f:
         json.dump(out, f, ensure_ascii=False, indent=2)
 
     poc_fotek = sum(len(x["fotky"]) for x in umistene)
+    poc_ost = sum(len(x["fotky"]) for x in out["ostatni"])
     print(f"Hotovo: {len(umistene)} budek s fotkami, {poc_fotek} fotek celkem.")
+    print(f"Ostatní: {len(out['ostatni'])} položek, {poc_ost} fotek.")
     print(f"Zapsáno do {OUT_JSON}")
 
 
