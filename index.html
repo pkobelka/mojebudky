@@ -649,6 +649,16 @@
 <script src="js/mapa.js?v=__MB_BUILD__"></script>
 <script src="js/main.js?v=__MB_BUILD__"></script>
 <script src="js/galerie.js?v=__MB_BUILD__"></script>
+<script>
+  // Pojistka: kdyby se js/galerie.js vůbec nenačetl (výpadek, 403/404 z hostingu),
+  // ať u fotogalerie netrčí donekonečna „Načítám fotogalerii…“.
+  setTimeout(function () {
+    var g = document.getElementById('galerieGrid');
+    if (g && g.querySelector('.galerie-loading')) {
+      g.innerHTML = '<div class="galerie-prazdno">Fotogalerii se teď nepodařilo načíst. 📷<br>Zkuste stránku obnovit (Ctrl+F5).</div>';
+    }
+  }, 10000);
+</script>
 <script src="js/auth.js?v=__MB_BUILD__"></script>
 <script src="js/presence.js?v=__MB_BUILD__"></script>
 <script>
