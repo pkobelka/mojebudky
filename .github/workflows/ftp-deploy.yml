@@ -38,3 +38,5 @@ jobs:
             *.py
             PLAN.md
             data/*.csv
+            **/*.wav
+            **/*.mp3
