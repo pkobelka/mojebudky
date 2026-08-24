@@ -307,12 +307,19 @@
     <div class="sekce-inner">
       <h2 class="sekce-nadpis">Fotogalerie</h2>
       <p class="sekce-podnadpis">Umístěné budky a další fotky z projektu.</p>
-      <div class="galerie-taby" role="tablist" aria-label="Kategorie fotogalerie">
-        <button class="galerie-tab is-active" data-tab="umistene" role="tab" aria-selected="true" type="button">🏡 Umístěné budky</button>
-        <button class="galerie-tab" data-tab="ostatni" role="tab" aria-selected="false" type="button">📷 Ostatní</button>
-      </div>
-      <div class="galerie-grid" id="galerieGrid" aria-live="polite">
-        <div class="galerie-loading">Načítám fotogalerii…</div>
+      <button class="galerie-rozbalit" id="galerieRozbalit" type="button"
+              aria-expanded="false" aria-controls="galerieObsah">
+        <span class="galerie-rozbalit-text">Zobrazit seznam budek s fotkami</span>
+        <span class="galerie-rozbalit-sipka" aria-hidden="true">▾</span>
+      </button>
+      <div id="galerieObsah" hidden>
+        <div class="galerie-taby" role="tablist" aria-label="Kategorie fotogalerie">
+          <button class="galerie-tab is-active" data-tab="umistene" role="tab" aria-selected="true" type="button">🏡 Umístěné budky</button>
+          <button class="galerie-tab" data-tab="ostatni" role="tab" aria-selected="false" type="button">📷 Ostatní</button>
+        </div>
+        <div class="galerie-grid" id="galerieGrid" aria-live="polite">
+          <div class="galerie-loading">Načítám fotogalerii…</div>
+        </div>
       </div>
     </div>
   </section>
@@ -668,12 +675,36 @@
     var aktivniTab = 'umistene';
 
     // ── Načtení dat ────────────────────────────────────────────────
-    if (window.GALERIE_DATA && window.GALERIE_DATA.umistene) {
-      DATA = window.GALERIE_DATA;
-      render();
-      wireTaby();
+    // Seznam se staví až při prvním rozbalení – 192 řádků nemá smysl skládat,
+    // dokud se na fotogalerii nikdo nepodívá.
+    var vykresleno = false;
+
+    function zobrazSeznam() {
+      if (vykresleno) return;
+      if (window.GALERIE_DATA && window.GALERIE_DATA.umistene) {
+        DATA = window.GALERIE_DATA;
+        render();
+        wireTaby();
+      } else {
+        grid.innerHTML = '<div class="galerie-prazdno">Fotogalerii se nepodařilo načíst.</div>';
+      }
+      vykresleno = true;
+    }
+
+    var btnRozbalit = document.getElementById('galerieRozbalit');
+    var obsah = document.getElementById('galerieObsah');
+    if (btnRozbalit && obsah) {
+      btnRozbalit.addEventListener('click', function () {
+        var otevreno = obsah.hidden;
+        if (otevreno) zobrazSeznam();
+        obsah.hidden = !otevreno;
+        btnRozbalit.setAttribute('aria-expanded', otevreno ? 'true' : 'false');
+        btnRozbalit.classList.toggle('je-otevreno', otevreno);
+        btnRozbalit.querySelector('.galerie-rozbalit-text').textContent =
+          otevreno ? 'Skrýt seznam budek' : 'Zobrazit seznam budek s fotkami';
+      });
     } else {
-      grid.innerHTML = '<div class="galerie-prazdno">Fotogalerii se nepodařilo načíst.</div>';
+      zobrazSeznam();
     }
 
     // ── Přepínání záložek ──────────────────────────────────────────
@@ -736,7 +767,11 @@
       // Seznam, ne mřížka náhledů: 192 fotek naráz je na mobilu zbytečná
       // zátěž. Fotka se stáhne až po kliknutí (v lightboxu).
       var html = items.map(function (it, i) {
-        var pocet = it.pocet > 1 ? '<span class="galerie-pocet">📷 ' + it.pocet + '</span>' : '';
+        // ikona je v samostatném <span>, na mobilu se skrývá – na úzkém řádku
+        // brala místo názvu a ten se pak lámal doprostřed slova
+        var pocet = it.pocet > 1
+          ? '<span class="galerie-pocet"><span class="galerie-pocet-ikona">📷 </span>' + it.pocet + '</span>'
+          : '';
         return '' +
           '<button class="galerie-radek" data-idx="' + i + '" type="button" aria-label="Ukázat fotku: ' + esc(it.nadpis) + '">' +
             (it.cislo != null ? '<span class="galerie-cislo">' + it.cislo + '</span>' : '') +
@@ -843,6 +878,8 @@
   // donekonečna „Načítám fotogalerii…“.
   setTimeout(function () {
     var g = document.getElementById('galerieGrid');
+    var o = document.getElementById('galerieObsah');
+    if (o && o.hidden) return;  // ještě nikdo galerii nerozbalil
     if (g && g.querySelector('.galerie-loading')) {
       g.innerHTML = '<div class="galerie-prazdno">Fotogalerii se teď nepodařilo zobrazit. 📷<br>Zkuste stránku obnovit (Ctrl+F5).</div>';
     }
