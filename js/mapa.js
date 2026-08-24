@@ -436,9 +436,9 @@ function _dotColor(b) {
 function vytvorIkonuDot(b) {
   return L.divIcon({
     html: `<div class="budka-dot" style="--dot-color:${_dotColor(b)}"></div>`,
-    iconSize: [14, 14],
-    iconAnchor: [7, 7],
-    popupAnchor: [0, -8],
+    iconSize: [18, 18],
+    iconAnchor: [9, 9],
+    popupAnchor: [0, -10],
     className: ''
   });
 }
@@ -449,14 +449,16 @@ function _ikonaProBudku(b) {
   return zoom >= ZOOM_DETAIL ? vytvorIkonu(b) : vytvorIkonuDot(b);
 }
 
-// Plynulé zvětšování v rámci každé úrovně: body 0.6→1.2, budky 0.72→1.0.
+// Plynulé zvětšování v rámci každé úrovně: body 0.9→1.25, budky 0.88→1.0.
+// Spodní hranice jsou schválně vysoko — na malém zoomu se body zmenšovaly tak,
+// že byly na mapě sotva vidět.
 function _scaleProZoom(zoom) {
   if (zoom >= ZOOM_DETAIL) {
     const t = Math.max(0, Math.min(1, (zoom - ZOOM_DETAIL) / 2));
-    return 0.72 + t * 0.28;
+    return 0.88 + t * 0.12;
   }
-  const t = Math.max(0, Math.min(1, (zoom - 8) / (ZOOM_DETAIL - 8)));
-  return 0.6 + t * 0.6;
+  const t = Math.max(0, Math.min(1, (zoom - 6) / (ZOOM_DETAIL - 6)));
+  return 0.9 + t * 0.35;
 }
 
 // Nastaví měřítko a při přechodu mezi body/budkami překreslí ikony markerů.
