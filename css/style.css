@@ -1424,6 +1424,11 @@ a.uvod-cta-text:hover { background: rgba(255,255,255,0.22); transform: translate
 }
 .galerie-dlazdice:hover { transform: translateY(-3px); box-shadow: 0 8px 22px rgba(60,90,40,.22); }
 .galerie-dlazdice img { width: 100%; height: 100%; object-fit: cover; display: block; }
+/* Fotka se nenačetla (chybí na serveru) – místo zmizelé dlaždice ukázat
+   placeholder, ať je poznat, že chybí soubor, a ne že galerie je prázdná. */
+.galerie-dlazdice--chybi { cursor: default; background: #eef4e8; }
+.galerie-dlazdice--chybi img { display: none; }
+.galerie-dlazdice--chybi::before { content: "📷"; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 2rem; opacity: 0.4; }
 .galerie-badge {
   position: absolute; top: 8px; right: 8px; background: rgba(0,0,0,.6); color: #fff;
   font-size: .8rem; font-weight: 600; padding: 3px 8px; border-radius: 999px;

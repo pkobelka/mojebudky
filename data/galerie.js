@@ -1,4 +1,5 @@
-{
+/* Generováno generuj_galerii.py – needitovat ručně. */
+window.GALERIE_DATA = {
   "generovano": "2026-08-24T15:34:47Z",
   "umistene": [
     {
@@ -1617,4 +1618,4 @@
     }
   ],
   "ostatni": []
-}
+};

@@ -1,10 +1,19 @@
 /* Fotogalerie – sekce #galerie
- * Načte data/galerie.json a vykreslí dlaždice fotek ve dvou kategoriích
- * (Umístěné budky / Ostatní). Klik otevře lightbox s listováním a možností
- * otevřít danou budku v mapě (window.focusBudka).
+ * Vykreslí dlaždice fotek ve dvou kategoriích (Umístěné budky / Ostatní).
+ * Klik otevře lightbox s listováním a možností otevřít danou budku v mapě
+ * (window.focusBudka).
+ *
+ * Data se berou přednostně z data/galerie.js (window.GALERIE_DATA), teprve
+ * když chybí, zkusí se stáhnout data/galerie.json. Důvod: tenhle hosting už
+ * vracel 403 Zakázáno u .mp4 i u jednoho .svg, takže se na servírování
+ * .json nedá spolehnout — .js soubory se načítají prokazatelně (běží na nich
+ * celý web). Oba soubory generuje generuj_galerii.py naráz.
  */
 (function () {
   'use strict';
+
+  // Příznak pro pojistku v index.html: soubor se načetl a začal se vykonávat.
+  window.GALERIE_SKRIPT_OK = true;
 
   var grid = document.getElementById('galerieGrid');
   if (!grid) return; // sekce na stránce není
@@ -13,12 +22,23 @@
   var aktivniTab = 'umistene';
 
   // ── Načtení dat ────────────────────────────────────────────────
-  fetch('data/galerie.json', { cache: 'no-cache' })
-    .then(function (r) { return r.ok ? r.json() : Promise.reject(r.status); })
-    .then(function (d) { DATA = d; render(); wireTaby(); })
-    .catch(function () {
-      grid.innerHTML = '<div class="galerie-prazdno">Fotogalerii se nepodařilo načíst.</div>';
-    });
+  function spust(d) { DATA = d; render(); wireTaby(); }
+
+  if (window.GALERIE_DATA && window.GALERIE_DATA.umistene) {
+    spust(window.GALERIE_DATA);
+  } else {
+    fetch('data/galerie.json', { cache: 'no-cache' })
+      .then(function (r) { return r.ok ? r.json() : Promise.reject('HTTP ' + r.status); })
+      .then(spust)
+      .catch(function (duvod) {
+        // Důvod vypsat rovnou na stránku – jinak se z „nenačetlo se to“ nedá
+        // poznat, jestli soubor na serveru chybí (404), je zakázaný (403),
+        // nebo je rozbitý.
+        grid.innerHTML = '<div class="galerie-prazdno">Fotogalerii se nepodařilo načíst.<br>' +
+          '<small>Důvod: ' + esc(String(duvod && duvod.message ? duvod.message : duvod)) +
+          ' — data/galerie.js i data/galerie.json</small></div>';
+      });
+  }
 
   // ── Přepínání záložek ──────────────────────────────────────────
   function wireTaby() {
@@ -81,7 +101,7 @@
       return '' +
         '<button class="galerie-dlazdice" data-idx="' + i + '" type="button" aria-label="Zvětšit: ' + esc(it.nadpis) + '">' +
           '<img src="' + it.foto + '" alt="' + esc(it.alt) + '" loading="lazy" ' +
-               'onerror="this.closest(\'.galerie-dlazdice\').style.display=\'none\'">' +
+               'onerror="this.closest(\'.galerie-dlazdice\').classList.add(\'galerie-dlazdice--chybi\')">' +
           badge +
           '<span class="galerie-popisek">' + esc(it.popis) + '</span>' +
         '</button>';

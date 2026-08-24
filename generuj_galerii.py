@@ -38,6 +38,9 @@ GALERIE_DIR = os.path.join(ROOT, "img", "galerie")
 NAZVY_JSON = os.path.join(GALERIE_DIR, "nazvy.json")
 BUDKY_JSON = os.path.join(ROOT, "data", "budky.json")
 OUT_JSON = os.path.join(ROOT, "data", "galerie.json")
+# Stejná data ještě jako .js – hosting už u některých přípon vracel 403,
+# .js se ale načítá spolehlivě (běží na něm celý web).
+OUT_JS = os.path.join(ROOT, "data", "galerie.js")
 
 IMG_EXT = (".jpg", ".jpeg", ".png")
 
@@ -148,11 +151,17 @@ def main():
     with open(OUT_JSON, "w", encoding="utf-8") as f:
         json.dump(out, f, ensure_ascii=False, indent=2)
 
+    with open(OUT_JS, "w", encoding="utf-8") as f:
+        f.write("/* Generováno generuj_galerii.py – needitovat ručně. */\n")
+        f.write("window.GALERIE_DATA = ")
+        json.dump(out, f, ensure_ascii=False, indent=2)
+        f.write(";\n")
+
     poc_fotek = sum(len(x["fotky"]) for x in umistene)
     poc_ost = sum(len(x["fotky"]) for x in out["ostatni"])
     print(f"Hotovo: {len(umistene)} budek s fotkami, {poc_fotek} fotek celkem.")
     print(f"Ostatní: {len(out['ostatni'])} položek, {poc_ost} fotek.")
-    print(f"Zapsáno do {OUT_JSON}")
+    print(f"Zapsáno do {OUT_JSON} a {OUT_JS}")
 
 
 if __name__ == "__main__":
