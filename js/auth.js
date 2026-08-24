@@ -290,6 +290,37 @@ async function _nactiSpravciInfo() {
   return _spravciInfoCache;
 }
 
+// --- Trvalé přihlášení (30 dní) -------------------------------------------
+// Po úspěšném přihlášení si prohlížeč zapamatuje, kdo je přihlášený, a při
+// další návštěvě už heslo nechce. Platí jen v tom jednom prohlížeči na tom
+// jednom zařízení — jinde (jiný počítač, mobil, anonymní okno) se přihlašuje
+// znovu. „Odhlásit se“ zapamatování zruší.
+const MB_SESSION_KEY = 'mb_session';
+const MB_SESSION_DNI = 30;
+
+function _ulozSession(loginId) {
+  try {
+    localStorage.setItem(MB_SESSION_KEY, JSON.stringify({
+      id: loginId,
+      exp: Date.now() + MB_SESSION_DNI * 86400000
+    }));
+  } catch {}
+}
+
+function _smazSession() {
+  try { localStorage.removeItem(MB_SESSION_KEY); } catch {}
+}
+
+// Vrátí loginId z platného zapamatovaného přihlášení, jinak null.
+// Platnost se každou návštěvou posouvá o dalších 30 dní.
+function _nactiSession() {
+  let s = null;
+  try { s = JSON.parse(localStorage.getItem(MB_SESSION_KEY) || 'null'); } catch {}
+  if (!s || !s.id || !s.exp || Date.now() > s.exp) { _smazSession(); return null; }
+  _ulozSession(s.id);
+  return s.id;
+}
+
 async function _overitPrihlaseni(id, heslo) {
   const hash = await sha256hex(heslo);
 
@@ -448,6 +479,7 @@ async function _zobrazAdminPanel(loginId) {
     const akce = item.dataset.akce;
 
     if (akce === 'odhlasit') {
+      _smazSession();
       dropdown.remove();
       const b = document.getElementById('adminBanner');
       if (b) b.remove();
@@ -3199,6 +3231,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
           localStorage.removeItem('mb_saved_loginId');
         }
+        _ulozSession(id);
         zavritModal();
         _zobrazAdminPanel(id);
       } else {
@@ -3220,6 +3253,10 @@ document.addEventListener('DOMContentLoaded', () => {
   [inputId, inputHeslo].forEach(el => {
     el.addEventListener('keydown', (e) => { if (e.key === 'Enter') pokusOPrihlaseni(); });
   });
+
+  // Zapamatované přihlášení — obnov panel správce bez zadávání hesla
+  const _session = _nactiSession();
+  if (_session) _zobrazAdminPanel(_session);
 
   const btnOko = document.getElementById('btnOko');
   const cbZobrazit = document.getElementById('cbZobrazitHeslo');
@@ -3271,7 +3308,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const msg   = document.getElementById('kontaktMsg');
       if (!jmeno || !text) { msg.textContent = '⚠ Vyplňte jméno a zprávu.'; msg.hidden = false; return; }
       const db = _getFirebaseDB();
-      if (!db) { msg.textContent = '⚠ Nelze odeslat — zkuste info@mojebudky.cz'; msg.hidden = false; return; }
+      if (!db) { msg.textContent = '⚠ Nelze odeslat — zkuste p.kobelka@gmail.com'; msg.hidden = false; return; }
       kontaktOdeslat.disabled = true;
       try {
         await db.ref('admin_requests/zpravy').push({
@@ -3283,7 +3320,7 @@ document.addEventListener('DOMContentLoaded', () => {
         msg.hidden = false;
         setTimeout(() => { modalKontakt.hidden = true; msg.hidden = true; kontaktOdeslat.disabled = false; document.getElementById('kontaktJmeno').value = ''; document.getElementById('kontaktEmail').value = ''; document.getElementById('kontaktText').value = ''; }, 2500);
       } catch {
-        msg.textContent = '⚠ Nepodařilo se odeslat — zkuste info@mojebudky.cz';
+        msg.textContent = '⚠ Nepodařilo se odeslat — zkuste p.kobelka@gmail.com';
         msg.hidden = false;
         kontaktOdeslat.disabled = false;
       }

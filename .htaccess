@@ -24,3 +24,16 @@
     Allow from all
   </IfModule>
 </FilesMatch>
+
+# Skripty, styly a datové soubory explicitně povolit.
+# (Tenhle hosting už u .mp4 vracel 403 Zakázáno — u .js/.json by se stránka
+# tvářila jen jako „nenačtená“, proto raději stejná pojistka.)
+<FilesMatch "\.(js|css|json)$">
+  <IfModule mod_authz_core.c>
+    Require all granted
+  </IfModule>
+  <IfModule !mod_authz_core.c>
+    Order allow,deny
+    Allow from all
+  </IfModule>
+</FilesMatch>
