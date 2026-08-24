@@ -13,7 +13,9 @@ Sem patří fotky, které nepatří ke konkrétní budce — z dílny, z výroby
    ```
    python3 generuj_galerii.py
    ```
-   Přepíše to `data/galerie.json` — soubory se do něj načtou samy, nic se nemusí psát ručně.
+   Přepíše to `data/galerie.json` a zároveň blok s daty přímo v `index.html`
+   (mezi značkami `GALERIE-DATA`) — odtud si je bere galerie na webu.
+   Soubory se načtou samy, nic se nemusí psát ručně.
 3. **Commitni a nasaď** — na testovací web se to nahraje samo po pushi do `main`,
    na ostrý web je potřeba ručně spustit workflow „Deploy na WEDOS FTP (produkce)".
 
