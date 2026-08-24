@@ -487,7 +487,9 @@ function _stavInfo(b) {
     if (days <= 60) return { color: '#c8a000', label: '🟡 Aktivní' };
     if (days <= 90) return { color: '#c09060', label: '🟫 Pasivní' };
   }
-  return { color: '#222222', label: '⚫ Bez zájmu' };
+  // Bez dlouhodobé aktivity správce se žádný stav neukazuje — dřívější
+  // „⚫ Bez zájmu“ jsme zrušili, jen to budku zbytečně shazovalo.
+  return { color: '#c96420', label: '' };
 }
 
 function formatTooltip(b) {
@@ -500,18 +502,19 @@ function formatTooltip(b) {
   const spravceRadek = b.spravce
     ? `<div class="tt-spravce ${spravceStav.cls}">👤 ${b.spravce} ${spravceStav.emoji}</div>${spravceStav.datum ? `<div class="tt-aktivni-datum">naposledy aktivní: ${spravceStav.datum}</div>` : ''}`
     : (spravceStav ? `<div class="tt-spravce ${spravceStav.cls}">${spravceStav.emoji}</div>${spravceStav.datum ? `<div class="tt-aktivni-datum">naposledy aktivní: ${spravceStav.datum}</div>` : ''}` : '');
+  const stavRadek = stavLabel ? `<div class="tt-stav" style="color:${stavColor}">${stavLabel}</div>` : '';
   if (b.nazev) {
     return `<div class="budka-tooltip">
       <div class="tt-nazev-hlavni" style="border-left:3px solid ${stavColor}">${b.nazev}</div>
       <div class="tt-cislo-sub">Budka č. ${b.cislo}</div>
-      <div class="tt-stav" style="color:${stavColor}">${stavLabel}</div>
+      ${stavRadek}
       ${ptakRadek}
       ${spravceRadek}
     </div>`;
   }
   return `<div class="budka-tooltip">
     <div class="tt-cislo" style="border-left:3px solid ${stavColor}">Budka č. ${b.cislo}</div>
-    <div class="tt-stav" style="color:${stavColor}">${stavLabel}</div>
+    ${stavRadek}
     ${ptakRadek}
     ${spravceRadek}
   </div>`;
@@ -620,7 +623,7 @@ function formatPopup(b) {
   return `<div class="budka-popup">
     <div class="popup-header" style="border-left:4px solid ${stavColor}">
       <div class="popup-cislo">${nadpis}</div>
-      <div class="popup-badge" style="color:${stavColor}">${stavLabel}</div>
+      ${stavLabel ? `<div class="popup-badge" style="color:${stavColor}">${stavLabel}</div>` : ''}
     </div>
     ${fotoBlock}
     ${ptakBlock}
