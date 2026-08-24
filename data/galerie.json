@@ -1,5 +1,5 @@
 {
-  "generovano": "2026-08-24T17:56:29Z",
+  "generovano": "2026-08-24T20:43:48Z",
   "umistene": [
     {
       "cislo": 2,
@@ -460,6 +460,7 @@
       "stav": "aktivni",
       "fotky": [
         "img/budky/60.jpg",
+        "img/budky/60_1.jpg",
         "img/budky/60_2.jpg"
       ]
     },
@@ -468,8 +469,7 @@
       "nazev": "Erwin Thuis",
       "stav": "aktivni",
       "fotky": [
-        "img/budky/61.jpg",
-        "img/budky/61_1.jpg"
+        "img/budky/61.jpg"
       ]
     },
     {
@@ -1050,7 +1050,7 @@
       "stav": "aktivni",
       "fotky": [
         "img/budky/134.jpg",
-        "img/budky/134_2.jpg"
+        "img/budky/134_1.jpg"
       ]
     },
     {
