@@ -795,6 +795,7 @@ async function inicializujMapu() {
     zoomOffset: -1
   }).addTo(mapInstance);
 
+  pridejGpsOvladani(mapInstance);
   pridejLegend(mapInstance);
 
   try {
@@ -1112,3 +1113,313 @@ async function inicializujMapu() {
     _pridejEditTlacitka(popup);
   });
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   ŽIVÁ POLOHA – „navigační" režim mapy
+   Zobrazí modrou tečku s vlastní polohou, kruh přesnosti a šipku
+   směru jízdy. V režimu sledování mapa jede s uživatelem a drží
+   ho uprostřed; jakmile uživatel mapu sám posune, sledování se
+   pozastaví (tlačítko pak funguje jako „vycentrovat zpět").
+   ═══════════════════════════════════════════════════════════════ */
+
+const _GPS_ZOOM_PRVNI  = 17;   // na jaký zoom skočíme při prvním zaměření
+const _GPS_MIN_POSUN_M = 4;    // menší posun nepovažujeme za jízdu (šum GPS)
+
+let _gpsWatchId   = null;
+let _gpsMarker    = null;
+let _gpsKruh      = null;
+let _gpsRezim     = 'off';     // 'off' | 'hledam' | 'sleduji' | 'volne'
+let _gpsBtn       = null;
+let _gpsChip      = null;
+let _gpsPredchozi = null;      // poslední poloha {lat, lng, ts}
+let _gpsSmer      = null;      // stupně 0–360, null = neznámý
+let _gpsWakeLock  = null;
+let _gpsSlabySignal   = false;  // poslední pokus o zaměření selhal
+let _gpsChybaOhlasena = false;  // hlásku o problému ukazujeme jen jednou
+
+// Vzdálenost dvou bodů v metrech (haversine)
+function _gpsVzdalenost(a, b) {
+  const R = 6371000, rad = Math.PI / 180;
+  const dLat = (b.lat - a.lat) * rad;
+  const dLng = (b.lng - a.lng) * rad;
+  const s = Math.sin(dLat / 2) ** 2 +
+            Math.cos(a.lat * rad) * Math.cos(b.lat * rad) * Math.sin(dLng / 2) ** 2;
+  return 2 * R * Math.asin(Math.sqrt(s));
+}
+
+// Azimut z bodu a do bodu b ve stupních (0 = sever)
+function _gpsAzimut(a, b) {
+  const rad = Math.PI / 180;
+  const dLng = (b.lng - a.lng) * rad;
+  const y = Math.sin(dLng) * Math.cos(b.lat * rad);
+  const x = Math.cos(a.lat * rad) * Math.sin(b.lat * rad) -
+            Math.sin(a.lat * rad) * Math.cos(b.lat * rad) * Math.cos(dLng);
+  return (Math.atan2(y, x) / rad + 360) % 360;
+}
+
+function _gpsIkona() {
+  return L.divIcon({
+    className: '',
+    iconSize: [26, 26],
+    iconAnchor: [13, 13],
+    html: `<div class="gps-poloha gps-poloha--bez-smeru">
+             <span class="gps-poloha-smer"></span>
+             <span class="gps-poloha-puls"></span>
+             <span class="gps-poloha-jadro"></span>
+           </div>`
+  });
+}
+
+// Otočí kužel směru podle azimutu (bez překreslení celého markeru → bez blikání)
+function _gpsVykresliSmer() {
+  const el = _gpsMarker && _gpsMarker.getElement();
+  const wrap = el && el.querySelector('.gps-poloha');
+  if (!wrap) return;
+  if (_gpsSmer == null) {
+    wrap.classList.add('gps-poloha--bez-smeru');
+    return;
+  }
+  wrap.classList.remove('gps-poloha--bez-smeru');
+  wrap.style.transform = `rotate(${_gpsSmer}deg)`;
+}
+
+function _gpsNastavRezim(rezim) {
+  _gpsRezim = rezim;
+  if (_gpsBtn) {
+    _gpsBtn.classList.toggle('gps-btn--hleda',   rezim === 'hledam');
+    _gpsBtn.classList.toggle('gps-btn--sleduji', rezim === 'sleduji');
+    _gpsBtn.classList.toggle('gps-btn--volne',   rezim === 'volne');
+    _gpsBtn.title =
+      rezim === 'sleduji' ? 'Sleduji vaši polohu — klepnutím vypnete'
+    : rezim === 'volne'   ? 'Vycentrovat mapu na moji polohu'
+    : rezim === 'hledam'  ? 'Hledám vaši polohu…'
+    :                       'Zobrazit moji polohu na mapě';
+    _gpsBtn.setAttribute('aria-pressed', rezim === 'sleduji' ? 'true' : 'false');
+    _gpsBtn.setAttribute('aria-label', _gpsBtn.title);
+  }
+  _gpsAktualizujChip();
+}
+
+function _gpsAktualizujChip(coords) {
+  if (!_gpsChip) return;
+  if (_gpsRezim === 'off') { _gpsChip.style.display = 'none'; _gpsChip.innerHTML = ''; return; }
+  _gpsChip.style.display = '';
+
+  if (_gpsRezim === 'hledam') { _gpsChip.innerHTML = '<span>📡 Hledám vaši polohu…</span>'; return; }
+  if (_gpsRezim === 'volne') {
+    _gpsChip.innerHTML = '<span>⏸ Sledování pozastaveno — klepněte na tlačítko polohy</span>';
+    return;
+  }
+  const c = coords || _gpsChip._posledni;
+  if (!c) { _gpsChip.innerHTML = '<span>📍 Sleduji vaši polohu</span>'; return; }
+  _gpsChip._posledni = c;
+
+  if (_gpsSlabySignal) {
+    _gpsChip.innerHTML = '<span>📶 Slabý signál — držím poslední známou polohu</span>';
+    return;
+  }
+
+  const presnost = c.accuracy != null ? `±${Math.round(c.accuracy)} m` : '';
+  const rychlost = (c.speed != null && c.speed >= 0.6) ? `${Math.round(c.speed * 3.6)} km/h` : '';
+  _gpsChip.innerHTML =
+    `<span>📍 Sleduji vaši polohu</span>` +
+    (presnost ? `<span class="gps-chip-sep">·</span><span>${presnost}</span>` : '') +
+    (rychlost ? `<span class="gps-chip-sep">·</span><span>${rychlost}</span>` : '');
+}
+
+// Udrž displej rozsvícený, dokud jedeme (jako v navigaci). Tiše ignoruj,
+// když prohlížeč Wake Lock neumí.
+async function _gpsZamkniDisplej() {
+  try {
+    if (!('wakeLock' in navigator) || _gpsWakeLock) return;
+    _gpsWakeLock = await navigator.wakeLock.request('screen');
+    _gpsWakeLock.addEventListener('release', () => { _gpsWakeLock = null; });
+  } catch { _gpsWakeLock = null; }
+}
+
+function _gpsUvolniDisplej() {
+  try { if (_gpsWakeLock) _gpsWakeLock.release(); } catch {}
+  _gpsWakeLock = null;
+}
+
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible' && _gpsRezim !== 'off') _gpsZamkniDisplej();
+});
+
+function _gpsZpracujPolohu(pos) {
+  if (!mapInstance) return;
+  _gpsSlabySignal = false;
+  const c = pos.coords;
+  const bod = { lat: c.latitude, lng: c.longitude, ts: pos.timestamp };
+  const latlng = L.latLng(bod.lat, bod.lng);
+
+  // Směr: přednostně z GPS, jinak dopočítej z posledního posunu
+  if (c.heading != null && !isNaN(c.heading) && (c.speed == null || c.speed > 0.4)) {
+    _gpsSmer = c.heading;
+  } else if (_gpsPredchozi && _gpsVzdalenost(_gpsPredchozi, bod) >= _GPS_MIN_POSUN_M) {
+    _gpsSmer = _gpsAzimut(_gpsPredchozi, bod);
+  }
+  if (!_gpsPredchozi || _gpsVzdalenost(_gpsPredchozi, bod) >= _GPS_MIN_POSUN_M) _gpsPredchozi = bod;
+
+  const prvniZamereni = !_gpsMarker;
+
+  if (prvniZamereni) {
+    _gpsKruh = L.circle(latlng, {
+      radius: c.accuracy || 0,
+      className: 'gps-presnost',
+      interactive: false
+    }).addTo(mapInstance);
+
+    _gpsMarker = L.marker(latlng, {
+      icon: _gpsIkona(),
+      zIndexOffset: 1000,
+      keyboard: false,
+      interactive: false
+    }).addTo(mapInstance);
+  } else {
+    _gpsMarker.setLatLng(latlng);
+    _gpsKruh.setLatLng(latlng);
+    _gpsKruh.setRadius(c.accuracy || 0);
+  }
+  _gpsVykresliSmer();
+
+  if (prvniZamereni) {
+    _gpsNastavRezim('sleduji');
+    mapInstance.setView(latlng, Math.max(mapInstance.getZoom(), _GPS_ZOOM_PRVNI), { animate: true });
+  } else if (_gpsRezim === 'sleduji') {
+    // Plynulý posun — uživatel zůstává uprostřed mapy
+    mapInstance.panTo(latlng, { animate: true, duration: 0.7, easeLinearity: 0.4 });
+  }
+
+  _gpsAktualizujChip(c);
+}
+
+function _gpsHlaska(text, ms) {
+  if (typeof window._zobrazToast === 'function') window._zobrazToast(text, ms || 6000);
+  else alert(text);
+}
+
+// Sledování ukončíme jen když nám uživatel polohu zakázal. Výpadek signálu
+// (tunel, les, hustá zástavba) je běžný i uprostřed jízdy — watchPosition
+// necháme běžet, ať navigace naskočí sama, jakmile se GPS zase chytí.
+function _gpsChyba(err) {
+  if (err.code === err.PERMISSION_DENIED) {
+    _gpsHlaska('📍 Přístup k poloze je zakázaný. Povolte ho v nastavení prohlížeče u stránky mojebudky.cz.');
+    _gpsStopSledovani();
+    return;
+  }
+  if (_gpsMarker) {
+    // Polohu už známe — jen dáme vědět, že poslední údaj je starší
+    _gpsSlabySignal = true;
+    _gpsAktualizujChip();
+    return;
+  }
+  // Ještě jsme se nezaměřili — upozorni, ale zkoušej dál
+  if (!_gpsChybaOhlasena) {
+    _gpsChybaOhlasena = true;
+    _gpsHlaska(err.code === err.TIMEOUT
+      ? '📍 Zaměřování trvá déle — signál je slabý. Zkuste vyjít ven, hledám dál.'
+      : '📍 Poloha zatím není dostupná. Zkontrolujte, že máte zapnuté GPS — hledám dál.');
+  }
+}
+
+function _gpsStartSledovani() {
+  if (!('geolocation' in navigator)) {
+    const t = '📍 Váš prohlížeč neumí zjistit polohu.';
+    if (typeof window._zobrazToast === 'function') window._zobrazToast(t, 5000); else alert(t);
+    return;
+  }
+  if (!window.isSecureContext) {
+    const t = '📍 Poloha funguje jen na zabezpečeném připojení (https).';
+    if (typeof window._zobrazToast === 'function') window._zobrazToast(t, 5000); else alert(t);
+    return;
+  }
+  // Na mobilu je mapa do prvního klepnutí „zamčená" – odemkni ji, ať jde
+  // s polohou i pracovat (posouvat, přibližovat).
+  if (typeof window._mapaAktivovat === 'function') window._mapaAktivovat();
+
+  _gpsSlabySignal = false;
+  _gpsChybaOhlasena = false;
+  _gpsNastavRezim('hledam');
+  _gpsZamkniDisplej();
+  _gpsWatchId = navigator.geolocation.watchPosition(_gpsZpracujPolohu, _gpsChyba, {
+    enableHighAccuracy: true,
+    maximumAge: 1000,
+    timeout: 20000
+  });
+}
+
+function _gpsStopSledovani() {
+  if (_gpsWatchId != null) { try { navigator.geolocation.clearWatch(_gpsWatchId); } catch {} }
+  _gpsWatchId = null;
+  if (_gpsMarker && mapInstance) mapInstance.removeLayer(_gpsMarker);
+  if (_gpsKruh && mapInstance)   mapInstance.removeLayer(_gpsKruh);
+  _gpsMarker = null;
+  _gpsKruh = null;
+  _gpsPredchozi = null;
+  _gpsSmer = null;
+  _gpsSlabySignal = false;
+  _gpsChybaOhlasena = false;
+  if (_gpsChip) _gpsChip._posledni = null;
+  _gpsUvolniDisplej();
+  _gpsNastavRezim('off');
+}
+
+function _gpsKlik() {
+  if (_gpsRezim === 'off') { _gpsStartSledovani(); return; }
+  if (_gpsRezim === 'volne') {
+    // Vrať se ke sledování a hned vycentruj na poslední známou polohu
+    _gpsNastavRezim('sleduji');
+    if (_gpsMarker && mapInstance) {
+      mapInstance.setView(_gpsMarker.getLatLng(), Math.max(mapInstance.getZoom(), _GPS_ZOOM_PRVNI), { animate: true });
+    }
+    return;
+  }
+  _gpsStopSledovani();   // 'sleduji' i 'hledam' → vypnout
+}
+
+function pridejGpsOvladani(map) {
+  const ovladani = L.control({ position: 'topleft' });
+  ovladani.onAdd = function() {
+    const wrap = L.DomUtil.create('div', 'leaflet-bar gps-btn-wrap');
+    _gpsBtn = L.DomUtil.create('a', 'gps-btn', wrap);
+    _gpsBtn.href = '#';
+    _gpsBtn.setAttribute('role', 'button');
+    _gpsBtn.innerHTML =
+      '<span class="gps-btn-ikona" aria-hidden="true">' +
+        '<svg viewBox="0 0 24 24" width="22" height="22">' +
+          '<circle cx="12" cy="12" r="4" fill="currentColor"/>' +
+          '<circle cx="12" cy="12" r="7.6" fill="none" stroke="currentColor" stroke-width="1.8"/>' +
+          '<path d="M12 1.4v3.6M12 19v3.6M1.4 12h3.6M19 12h3.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>' +
+        '</svg>' +
+      '</span>';
+    L.DomEvent.disableClickPropagation(wrap);
+    L.DomEvent.on(_gpsBtn, 'click', e => { L.DomEvent.preventDefault(e); _gpsKlik(); });
+    return wrap;
+  };
+  ovladani.addTo(map);
+
+  // Info proužek s přesností a rychlostí (jen když je poloha zapnutá).
+  // Je ve stejném rohu jako legenda — Leaflet je poskládá pod sebe, takže se
+  // ani na úzkém telefonu nepřekrývají.
+  const chipCtrl = L.control({ position: 'bottomright' });
+  chipCtrl.onAdd = function() {
+    _gpsChip = L.DomUtil.create('div', 'gps-chip');
+    _gpsChip.style.display = 'none';
+    L.DomEvent.disableClickPropagation(_gpsChip);
+    return _gpsChip;
+  };
+  chipCtrl.addTo(map);
+
+  // Jakmile uživatel mapu sám posune, sledování se pozastaví — ať mu mapa
+  // „neutíká" zpět, když si chce prohlédnout okolní budky.
+  map.on('dragstart', () => {
+    if (_gpsRezim === 'sleduji') _gpsNastavRezim('volne');
+  });
+
+  _gpsNastavRezim('off');
+}
+
+// Umožni zapnout/vypnout polohu i zvenčí (např. z menu)
+window._mapaZapniPolohu = _gpsStartSledovani;
+window._mapaVypniPolohu = _gpsStopSledovani;
