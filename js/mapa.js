@@ -1194,6 +1194,12 @@ function _gpsNastavRezim(rezim) {
     : rezim === 'volne'   ? 'Vycentrovat mapu na moji polohu'
     : rezim === 'hledam'  ? 'Hledám vaši polohu…'
     :                       'Zobrazit moji polohu na mapě';
+    const popis = _gpsBtn.querySelector('.gps-btn-popis');
+    if (popis) popis.textContent =
+      rezim === 'sleduji' ? 'Sleduji vás'
+    : rezim === 'volne'   ? 'Vycentrovat'
+    : rezim === 'hledam'  ? 'Hledám…'
+    :                       'Moje poloha';
     _gpsBtn.setAttribute('aria-pressed', rezim === 'sleduji' ? 'true' : 'false');
     _gpsBtn.setAttribute('aria-label', _gpsBtn.title);
   }
@@ -1387,12 +1393,12 @@ function pridejGpsOvladani(map) {
     _gpsBtn.setAttribute('role', 'button');
     _gpsBtn.innerHTML =
       '<span class="gps-btn-ikona" aria-hidden="true">' +
-        '<svg viewBox="0 0 24 24" width="22" height="22">' +
+        '<svg viewBox="0 0 24 24" width="19" height="19">' +
           '<circle cx="12" cy="12" r="4" fill="currentColor"/>' +
           '<circle cx="12" cy="12" r="7.6" fill="none" stroke="currentColor" stroke-width="1.8"/>' +
           '<path d="M12 1.4v3.6M12 19v3.6M1.4 12h3.6M19 12h3.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>' +
         '</svg>' +
-      '</span>';
+      '</span><span class="gps-btn-popis">Moje poloha</span>';
     L.DomEvent.disableClickPropagation(wrap);
     L.DomEvent.on(_gpsBtn, 'click', e => { L.DomEvent.preventDefault(e); _gpsKlik(); });
     return wrap;

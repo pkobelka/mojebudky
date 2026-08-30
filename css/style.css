@@ -1619,25 +1619,38 @@ body.mapa-cele .map-wrapper {
 
 /* ── ŽIVÁ POLOHA (navigační režim mapy) ── */
 
-/* Tlačítko pod ovládáním zoomu — rozměry ladí se zoomem +/- */
-.gps-btn-wrap { border: none !important; box-shadow: 0 2px 8px rgba(0,0,0,0.3); border-radius: 8px; overflow: hidden; margin-top: 10px !important; }
+/* Popsaná pilulka pod ovládáním zoomu (styl sjednocen s „Celá obrazovka") —
+   samotná ikonka se v mapě ztrácela a nebylo poznat, k čemu je. */
+.gps-btn-wrap { border: none !important; box-shadow: none !important; margin-top: 10px !important; }
 .gps-btn-wrap a.gps-btn {
-  display: flex !important; align-items: center; justify-content: center;
-  width: 40px !important; height: 40px !important; line-height: 1 !important;
-  background: #fff; color: #1c5c10; font-size: 20px; text-decoration: none;
-  border-bottom: none; transition: background 0.15s, box-shadow 0.15s;
+  display: inline-flex !important; align-items: center; gap: 7px;
+  width: auto !important; height: auto !important; line-height: 1.1 !important;
+  padding: 10px 15px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.4);
+  background: rgba(28,92,16,0.94); color: #eef4e8;
+  font-family: 'Segoe UI', system-ui, sans-serif; font-size: 0.9rem; font-weight: 700;
+  text-decoration: none; white-space: nowrap;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.4);
+  -webkit-tap-highlight-color: transparent;
+  transition: background 0.15s, color 0.15s;
 }
-.gps-btn-wrap a.gps-btn:hover { background: #eef4e8; }
-/* Hover nesmí přebít stav — jinak se u zapnutého sledování ztratí zelená */
-.gps-btn-wrap a.gps-btn--hleda:hover   { background: #ffe9b8; }
-.gps-btn-wrap a.gps-btn--sleduji:hover { background: #164a0c; }
-.gps-btn-ikona { display: block; }
+.gps-btn-wrap a.gps-btn:hover { background: #1c5c10; color: #fff; }
+.gps-btn-ikona { display: block; flex: none; }
 .gps-btn-ikona svg { display: block; }
-.gps-btn-wrap a.gps-btn--sleduji { color: #fff; }
-.gps-btn-wrap a.gps-btn--hleda   { background: #fff3d6; }
-.gps-btn--hleda .gps-btn-ikona   { animation: gps-btn-blika 1.1s ease-in-out infinite; }
-.gps-btn-wrap a.gps-btn--sleduji { background: #1c5c10; }
-.gps-btn-wrap a.gps-btn--volne   { background: #fff; box-shadow: inset 0 0 0 3px #1c5c10; }
+.gps-btn-popis { display: block; }
+
+/* Hledám — probliknutí, ať je vidět, že se něco děje */
+.gps-btn--hleda .gps-btn-ikona { animation: gps-btn-blika 1.1s ease-in-out infinite; }
+/* Sleduji — světlá pilulka se zeleným rámečkem, jasně odlišená od vypnutého stavu */
+.gps-btn-wrap a.gps-btn--sleduji,
+.gps-btn-wrap a.gps-btn--sleduji:hover {
+  background: #f4fbef; color: #1c5c10; border-color: #1c5c10;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.35), inset 0 0 0 2px #1c5c10;
+}
+/* Pozastaveno — oranžová jako ostatní „udělej něco" tlačítka v mapě */
+.gps-btn-wrap a.gps-btn--volne,
+.gps-btn-wrap a.gps-btn--volne:hover {
+  background: var(--orange, #e06820); color: #fff; border-color: rgba(255,255,255,0.5);
+}
 @keyframes gps-btn-blika { 0%, 100% { opacity: 1; } 50% { opacity: 0.25; } }
 
 /* Modrá tečka s kuželem směru jízdy */
