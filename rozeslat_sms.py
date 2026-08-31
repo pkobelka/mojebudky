@@ -5,12 +5,13 @@ Rozešle přihlašovací SMS správcům přes SMSbrana.cz (SMS Connect HTTP API)
 Použití:
     python3 rozeslat_sms.py hesla.csv              # ostré odeslání přes SMS Connect API
     python3 rozeslat_sms.py hesla.csv --nanecisto  # jen náhled, nic se neodešle
-    python3 rozeslat_sms.py hesla.csv --pro-web     # vygeneruje pro_web.csv pro webovou
+    python3 rozeslat_sms.py hesla.csv --pro-web    # vygeneruje pro_web.csv pro webovou
                                                     #   „CSV rozesílku" na SMSbrana.cz
                                                     #   (nic neodesílá, netřeba SMS Connect)
 
 CSV musí obsahovat sloupce: ID (nebo číslo budky) a Heslo (plaintext).
-Telefony a jména se načtou z data/spravci_info.json.
+Jména se načtou z data/spravci_info.json, telefony z neveřejného uzlu
+`spravci_kontakt` v RTDB (vyžaduje service-account-key.json).
 
 NIKDY nekomitovat hesla.csv ani tento skript s vyplněnými přihlašovacími údaji!
 """
@@ -97,8 +98,49 @@ def normalizuj_telefon(t):
     return t if re.fullmatch(r'\+\d{9,15}', t) else None
 
 def nacti_info():
+    """Jména a budky z veřejného souboru, telefony z neveřejné DB.
+
+    Telefony (a e-maily, data narození) se v 8/2026 přesunuly z veřejně
+    servírovaného data/spravci_info.json do uzlu `spravci_kontakt`, ke kterému
+    se klient nedostane. Skript si je proto dotáhne přes Admin SDK – potřebuje
+    service-account-key.json ve stejné složce (stejně jako ostatní servisní
+    skripty v tomhle repu).
+    """
     with open('data/spravci_info.json', encoding='utf-8') as f:
-        return json.load(f)
+        info = json.load(f)
+
+    try:
+        import firebase_admin
+        from firebase_admin import credentials, db
+    except ImportError:
+        sys.exit('CHYBA: chybí knihovna firebase-admin.  Nainstaluj: pip install firebase-admin')
+
+    if not Path('service-account-key.json').exists():
+        sys.exit(
+            'CHYBA: chybí service-account-key.json.\n'
+            'Telefony už nejsou ve veřejném souboru, tahají se z uzlu spravci_kontakt.\n'
+            'Klíč stáhneš ve Firebase konzoli: Nastavení projektu -> Servisní účty\n'
+            '-> Vygenerovat nový soukromý klíč. NIKDY ho nekomituj.'
+        )
+
+    if not firebase_admin._apps:
+        firebase_admin.initialize_app(
+            credentials.Certificate('service-account-key.json'),
+            {'databaseURL': 'https://moje-budky-default-rtdb.firebaseio.com'},
+        )
+    kontakty = db.reference('spravci_kontakt').get() or {}
+
+    for login_id, osoba in info.items():
+        if isinstance(osoba, dict):
+            k = kontakty.get(login_id) or {}
+            if isinstance(k, dict):
+                osoba['telefon'] = k.get('telefon', '')
+                osoba['email'] = k.get('email', '')
+
+    s_tel = sum(1 for o in info.values() if isinstance(o, dict) and o.get('telefon'))
+    print(f'Načteno {len(info)} správců, z toho {s_tel} s telefonem '
+          f'(telefony z neveřejného uzlu spravci_kontakt).')
+    return info
 
 def detekuj_sloupce(headers):
     """Automaticky najde sloupce ID a Heslo v CSV."""
