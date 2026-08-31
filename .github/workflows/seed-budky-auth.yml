@@ -1,0 +1,34 @@
+name: Převod hesel správců do neveřejné DB (budky_auth)
+
+# Spustit RUČNĚ a AŽ POTOM nasazovat klienta, který se přihlašuje přes server.
+# Skript překlopí stávající SHA-256 hashe do uzlu `budky_auth` (scrypt + sůl),
+# ke kterému se klient přes DB pravidla nedostane. Stávající hesla dál fungují,
+# ale všem se nastaví must_change=True.
+
+on:
+  workflow_dispatch:
+    inputs:
+      prepsat_vse:
+        description: 'Přepsat i účty, které už v budky_auth jsou (POZOR: zruší hesla nastavená po první migraci)'
+        type: boolean
+        default: false
+
+jobs:
+  seed-budky-auth:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Nastav Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Instaluj závislosti
+        run: pip install firebase-admin
+
+      - name: Ulož service account key
+        run: echo '${{ secrets.FIREBASE_SERVICE_ACCOUNT }}' > service-account-key.json
+
+      - name: Převeď hesla
+        run: python seed_budky_auth.py ${{ inputs.prepsat_vse && '--prepsat-vse' || '' }}
