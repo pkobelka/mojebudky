@@ -161,27 +161,39 @@
   };
 
   // Skutečná návštěvnost (celkem / dnes / včera / předevčírem) – volá se z main.js
+  // pro KAŽDÉHO návštěvníka, i nepřihlášeného.
+  //
+  // Dřív se denní počty sčítaly z uzlu `navstevnost_log`. Ten ale u přihlášených
+  // správců obsahuje loginId, jméno a příznak admin, takže od 8/2026 smí číst jen
+  // admin – návštěvníkovi by to spadlo na PERMISSION_DENIED a počítadlo by
+  // zůstalo na nule. Denní součty proto bereme z `navstevnost_denne`, což je
+  // agregát bez jakýchkoli osobních údajů a je veřejně čitelný.
+  const _denKlic = (d) => d.getFullYear() + '-'
+    + String(d.getMonth() + 1).padStart(2, '0') + '-'
+    + String(d.getDate()).padStart(2, '0');
+
   window._nactiZivouNavstevnost = async function () {
     const ted = new Date();
-    const zacatekDnes = new Date(ted.getFullYear(), ted.getMonth(), ted.getDate()).getTime();
-    const zacatekVcera = zacatekDnes - 24 * 60 * 60 * 1000;
-    const zacatekPredvcirem = zacatekDnes - 2 * 24 * 60 * 60 * 1000;
+    const den = (posun) => {
+      const d = new Date(ted.getFullYear(), ted.getMonth(), ted.getDate());
+      d.setDate(d.getDate() + posun);
+      return _denKlic(d);
+    };
 
-    const [logSnap, celkemSnap] = await Promise.all([
-      db.ref('navstevnost_log').orderByChild('ts').startAt(zacatekPredvcirem).once('value'),
+    const [denneSnap, celkemSnap] = await Promise.all([
+      db.ref('navstevnost_denne').once('value'),
       db.ref('navstevnost_celkem').once('value')
     ]);
 
-    let dnes = 0, vcera = 0, predvcirem = 0;
-    logSnap.forEach(child => {
-      const v = child.val();
-      if (!v || !v.ts) return;
-      if (v.ts >= zacatekDnes) dnes++;
-      else if (v.ts >= zacatekVcera) vcera++;
-      else if (v.ts >= zacatekPredvcirem) predvcirem++;
-    });
+    const denne = denneSnap.val() || {};
+    const poc = (klic) => parseInt(denne[klic], 10) || 0;
 
-    return { celkem: celkemSnap.val() || 0, dnes, vcera, predvcirem };
+    return {
+      celkem: celkemSnap.val() || 0,
+      dnes: poc(den(0)),
+      vcera: poc(den(-1)),
+      predvcirem: poc(den(-2))
+    };
   };
 
   // Trvalá denní historie návštěv (od zavedení, nikdy nemazaná) – pro admin přehled
