@@ -52,6 +52,15 @@ Kdyby se někdy projekt zakládal znovu nebo se měnil běhový účet funkcí, 
 krok je potřeba zopakovat, jinak se **nikdo nepřihlásí** (heslo projde, ale token
 se nevydá – v appce se to ukáže jako `token-failed`).
 
+**Nedodělaný krok (8/2026):** hesla se zneplatnila jen účtům, které se nikdy
+nepřihlásily. Účty s historií přihlášení (v 8/2026 jich bylo 28) zůstaly funkční
+a spoléhá se na to, že si jejich majitelé nastaví nové heslo sami při dalším
+přihlášení (`must_change`). **Dokud to neudělají, jejich původní – prozrazené –
+heslo pořád platí.** Za pár týdnů je proto potřeba se podívat do administrace
+(📊 Online historie) a workflow „Zneplatnit hesla nepoužívaných účtů" pustit
+znovu; komu se to mezitím změnilo, ten už `zneplatneno` nedostane a nic se mu
+nestane. Bez toho kroku tam ty účty zůstanou otevřené natrvalo.
+
 **Verze pro cache:** `?v=…` u skriptů a stylů v `index.html` je potřeba po každé
 změně v `js/` nebo `css/` ručně zvýšit, jinak lidem zůstane stará verze.
 
