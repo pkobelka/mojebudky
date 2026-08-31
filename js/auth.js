@@ -491,7 +491,13 @@ async function _zobrazAdminPanel(loginId) {
   const lsPraniKlic = `mb_prani_${loginId}_${dnes.toISOString().slice(0,10)}`;
   const praniUkazano = !!localStorage.getItem(lsPraniKlic);
 
-  if (!jeSlib) {
+  // Když server hlásí must_change, otevře se hned po přihlášení modal na nové
+  // heslo, který nejde zavřít. Uvítací hláška ani slib správce se v tu chvíli
+  // nesmí ukázat – překryly by pole "Současné heslo" a nešly by odklikat.
+  // Přijdou na řadu při příštím přihlášení.
+  if (window._mbVynucenaZmena) {
+    // nic – uvítání počká, teď má přednost nastavení nového hesla
+  } else if (!jeSlib) {
     setTimeout(() => _zobrazSlibSpravce(loginId, spravceInfo, budkaText, osloveni), 1500);
   } else {
     const posledniText = posledniLoginTs
@@ -1120,6 +1126,7 @@ function _zobrazZmenitHeslo(loginId, vynucene) {
 
     msgEl.textContent = '✓ Heslo bylo změněno!';
     msgEl.hidden = false;
+    window._mbVynucenaZmena = false;   // uvítání se zase může ukázat
     setTimeout(() => modal.remove(), 2000);
   });
 
@@ -3365,6 +3372,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         _ulozSession(id);
         zavritModal();
+        // musí být nastavené PŘED panelem – ten se podle toho rozhodne,
+        // jestli ukázat uvítání, nebo nechat prostor vynucené změně hesla
+        window._mbVynucenaZmena = !!vysledek.mustChange;
         _zobrazAdminPanel(id);
         // Hashe hesel byly do 8/2026 veřejně ke stažení, takže se všechna
         // stávající hesla považují za prozrazená. Server to hlásí přes
