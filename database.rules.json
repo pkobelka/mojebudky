@@ -180,6 +180,27 @@
         ".write": true
       }
     },
+    "budky_login": {
+      "$req": {
+        ".write": "!newData.exists()",
+        "req": {
+          ".write": "!data.exists()",
+          ".validate": "newData.hasChildren(['loginId', 'heslo']) && newData.child('loginId').isString() && newData.child('loginId').val().length <= 32 && newData.child('heslo').isString() && newData.child('heslo').val().length <= 200"
+        },
+        "res": {
+          ".read": true
+        }
+      }
+    },
+    "budky_passwd": {
+      "$uid": {
+        ".read": "auth != null && auth.uid === $uid",
+        "req": {
+          ".write": "auth != null && auth.uid === $uid && !data.exists()",
+          ".validate": "newData.hasChild('nove') && newData.child('nove').isString() && newData.child('nove').val().length <= 200"
+        }
+      }
+    },
     "hesla": {
       "$uid": {
         ".read": true,

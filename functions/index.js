@@ -9,6 +9,8 @@
 
 const functions = require("firebase-functions/v1");
 const admin = require("firebase-admin");
+// pozor: globální `crypto` je v Node 18+ WebCrypto a nemá createHash/scryptSync
+const crypto = require("node:crypto");
 
 admin.initializeApp();
 
@@ -453,5 +455,242 @@ exports.florianPairingReq = functions.database
       console.error("florianPairingReq error:", e);
       try { await resRef.set({ err: "internal", ts: Date.now() }); } catch (_) { /* ignore */ }
     }
+    return null;
+  });
+
+// ===== 6) MojeBudky – serverové ověření hesla správce =====
+// Do 8/2026 se přihlašovalo tak, že prohlížeč stáhl `data/spravci.json`
+// (215 neosolených SHA-256 hashů, veřejně servírovaný soubor) nebo uzel
+// `hesla/{id}` (world-readable) a heslo porovnal u sebe. Kdokoli si tedy mohl
+// hashe stáhnout a rozlousknout, a protože byl uzel i world-writable, mohl
+// komukoli heslo i přepsat, aniž by to staré znal.
+//
+// Nově heslo ověřuje jedině server. Hashe leží v uzlu `budky_auth`, který
+// v database.rules.json NENÍ uvedený – kořen má .read/.write:false, takže se
+// k němu klient nedostane vůbec a čte ho jen tenhle kód přes Admin SDK.
+//
+// Kanál je databázový, ne callable: servisní účet v CI neumí nastavit invoker
+// IAM pro volané funkce (viz florianPairingReq), takže onCall by se nenasadilo.
+//   klient -> /budky_login/{req}/req = {loginId, heslo}   (req je náhodných 32 hex znaků)
+//   server -> /budky_login/{req}/res = {token, must_change} | {err}
+// `req` se maže hned po vyhodnocení, aby v databázi neleželo heslo.
+// `res` je čitelný komukoli, kdo zná {req} – to je celé to tajemství, proto
+// musí klient generovat {req} kryptograficky (crypto.getRandomValues).
+
+const SCRYPT = { N: 16384, r: 8, p: 1, dklen: 32 };
+const LOGIN_RATE_MAX = 10;                 // pokusů
+const LOGIN_RATE_OKNO = 15 * 60 * 1000;    // za 15 minut
+const LOGIN_TTL = 10 * 60 * 1000;          // po 10 min se záznam uklidí
+
+function mbSha256(text) {
+  return crypto.createHash("sha256").update(String(text), "utf8").digest("hex");
+}
+
+// Migrace ze starých dat: hashuje se legacy SHA-256 hex, ne heslo samotné.
+// Díky tomu jsme mohli převzít stávající hesla, aniž bychom je znali.
+function mbScrypt(sha256hex, saltHex) {
+  return crypto
+    .scryptSync(sha256hex, Buffer.from(saltHex, "hex"), SCRYPT.dklen, {
+      N: SCRYPT.N, r: SCRYPT.r, p: SCRYPT.p,
+    })
+    .toString("hex");
+}
+
+function mbRovno(a, b) {
+  const ba = Buffer.from(String(a || ""), "utf8");
+  const bb = Buffer.from(String(b || ""), "utf8");
+  if (ba.length !== bb.length) return false;
+  return crypto.timingSafeEqual(ba, bb);
+}
+
+function mbNovyZaznam(heslo, admin, mustChange) {
+  const saltHex = crypto.randomBytes(16).toString("hex");
+  return {
+    alg: "scrypt-sha256",
+    salt: saltHex,
+    hash: mbScrypt(mbSha256(heslo), saltHex),
+    admin: admin === true,
+    must_change: mustChange === true,
+    ts: Date.now(),
+  };
+}
+
+// Ověří heslo proti uloženému záznamu. Zvládne i starý formát (holý SHA-256),
+// kdyby se někdo přihlásil dřív, než doběhne migrační skript.
+function mbOveritHeslo(zaznam, heslo) {
+  if (!zaznam) return false;
+  if (zaznam.alg === "scrypt-sha256" && zaznam.salt && zaznam.hash) {
+    return mbRovno(mbScrypt(mbSha256(heslo), zaznam.salt), zaznam.hash);
+  }
+  if (typeof zaznam === "string") return mbRovno(mbSha256(heslo), zaznam);
+  if (zaznam.sha256) return mbRovno(mbSha256(heslo), zaznam.sha256);
+  return false;
+}
+
+// Vrátí true, pokud je účet zablokovaný kvůli počtu neúspěšných pokusů.
+async function mbRateLimit(loginId) {
+  const ref = admin.database().ref("budky_rate/" + loginId);
+  const snap = await ref.get();
+  const v = snap.val() || {};
+  const ted = Date.now();
+  if (!v.first || ted - v.first > LOGIN_RATE_OKNO) return false;
+  return (v.n || 0) >= LOGIN_RATE_MAX;
+}
+
+async function mbRateZapis(loginId, uspech) {
+  const ref = admin.database().ref("budky_rate/" + loginId);
+  if (uspech) return ref.remove();
+  const ted = Date.now();
+  return ref.transaction((v) => {
+    if (!v || !v.first || ted - v.first > LOGIN_RATE_OKNO) return { n: 1, first: ted };
+    return { n: (v.n || 0) + 1, first: v.first };
+  });
+}
+
+exports.budkyLoginReq = functions.database
+  .ref("/budky_login/{req}/req")
+  .onCreate(async (snap, context) => {
+    const reqId = context.params.req;
+    const baseRef = admin.database().ref("budky_login/" + reqId);
+    const resRef = baseRef.child("res");
+    const data = snap.val() || {};
+    const loginId = String(data.loginId || "").trim();
+    const heslo = String(data.heslo || "");
+
+    // heslo v databázi neleží déle, než je nutné
+    const smazReq = () => snap.ref.remove().catch(() => {});
+
+    try {
+      if (!loginId || !heslo || loginId.length > 32 || heslo.length > 200) {
+        await resRef.set({ err: "invalid-argument", ts: Date.now() });
+        return smazReq();
+      }
+
+      if (await mbRateLimit(loginId)) {
+        await resRef.set({ err: "too-many-requests", ts: Date.now() });
+        console.warn(`budkyLoginReq: ${loginId} zablokován (příliš mnoho pokusů).`);
+        return smazReq();
+      }
+
+      const zaznamSnap = await admin.database().ref("budky_auth/" + loginId).get();
+      const zaznam = zaznamSnap.val();
+
+      if (!mbOveritHeslo(zaznam, heslo)) {
+        await mbRateZapis(loginId, false);
+        // stejná odpověď pro neznámé id i špatné heslo (neprozrazuje existenci účtu)
+        await resRef.set({ err: "wrong-credentials", ts: Date.now() });
+        return smazReq();
+      }
+
+      await mbRateZapis(loginId, true);
+      const token = await admin.auth().createCustomToken("budky_" + loginId, {
+        loginId: loginId,
+        admin: zaznam.admin === true,
+      });
+      await resRef.set({
+        token: token,
+        must_change: zaznam.must_change === true,
+        ts: Date.now(),
+      });
+      console.log(`budkyLoginReq: ${loginId} přihlášen (admin=${zaznam.admin === true}).`);
+      return smazReq();
+    } catch (e) {
+      console.error("budkyLoginReq error:", e);
+      try { await resRef.set({ err: "internal", ts: Date.now() }); } catch (_) { /* ignore */ }
+      return smazReq();
+    }
+  });
+
+// ===== 7) MojeBudky – změna hesla (jen pro přihlášeného) =====
+// Kanál je pod uid, takže do něj podle pravidel zapíše jen ten, komu patří.
+//   /budky_passwd/{uid}/req = {stare, nove}            – změna vlastního hesla
+//   /budky_passwd/{uid}/req = {cil, nove}              – admin nastaví heslo jinému
+//   /budky_passwd/{uid}/res = {ok:true} | {err}
+exports.budkyPasswdReq = functions.database
+  .ref("/budky_passwd/{uid}/req")
+  .onCreate(async (snap, context) => {
+    const uid = context.params.uid;
+    const resRef = admin.database().ref("budky_passwd/" + uid + "/res");
+    const data = snap.val() || {};
+    const smazReq = () => snap.ref.remove().catch(() => {});
+
+    try {
+      // uid má tvar budky_<loginId>; pravidla zaručila, že píše jeho vlastník
+      if (uid.indexOf("budky_") !== 0) {
+        await resRef.set({ err: "invalid-argument", ts: Date.now() });
+        return smazReq();
+      }
+      const zadatel = uid.slice("budky_".length);
+      const nove = String(data.nove || "");
+      const cil = data.cil ? String(data.cil).trim() : zadatel;
+
+      if (nove.length < 8) {
+        await resRef.set({ err: "weak-password", ts: Date.now() });
+        return smazReq();
+      }
+
+      const zadatelSnap = await admin.database().ref("budky_auth/" + zadatel).get();
+      const zadatelZaznam = zadatelSnap.val();
+      if (!zadatelZaznam) {
+        await resRef.set({ err: "not-found", ts: Date.now() });
+        return smazReq();
+      }
+
+      if (cil === zadatel) {
+        // vlastní heslo: musí sedět to staré
+        if (!mbOveritHeslo(zadatelZaznam, String(data.stare || ""))) {
+          await resRef.set({ err: "wrong-credentials", ts: Date.now() });
+          return smazReq();
+        }
+      } else if (zadatelZaznam.admin !== true) {
+        // cizí heslo smí přenastavit jen admin
+        await resRef.set({ err: "permission-denied", ts: Date.now() });
+        console.warn(`budkyPasswdReq: ${zadatel} zkusil změnit heslo ${cil} bez admin práv.`);
+        return smazReq();
+      }
+
+      const cilSnap = await admin.database().ref("budky_auth/" + cil).get();
+      const cilZaznam = cilSnap.val();
+      if (!cilZaznam) {
+        await resRef.set({ err: "not-found", ts: Date.now() });
+        return smazReq();
+      }
+
+      // admin zůstává adminem; must_change padá, protože heslo je právě nové
+      await admin.database().ref("budky_auth/" + cil)
+        .set(mbNovyZaznam(nove, cilZaznam.admin === true, false));
+      // staré hashe už nemají kde být
+      await admin.database().ref("hesla/" + cil).remove().catch(() => {});
+      await admin.database().ref("budky_rate/" + cil).remove().catch(() => {});
+
+      await resRef.set({ ok: true, ts: Date.now() });
+      console.log(`budkyPasswdReq: heslo ${cil} změněno (žadatel ${zadatel}).`);
+      return smazReq();
+    } catch (e) {
+      console.error("budkyPasswdReq error:", e);
+      try { await resRef.set({ err: "internal", ts: Date.now() }); } catch (_) { /* ignore */ }
+      return smazReq();
+    }
+  });
+
+// ===== 8) MojeBudky – úklid dokoukaných přihlašovacích kanálů =====
+// Klient si svůj záznam maže sám, tohle je pojistka na nedokončené pokusy.
+exports.budkyLoginCleanup = functions.pubsub
+  .schedule("every day 03:20")
+  .timeZone("Europe/Prague")
+  .onRun(async () => {
+    const ref = admin.database().ref("budky_login");
+    const snap = await ref.get();
+    const vse = snap.val() || {};
+    const cutoff = Date.now() - LOGIN_TTL;
+    const smazat = {};
+    Object.keys(vse).forEach((k) => {
+      const z = vse[k] || {};
+      const ts = (z.res && z.res.ts) || (z.req && z.req.ts) || 0;
+      if (!ts || ts < cutoff) smazat[k] = null;
+    });
+    const n = Object.keys(smazat).length;
+    if (n) await ref.update(smazat);
+    console.log(`budkyLoginCleanup: uklizeno ${n} záznamů.`);
     return null;
   });
