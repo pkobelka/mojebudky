@@ -578,6 +578,15 @@ exports.budkyLoginReq = functions.database
       // Ověření hesla a vydání tokenu mají vlastní odchycení, aby se v odpovědi
       // rozlišilo, na kterém kroku to spadlo. Generické "internal" se špatně ladí,
       // protože do logů Cloud Functions není z appky vidět.
+      // Účty, kterým bylo heslo hromadně zneplatněno (zneplatnit_hesla.py),
+      // mají heslo, které nikdo nezná. Bez tohohle by dostaly jen "neplatné
+      // heslo" a lidi by zbytečně zkoušeli dokola. Že účet existuje, se tím
+      // sice prozradí, ale seznam ID je stejně veřejný (data/spravci_ids.json).
+      if (zaznam && zaznam.zneplatneno) {
+        await resRef.set({ err: "account-disabled", ts: Date.now() });
+        return smazReq();
+      }
+
       let sedi;
       try {
         sedi = mbOveritHeslo(zaznam, heslo);
