@@ -321,6 +321,120 @@ function _nactiSession() {
   return s.id;
 }
 
+// --- Serverové přihlášení ------------------------------------------------
+// Heslo se od 8/2026 neověřuje v prohlížeči. Klient ho pošle do kanálu
+// budky_login/{req}/req, Cloud Function budkyLoginReq ho porovná proti uzlu
+// budky_auth (klient tam nemá přístup) a vrátí custom token do .../res.
+// {req} je 128 bitů z crypto.getRandomValues – je to jediné, co odpověď chrání,
+// takže se nesmí generovat přes Math.random().
+const MB_LOGIN_TIMEOUT = 20000;
+
+function _mbNahodneId() {
+  const b = new Uint8Array(16);
+  (window.crypto || window.msCrypto).getRandomValues(b);
+  return Array.from(b).map(x => x.toString(16).padStart(2, '0')).join('');
+}
+
+// Společná mechanika pro oba kanály (přihlášení i změna hesla):
+// zapiš požadavek, počkej na odpověď, po sobě ukliď.
+async function _mbKanal(baseRef, pozadavek) {
+  // Zahoď zbytek po dřívějším pokusu. U budky_passwd je cesta pevná (podle uid),
+  // takže by se stará odpověď načetla jako výsledek toho nového požadavku.
+  await baseRef.remove().catch(() => {});
+
+  const resRef = baseRef.child('res');
+  try {
+    return await new Promise((resolve, reject) => {
+      // deklarované předem, ať na ně dokonci() dosáhne i kdyby posluchač
+      // stihl zavolat zpátky ještě během registrace
+      let hotovo = false;
+      let tmr = null;
+      let posluchac = null;
+      const dokonci = (fn, v) => {
+        if (hotovo) return;
+        hotovo = true;
+        if (tmr) clearTimeout(tmr);
+        resRef.off('value', posluchac);
+        fn(v);
+      };
+      tmr = setTimeout(() => dokonci(reject, new Error('timeout')), MB_LOGIN_TIMEOUT);
+      posluchac = resRef.on('value', snap => {
+        const v = snap.val();
+        if (v) dokonci(resolve, v);
+      }, err => dokonci(reject, err));
+      baseRef.child('req').set(pozadavek).catch(err => dokonci(reject, err));
+    });
+  } finally {
+    baseRef.remove().catch(() => {});
+  }
+}
+
+// { ok:true, mustChange } | { ok:false, err }
+// err === 'nedostupne' znamená, že server neodpověděl – ne že je heslo špatné.
+async function _prihlasitServerem(loginId, heslo) {
+  const db = _getFirebaseDB();
+  if (!db || !window.firebase || !firebase.auth) return { ok: false, err: 'nedostupne' };
+
+  let odpoved;
+  try {
+    odpoved = await _mbKanal(db.ref('budky_login/' + _mbNahodneId()),
+      { loginId: loginId, heslo: heslo, ts: Date.now() });
+  } catch {
+    return { ok: false, err: 'nedostupne' };
+  }
+
+  if (!odpoved.token) return { ok: false, err: odpoved.err || 'wrong-credentials' };
+
+  try {
+    await firebase.auth().signInWithCustomToken(odpoved.token);
+  } catch {
+    return { ok: false, err: 'nedostupne' };
+  }
+  return { ok: true, mustChange: odpoved.must_change === true };
+}
+
+// Změna hesla. `cil` vyplň jen když admin nastavuje heslo někomu jinému.
+async function _zmenitHesloServerem(nove, stare, cil) {
+  const db = _getFirebaseDB();
+  const u = (window.firebase && firebase.auth) ? firebase.auth().currentUser : null;
+  if (!db || !u) return { ok: false, err: 'neprihlasen' };
+
+  const pozadavek = { nove: nove, ts: Date.now() };
+  if (cil) pozadavek.cil = cil; else pozadavek.stare = stare || '';
+
+  let odpoved;
+  try {
+    odpoved = await _mbKanal(db.ref('budky_passwd/' + u.uid), pozadavek);
+  } catch {
+    return { ok: false, err: 'nedostupne' };
+  }
+  return odpoved.ok ? { ok: true } : { ok: false, err: odpoved.err || 'internal' };
+}
+
+function _mbChybaText(err) {
+  switch (err) {
+    case 'wrong-credentials':  return 'Neplatné ID nebo heslo.';
+    case 'too-many-requests':  return 'Příliš mnoho pokusů. Zkus to za 15 minut.';
+    case 'weak-password':      return 'Nové heslo musí mít alespoň 8 znaků.';
+    case 'permission-denied':  return 'Na tuhle změnu nemáš oprávnění.';
+    case 'not-found':          return 'Účet nenalezen.';
+    case 'neprihlasen':        return 'Nejsi přihlášený. Přihlas se prosím znovu.';
+    case 'nedostupne':         return 'Server neodpovídá. Zkus to prosím znovu.';
+    default:                   return 'Něco se nepovedlo. Zkus to prosím znovu.';
+  }
+}
+
+async function _mbOdhlasit() {
+  try {
+    if (window.firebase && firebase.auth && firebase.auth().currentUser) {
+      await firebase.auth().signOut();
+    }
+  } catch { /* na odhlášení z appky to nic nemění */ }
+}
+
+// Staré ověření v prohlížeči. Zůstává jen jako záchrana pro případ, že by
+// serverový kanál neodpověděl (výpadek funkce). Odstraní se hned, jak bude
+// serverové přihlášení ověřené v provozu – spolu s data/spravci.json.
 async function _overitPrihlaseni(id, heslo) {
   const hash = await sha256hex(heslo);
 
@@ -480,6 +594,7 @@ async function _zobrazAdminPanel(loginId) {
 
     if (akce === 'odhlasit') {
       _smazSession();
+      _mbOdhlasit();   // zahodit i relaci Firebase Auth, ne jen tu localStorage
       dropdown.remove();
       const b = document.getElementById('adminBanner');
       if (b) b.remove();
@@ -919,7 +1034,9 @@ window._poslatPushSpravciByBudka = async function(cislo) {
   });
 };
 
-function _zobrazZmenitHeslo(loginId) {
+// `vynucene` = server hlásí must_change (staré heslo bylo veřejně ke stažení).
+// V tom režimu nejde modal zavřít, dokud si správce nenastaví nové heslo.
+function _zobrazZmenitHeslo(loginId, vynucene) {
   const existujici = document.getElementById('modalZmenitHeslo');
   if (existujici) existujici.remove();
 
@@ -928,41 +1045,49 @@ function _zobrazZmenitHeslo(loginId) {
   modal.className = 'modal-overlay';
   modal.innerHTML = `
     <div class="modal-box" style="max-width:420px;width:94%">
-      <button class="modal-zavrit" id="zmenitHesloZavrit">×</button>
+      ${vynucene ? '' : '<button class="modal-zavrit" id="zmenitHesloZavrit">×</button>'}
       <div class="profil-header"><div class="profil-header-text">
-        <div class="profil-nadpis">🔑 Změnit heslo</div>
+        <div class="profil-nadpis">🔑 ${vynucene ? 'Nastav si nové heslo' : 'Změnit heslo'}</div>
         <div class="profil-budka">ID: ${loginId}</div>
       </div></div>
+      ${vynucene ? `<div class="zh-vynuceno">Tvoje dosavadní heslo bylo kvůli chybě v zabezpečení
+        veřejně dostupné, a proto ho považujeme za prozrazené. Nastav si prosím nové —
+        bez toho nejde pokračovat. Nové heslo už bude uložené bezpečně (solené a protahované)
+        a ověřuje ho server, ne prohlížeč.</div>` : ''}
       <div class="profil-form" style="padding:20px 24px">
         <div class="zh-pravidla">
           <div class="zh-pravidla-nadpis">Pravidla pro heslo:</div>
           <ul class="zh-pravidla-seznam">
-            <li>Délka: <strong>4–8 znaků</strong></li>
-            <li>Nepoužívej snadno zaměnitelné znaky: <strong>0</strong> (nula), <strong>O</strong> (velké O), <strong>1</strong> (jednička), <strong>l</strong> (malé L)</li>
+            <li>Délka: <strong>alespoň 8 znaků</strong></li>
+            <li>Klidně použij větu nebo pár slov za sebou — čím delší, tím lepší</li>
+            <li>Nepoužívej heslo, které máš i jinde</li>
           </ul>
         </div>
         <div class="profil-field profil-field--wide" style="margin-bottom:14px">
           <label>Současné heslo</label>
-          <input type="password" id="zhStare" maxlength="8" autocomplete="current-password">
+          <input type="password" id="zhStare" maxlength="64" autocomplete="current-password">
         </div>
         <div class="profil-field profil-field--wide" style="margin-bottom:14px">
           <label>Nové heslo</label>
-          <input type="password" id="zhNove" maxlength="8" autocomplete="new-password">
+          <input type="password" id="zhNove" maxlength="64" autocomplete="new-password">
         </div>
         <div class="profil-field profil-field--wide">
           <label>Nové heslo znovu</label>
-          <input type="password" id="zhNove2" maxlength="8" autocomplete="new-password">
+          <input type="password" id="zhNove2" maxlength="64" autocomplete="new-password">
         </div>
         <div class="zh-error" id="zhError" hidden></div>
       </div>
       <div class="profil-actions">
         <button class="profil-btn-ulozit" id="zhUlozit">🔑 Uložit nové heslo</button>
+        <button class="profil-btn-zrusit" id="zhPozdeji" hidden>Zavřít a zkusit později</button>
         <span class="profil-ulozeno" id="zhMsg" hidden></span>
       </div>
     </div>`;
   document.body.appendChild(modal);
-  document.getElementById('zmenitHesloZavrit').addEventListener('click', () => modal.remove());
-  modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
+  if (!vynucene) {
+    document.getElementById('zmenitHesloZavrit').addEventListener('click', () => modal.remove());
+    modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
+  }
   setTimeout(() => document.getElementById('zhStare').focus(), 80);
 
   document.getElementById('zhUlozit').addEventListener('click', async () => {
@@ -975,28 +1100,36 @@ function _zobrazZmenitHeslo(loginId) {
     errEl.hidden = true;
     function chyba(t) { errEl.textContent = t; errEl.hidden = false; }
 
-    const ZAKAZANE = /[0O1l]/;
     if (!stare)                    return chyba('Zadej současné heslo.');
-    if (nove.length < 4)           return chyba('Nové heslo musí mít alespoň 4 znaky.');
-    if (ZAKAZANE.test(nove))       return chyba('Heslo obsahuje zakázaný znak (0, O, 1 nebo l).');
+    if (nove.length < 8)           return chyba('Nové heslo musí mít alespoň 8 znaků.');
     if (nove !== nove2)            return chyba('Nová hesla se neshodují.');
     if (nove === stare)            return chyba('Nové heslo musí být jiné než současné.');
 
-    const ok = await _overitPrihlaseni(loginId, stare);
-    if (!ok) return chyba('Současné heslo není správné.');
-
-    const db = _getFirebaseDB();
-    if (!db) return chyba('Firebase není dostupná.');
-    try {
-      const novyHash = await sha256hex(nove);
-      await db.ref(`hesla/${loginId}`).set(novyHash);
-      msgEl.textContent = '✓ Heslo bylo změněno!';
-      msgEl.hidden = false;
-      document.getElementById('zhUlozit').disabled = true;
-      setTimeout(() => modal.remove(), 2000);
-    } catch {
-      chyba('Nepodařilo se uložit. Zkus to znovu.');
+    // Staré heslo ověřuje server proti budky_auth, ne prohlížeč. Dřív se sem
+    // zapisoval SHA-256 přímo do uzlu `hesla`, který byl world-writable –
+    // heslo tak šlo přepsat komukoli, aniž by útočník to staré znal.
+    const tlacitko = document.getElementById('zhUlozit');
+    tlacitko.disabled = true;
+    const vysledek = await _zmenitHesloServerem(nove, stare, null);
+    if (!vysledek.ok) {
+      tlacitko.disabled = false;
+      // Vynucený modal nejde zavřít. Kdyby se ukládání nedařilo, nabídni
+      // odchod, ať v něm nikdo neuvázne – heslo si vyžádáme zas příště.
+      if (vynucene) {
+        const pozdeji = document.getElementById('zhPozdeji');
+        if (pozdeji && pozdeji.hidden) {
+          pozdeji.hidden = false;
+          pozdeji.addEventListener('click', () => modal.remove());
+        }
+      }
+      return chyba(vysledek.err === 'wrong-credentials'
+        ? 'Současné heslo není správné.'
+        : _mbChybaText(vysledek.err));
     }
+
+    msgEl.textContent = '✓ Heslo bylo změněno!';
+    msgEl.hidden = false;
+    setTimeout(() => modal.remove(), 2000);
   });
 
   [document.getElementById('zhStare'), document.getElementById('zhNove'), document.getElementById('zhNove2')]
@@ -1004,8 +1137,10 @@ function _zobrazZmenitHeslo(loginId) {
 }
 
 // ── Admin: nastavit (resetovat) heslo libovolnému správci ──
-// Zapíše nové heslo do Firebase hesla/{id}, které má při přihlášení přednost
-// před statickým spravci.json. Admin nemusí znát staré heslo.
+// Jde přes kanál budky_passwd; oprávnění admina si ověřuje server podle claimu
+// v tokenu, ne podle toho, co si o sobě myslí prohlížeč. Admin nemusí znát
+// staré heslo. Dřív se sem zapisoval SHA-256 rovnou do world-writable uzlu
+// `hesla`, takže to zvládl i kdokoli jiný než admin.
 async function _zobrazNastavitHesloSpravci() {
   const existujici = document.getElementById('modalNastavitHeslo');
   if (existujici) existujici.remove();
@@ -1040,17 +1175,17 @@ async function _zobrazNastavitHesloSpravci() {
         <div class="zh-pravidla">
           <div class="zh-pravidla-nadpis">Pravidla pro heslo:</div>
           <ul class="zh-pravidla-seznam">
-            <li>Délka: <strong>4–8 znaků</strong></li>
-            <li>Nepoužívej snadno zaměnitelné znaky: <strong>0</strong>, <strong>O</strong>, <strong>1</strong>, <strong>l</strong></li>
+            <li>Délka: <strong>alespoň 8 znaků</strong></li>
+            <li>Vyhni se snadno zaměnitelným znakům (<strong>0</strong>, <strong>O</strong>, <strong>1</strong>, <strong>l</strong>), ať se heslo dobře diktuje</li>
           </ul>
         </div>
         <div class="profil-field profil-field--wide" style="margin-bottom:14px">
           <label>Nové heslo (vidíš ho, ať ho můžeš předat)</label>
-          <input type="text" id="nhNove" maxlength="8" autocomplete="off">
+          <input type="text" id="nhNove" maxlength="64" autocomplete="off">
         </div>
         <div class="profil-field profil-field--wide">
           <label>Nové heslo znovu</label>
-          <input type="text" id="nhNove2" maxlength="8" autocomplete="off">
+          <input type="text" id="nhNove2" maxlength="64" autocomplete="off">
         </div>
         <div class="zh-error" id="nhError" hidden></div>
       </div>
@@ -1090,30 +1225,28 @@ async function _zobrazNastavitHesloSpravci() {
     errEl.hidden = true;
     const chyba = t => { errEl.textContent = t; errEl.hidden = false; };
 
-    const ZAKAZANE = /[0O1l]/;
     if (!/^\d{1,6}$/.test(id)) return chyba('Zadej platné ID správce (1–6 číslic).');
-    if (nove.length < 4)       return chyba('Nové heslo musí mít alespoň 4 znaky.');
-    if (nove.length > 8)       return chyba('Nové heslo může mít nejvýš 8 znaků.');
-    if (ZAKAZANE.test(nove))   return chyba('Heslo obsahuje zakázaný znak (0, O, 1 nebo l).');
+    if (nove.length < 8)       return chyba('Nové heslo musí mít alespoň 8 znaků.');
     if (nove !== nove2)        return chyba('Hesla se neshodují.');
 
     const s = info[id];
     const jmeno = s ? `${s.jmeno || ''} ${s.prijmeni || ''}`.trim() : ('ID ' + id);
     if (!confirm(`Nastavit nové heslo pro ${jmeno} (ID ${id})?`)) return;
 
-    const db = _getFirebaseDB();
-    if (!db) return chyba('Firebase není dostupná.');
-    try {
-      const novyHash = await sha256hex(nove);
-      await db.ref(`hesla/${id}`).set(novyHash);
-      msgEl.textContent = `✓ Heslo pro ${jmeno} nastaveno!`;
-      msgEl.hidden = false;
-      document.getElementById('nhUlozit').disabled = true;
-      _zobrazToast(`✓ Nové heslo nastaveno pro ${jmeno}. Nezapomeň mu ho předat.`, 6000);
-      setTimeout(() => modal.remove(), 2500);
-    } catch {
-      chyba('Nepodařilo se uložit. Zkus to znovu.');
+    // Oprávnění admina si ověřuje server podle claimu v tokenu (budky_auth.admin),
+    // ne podle toho, co si o sobě myslí prohlížeč.
+    const tlacitko = document.getElementById('nhUlozit');
+    tlacitko.disabled = true;
+    const vysledek = await _zmenitHesloServerem(nove, null, id);
+    if (!vysledek.ok) {
+      tlacitko.disabled = false;
+      return chyba(_mbChybaText(vysledek.err));
     }
+
+    msgEl.textContent = `✓ Heslo pro ${jmeno} nastaveno!`;
+    msgEl.hidden = false;
+    _zobrazToast(`✓ Nové heslo nastaveno pro ${jmeno}. Nezapomeň mu ho předat.`, 6000);
+    setTimeout(() => modal.remove(), 2500);
   });
 
   [document.getElementById('nhNove'), document.getElementById('nhNove2')]
@@ -3227,8 +3360,18 @@ document.addEventListener('DOMContentLoaded', () => {
     loginBtn.disabled = true;
 
     try {
-      const ok = await _overitPrihlaseni(id, heslo);
-      if (ok) {
+      // Primárně ověřuje server (heslo se nikdy neporovnává v prohlížeči).
+      let vysledek = await _prihlasitServerem(id, heslo);
+
+      // Záchrana pro případ výpadku funkce – jen když server neodpověděl.
+      // Špatné heslo se takhle NEobchází. Odstraní se, až bude serverové
+      // přihlášení ověřené v provozu.
+      if (!vysledek.ok && vysledek.err === 'nedostupne') {
+        console.warn('Serverové přihlášení neodpovědělo, zkouším staré ověření.');
+        if (await _overitPrihlaseni(id, heslo)) vysledek = { ok: true, mustChange: false };
+      }
+
+      if (vysledek.ok) {
         const cbZapamatovat = document.getElementById('cbZapamatovat');
         if (cbZapamatovat && cbZapamatovat.checked) {
           localStorage.setItem('mb_saved_loginId', id);
@@ -3238,8 +3381,14 @@ document.addEventListener('DOMContentLoaded', () => {
         _ulozSession(id);
         zavritModal();
         _zobrazAdminPanel(id);
+        // Hashe hesel byly do 8/2026 veřejně ke stažení, takže se všechna
+        // stávající hesla považují za prozrazená. Server to hlásí přes
+        // must_change a appka nové heslo vynutí hned po přihlášení.
+        if (vysledek.mustChange) {
+          setTimeout(() => _zobrazZmenitHeslo(id, true), 600);
+        }
       } else {
-        loginError.textContent = 'Neplatné ID nebo heslo.';
+        loginError.textContent = _mbChybaText(vysledek.err);
         loginError.hidden = false;
         inputHeslo.value = '';
         inputHeslo.focus();

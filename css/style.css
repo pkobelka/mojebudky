@@ -1716,3 +1716,29 @@ body.mapa-cele .map-wrapper {
   border-radius: 4px;
   font-size: 12px;
 }
+
+/* Vynucená změna hesla po migraci na serverové ověřování. */
+.zh-vynuceno {
+  margin: 0 24px 4px;
+  padding: 12px 14px;
+  border: 1px solid #f0c0c0;
+  border-left: 4px solid #d9534f;
+  border-radius: 8px;
+  background: #fff5f5;
+  color: #7a3a38;
+  font-size: 13.5px;
+  line-height: 1.5;
+}
+
+/* Únik z vynuceného modalu, když se nové heslo nedaří uložit. */
+.profil-btn-zrusit {
+  margin-left: 10px;
+  padding: 10px 16px;
+  border: 1px solid var(--panel-border, #ccc);
+  border-radius: 8px;
+  background: transparent;
+  color: inherit;
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+.profil-btn-zrusit:hover { background: rgba(127, 127, 127, 0.12); }
