@@ -1,0 +1,106 @@
+name: JEDNORÁZOVĚ - přepsat historii (osobní údaje a hesla)
+
+# NEVRATNÉ. Přepíše všechny commity a force-pushne. Spouštět ručně a jen jednou.
+#
+# Co dělá:
+#   - data/spravci.json (215 hashů hesel) vymaže ze VŠECH commitů
+#   - ze všech historických verzí data/spravci_info.json vyškrtne
+#     telefon / email / datum_narozeni
+#
+# Nedělá se to lokálně, protože repo má ~712 MB a stažení celé historie
+# přes proxy trvá déle, než kolik je k dispozici. Runner GitHubu má repo
+# vedle sebe, takže je to tam otázka chvíle.
+#
+# POZOR - co tohle NEVYŘEŠÍ:
+#   - GitHub si nedosažitelné objekty drží dál a jsou přístupné přímo přes
+#     SHA commitu, dokud neproběhne úklid. Aby zmizely doopravdy, je potřeba
+#     o to požádat podporu GitHubu.
+#   - Kdo si data stáhl dřív, ten je má.
+#   - Přepíší se všechna SHA commitů, takže existující klony přestanou
+#     sedět (je potřeba si repo naklonovat znovu) a odkazy na commity
+#     ve starých PR přestanou fungovat.
+
+on:
+  workflow_dispatch:
+    inputs:
+      potvrzeni:
+        description: 'Napiš PREPSAT (velkými) pro potvrzení nevratného přepisu historie'
+        required: true
+        default: ''
+
+jobs:
+  prepis:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Zkontroluj potvrzení
+        run: |
+          if [ "${{ inputs.potvrzeni }}" != "PREPSAT" ]; then
+            echo "Nepotvrzeno (očekávám přesně PREPSAT). Nic se nestalo."
+            exit 1
+          fi
+
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0     # filter-repo potřebuje celou historii
+          persist-credentials: true
+
+      - name: Nastav Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Instaluj git-filter-repo
+        run: pip install git-filter-repo
+
+      - name: Stav před přepisem
+        run: |
+          git fetch --all --tags --prune
+          for b in $(git branch -r --format='%(refname:short)' | grep -v 'HEAD' | sed 's|origin/||'); do
+            git branch -f "$b" "origin/$b" 2>/dev/null || true
+          done
+          echo "HEAD před přepisem: $(git rev-parse HEAD)"
+          echo "commitů s data/spravci.json: $(git log --all --oneline -- data/spravci.json | wc -l)"
+          git rev-parse HEAD > /tmp/head_pred.txt
+          git show HEAD:data/spravci_info.json > /tmp/info_pred.json
+
+      - name: Přepiš historii
+        run: |
+          git filter-repo --force \
+            --invert-paths --path data/spravci.json \
+            --blob-callback "$(cat tools/filtr_historie.py)"
+
+      - name: Ověř výsledek (bez tohohle se nepushuje)
+        run: |
+          set -e
+          echo "--- data/spravci.json nesmí být nikde v historii ---"
+          POCET=$(git log --all --oneline -- data/spravci.json | wc -l)
+          echo "nalezeno commitů: $POCET"
+          [ "$POCET" -eq 0 ] || { echo "CHYBA: soubor v historii zůstal"; exit 1; }
+
+          echo "--- žádný blob nesmí obsahovat telefon/email/datum_narozeni v spravci_info ---"
+          NALEZ=0
+          for sha in $(git rev-list --all); do
+            if git cat-file -p "$sha:data/spravci_info.json" 2>/dev/null \
+               | grep -qE '"(telefon|email|datum_narozeni)"'; then
+              echo "CHYBA: citlivé pole v commitu $sha"; NALEZ=1
+            fi
+          done
+          [ "$NALEZ" -eq 0 ] || exit 1
+
+          echo "--- aktuální obsah spravci_info.json se nesmí změnit ---"
+          git show HEAD:data/spravci_info.json > /tmp/info_po.json
+          diff -q /tmp/info_pred.json /tmp/info_po.json || { echo "CHYBA: HEAD verze se změnila"; exit 1; }
+
+          echo "--- kontrola, že repo dává smysl ---"
+          test -f index.html
+          test -f database.rules.json
+          test -f data/spravci_ids.json
+          git log --oneline -3
+          echo "OK, přepis prošel kontrolou."
+
+      - name: Force-push přepsané historie
+        run: |
+          git remote add origin "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git"
+          git push --force --all origin
+          git push --force --tags origin
+          echo "Hotovo. Existující klony je potřeba naklonovat znovu."
