@@ -1,0 +1,23 @@
+rules_version = '2';
+
+// Firebase Storage – projekt moje-budky.
+// Storage používá jen appka Florián (foto hydrantů, přílohy úkolů a komentářů).
+// Ostatní appky (MojeBudky, AquaCtrl, Volby) Storage nepoužívají vůbec.
+//
+// Pozor: už vydané download URL (getDownloadURL, obsahuje ?token=) fungují
+// i bez přihlášení – to je záměr Firebase a tato pravidla to nemění.
+// Chrání se tím výpis a zápis přes SDK, ne prohlížení konkrétní fotky.
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    // Florián – jen přihlášený uživatel appky.
+    match /florian/{allPaths=**} {
+      allow read, write: if request.auth != null;
+    }
+
+    // Vše ostatní zavřeno.
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

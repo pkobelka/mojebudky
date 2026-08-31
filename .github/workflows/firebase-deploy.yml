@@ -6,6 +6,7 @@ on:
       - main
     paths:
       - database.rules.json
+      - storage.rules
       - firebase.json
       - functions/**
       - .github/workflows/firebase-deploy.yml
@@ -31,6 +32,17 @@ jobs:
           until npx firebase-tools@latest deploy --only database --project moje-budky --non-interactive; do
             n=$((n+1))
             if [ $n -ge 3 ]; then echo "Database deploy selhal po 3 pokusech"; exit 1; fi
+            echo "Pokus $n selhal, zkousim znovu za 15s..."; sleep 15
+          done
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: /tmp/sa.json
+
+      - name: Deploy storage rules
+        run: |
+          n=0
+          until npx firebase-tools@latest deploy --only storage --project moje-budky --non-interactive; do
+            n=$((n+1))
+            if [ $n -ge 3 ]; then echo "Storage deploy selhal po 3 pokusech"; exit 1; fi
             echo "Pokus $n selhal, zkousim znovu za 15s..."; sleep 15
           done
         env:
