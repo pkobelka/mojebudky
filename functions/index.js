@@ -694,3 +694,43 @@ exports.budkyLoginCleanup = functions.pubsub
     console.log(`budkyLoginCleanup: uklizeno ${n} záznamů.`);
     return null;
   });
+
+// ===== 9) MojeBudky – kontakty správců pro admina =====
+// telefon / e-mail / datum narození se v 8/2026 přesunuly z veřejného
+// data/spravci_info.json do uzlu `spravci_kontakt`, ke kterému klient nemá
+// přístup. Admin je potřebuje v přehledu správců, tak si o ně řekne kanálem
+// pod svým uid a server mu je vydá – ale jen když má v tokenu admin claim.
+//   /budky_kontakty/{uid}/req = { ts }
+//   /budky_kontakty/{uid}/res = { data: {loginId: {telefon,email,datum_narozeni}} } | { err }
+exports.budkyKontaktyReq = functions.database
+  .ref("/budky_kontakty/{uid}/req")
+  .onCreate(async (snap, context) => {
+    const uid = context.params.uid;
+    const resRef = admin.database().ref("budky_kontakty/" + uid + "/res");
+    const smazReq = () => snap.ref.remove().catch(() => {});
+
+    try {
+      if (uid.indexOf("budky_") !== 0) {
+        await resRef.set({ err: "invalid-argument", ts: Date.now() });
+        return smazReq();
+      }
+      const zadatel = uid.slice("budky_".length);
+      const zadatelSnap = await admin.database().ref("budky_auth/" + zadatel).get();
+      const zadatelZaznam = zadatelSnap.val();
+
+      if (!zadatelZaznam || zadatelZaznam.admin !== true) {
+        await resRef.set({ err: "permission-denied", ts: Date.now() });
+        console.warn(`budkyKontaktyReq: ${zadatel} si řekl o kontakty bez admin práv.`);
+        return smazReq();
+      }
+
+      const kontaktySnap = await admin.database().ref("spravci_kontakt").get();
+      await resRef.set({ data: kontaktySnap.val() || {}, ts: Date.now() });
+      console.log(`budkyKontaktyReq: kontakty vydány adminovi ${zadatel}.`);
+      return smazReq();
+    } catch (e) {
+      console.error("budkyKontaktyReq error:", e);
+      try { await resRef.set({ err: "internal", ts: Date.now() }); } catch (_) { /* ignore */ }
+      return smazReq();
+    }
+  });

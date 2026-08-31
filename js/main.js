@@ -45,7 +45,7 @@ function najdiSvatekSpravce(svarekJmeno) {
     const videniSpravci = new Set();
     return pasujici.filter(s => {
       const key = _boxManagerKey[s.cislo];
-      if (key === undefined) return true;  // budka není v spravci.json → počítej zvlášť
+      if (key === undefined) return true;  // budka není v seznamu → počítej zvlášť
       if (videniSpravci.has(key)) return false;
       videniSpravci.add(key);
       return true;
@@ -56,14 +56,17 @@ function najdiSvatekSpravce(svarekJmeno) {
 
 async function nactiSpravce() {
   try {
-    const [resJmena, resHesla] = await Promise.all([
+    const [resJmena, resIds] = await Promise.all([
       fetch('data/spravci_jmena.json?v=20260625a'),
-      fetch('data/spravci.json?v=20260618')
+      fetch('data/spravci_ids.json?v=20260831')
     ]);
     spravciJmena = await resJmena.json();
-    const heslaData = await resHesla.json();
+    // Dřív se sem tahal data/spravci.json, což byl veřejně servírovaný soubor
+    // s hashi hesel – používaly se z něj ale jen klíče. Teď je to prostý
+    // seznam loginId bez čehokoli citlivého.
+    const loginIds = await resIds.json();
     // Postav mapu box_cislo → manažerský klíč (suffix 6-místného loginId)
-    for (const loginId of Object.keys(heslaData)) {
+    for (const loginId of loginIds) {
       let boxNum, managerKey;
       if (loginId.length === 6) {
         boxNum = parseInt(loginId.slice(0, 3), 10);

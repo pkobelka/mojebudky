@@ -148,6 +148,8 @@ function _isoToCz(s) {
   return `${parseInt(m[3])}.${parseInt(m[2])}.${m[1]}`;
 }
 
+// Ponecháno jako obecná pomůcka; k heslům se nepoužívá – ta od 8/2026
+// hashuje výhradně server (scrypt v budkyLoginReq), ne prohlížeč.
 async function sha256hex(text) {
   // Primárně nativní WebCrypto (rychlé), ale funguje jen v bezpečném kontextu (HTTPS).
   // Když crypto.subtle není k dispozici (http://, vestavěný prohlížeč v appce, starší
@@ -233,7 +235,6 @@ function _sha256js(ascii) {
   return result;
 }
 
-let _authSpravciCache = null;
 let _spravciInfoCache = null;
 
 function _getFirebaseDB() {
@@ -271,14 +272,6 @@ async function _logAktivita(loginId, jmeno, budkaCislo, budkaNazev, zprava) {
       zprava
     });
   } catch {}
-}
-
-async function _nactiAuthSpravce() {
-  if (_authSpravciCache) return _authSpravciCache;
-  const res = await fetch('data/spravci.json?v=20260605n', { cache: 'reload' });
-  if (!res.ok) throw new Error('Nelze načíst data správců');
-  _authSpravciCache = await res.json();
-  return _authSpravciCache;
 }
 
 async function _nactiSpravciInfo() {
@@ -411,6 +404,20 @@ async function _zmenitHesloServerem(nove, stare, cil) {
   return odpoved.ok ? { ok: true } : { ok: false, err: odpoved.err || 'internal' };
 }
 
+// Kontakty správců (telefon / e-mail / datum narození) leží v neveřejném uzlu
+// spravci_kontakt. Server je vydá jen tomu, kdo má v tokenu admin claim.
+async function _nactiKontaktyServerem() {
+  const db = _getFirebaseDB();
+  const u = (window.firebase && firebase.auth) ? firebase.auth().currentUser : null;
+  if (!db || !u) return null;
+  try {
+    const odpoved = await _mbKanal(db.ref('budky_kontakty/' + u.uid), { ts: Date.now() });
+    return odpoved && odpoved.data ? odpoved.data : null;
+  } catch {
+    return null;
+  }
+}
+
 function _mbChybaText(err) {
   switch (err) {
     case 'wrong-credentials':  return 'Neplatné ID nebo heslo.';
@@ -432,26 +439,6 @@ async function _mbOdhlasit() {
   } catch { /* na odhlášení z appky to nic nemění */ }
 }
 
-// Staré ověření v prohlížeči. Zůstává jen jako záchrana pro případ, že by
-// serverový kanál neodpověděl (výpadek funkce). Odstraní se hned, jak bude
-// serverové přihlášení ověřené v provozu – spolu s data/spravci.json.
-async function _overitPrihlaseni(id, heslo) {
-  const hash = await sha256hex(heslo);
-
-  // Firebase hesla mají přednost (umožňuje změnu hesla správcem)
-  const db = _getFirebaseDB();
-  if (db) {
-    try {
-      const snap = await db.ref(`hesla/${id}`).once('value');
-      const fbHash = snap.val();
-      if (fbHash) return fbHash === hash;
-    } catch {}
-  }
-
-  // Fallback na statický JSON
-  const spravci = await _nactiAuthSpravce();
-  return spravci[id] && spravci[id] === hash;
-}
 
 async function _zobrazAdminPanel(loginId) {
   const info = await _nactiSpravciInfo();
@@ -598,7 +585,6 @@ async function _zobrazAdminPanel(loginId) {
       dropdown.remove();
       const b = document.getElementById('adminBanner');
       if (b) b.remove();
-      _authSpravciCache = null;
       _spravciInfoCache = null;
       if (typeof window._presenceSetAdmin === 'function') window._presenceSetAdmin(false);
       window._aktualniSpravce = null;
@@ -1258,11 +1244,15 @@ async function _zobrazPrehledSpravcu() {
   if (existujici) existujici.remove();
 
   const db = _getFirebaseDB();
-  const [info, tokensSnap] = await Promise.all([
+  // Telefon a e-mail už nejsou ve veřejném spravci_info.json – vydá je server
+  // z neveřejného spravci_kontakt, a jen když má žadatel admin claim.
+  const [info, tokensSnap, kontakty] = await Promise.all([
     _nactiSpravciInfo(),
     db ? db.ref('push_tokens').once('value').catch(() => null) : Promise.resolve(null),
+    _nactiKontaktyServerem(),
   ]);
   const pushTokeny = tokensSnap ? (tokensSnap.val() || {}) : {};
+  const kont = kontakty || {};
 
   // Datum potvrzení notifikací (z ts, což je epoch v ms)
   const _formatNotifDatum = ts => {
@@ -1302,12 +1292,13 @@ async function _zobrazPrehledSpravcu() {
   const _mapaOsob = new Map();
   Object.entries(info || {}).forEach(([id, s]) => {
     const budkyList = s.budky ? s.budky : [{ cislo: s.budka_cislo, nazev: s.budka_nazev || '' }];
+    const k = kont[id] || {};
     const zaznam = {
       id,
       jmeno:    s.jmeno    || '',
       prijmeni: s.prijmeni || '',
-      telefon:  s.telefon  || '',
-      email:    s.email    || '',
+      telefon:  k.telefon  || '',
+      email:    k.email    || '',
       tok:      pushTokeny[id] || null,
       budky:    budkyList,
     };
@@ -1356,10 +1347,6 @@ async function _zobrazPrehledSpravcu() {
       <div class="prehled-hledat-wrap">
         <input type="search" id="prehledHledat" class="prehled-hledat" placeholder="🔍 Hledat jméno, č. budky, název budky…">
       </div>
-      <div class="prehled-upozorneni">⚠️ Telefony a e-maily se sem zatím nenačítají. Přesunuly se z veřejného
-        souboru <code>data/spravci_info.json</code> (byl volně ke stažení z webu i z GitHubu) do neveřejného
-        uzlu <code>spravci_kontakt</code>, ke kterému se prohlížeč dostane až po dokončení serverového
-        přihlašování. Údaje nejsou ztracené, jen zatím nejsou vidět tady.</div>
       <div class="prehled-filtry">
         <button class="prehled-filtr prehled-filtr--aktivni" data-filtr="vse">Všichni (${vsichniSpravci.length})</button>
         <button class="prehled-filtr" data-filtr="telefon">📞 S telefonem (${vsichniSpravci.filter(s=>s.telefon).length})</button>
@@ -3360,16 +3347,9 @@ document.addEventListener('DOMContentLoaded', () => {
     loginBtn.disabled = true;
 
     try {
-      // Primárně ověřuje server (heslo se nikdy neporovnává v prohlížeči).
-      let vysledek = await _prihlasitServerem(id, heslo);
-
-      // Záchrana pro případ výpadku funkce – jen když server neodpověděl.
-      // Špatné heslo se takhle NEobchází. Odstraní se, až bude serverové
-      // přihlášení ověřené v provozu.
-      if (!vysledek.ok && vysledek.err === 'nedostupne') {
-        console.warn('Serverové přihlášení neodpovědělo, zkouším staré ověření.');
-        if (await _overitPrihlaseni(id, heslo)) vysledek = { ok: true, mustChange: false };
-      }
+      // Heslo ověřuje výhradně server. V prohlížeči už není žádná cesta,
+      // která by heslo porovnávala, ani žádný hash ke stažení.
+      const vysledek = await _prihlasitServerem(id, heslo);
 
       if (vysledek.ok) {
         const cbZapamatovat = document.getElementById('cbZapamatovat');
@@ -3407,9 +3387,25 @@ document.addEventListener('DOMContentLoaded', () => {
     el.addEventListener('keydown', (e) => { if (e.key === 'Enter') pokusOPrihlaseni(); });
   });
 
-  // Zapamatované přihlášení — obnov panel správce bez zadávání hesla
+  // Zapamatované přihlášení — obnov panel správce bez zadávání hesla.
+  // Od přechodu na serverové ověřování nestačí záznam v localStorage: data
+  // v databázi jsou vázaná na přihlášení, takže bez relace Firebase Auth by se
+  // panel sice otevřel, ale nic by se z něj nedalo číst ani ukládat. Kdo má
+  // starou relaci z doby před přechodem, přihlásí se prostě znovu.
   const _session = _nactiSession();
-  if (_session) _zobrazAdminPanel(_session);
+  if (_session) {
+    if (window.firebase && firebase.auth) {
+      firebase.auth().onAuthStateChanged(u => {
+        if (u) {
+          _zobrazAdminPanel(_session);
+        } else {
+          _smazSession();
+        }
+      });
+    } else {
+      _smazSession();
+    }
+  }
 
   const btnOko = document.getElementById('btnOko');
   const cbZobrazit = document.getElementById('cbZobrazitHeslo');
