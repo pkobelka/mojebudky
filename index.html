@@ -6,10 +6,10 @@
   <meta name="description" content="MojeBudky.cz – sledujeme ptáčí budky po celé ČR. Živá mapa, statistiky a příběhy z přírody.">
   <title>MojeBudky.cz – Pomáháme ptactvu</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
-  <link rel="stylesheet" href="css/vendor/MarkerCluster.css?v=mb20260831a">
+  <link rel="stylesheet" href="css/vendor/MarkerCluster.css?v=mb20260831b">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=mb20260831a">
+  <link rel="stylesheet" href="css/style.css?v=mb20260831b">
   <link rel="icon" type="image/svg+xml" href="img/favicon.svg">
   <link rel="icon" type="image/png" sizes="512x512" href="img/icon-512.png">
   <link rel="icon" type="image/png" sizes="192x192" href="img/icon-192.png">
@@ -274,11 +274,11 @@
               </div>
               <div class="uvod-videos-item">
                 <video class="uvod-video" controls preload="none" playsinline
-                       poster="promo_web_2026.jpg?v=mb20260831a"
+                       poster="promo_web_2026.jpg?v=mb20260831b"
                        aria-label="Ukázka aplikace MojeBudky.cz – živá mapa budek a jejich příběhy">
-                  <source src="promo_web_2026.mp4?v=mb20260831a" type="video/mp4">
+                  <source src="promo_web_2026.mp4?v=mb20260831b" type="video/mp4">
                   Váš prohlížeč neumí přehrát vložené video.
-                  <a href="promo_web_2026.mp4?v=mb20260831a">Stáhnout video (MP4)</a>.
+                  <a href="promo_web_2026.mp4?v=mb20260831b">Stáhnout video (MP4)</a>.
                 </video>
                 <p class="uvod-teaser-video-title">🗺️ Naše aplikace – živá mapa budek a jejich příběhy po celém Česku i Slovensku</p>
               </div>
@@ -427,7 +427,7 @@
     <div class="modal-form">
       <input type="text" id="loginId" maxlength="6" inputmode="numeric" placeholder="ID (6 číslic)" autocomplete="username" aria-label="ID správce">
       <div class="heslo-wrap">
-        <input type="password" id="loginHeslo" maxlength="8" placeholder="Heslo (8 znaků)" autocomplete="current-password" aria-label="Heslo">
+        <input type="password" id="loginHeslo" maxlength="64" placeholder="Heslo" autocomplete="current-password" aria-label="Heslo">
         <button type="button" class="btn-oko" id="btnOko" aria-label="Zobrazit/skrýt heslo" title="Zobrazit heslo">👁</button>
       </div>
       <label class="zobrazit-heslo-label">
@@ -638,11 +638,11 @@
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
 <!-- POZOR: ?v=… u skriptů a stylů je verze pro cache prohlížeče. Po KAŽDÉ změně
-     v js/ nebo css/ ji zvyš (např. mb20260831a -> mb20260831b), jinak lidem zůstane
-     v prohlížeči stará verze. Dřív tu byl zástupný text __MB_BUILD__, který ale
+     v js/, css/ nebo v tomhle souboru ji zvyš (poslední písmeno: …a -> …b -> …c),
+     jinak lidem zůstane v prohlížeči stará verze. Dřív tu byl zástupný text __MB_BUILD__, který ale
      dosazoval jen FTP deploy na WEDOS – na GitHub Pages zůstával nezměněný, takže
      se adresa nikdy neměnila a cache se nikdy neobnovila. -->
-<script src="js/vendor/leaflet.markercluster.js?v=mb20260831a"></script>
+<script src="js/vendor/leaflet.markercluster.js?v=mb20260831b"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
@@ -659,9 +659,9 @@
     window.MB_CAS = "30. 8. 2026";
   }
 </script>
-<script src="js/svatky.js?v=mb20260831a"></script>
-<script src="js/mapa.js?v=mb20260831a"></script>
-<script src="js/main.js?v=mb20260831a"></script>
+<script src="js/svatky.js?v=mb20260831b"></script>
+<script src="js/mapa.js?v=mb20260831b"></script>
+<script src="js/main.js?v=mb20260831b"></script>
 <!-- Fotogalerie: data i kód jsou schválně přímo tady, ne v samostatných
      souborech. Hosting opakovaně neservíroval nově nahrané soubory
      (js/galerie.js, data/galerie.js; dřív stejně dopadly obydleno.svg a .mp4),
@@ -891,8 +891,8 @@
     }
   }, 10000);
 </script>
-<script src="js/auth.js?v=mb20260831a"></script>
-<script src="js/presence.js?v=mb20260831a"></script>
+<script src="js/auth.js?v=mb20260831b"></script>
+<script src="js/presence.js?v=mb20260831b"></script>
 <script>
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('firebase-messaging-sw.js')
