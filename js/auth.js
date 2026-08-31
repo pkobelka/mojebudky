@@ -1047,10 +1047,9 @@ function _zobrazZmenitHeslo(loginId, vynucene) {
         <div class="profil-nadpis">🔑 ${vynucene ? 'Nastav si nové heslo' : 'Změnit heslo'}</div>
         <div class="profil-budka">ID: ${loginId}</div>
       </div></div>
-      ${vynucene ? `<div class="zh-vynuceno">Tvoje dosavadní heslo bylo kvůli chybě v zabezpečení
-        veřejně dostupné, a proto ho považujeme za prozrazené. Nastav si prosím nové —
-        bez toho nejde pokračovat. Nové heslo už bude uložené bezpečně (solené a protahované)
-        a ověřuje ho server, ne prohlížeč.</div>` : ''}
+      ${vynucene ? `<div class="zh-vynuceno">Přecházíme na vyšší úroveň zabezpečení — hesla se
+        nově ukládají v chráněné podobě a ověřuje je server, ne prohlížeč. Kvůli tomu si všichni
+        správci jednorázově nastavují nové heslo. Bez toho nejde pokračovat.</div>` : ''}
       <div class="profil-form" style="padding:20px 24px">
         <div class="zh-pravidla">
           <div class="zh-pravidla-nadpis">Pravidla pro heslo:</div>

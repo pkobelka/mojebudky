@@ -1697,15 +1697,16 @@ body.mapa-cele .map-wrapper {
   .gps-chip { font-size: 0.75rem; padding: 5px 11px; max-width: calc(100vw - 24px); }
 }
 
-/* Vynucená změna hesla po migraci na serverové ověřování. */
+/* Vynucená změna hesla po přechodu na serverové ověřování.
+   Záměrně informativní tón, ne varovný – není to chyba uživatele. */
 .zh-vynuceno {
   margin: 0 24px 4px;
   padding: 12px 14px;
-  border: 1px solid #f0c0c0;
-  border-left: 4px solid #d9534f;
+  border: 1px solid #cfe0c8;
+  border-left: 4px solid #6a9c58;
   border-radius: 8px;
-  background: #fff5f5;
-  color: #7a3a38;
+  background: #f4f9f1;
+  color: #3f5738;
   font-size: 13.5px;
   line-height: 1.5;
 }
