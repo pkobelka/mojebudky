@@ -1,0 +1,55 @@
+name: Opravit oprávnění pro vydávání přihlašovacích tokenů
+
+# Cloud Function budkyLoginReq vydává custom token přes admin.auth().createCustomToken().
+# Běhový účet funkcí nemá privátní klíč, takže podpis dělá IAM Service Account
+# Credentials API - a k tomu potřebuje účet roli "Service Account Token Creator"
+# sám na sobě. Ve Firebase projektech tahle role často chybí a projeví se to až
+# za běhu: heslo se ověří správně, ale token se nevydá.
+#
+# Workflow je idempotentní - když už je role přidělená, jen to vypíše.
+# Nic nemaže a nic jiného nemění.
+
+on:
+  workflow_dispatch:
+
+jobs:
+  iam:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Přihlášení k Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+
+      - name: Nastav gcloud
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          project_id: moje-budky
+
+      - name: Stav před zásahem
+        run: |
+          SA="moje-budky@appspot.gserviceaccount.com"
+          echo "Běhový účet funkcí (1. generace): $SA"
+          echo "--- role, které na sobě účet má ---"
+          gcloud iam service-accounts get-iam-policy "$SA" \
+            --project moje-budky --format='value(bindings.role)' || true
+
+      - name: Zapni IAM Service Account Credentials API
+        run: gcloud services enable iamcredentials.googleapis.com --project moje-budky
+
+      - name: Přiděl roli Service Account Token Creator
+        run: |
+          SA="moje-budky@appspot.gserviceaccount.com"
+          gcloud iam service-accounts add-iam-policy-binding "$SA" \
+            --project moje-budky \
+            --member "serviceAccount:$SA" \
+            --role "roles/iam.serviceAccountTokenCreator"
+
+      - name: Stav po zásahu
+        run: |
+          SA="moje-budky@appspot.gserviceaccount.com"
+          echo "--- role, které na sobě účet má teď ---"
+          gcloud iam service-accounts get-iam-policy "$SA" \
+            --project moje-budky --format='value(bindings.role)'
+          echo
+          echo "Hotovo. Změna se projeví do minuty, pak zkus přihlášení znovu."

@@ -575,7 +575,19 @@ exports.budkyLoginReq = functions.database
       const zaznamSnap = await admin.database().ref("budky_auth/" + loginId).get();
       const zaznam = zaznamSnap.val();
 
-      if (!mbOveritHeslo(zaznam, heslo)) {
+      // Ověření hesla a vydání tokenu mají vlastní odchycení, aby se v odpovědi
+      // rozlišilo, na kterém kroku to spadlo. Generické "internal" se špatně ladí,
+      // protože do logů Cloud Functions není z appky vidět.
+      let sedi;
+      try {
+        sedi = mbOveritHeslo(zaznam, heslo);
+      } catch (e) {
+        console.error("budkyLoginReq: ověření hesla selhalo:", e);
+        await resRef.set({ err: "verify-failed", ts: Date.now() });
+        return smazReq();
+      }
+
+      if (!sedi) {
         await mbRateZapis(loginId, false);
         // stejná odpověď pro neznámé id i špatné heslo (neprozrazuje existenci účtu)
         await resRef.set({ err: "wrong-credentials", ts: Date.now() });
@@ -583,10 +595,22 @@ exports.budkyLoginReq = functions.database
       }
 
       await mbRateZapis(loginId, true);
-      const token = await admin.auth().createCustomToken("budky_" + loginId, {
-        loginId: loginId,
-        admin: zaznam.admin === true,
-      });
+
+      // createCustomToken podepisuje přes IAM Service Account Credentials API
+      // (běhový účet funkcí nemá privátní klíč). Když účtu chybí role
+      // "Service Account Token Creator", spadne to sem – a heslo přitom bylo správně.
+      let token;
+      try {
+        token = await admin.auth().createCustomToken("budky_" + loginId, {
+          loginId: loginId,
+          admin: zaznam.admin === true,
+        });
+      } catch (e) {
+        console.error("budkyLoginReq: createCustomToken selhalo:", e);
+        await resRef.set({ err: "token-failed", ts: Date.now() });
+        return smazReq();
+      }
+
       await resRef.set({
         token: token,
         must_change: zaznam.must_change === true,

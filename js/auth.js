@@ -427,7 +427,12 @@ function _mbChybaText(err) {
     case 'not-found':          return 'Účet nenalezen.';
     case 'neprihlasen':        return 'Nejsi přihlášený. Přihlas se prosím znovu.';
     case 'nedostupne':         return 'Server neodpovídá. Zkus to prosím znovu.';
-    default:                   return 'Něco se nepovedlo. Zkus to prosím znovu.';
+    // Heslo bylo správně, ale server nedokázal vydat přihlašovací token.
+    // Typicky chybí běhovému účtu funkcí role Service Account Token Creator.
+    case 'token-failed':       return 'Heslo je správně, ale server nevydal přihlášení (token-failed). Tohle je chyba nastavení, ne tvoje.';
+    case 'verify-failed':      return 'Server neuměl ověřit heslo (verify-failed). Tohle je chyba nastavení, ne tvoje.';
+    // Neznámý kód radši ukázat, ať se nehádá, co se stalo.
+    default:                   return 'Něco se nepovedlo' + (err ? ' (' + err + ')' : '') + '. Zkus to prosím znovu.';
   }
 }
 
