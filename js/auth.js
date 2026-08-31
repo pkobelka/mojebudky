@@ -421,6 +421,7 @@ async function _nactiKontaktyServerem() {
 function _mbChybaText(err) {
   switch (err) {
     case 'wrong-credentials':  return 'Neplatné ID nebo heslo.';
+    case 'account-disabled':   return 'Tenhle přístup je momentálně neaktivní. Napiš na p.kobelka@gmail.com a heslo ti pošlu.';
     case 'too-many-requests':  return 'Příliš mnoho pokusů. Zkus to za 15 minut.';
     case 'weak-password':      return 'Nové heslo musí mít alespoň 8 znaků.';
     case 'permission-denied':  return 'Na tuhle změnu nemáš oprávnění.';
