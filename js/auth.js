@@ -1079,6 +1079,7 @@ function _zobrazZmenitHeslo(loginId, vynucene) {
       </div>
       <div class="profil-actions">
         <button class="profil-btn-ulozit" id="zhUlozit">🔑 Uložit nové heslo</button>
+        <button class="profil-btn-zrusit" id="zhPozdeji" hidden>Zavřít a zkusit později</button>
         <span class="profil-ulozeno" id="zhMsg" hidden></span>
       </div>
     </div>`;
@@ -1112,6 +1113,15 @@ function _zobrazZmenitHeslo(loginId, vynucene) {
     const vysledek = await _zmenitHesloServerem(nove, stare, null);
     if (!vysledek.ok) {
       tlacitko.disabled = false;
+      // Vynucený modal nejde zavřít. Kdyby se ukládání nedařilo, nabídni
+      // odchod, ať v něm nikdo neuvázne – heslo si vyžádáme zas příště.
+      if (vynucene) {
+        const pozdeji = document.getElementById('zhPozdeji');
+        if (pozdeji && pozdeji.hidden) {
+          pozdeji.hidden = false;
+          pozdeji.addEventListener('click', () => modal.remove());
+        }
+      }
       return chyba(vysledek.err === 'wrong-credentials'
         ? 'Současné heslo není správné.'
         : _mbChybaText(vysledek.err));
