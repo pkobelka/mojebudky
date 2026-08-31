@@ -56,10 +56,18 @@ se nevydá – v appce se to ukáže jako `token-failed`).
 nepřihlásily. Účty s historií přihlášení (v 8/2026 jich bylo 28) zůstaly funkční
 a spoléhá se na to, že si jejich majitelé nastaví nové heslo sami při dalším
 přihlášení (`must_change`). **Dokud to neudělají, jejich původní – prozrazené –
-heslo pořád platí.** Za pár týdnů je proto potřeba se podívat do administrace
-(📊 Online historie) a workflow „Zneplatnit hesla nepoužívaných účtů" pustit
-znovu; komu se to mezitím změnilo, ten už `zneplatneno` nedostane a nic se mu
-nestane. Bez toho kroku tam ty účty zůstanou otevřené natrvalo.
+heslo pořád platí.** Těmhle lidem se proto rozešle SMS s výzvou, ať se přihlásí
+a heslo si změní (web je k tomu vyzve sám), a s termínem. Po termínu se workflow
+„Zneplatnit hesla nepoužívaných účtů" pustí znovu, tentokrát **s vypnutým**
+`PONECHAT_AKTIVNI` – zapnutý by ušetřil právě ty účty, o které tu jde. Kdo si
+heslo mezitím změnil, o přístup nepřijde: skript přeskakuje účty, kde
+`must_change` není `true`, a změna hesla ten příznak shazuje. Bez toho běhu tam
+ty účty zůstanou otevřené natrvalo.
+
+> Do 31. 8. 2026 tu stálo, že se komu se heslo mezitím změnilo, „už `zneplatneno`
+> nedostane". To ale skript tehdy nedělal – díval se jen na `PONECHAT` a na už
+> zneplatněné účty, takže by druhý běh sebral přístup i lidem, kteří na výzvu
+> zareagovali. Kontrola na `must_change` se doplnila až dodatečně.
 
 **Verze pro cache:** `?v=…` u skriptů a stylů v `index.html` je potřeba po každé
 změně v `js/` nebo `css/` ručně zvýšit, jinak lidem zůstane stará verze.

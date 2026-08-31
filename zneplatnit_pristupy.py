@@ -22,6 +22,14 @@ CO DĚLÁ: každému účtu kromě těch v PONECHAT nastaví heslo, které nikdo
 `zneplatneno` časovým razítkem. Účet zůstává i s příznakem `admin`, takže
 stačí mu přes administraci nastavit nové heslo a zase funguje.
 
+KOHO NIKDY NEZNEPLATNÍ: účty s `must_change` jiným než True. Takový účet má
+heslo, které si jeho majitel nastavil sám (nebo mu ho nastavil admin) až po
+úniku – `budkyPasswdReq` v functions/index.js při každé změně hesla shodí
+`must_change` na false. Takové heslo nikdy veřejné nebylo a není důvod ho
+rušit. Díky tomu jde skript pustit opakovaně: druhý běh sebere přístup jen
+těm, kdo na výzvu ke změně hesla nereagovali, a nikoho, kdo poslechl,
+nezamkne ven.
+
 NEVYPISUJE ŽÁDNÁ HESLA. Logy GitHub Actions jsou u veřejného repa veřejné.
 
 Na konci ověří, že účty v PONECHAT zůstaly nedotčené – kdyby se cokoli
@@ -130,6 +138,7 @@ def main():
     ts = int(time.time() * 1000)
     davka = {}
     uz_zneplatnenych = 0
+    vlastni_heslo = 0
     for login_id, z in ucty.items():
         if login_id in ponechat:
             continue
@@ -138,11 +147,20 @@ def main():
         if z.get('zneplatneno'):
             uz_zneplatnenych += 1
             continue
+        if z.get('must_change') is not True:
+            # heslo si nastavil sám až po úniku – to rušit nemáme proč.
+            # Chybějící `must_change` sem spadne taky: nevíme, jak na tom účet
+            # je, a nechat funkční přístup je menší škoda než zamknout ven
+            # někoho, kdo nic neprovedl. Vypisuje se jen počet, ne ID –
+            # logy Actions jsou u veřejného repa veřejné.
+            vlastni_heslo += 1
+            continue
         davka[login_id] = nahodny_zaznam(z.get('admin'), ts)
 
     print(f'Účtů celkem: {len(ucty)}')
     print(f'Ponechávám funkční: {sorted(ponechat)}')
     print(f'Už zneplatněných dřív: {uz_zneplatnenych}')
+    print(f'S vlastním novým heslem – nechávám být: {vlastni_heslo}')
     print(f'Ke zneplatnění teď: {len(davka)}')
 
     if not davka:
@@ -164,7 +182,8 @@ def main():
     zbyva_funkcnich = sum(
         1 for z in po.values() if isinstance(z, dict) and not z.get('zneplatneno'))
     print(f'\nHotovo: zneplatněno {len(davka)} účtů.')
-    print(f'Funkčních účtů zůstává: {zbyva_funkcnich} (mělo by být {len(ponechat)}).')
+    print(f'Funkčních účtů zůstává: {zbyva_funkcnich} '
+          f'(mělo by být {len(ponechat) + vlastni_heslo}).')
     if ponechat_aktivni:
         print('Aktivní účty zůstaly funkční – jejich uživatelé si heslo\n'
               'nastaví sami při dalším přihlášení (vynucená změna).')
