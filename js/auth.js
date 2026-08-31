@@ -1048,9 +1048,9 @@ function _zobrazZmenitHeslo(loginId, vynucene) {
         <div class="profil-nadpis">🔑 ${vynucene ? 'Nastav si nové heslo' : 'Změnit heslo'}</div>
         <div class="profil-budka">ID: ${loginId}</div>
       </div></div>
-      ${vynucene ? `<div class="zh-vynuceno">Přecházíme na vyšší úroveň zabezpečení — hesla se
-        nově ukládají v chráněné podobě a ověřuje je server, ne prohlížeč. Kvůli tomu si všichni
-        správci jednorázově nastavují nové heslo. Bez toho nejde pokračovat.</div>` : ''}
+      ${vynucene ? `<div class="zh-vynuceno">Zvýšili jsme zabezpečení webu, tak si prosím
+        <b>vymysli nové heslo</b> — aspoň 8 znaků. Stačí jednou, příště už se budeš přihlašovat
+        jím.</div>` : ''}
       <div class="profil-form" style="padding:20px 24px">
         <div class="zh-pravidla">
           <div class="zh-pravidla-nadpis">Pravidla pro heslo:</div>
@@ -1060,10 +1060,10 @@ function _zobrazZmenitHeslo(loginId, vynucene) {
             <li>Nepoužívej heslo, které máš i jinde</li>
           </ul>
         </div>
-        <div class="profil-field profil-field--wide" style="margin-bottom:14px">
+        ${vynucene ? '' : `<div class="profil-field profil-field--wide" style="margin-bottom:14px">
           <label>Současné heslo</label>
           <input type="password" id="zhStare" maxlength="64" autocomplete="current-password">
-        </div>
+        </div>`}
         <div class="profil-field profil-field--wide" style="margin-bottom:14px">
           <label>Nové heslo</label>
           <input type="password" id="zhNove" maxlength="64" autocomplete="new-password">
@@ -1085,10 +1085,14 @@ function _zobrazZmenitHeslo(loginId, vynucene) {
     document.getElementById('zmenitHesloZavrit').addEventListener('click', () => modal.remove());
     modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
   }
-  setTimeout(() => document.getElementById('zhStare').focus(), 80);
+  setTimeout(() => {
+    const prvni = document.getElementById(vynucene ? 'zhNove' : 'zhStare');
+    if (prvni) prvni.focus();
+  }, 80);
 
   document.getElementById('zhUlozit').addEventListener('click', async () => {
-    const stare  = document.getElementById('zhStare').value;
+    const starePole = document.getElementById('zhStare');
+    const stare  = starePole ? starePole.value : '';
     const nove   = document.getElementById('zhNove').value;
     const nove2  = document.getElementById('zhNove2').value;
     const errEl  = document.getElementById('zhError');
@@ -1097,10 +1101,10 @@ function _zobrazZmenitHeslo(loginId, vynucene) {
     errEl.hidden = true;
     function chyba(t) { errEl.textContent = t; errEl.hidden = false; }
 
-    if (!stare)                    return chyba('Zadej současné heslo.');
+    if (!vynucene && !stare)       return chyba('Zadej současné heslo.');
     if (nove.length < 8)           return chyba('Nové heslo musí mít alespoň 8 znaků.');
     if (nove !== nove2)            return chyba('Nová hesla se neshodují.');
-    if (nove === stare)            return chyba('Nové heslo musí být jiné než současné.');
+    if (stare && nove === stare)   return chyba('Nové heslo musí být jiné než současné.');
 
     // Staré heslo ověřuje server proti budky_auth, ne prohlížeč. Dřív se sem
     // zapisoval SHA-256 přímo do uzlu `hesla`, který byl world-writable –
