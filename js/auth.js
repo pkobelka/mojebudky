@@ -1223,6 +1223,10 @@ async function _zobrazPrehledSpravcu() {
       <div class="prehled-hledat-wrap">
         <input type="search" id="prehledHledat" class="prehled-hledat" placeholder="🔍 Hledat jméno, č. budky, název budky…">
       </div>
+      <div class="prehled-upozorneni">⚠️ Telefony a e-maily se sem zatím nenačítají. Přesunuly se z veřejného
+        souboru <code>data/spravci_info.json</code> (byl volně ke stažení z webu i z GitHubu) do neveřejného
+        uzlu <code>spravci_kontakt</code>, ke kterému se prohlížeč dostane až po dokončení serverového
+        přihlašování. Údaje nejsou ztracené, jen zatím nejsou vidět tady.</div>
       <div class="prehled-filtry">
         <button class="prehled-filtr prehled-filtr--aktivni" data-filtr="vse">Všichni (${vsichniSpravci.length})</button>
         <button class="prehled-filtr" data-filtr="telefon">📞 S telefonem (${vsichniSpravci.filter(s=>s.telefon).length})</button>

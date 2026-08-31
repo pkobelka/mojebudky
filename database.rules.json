@@ -132,8 +132,10 @@
       ".write": true
     },
     "spravci": {
-      ".read": true,
-      ".write": true
+      "$loginId": {
+        ".read": true,
+        ".write": true
+      }
     },
     "spravce_aktivita": {
       ".read": true,
