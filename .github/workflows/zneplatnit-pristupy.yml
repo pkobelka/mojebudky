@@ -1,0 +1,58 @@
+name: Zneplatnit hesla nepoužívaných účtů
+
+# Hashe hesel byly do 8/2026 veřejně ke stažení, takže je potřeba považovat
+# všech 215 účtů za kompromitované. Tohle jim naráz nastaví heslo, které nikdo
+# nezná. Účty zůstávají i s příznakem admin – heslo se dá kdykoli nastavit
+# v administraci ("Nastavit heslo správci") tomu, kdo si o přístup řekne.
+#
+# NEVYPISUJE ŽÁDNÁ HESLA. Logy Actions jsou u veřejného repa veřejné.
+
+on:
+  workflow_dispatch:
+    inputs:
+      potvrzeni:
+        description: 'Napiš ZNEPLATNIT (velkými) pro potvrzení'
+        required: true
+        default: ''
+      ponechat:
+        description: 'ID účtů, které mají zůstat funkční (oddělené čárkou)'
+        required: true
+        default: '602356'
+      ponechat_aktivni:
+        description: 'Nechat funkční i všechny účty, které se někdy přihlásily (doporučeno)'
+        type: boolean
+        default: true
+
+jobs:
+  zneplatnit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Zkontroluj potvrzení
+        run: |
+          if [ "${{ inputs.potvrzeni }}" != "ZNEPLATNIT" ]; then
+            echo "Nepotvrzeno (očekávám přesně ZNEPLATNIT). Nic se nestalo."
+            exit 1
+          fi
+          if [ -z "${{ inputs.ponechat }}" ]; then
+            echo "Nezadán žádný účet, který má zůstat funkční. Nic se nestalo."
+            exit 1
+          fi
+
+      - uses: actions/checkout@v4
+
+      - name: Nastav Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Instaluj závislosti
+        run: pip install firebase-admin
+
+      - name: Ulož service account key
+        run: echo '${{ secrets.FIREBASE_SERVICE_ACCOUNT }}' > service-account-key.json
+
+      - name: Zneplatni hesla
+        env:
+          PONECHAT: ${{ inputs.ponechat }}
+          PONECHAT_AKTIVNI: ${{ inputs.ponechat_aktivni }}
+        run: python zneplatnit_pristupy.py
