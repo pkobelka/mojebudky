@@ -121,33 +121,55 @@
     },
     "aktivita": {
       ".read": true,
-      ".write": true
+      ".write": "auth != null",
+      ".indexOn": [
+        "ts"
+      ]
+    },
+    "aktuality": {
+      ".read": true,
+      ".write": "auth != null && auth.token.admin === true",
+      ".indexOn": [
+        "ts"
+      ]
     },
     "budky_edit": {
       ".read": true,
-      ".write": true
+      ".write": "auth != null && auth.token.admin === true",
+      "$cislo": {
+        ".write": "auth != null"
+      }
     },
     "admin_requests": {
-      ".read": true,
-      ".write": true
+      ".read": "auth != null && auth.token.admin === true",
+      "$typ": {
+        "$id": {
+          ".write": "!data.exists() || (auth != null && auth.token.admin === true)"
+        }
+      }
     },
     "spravci": {
       "$loginId": {
-        ".read": true,
-        ".write": true
+        ".read": "auth != null && (auth.token.loginId === $loginId || auth.token.admin === true)",
+        ".write": "auth != null && (auth.token.loginId === $loginId || auth.token.admin === true)"
       }
     },
     "spravce_aktivita": {
       ".read": true,
-      ".write": true
+      ".write": "auth != null && auth.token.admin === true",
+      "$cislo": {
+        ".write": "auth != null"
+      }
     },
     "prihlaseni": {
-      ".read": true,
-      ".write": true
+      ".read": "auth != null && auth.token.admin === true",
+      ".write": "auth != null"
     },
     "navstevnost_log": {
-      ".read": true,
-      ".write": true,
+      ".read": "auth != null && auth.token.admin === true",
+      "$id": {
+        ".write": true
+      },
       ".indexOn": [
         "ts"
       ]
@@ -162,21 +184,22 @@
     },
     "push_broadcast": {
       ".read": true,
-      ".write": true
+      ".write": "auth != null && auth.token.admin === true"
     },
     "push_history": {
-      ".read": true,
-      ".write": true
-    },
-    "push_tokens": {
+      ".read": "auth != null && auth.token.admin === true",
       "$id": {
-        ".read": true,
-        ".write": true
+        ".write": "auth != null && auth.token.admin === true",
+        "read": {
+          "$loginId": {
+            ".write": "auth != null"
+          }
+        }
       }
     },
-    "zpravy_spravci": {
-      "$loginId": {
-        ".read": true,
+    "push_tokens": {
+      ".read": "auth != null && auth.token.admin === true",
+      "$id": {
         ".write": true
       }
     },
@@ -192,6 +215,15 @@
         }
       }
     },
+    "budky_kontakty": {
+      "$uid": {
+        ".read": "auth != null && auth.uid === $uid",
+        ".write": "auth != null && auth.uid === $uid && !newData.exists()",
+        "req": {
+          ".write": "auth != null && auth.uid === $uid && !data.exists()"
+        }
+      }
+    },
     "budky_passwd": {
       "$uid": {
         ".read": "auth != null && auth.uid === $uid",
@@ -202,10 +234,10 @@
         }
       }
     },
-    "hesla": {
-      "$uid": {
-        ".read": true,
-        ".write": true
+    "zpravy_spravci": {
+      "$loginId": {
+        ".read": "auth != null && (auth.token.loginId === $loginId || auth.token.admin === true)",
+        ".write": "auth != null && (auth.token.loginId === $loginId || auth.token.admin === true)"
       }
     },
     "volby_obce": {
