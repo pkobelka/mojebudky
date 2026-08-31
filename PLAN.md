@@ -21,8 +21,39 @@ Stránka bez přihlášení, bez osobních údajů, bez editací.
 | Základ | HTML + CSS + vanilla JavaScript |
 | Mapa | Leaflet.js + OpenStreetMap (zdarma, bez API klíče) |
 | Data | statický `budky.json` (bez osobních údajů) |
-| Hosting | GitHub Pages (`pkobelka.github.io/mojebudky`) |
+| Hosting | WEDOS FTP – produkce `mojebudky.cz` (workflow `ftp-deploy-prod.yml`, **ruční**), test `_test` (workflow `ftp-deploy.yml`, automaticky při pushi do `main`) |
 | Svátek | lokální CZ jmenný kalendář v JS |
+
+> GitHub Pages už se pro tohle repo nebuildí – v historii běhů není jediný
+> „pages build and deployment". Ta adresa tedy servíruje starou verzi a nedá
+> se na ní nic testovat. Testuje se na `_test`.
+
+---
+
+## Přihlašování správců (od 8/2026)
+
+Heslo se ověřuje **na serveru**, ne v prohlížeči. Cloud Function `budkyLoginReq`
+ho porovná proti uzlu `budky_auth` (scrypt + sůl, klient tam nemá přístup)
+a vydá custom token. Podrobnosti v hlavičkách funkcí v `functions/index.js`.
+
+**Ruční krok, který se neobejde bez konzole:** `createCustomToken()` v Cloud
+Functions nepodepisuje lokálně – běhový účet nemá privátní klíč, takže o podpis
+žádá IAM Service Account Credentials API. Účet
+`moje-budky@appspot.gserviceaccount.com` proto musí mít **sám na sobě** roli
+**Service Account Token Creator**:
+
+    console.cloud.google.com/iam-admin/serviceaccounts?project=moje-budky
+    -> App Engine default service account -> Permissions -> Manage access
+    -> Add another role -> Service Account Token Creator -> Save
+
+Nastaveno ručně 31. 8. 2026. Z CI to udělat nejde – účet ze secretu
+`FIREBASE_SERVICE_ACCOUNT` (Admin SDK) nemá právo `iam.serviceAccounts.setIamPolicy`.
+Kdyby se někdy projekt zakládal znovu nebo se měnil běhový účet funkcí, tenhle
+krok je potřeba zopakovat, jinak se **nikdo nepřihlásí** (heslo projde, ale token
+se nevydá – v appce se to ukáže jako `token-failed`).
+
+**Verze pro cache:** `?v=…` u skriptů a stylů v `index.html` je potřeba po každé
+změně v `js/` nebo `css/` ručně zvýšit, jinak lidem zůstane stará verze.
 
 ---
 
