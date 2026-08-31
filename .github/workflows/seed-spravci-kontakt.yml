@@ -1,0 +1,28 @@
+name: Přesun kontaktů správců do neveřejné DB (spravci_kontakt)
+
+# Spustit RUČNĚ a AŽ POTOM slučovat commit, který data/spravci_info.json osekává.
+# Skript čte veřejný soubor a telefon / e-mail / datum narození překlopí do uzlu
+# `spravci_kontakt`, ke kterému se klient přes DB pravidla nedostane.
+
+on:
+  workflow_dispatch:
+
+jobs:
+  seed-spravci-kontakt:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Nastav Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Instaluj závislosti
+        run: pip install firebase-admin
+
+      - name: Ulož service account key
+        run: echo '${{ secrets.FIREBASE_SERVICE_ACCOUNT }}' > service-account-key.json
+
+      - name: Přesuň kontakty do neveřejného uzlu
+        run: python seed_spravci_kontakt.py
