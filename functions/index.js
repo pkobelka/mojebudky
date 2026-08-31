@@ -670,8 +670,12 @@ exports.budkyPasswdReq = functions.database
       }
 
       if (cil === zadatel) {
-        // vlastní heslo: musí sedět to staré
-        if (!mbOveritHeslo(zadatelZaznam, String(data.stare || ""))) {
+        // Vynucená změna po přechodu na serverové ověřování: staré heslo se
+        // neptáme. Uživatel ho zadal před chvílí při přihlášení (jinak by tenhle
+        // požadavek nemohl podepsat) a spousta lidí ho stejně nezná – mají ho
+        // uložené v prohlížeči. Ptát se na něj by je zbytečně zastavilo.
+        if (zadatelZaznam.must_change !== true &&
+            !mbOveritHeslo(zadatelZaznam, String(data.stare || ""))) {
           await resRef.set({ err: "wrong-credentials", ts: Date.now() });
           return smazReq();
         }
