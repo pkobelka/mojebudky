@@ -195,6 +195,7 @@
     "budky_passwd": {
       "$uid": {
         ".read": "auth != null && auth.uid === $uid",
+        ".write": "auth != null && auth.uid === $uid && !newData.exists()",
         "req": {
           ".write": "auth != null && auth.uid === $uid && !data.exists()",
           ".validate": "newData.hasChild('nove') && newData.child('nove').isString() && newData.child('nove').val().length <= 200"
