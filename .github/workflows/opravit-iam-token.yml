@@ -40,10 +40,44 @@ jobs:
       - name: Přiděl roli Service Account Token Creator
         run: |
           SA="moje-budky@appspot.gserviceaccount.com"
-          gcloud iam service-accounts add-iam-policy-binding "$SA" \
-            --project moje-budky \
-            --member "serviceAccount:$SA" \
-            --role "roles/iam.serviceAccountTokenCreator"
+          if gcloud iam service-accounts add-iam-policy-binding "$SA" \
+               --project moje-budky \
+               --member "serviceAccount:$SA" \
+               --role "roles/iam.serviceAccountTokenCreator"; then
+            echo "Role přidělena."
+            exit 0
+          fi
+
+          cat <<'NAVOD'
+
+          ============================================================
+          Roli se nepodařilo přidělit z CI.
+
+          Servisní účet uložený v secretu FIREBASE_SERVICE_ACCOUNT
+          (firebase-adminsdk-…) nemá právo iam.serviceAccounts.setIamPolicy.
+          To je v pořádku - Admin SDK účet ho běžně nemá a rozšiřovat mu
+          oprávnění kvůli tomuhle jednorázovému kroku nedává smysl.
+
+          Udělej to prosím ručně, je to na minutu:
+
+            1. https://console.cloud.google.com/iam-admin/serviceaccounts?project=moje-budky
+            2. Otevři účet  moje-budky@appspot.gserviceaccount.com
+            3. Záložka  PERMISSIONS  ->  GRANT ACCESS
+            4. New principals:  moje-budky@appspot.gserviceaccount.com
+               (ano, ten samý účet - přiděluje se sám sobě)
+            5. Role:  Service Account Token Creator
+            6. Save
+
+          Pozor: krok 2 platí pro funkce 1. generace, které běží pod
+          účtem <projekt>@appspot.gserviceaccount.com. Kdyby funkce
+          běžely pod jiným účtem, je vidět v Cloud Console u funkce
+          budkyLoginReq v kolonce Service account.
+
+          Zapnutí IAM Service Account Credentials API (krok výše) už
+          proběhlo, to se povedlo.
+          ============================================================
+          NAVOD
+          exit 1
 
       - name: Stav po zásahu
         run: |
