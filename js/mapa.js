@@ -788,11 +788,17 @@ async function inicializujMapu() {
     }, { passive: true });
   }
 
-  L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}@2x.png', {
-    attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> © <a href="https://carto.com/">CARTO</a>',
+  // Podklad mapy: CARTO začalo u volných dlaždic vyžadovat API klíč a do obrázků
+  // vypaluje vodoznak „API KEY REQUIRED“. Jedeme proto na standardních dlaždicích
+  // OpenStreetMap – bez klíče a bez registrace. Jemný filtr v CSS (.mapa-dlazdice)
+  // ztlumí jejich sytost, ať budky v mapě nezanikají.
+  // maxNativeZoom 19 = poslední zoom, který OSM dlaždice mají; nad ním se obrázky
+  // jen zvětšují, aby mapa fungovala až do zoomu 20 jako dřív.
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
     maxZoom: 20,
-    tileSize: 512,
-    zoomOffset: -1
+    maxNativeZoom: 19,
+    className: 'mapa-dlazdice'
   }).addTo(mapInstance);
 
   pridejGpsOvladani(mapInstance);

@@ -166,6 +166,9 @@ html, body {
 
 .map-wrapper { flex: 1; position: relative; min-width: 280px; height: 100%; }
 #map { position: absolute; inset: 0; }
+/* Podklad z OpenStreetMap je sytější než dřívější CARTO Voyager – jemně ho
+   ztlumíme, ať ikony budek a shluky zůstanou dobře čitelné. */
+.mapa-dlazdice { filter: saturate(0.72) brightness(1.06) contrast(0.94); }
 
 .panel-right .panel-title::before { content: '📊 '; }
 

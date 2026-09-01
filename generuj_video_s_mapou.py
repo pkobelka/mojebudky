@@ -100,15 +100,18 @@ def build_map_axes() -> tuple:
     ctx_ok = False
     try:
         import contextily as ctx
+        # CartoDB (Positron) už volné dlaždice bez API klíče nedává – vracel by
+        # podklad s vodoznakem „API KEY REQUIRED“. Esri World Gray Canvas je
+        # vzhledem nejblíž a klíč nepotřebuje.
         ctx.add_basemap(
             ax, crs='EPSG:4326',
-            source=ctx.providers.CartoDB.Positron,
+            source=ctx.providers.Esri.WorldGrayCanvas,
             zoom=7, attribution=False
         )
         ax.set_xlim(XMIN, XMAX)
         ax.set_ylim(YMIN, YMAX)
         ctx_ok = True
-        print('✅ Mapa: CartoDB Positron (contextily)')
+        print('✅ Mapa: Esri World Gray Canvas (contextily)')
     except Exception as e:
         print(f'ℹ️  Contextily nedostupné ({type(e).__name__}), používám offline data')
 
