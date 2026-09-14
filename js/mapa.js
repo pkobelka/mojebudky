@@ -761,14 +761,20 @@ function _prislibPopupHtml(cislo) {
          <button class="prislib-btn prislib-btn-smazat" data-prislib-akce="smazat" data-cislo="${cislo}">🗑 Smazat</button>
        </div>`
     : '';
+  // Stavba i barvy schválně stejné jako u bublin budek (hlavička na krémovém
+  // podkladu, pod ní tělo) – bublina mapy je světlá, ne tmavá jako panely webu.
   return `<div class="prislib-popup">
-    <div class="prislib-popup-nadpis">📋 Tady má vyrůst budka</div>
-    <div class="prislib-popup-cislo">Žádost č. ${cislo}${kdy ? ' · slíbeno ' + kdy : ''}</div>
-    <p class="prislib-popup-text">Někomu je na tomhle místě budka slíbená.<br>
-      Jste to vy a už dlouho se nic neděje? Napište mi — žádostí je hodně a mohl jsem na vás zapomenout.</p>
-    <button class="prislib-btn prislib-btn-napsat" data-prislib-akce="napsat">✉ Napsat Petrovi</button>
-    ${detailRadky}
-    ${adminCast}
+    <div class="prislib-popup-hlavicka">
+      <div class="prislib-popup-nadpis">Tady má vyrůst budka</div>
+      <div class="prislib-popup-cislo">Žádost č. ${cislo}${kdy ? ' · slíbeno ' + kdy : ''}</div>
+    </div>
+    <div class="prislib-popup-telo">
+      <p class="prislib-popup-text">Někomu je na tomhle místě budka slíbená.
+        Jste to vy a už dlouho se nic neděje? Napište mi — žádostí je hodně a mohl jsem na vás zapomenout.</p>
+      <button class="prislib-btn prislib-btn-napsat" data-prislib-akce="napsat">✉ Napsat Petrovi</button>
+      ${detailRadky}
+      ${adminCast}
+    </div>
   </div>`;
 }
 
@@ -852,23 +858,65 @@ async function nactiPrisliby(map) {
   });
 }
 
+// Legenda slouží zároveň jako filtr: klik na položku nechá na mapě jen daný
+// druh značky, klik na tu samou položku znovu filtr zruší.
+let _legendaFiltr = null;   // null | 'osidlena' | 'budka' | 'slib'
+
+window._filtrLegenda = function(druh) {
+  _legendaFiltr = (_legendaFiltr === druh) ? null : druh;
+  const data = window._budkyDataMap || {};
+  const cile = [];
+
+  Object.entries(markersByCislo).forEach(([cislo, m]) => {
+    const b = data[parseInt(cislo, 10)];
+    let vidi = true;
+    if (_legendaFiltr === 'osidlena') vidi = !!(b && b.stav === 'osidlena');
+    else if (_legendaFiltr === 'budka') vidi = !!(b && b.stav !== 'osidlena');
+    else if (_legendaFiltr === 'slib') vidi = false;
+    m.setOpacity(vidi ? 1 : 0.12);
+    if (vidi && _legendaFiltr) cile.push(m.getLatLng());
+  });
+
+  Object.values(prislibMarkery).forEach(m => {
+    const vidi = !_legendaFiltr || _legendaFiltr === 'slib';
+    m.setOpacity(vidi ? 1 : 0.12);
+    if (vidi && _legendaFiltr === 'slib') cile.push(m.getLatLng());
+  });
+
+  document.querySelectorAll('.legenda-polozka').forEach(el => {
+    el.classList.toggle('legenda-polozka--aktivni', el.dataset.filtr === _legendaFiltr);
+  });
+
+  // Po zapnutí filtru najet na to, co zbylo – jinak by uživatel koukal na
+  // prázdnou část mapy, když jsou vyfiltrované značky jinde.
+  if (cile.length && mapInstance) {
+    mapInstance.fitBounds(L.latLngBounds(cile), { padding: [40, 40], maxZoom: 13 });
+  }
+};
+
 function pridejLegend(map) {
   const legend = L.control({ position: 'bottomright' });
   legend.onAdd = function() {
     const div = L.DomUtil.create('div', 'mapa-legenda');
     div.innerHTML = `
-      <div class="legenda-polozka">
+      <div class="legenda-nadpis">Klikni a uvidíš jen:</div>
+      <button type="button" class="legenda-polozka" data-filtr="osidlena">
         ${obydlenoSvg(28)}
         <span>Osídlená budka</span>
-      </div>
-      <div class="legenda-polozka">
+      </button>
+      <button type="button" class="legenda-polozka" data-filtr="budka">
         <span class="legenda-dot" style="--dot-color:#e06820"></span>
         <span>Budka — přibliž pro detail</span>
-      </div>
-      <div class="legenda-polozka">
+      </button>
+      <button type="button" class="legenda-polozka" data-filtr="slib">
         <span class="legenda-dot legenda-dot-prislib"></span>
         <span>Slíbená budka — teprve bude</span>
-      </div>`;
+      </button>`;
+    // bez tohohle by klik na legendu probublal na mapu a přiblížil ji
+    L.DomEvent.disableClickPropagation(div);
+    div.querySelectorAll('.legenda-polozka').forEach(btn => {
+      btn.addEventListener('click', () => window._filtrLegenda(btn.dataset.filtr));
+    });
     return div;
   };
   legend.addTo(map);
