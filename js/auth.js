@@ -3352,7 +3352,10 @@ async function _zobrazPrisliby() {
       <div class="profil-nadpis">📋 Slíbené budky (${polozky.length})</div>
     </div></div>
     <div class="profil-form">
-      <button class="zadost-btn-ok" id="prislibPridat" style="align-self:flex-start">➕ Přidat slib — klikem do mapy</button>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="zadost-btn-ok" id="prislibPridat">➕ Přidat slib — klikem do mapy</button>
+        <button class="zadost-btn-ok" id="prislibImport">⬆ Hromadný import</button>
+      </div>
       ${radky}
     </div>
   </div>`;
@@ -3363,6 +3366,10 @@ async function _zobrazPrisliby() {
   modal.querySelector('#prislibPridat').addEventListener('click', () => {
     modal.remove();
     _prislibZapniKlikRezim();
+  });
+  modal.querySelector('#prislibImport').addEventListener('click', () => {
+    modal.remove();
+    _prislibImport();
   });
   modal.querySelectorAll('[data-pakce]').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -3482,6 +3489,95 @@ async function _prislibFormular(p) {
     await db.ref().update({ [`prisliby/${cislo}`]: null, [`prisliby_mapa/${cislo}`]: null });
     modal.remove();
     _zobrazToast('🗑 Slib smazán');
+  });
+}
+
+// Hromadný import slibů – první dávka se přenáší z pracovní mapy v Google
+// My Maps, kde je bodů najednou hodně. Zapisuje prohlížeč přihlášeného admina,
+// takže jména nikam jinam nejdou: ani do repozitáře, ani do logů GitHub Actions.
+function _prislibImport() {
+  document.getElementById('modalPrislibImport')?.remove();
+  const modal = document.createElement('div');
+  modal.id = 'modalPrislibImport';
+  modal.className = 'modal-overlay';
+  modal.innerHTML = `<div class="modal-box profil-box" style="max-width:620px">
+    <button class="modal-zavrit" id="piZavrit" aria-label="Zavřít">×</button>
+    <div class="profil-header"><div class="profil-header-text">
+      <div class="profil-nadpis">⬆ Hromadný import slibů</div>
+    </div></div>
+    <div class="profil-form">
+      <div style="color:var(--text-muted);font-size:0.88rem;line-height:1.6">
+        Vlož seznam ve formátu JSON. Povinné je <strong>jmeno</strong>, <strong>lat</strong> a <strong>lng</strong>;
+        <em>cislo</em> se doplní samo, pokud chybí. Záznam s číslem, které už existuje, se přepíše.<br>
+        <code style="font-size:0.8rem">[{"misto":"Vlašim","jmeno":"Milan Tůma","lat":49.70632,"lng":14.89881}]</code>
+      </div>
+      <textarea class="profil-input" id="piText" rows="10" placeholder='[ ... ]' style="font-family:monospace;font-size:0.85rem"></textarea>
+      <button class="zadost-btn-ok" id="piNahrat">⬆ Nahrát do mapy</button>
+      <div id="piMsg" class="login-error" hidden></div>
+    </div>
+  </div>`;
+  document.body.appendChild(modal);
+  modal.querySelector('#piZavrit').addEventListener('click', () => modal.remove());
+
+  modal.querySelector('#piNahrat').addEventListener('click', async () => {
+    const msg = document.getElementById('piMsg');
+    const btn = document.getElementById('piNahrat');
+    msg.style.color = '';
+    let polozky;
+    try {
+      polozky = JSON.parse(document.getElementById('piText').value);
+    } catch (e) {
+      msg.textContent = '⚠ Tohle není platný JSON: ' + e.message;
+      msg.hidden = false;
+      return;
+    }
+    if (!Array.isArray(polozky) || !polozky.length) {
+      msg.textContent = '⚠ Čekám seznam v hranatých závorkách, a ne prázdný.';
+      msg.hidden = false;
+      return;
+    }
+    // vstup zkontrolovat dřív, než se sáhne na databázi – chyba v seznamu
+    // se tak ohlásí přesně, ne jako "databáze není dostupná"
+    const spatny = polozky.findIndex(p => !p || !p.jmeno || p.lat == null || p.lng == null);
+    if (spatny !== -1) {
+      msg.textContent = `⚠ ${spatny + 1}. záznam nemá jméno nebo souřadnice.`;
+      msg.hidden = false;
+      return;
+    }
+    const db = _getFirebaseDB();
+    if (!db) { msg.textContent = '⚠ Databáze není dostupná'; msg.hidden = false; return; }
+    btn.disabled = true;
+    try {
+      const snap = await db.ref('prisliby').once('value');
+      const stavajici = snap.val() || {};
+      let dalsi = _prislibDalsiCislo(stavajici);
+      const updates = {};
+      let novych = 0, prepsanych = 0;
+      for (const p of polozky) {
+        if (!p || !p.jmeno || p.lat == null || p.lng == null) {
+          throw new Error('záznam bez jména nebo souřadnic: ' + JSON.stringify(p));
+        }
+        const cislo = p.cislo != null ? Number(p.cislo) : dalsi++;
+        if (stavajici[cislo]) prepsanych++; else novych++;
+        const lat = Number(p.lat), lng = Number(p.lng);
+        const mesic = p.mesic || '';
+        updates[`prisliby/${cislo}`] = {
+          cislo, lat, lng, misto: p.misto || '', jmeno: p.jmeno,
+          telefon: p.telefon || '', poznamka: p.poznamka || '', mesic,
+          sms: p.sms || false, ts: p.ts || Date.now()
+        };
+        // veřejná větev schválně bez jména a telefonu
+        updates[`prisliby_mapa/${cislo}`] = { cislo, lat, lng, mesic };
+      }
+      await db.ref().update(updates);
+      modal.remove();
+      _zobrazToast(`✓ Nahráno: ${novych} nových, ${prepsanych} přepsaných`, 5000);
+      if (typeof window._nactiPrislibyDetail === 'function') window._nactiPrislibyDetail();
+    } catch (e) {
+      msg.textContent = '⚠ ' + (e && e.message ? e.message : 'nahrání selhalo');
+      msg.hidden = false;
+      btn.disabled = false;
+    }
   });
 }
 
