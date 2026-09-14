@@ -6,10 +6,10 @@
   <meta name="description" content="MojeBudky.cz – sledujeme ptáčí budky po celé ČR. Živá mapa, statistiky a příběhy z přírody.">
   <title>MojeBudky.cz – Pomáháme ptactvu</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
-  <link rel="stylesheet" href="css/vendor/MarkerCluster.css?v=mb20260914a">
+  <link rel="stylesheet" href="css/vendor/MarkerCluster.css?v=mb20260914b">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=mb20260914a">
+  <link rel="stylesheet" href="css/style.css?v=mb20260914b">
   <link rel="icon" type="image/svg+xml" href="img/favicon.svg">
   <link rel="icon" type="image/png" sizes="512x512" href="img/icon-512.png">
   <link rel="icon" type="image/png" sizes="192x192" href="img/icon-192.png">
@@ -151,6 +151,21 @@
         ℹ️ Počet <strong>aktivních budek</strong> vychází z hlášení správců – tedy z toho, zda je či byla jejich budka obydlená. Pokud symbol vaší budky na mapě neodpovídá skutečnosti, můžete stav upravit sami po přihlášení, nebo nám ho nahlaste na <a href="mailto:p.kobelka@gmail.com">p.kobelka@gmail.com</a>. <a href="#" id="odkazNavodStats">Viz Návod pro správce →</a>
       </p>
 
+      <!-- Slíbené budky – text pro lidi, kterým je budka slíbená.
+           Blok se sám skryje, když v databázi žádný slib není (mapa.js). -->
+      <div class="slibene-blok" id="slibeneBudkyBlok" hidden>
+        <h3 class="slibene-nadpis">📋 Slíbil jsem vám budku?</h3>
+        <p class="slibene-text">
+          Šedé značky na mapě jsou místa, kde budka <strong>teprve bude</strong> — právě teď jich je <strong id="stat-slibenych">…</strong>.
+          Všem, komu jsem budku slíbil, jsem psal SMS. <strong>Pokud vám nic nepřišlo, ozvěte se mi prosím</strong> —
+          žádostí je hodně a nerad bych na někoho zapomněl.
+        </p>
+        <p class="slibene-text">
+          <strong>Chcete budku taky?</strong> Napište mi, kde bydlíte, a domluvíme se.
+        </p>
+        <button type="button" class="slibene-btn" id="btnSlibeneNapsat">✉ Napsat Petrovi</button>
+      </div>
+
       <div class="sekce-dvojsloupec">
         <!-- Druhy ptáků -->
         <div class="stat-box druhy-panel" id="druhyPanel"></div>
@@ -274,11 +289,11 @@
               </div>
               <div class="uvod-videos-item">
                 <video class="uvod-video" controls preload="none" playsinline
-                       poster="promo_web_2026.jpg?v=mb20260914a"
+                       poster="promo_web_2026.jpg?v=mb20260914b"
                        aria-label="Ukázka aplikace MojeBudky.cz – živá mapa budek a jejich příběhy">
-                  <source src="promo_web_2026.mp4?v=mb20260914a" type="video/mp4">
+                  <source src="promo_web_2026.mp4?v=mb20260914b" type="video/mp4">
                   Váš prohlížeč neumí přehrát vložené video.
-                  <a href="promo_web_2026.mp4?v=mb20260914a">Stáhnout video (MP4)</a>.
+                  <a href="promo_web_2026.mp4?v=mb20260914b">Stáhnout video (MP4)</a>.
                 </video>
                 <p class="uvod-teaser-video-title">🗺️ Naše aplikace – živá mapa budek a jejich příběhy po celém Česku i Slovensku</p>
               </div>
@@ -670,7 +685,7 @@
      jinak lidem zůstane v prohlížeči stará verze. Dřív tu byl zástupný text __MB_BUILD__, který ale
      dosazoval jen FTP deploy na WEDOS – na GitHub Pages zůstával nezměněný, takže
      se adresa nikdy neměnila a cache se nikdy neobnovila. -->
-<script src="js/vendor/leaflet.markercluster.js?v=mb20260914a"></script>
+<script src="js/vendor/leaflet.markercluster.js?v=mb20260914b"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
@@ -687,9 +702,9 @@
     window.MB_CAS = "30. 8. 2026";
   }
 </script>
-<script src="js/svatky.js?v=mb20260914a"></script>
-<script src="js/mapa.js?v=mb20260914a"></script>
-<script src="js/main.js?v=mb20260914a"></script>
+<script src="js/svatky.js?v=mb20260914b"></script>
+<script src="js/mapa.js?v=mb20260914b"></script>
+<script src="js/main.js?v=mb20260914b"></script>
 <!-- Fotogalerie: data i kód jsou schválně přímo tady, ne v samostatných
      souborech. Hosting opakovaně neservíroval nově nahrané soubory
      (js/galerie.js, data/galerie.js; dřív stejně dopadly obydleno.svg a .mp4),
@@ -919,8 +934,8 @@
     }
   }, 10000);
 </script>
-<script src="js/auth.js?v=mb20260914a"></script>
-<script src="js/presence.js?v=mb20260914a"></script>
+<script src="js/auth.js?v=mb20260914b"></script>
+<script src="js/presence.js?v=mb20260914b"></script>
 <script>
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('firebase-messaging-sw.js')

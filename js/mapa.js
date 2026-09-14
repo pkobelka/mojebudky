@@ -468,6 +468,8 @@ function _aktualizujZoomVzhled(force) {
   mapInstance.getContainer().style.setProperty('--budka-scale', _scaleProZoom(zoom).toFixed(3));
   const tier = zoom >= ZOOM_DETAIL ? 'full' : 'dot';
   if (tier === _zoomTier && !force) return;
+  // slíbené budky se přepínají mezi bodem a ikonou stejně jako ty postavené
+  if (typeof window._prekresliPrisliby === 'function') window._prekresliPrisliby();
   _zoomTier = tier;
   Object.keys(markersByCislo).forEach(cislo => {
     const b = (window._budkyDataMap || {})[Number(cislo)];
@@ -639,6 +641,160 @@ function formatPopup(b) {
   </div>`;
 }
 
+// ═══ SLÍBENÉ BUDKY ════════════════════════════════════════════════════════
+// Místa, kde budka teprve bude. Veřejně se o nich ví jen pořadové číslo
+// žádosti, souřadnice a měsíc (uzel prisliby_mapa, čitelný pro kohokoli).
+// Jméno, telefon a poznámka jsou osobní údaje – leží v uzlu prisliby, který
+// podle pravidel databáze přečte jedině přihlášený admin, a ukazují se proto
+// jen jemu. Pozor na názvosloví: "slib" v tomhle projektu znamená slib správce
+// při prvním přihlášení (mb_slib_*), proto se tyhle body v kódu jmenují
+// prisliby.
+const prislibMarkery = {};
+let prislibyVerejne = {};
+let prislibyDetail  = {};
+let prislibyVrstva  = null;
+
+function _jsemAdmin() {
+  return !!(window._aktualniSpravce && window._aktualniSpravce.jeAdmin);
+}
+
+function _prislibIkona(p) {
+  const zoom = mapInstance ? mapInstance.getZoom() : 6;
+  if (zoom >= ZOOM_DETAIL) {
+    return L.divIcon({
+      html: `<div class="budka-marker budka-prislib"><img src="img/logo.svg" width="32" height="44" alt=""></div>`,
+      iconSize: [32, 44], iconAnchor: [16, 44], popupAnchor: [0, -46], className: ''
+    });
+  }
+  return L.divIcon({
+    html: `<div class="budka-dot budka-dot-prislib"></div>`,
+    iconSize: [18, 18], iconAnchor: [9, 9], popupAnchor: [0, -10], className: ''
+  });
+}
+
+function _prislibCas(p) {
+  return p && p.mesic ? String(p.mesic) : '';
+}
+
+function _prislibTooltipHtml(cislo) {
+  const p = prislibyVerejne[cislo] || {};
+  const kdy = _prislibCas(p);
+  if (!_jsemAdmin()) {
+    return `<div class="prislib-tip"><strong>📋 Žádost č. ${cislo}</strong>${kdy ? `<br><span class="prislib-tip-kdy">slíbeno ${kdy}</span>` : ''}</div>`;
+  }
+  // Admin vidí i to, co je potřeba k vyřízení – hlavně jestli už šla SMS.
+  const d = prislibyDetail[cislo] || {};
+  const radky = [];
+  if (d.misto)    radky.push(_esc(d.misto));
+  if (d.telefon)  radky.push(_esc(d.telefon));
+  if (d.poznamka) radky.push('„' + _esc(d.poznamka) + '"');
+  const sms = d.sms
+    ? `<span class="prislib-sms-ano">✉ SMS odeslána${typeof d.sms === 'number' ? ' ' + new Date(d.sms).toLocaleDateString('cs-CZ') : ''}</span>`
+    : `<span class="prislib-sms-ne">✉ SMS zatím neodeslána</span>`;
+  return `<div class="prislib-tip"><strong>📋 Žádost č. ${cislo}${d.jmeno ? ' — ' + _esc(d.jmeno) : ''}</strong>`
+       + (radky.length ? `<br><span class="prislib-tip-kdy">${radky.join(' · ')}</span>` : '')
+       + `<br>${sms}</div>`;
+}
+
+function _esc(t) {
+  return String(t == null ? '' : t).replace(/[<>&"]/g, z => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;' }[z]));
+}
+
+function _prislibPopupHtml(cislo) {
+  const p = prislibyVerejne[cislo] || {};
+  const kdy = _prislibCas(p);
+  const adminCast = _jsemAdmin()
+    ? `<div class="prislib-popup-admin">
+         <button class="prislib-btn" data-prislib-akce="upravit" data-cislo="${cislo}">✏️ Upravit</button>
+         <button class="prislib-btn" data-prislib-akce="sms" data-cislo="${cislo}">✉ SMS odeslána</button>
+         <button class="prislib-btn prislib-btn-smazat" data-prislib-akce="smazat" data-cislo="${cislo}">🗑 Smazat</button>
+       </div>`
+    : '';
+  return `<div class="prislib-popup">
+    <div class="prislib-popup-nadpis">📋 Tady má vyrůst budka</div>
+    <div class="prislib-popup-cislo">Žádost č. ${cislo}${kdy ? ' · slíbeno ' + kdy : ''}</div>
+    <p class="prislib-popup-text">Někomu je na tomhle místě budka slíbená.<br>
+      Jste to vy a už dlouho se nic neděje? Napište mi — žádostí je hodně a mohl jsem na vás zapomenout.</p>
+    <button class="prislib-btn prislib-btn-napsat" data-prislib-akce="napsat">✉ Napsat Petrovi</button>
+    ${adminCast}
+  </div>`;
+}
+
+function _vytvorPrislibMarker(cislo) {
+  const p = prislibyVerejne[cislo];
+  if (!p || p.lat == null || p.lng == null) return;
+  const marker = L.marker([p.lat, p.lng], { icon: _prislibIkona(p), zIndexOffset: -500 });
+  marker.bindTooltip(_prislibTooltipHtml(cislo), {
+    direction: 'top', offset: [0, -46], className: 'budka-tooltip-wrap prislib-tooltip-wrap', sticky: false
+  });
+  marker.bindPopup(_prislibPopupHtml(cislo), { className: 'budka-popup-wrap prislib-popup-wrap', maxWidth: 320 });
+  prislibMarkery[cislo] = marker;
+  if (prislibyVrstva) prislibyVrstva.addLayer(marker);
+}
+
+// Překreslí texty i ikony – volá se po přihlášení admina (tehdy se doplní
+// jména) a při změně zoomu.
+window._prekresliPrisliby = function() {
+  Object.entries(prislibMarkery).forEach(([cislo, m]) => {
+    m.setIcon(_prislibIkona(prislibyVerejne[cislo]));
+    m.setTooltipContent(_prislibTooltipHtml(cislo));
+    m.setPopupContent(_prislibPopupHtml(cislo));
+  });
+};
+
+// Admin má po přihlášení vidět i jména – doplní se dočtením neveřejné větve.
+window._nactiPrislibyDetail = async function() {
+  if (!_jsemAdmin()) { prislibyDetail = {}; window._prekresliPrisliby(); return; }
+  try {
+    const snap = await firebase.database().ref('prisliby').once('value');
+    prislibyDetail = snap.val() || {};
+  } catch (e) {
+    console.warn('prisliby: detail se nepodařilo načíst', e);
+    prislibyDetail = {};
+  }
+  window._prekresliPrisliby();
+};
+
+async function nactiPrisliby(map) {
+  if (typeof firebase === 'undefined' || !firebase.database) return;
+  prislibyVrstva = L.layerGroup().addTo(map);
+  try {
+    // on('value') – po přidání slibu v administraci se mapa aktualizuje sama
+    firebase.database().ref('prisliby_mapa').on('value', snap => {
+      const data = snap.val() || {};
+      Object.values(prislibMarkery).forEach(m => prislibyVrstva.removeLayer(m));
+      Object.keys(prislibMarkery).forEach(k => delete prislibMarkery[k]);
+      prislibyVerejne = data;
+      Object.keys(data).forEach(cislo => _vytvorPrislibMarker(cislo));
+      const el = document.getElementById('stat-slibenych');
+      if (el) el.textContent = Object.keys(data).length;
+      const blok = document.getElementById('slibeneBudkyBlok');
+      if (blok) blok.hidden = Object.keys(data).length === 0;
+      if (_jsemAdmin()) window._nactiPrislibyDetail();
+    });
+  } catch (e) {
+    console.warn('prisliby: nepodařilo se načíst', e);
+  }
+
+  // Akce v bublině slíbené budky
+  map.on('popupopen', e => {
+    const el = e.popup.getElement();
+    if (!el) return;
+    el.querySelectorAll('[data-prislib-akce]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const akce = btn.dataset.prislibAkce;
+        const cislo = btn.dataset.cislo;
+        if (akce === 'napsat') {
+          map.closePopup();
+          document.getElementById('btnNapsat')?.click();
+          return;
+        }
+        if (typeof window._prislibAdminAkce === 'function') window._prislibAdminAkce(akce, cislo);
+      });
+    });
+  });
+}
+
 function pridejLegend(map) {
   const legend = L.control({ position: 'bottomright' });
   legend.onAdd = function() {
@@ -651,6 +807,10 @@ function pridejLegend(map) {
       <div class="legenda-polozka">
         <span class="legenda-dot" style="--dot-color:#e06820"></span>
         <span>Budka — přibliž pro detail</span>
+      </div>
+      <div class="legenda-polozka">
+        <span class="legenda-dot legenda-dot-prislib"></span>
+        <span>Slíbená budka — teprve bude</span>
       </div>`;
     return div;
   };
@@ -801,8 +961,10 @@ async function inicializujMapu() {
     className: 'mapa-dlazdice'
   }).addTo(mapInstance);
 
+  window._mapInstance = mapInstance;   // administrace do ní přidává slíbené budky
   pridejGpsOvladani(mapInstance);
   pridejLegend(mapInstance);
+  nactiPrisliby(mapInstance);
 
   try {
     const [resBudky, resSpravci] = await Promise.all([
