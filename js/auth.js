@@ -3314,6 +3314,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (!btnPrihlasit || !modal) return;
 
+  // Modal má dva panely: vysvětlení + žádost o přístup (pristupInfo) a vlastní
+  // přihlášení (formWrap). Od hromadného zneplatnění hesel v 8/2026 se většině
+  // lidí staré heslo neověří, takže se jako první ukazuje vysvětlení – jinak by
+  // dokola zkoušeli heslo, které už nikdy nemůže projít. Kdo má zapamatované ID
+  // (tedy se už po zneplatnění úspěšně přihlásil), jde rovnou na formulář.
+  const pristupInfo = document.getElementById('loginPristupInfo');
+  const formWrap    = document.getElementById('loginFormWrap');
+
+  function ukazPanel(ktery) {
+    if (!pristupInfo || !formWrap) return;
+    pristupInfo.hidden = ktery !== 'pristup';
+    formWrap.hidden    = ktery !== 'formular';
+  }
+
   function otevritModal() {
     modal.hidden = false;
     const savedId = localStorage.getItem('mb_saved_loginId') || '';
@@ -3324,7 +3338,10 @@ document.addEventListener('DOMContentLoaded', () => {
     loginBtn.disabled = false;
     const cbZapamatovat = document.getElementById('cbZapamatovat');
     if (cbZapamatovat) cbZapamatovat.checked = !!savedId;
-    setTimeout(() => (savedId ? inputHeslo : inputId).focus(), 50);
+    const pristupMsg = document.getElementById('pristupMsg');
+    if (pristupMsg) pristupMsg.hidden = true;
+    ukazPanel(savedId ? 'formular' : 'pristup');
+    if (savedId) setTimeout(() => inputHeslo.focus(), 50);
   }
 
   function zavritModal() {
@@ -3386,6 +3403,18 @@ document.addEventListener('DOMContentLoaded', () => {
         if (vysledek.mustChange) {
           setTimeout(() => _zobrazZmenitHeslo(id, true), 600);
         }
+      } else if (vysledek.err === 'account-disabled') {
+        // Účet existuje, ale heslo mu bylo hromadně zneplatněno – zkoušet dál
+        // nemá smysl, tak rovnou ukážeme vysvětlení a žádost o přístup.
+        inputHeslo.value = '';
+        ukazPanel('pristup');
+        const pristupMsg = document.getElementById('pristupMsg');
+        if (pristupMsg) {
+          pristupMsg.style.color = '';
+          pristupMsg.textContent = 'ℹ Tenhle přístup je zneplatněný. Požádejte o nové heslo níže.';
+          pristupMsg.hidden = false;
+        }
+        document.getElementById('pristupJmeno')?.focus();
       } else {
         loginError.textContent = _mbChybaText(vysledek.err);
         loginError.hidden = false;
@@ -3435,6 +3464,66 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   if (btnOko) btnOko.addEventListener('click', () => toggleHeslo(inputHeslo.type === 'password'));
   if (cbZobrazit) cbZobrazit.addEventListener('change', () => toggleHeslo(cbZobrazit.checked));
+
+  // Přepínání mezi vysvětlením a přihlašovacím formulářem
+  document.getElementById('linkMamHeslo')?.addEventListener('click', e => {
+    e.preventDefault();
+    ukazPanel('formular');
+    setTimeout(() => (inputId.value ? inputHeslo : inputId).focus(), 50);
+  });
+  document.getElementById('linkChciPristup')?.addEventListener('click', e => {
+    e.preventDefault();
+    loginError.hidden = true;
+    ukazPanel('pristup');
+    setTimeout(() => document.getElementById('pristupJmeno')?.focus(), 50);
+  });
+
+  // Žádost o přístup správce – padá do stejné schránky jako zprávy návštěvníků
+  // (administrace → Žádosti → ✉️ Zprávy), takže se na ni nezapomene.
+  const pristupOdeslat = document.getElementById('pristupOdeslat');
+  pristupOdeslat?.addEventListener('click', async () => {
+    const jmeno = document.getElementById('pristupJmeno').value.trim();
+    const email = document.getElementById('pristupEmail').value.trim();
+    const budka = document.getElementById('pristupBudka').value.trim();
+    const text  = document.getElementById('pristupText').value.trim();
+    const msg   = document.getElementById('pristupMsg');
+    msg.style.color = '';
+    if (!jmeno || !email) {
+      msg.textContent = '⚠ Vyplňte prosím jméno a e-mail, ať vám mám kam odpovědět.';
+      msg.hidden = false;
+      return;
+    }
+    const db = _getFirebaseDB();
+    if (!db) {
+      msg.textContent = '⚠ Odeslání se nezdařilo — napište prosím na p.kobelka@gmail.com';
+      msg.hidden = false;
+      return;
+    }
+    pristupOdeslat.disabled = true;
+    const popis = [
+      '🔑 ŽÁDOST O PŘÍSTUP SPRÁVCE',
+      budka ? 'Budka č.: ' + budka : 'Budka: neuvedena',
+      text ? 'Poznámka: ' + text : ''
+    ].filter(Boolean).join('\n');
+    try {
+      await db.ref('admin_requests/zpravy').push({
+        loginId: 'navstevnik', jmeno, email, text: popis,
+        ts: firebase.database.ServerValue.TIMESTAMP, vyrizeno: false
+      });
+      msg.style.color = '#4caf50';
+      msg.textContent = '✓ Žádost odeslána. Ozvu se vám e-mailem a heslo vám pošlu.';
+      msg.hidden = false;
+      document.getElementById('pristupJmeno').value = '';
+      document.getElementById('pristupEmail').value = '';
+      document.getElementById('pristupBudka').value = '';
+      document.getElementById('pristupText').value = '';
+      setTimeout(() => { zavritModal(); msg.hidden = true; pristupOdeslat.disabled = false; }, 3000);
+    } catch {
+      msg.textContent = '⚠ Odeslání se nezdařilo — napište prosím na p.kobelka@gmail.com';
+      msg.hidden = false;
+      pristupOdeslat.disabled = false;
+    }
+  });
 
   const linkZapomnel = document.getElementById('linkZapomnel');
   const zapomnelMsg  = document.getElementById('zapomnel-msg');
