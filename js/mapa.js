@@ -6,6 +6,39 @@ window._markersByCislo = markersByCislo;
 window._getMapInstance = () => mapInstance;
 
 // Ikona shluku: jedna neutrální bublina s počtem budek. Velikost roste s počtem.
+// Výchozí výřez mapy. Pevný střed a zoom musel pokrýt i tři budky
+// v Nizozemsku, takže se kvůli nim mačkalo zbylých 200 do rohu obrazovky
+// a mapa se otevírala jako pohled přes celou střední Evropu.
+//
+// Výřez se proto počítá z budek do 500 km od mediánu jejich polohy. Ten práh
+// není nastřelený: nejvzdálenější tuzemská a slovenská budka je 341 km,
+// nejbližší nizozemská 829 km, takže mezi nimi je široká mezera a hranice
+// kamkoli mezi ně dopadne stejně. Vzdálené budky z mapy nemizí, jen se k nim
+// doroluje nebo oddálí.
+const _VYREZ_PRAH_KM = 500;
+
+function _kmMezi(a, b) {
+  const R = 6371, rad = Math.PI / 180;
+  const dLat = (b[0] - a[0]) * rad, dLng = (b[1] - a[1]) * rad;
+  const h = Math.sin(dLat / 2) ** 2
+          + Math.cos(a[0] * rad) * Math.cos(b[0] * rad) * Math.sin(dLng / 2) ** 2;
+  return 2 * R * Math.asin(Math.sqrt(h));
+}
+
+function _median(pole) {
+  const s = [...pole].sort((a, b) => a - b);
+  return s[Math.floor(s.length / 2)];
+}
+
+function _vyrezVetsinyBudek(budky) {
+  const platne = budky.filter(b => typeof b.lat === 'number' && typeof b.lng === 'number');
+  if (platne.length < 5) return null;   // málo dat, ať zůstane výchozí pohled
+  const stred = [_median(platne.map(b => b.lat)), _median(platne.map(b => b.lng))];
+  const blizke = platne.filter(b => _kmMezi(stred, [b.lat, b.lng]) <= _VYREZ_PRAH_KM);
+  if (!blizke.length) return null;
+  return L.latLngBounds(blizke.map(b => [b.lat, b.lng]));
+}
+
 function _vytvorClusterIkonu(cluster) {
   const n = cluster.getChildCount();
   const size = n < 10 ? 38 : n < 50 ? 46 : 54;
@@ -1045,6 +1078,14 @@ async function inicializujMapu() {
     });
 
     if (clusterGroup) mapInstance.addLayer(clusterGroup);
+
+    // Najeď na oblast, kde budky opravdu jsou (viz _vyrezVetsinyBudek).
+    // fitBounds si zoom dopočítá podle velikosti okna, takže na mobilu vyjde
+    // jinak než na monitoru a vždycky se využije celá plocha mapy.
+    const vyrez = _vyrezVetsinyBudek(budky);
+    if (vyrez && vyrez.isValid()) {
+      mapInstance.fitBounds(vyrez, { padding: [24, 24], animate: false });
+    }
 
     // Nastav počáteční měřítko/tier a překresli podle úrovně zoomu
     _aktualizujZoomVzhled(true);
