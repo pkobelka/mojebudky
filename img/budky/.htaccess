@@ -1,0 +1,13 @@
+# Fotky budek – vynutit přístup.
+# Hosting na /_test/img/budky/*.jpg vracel 403 Zakázáno, přestože stejná
+# fotka o adresář výš (/_test/img/179.jpg) se servírovala bez potíží. Pravidlo
+# v kořenovém .htaccess na to nestačilo, tak ještě pojistka přímo tady.
+# Kdyby 403 přetrvával, nejde o konfiguraci Apache, ale o práva adresáře
+# na disku – ta se přes FTP deploy nastavit nedají a musí se opravit ručně.
+<IfModule mod_authz_core.c>
+  Require all granted
+</IfModule>
+<IfModule !mod_authz_core.c>
+  Order allow,deny
+  Allow from all
+</IfModule>
