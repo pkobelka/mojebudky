@@ -7,6 +7,10 @@ on:
         description: 'Jen nanečisto (nic se nenahraje, jen se vypíše, co by se změnilo)'
         type: boolean
         default: true
+      plne_nahrani:
+        description: 'Nahrát VŠECHNY soubory znovu (když na webu něco chybí)'
+        type: boolean
+        default: false
 
 jobs:
   deploy:
@@ -27,6 +31,13 @@ jobs:
           # Kořen tohoto účtu je hlavní (ostrý) web; _test níže je testovací verze a nesmí se jí sáhat
           server-dir: /
           dry-run: ${{ github.event.inputs.dry_run }}
+          # Deploy porovnává soubory se stavem zapsaným v .ftp-deploy-sync-state.json
+          # NA SERVERU, ne se skutečným obsahem. Když soubor ze serveru zmizí jinak
+          # než deployem, stav o tom neví a nahrávání ho už napořád přeskakuje –
+          # v logu se tváří jako „File content is the same". Zaškrtnuté
+          # „plne_nahrani" použije jiný název stavového souboru, takže se server
+          # tváří jako prázdný a nahraje se všechno. Nic se přitom nemaže.
+          state-name: ${{ github.event.inputs.plne_nahrani == 'true' && format('.ftp-deploy-state-{0}.json', github.run_number) || '.ftp-deploy-sync-state.json' }}
           exclude: |
             **/.git*
             **/.git*/**
