@@ -193,7 +193,7 @@ exports.budkyZpravaNotify = functions.database
     const jeZadostOPristup = z.typ === "pristup";
     const title = jeZadostOPristup ? "🔑 Žádost o přístup správce" : "📨 Nová zpráva z webu";
     const body = jeZadostOPristup
-      ? `${jmeno}${z.telefon ? " · ☎ " + z.telefon : ""}${z.email ? " · " + z.email : ""}${z.budka ? " · budka č. " + z.budka : ""}`
+      ? `${jmeno}${z.telefon ? " · ☎ " + z.telefon : ""}${z.email ? " · " + z.email : ""}${z.obec ? " · " + z.obec : ""}${z.budka ? " · č. " + z.budka : ""}`
       : `${odKoho}: ${text}`;
 
     // tokeny admina – pošli na všechna jeho zařízení s povolenými notifikacemi
