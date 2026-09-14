@@ -11,6 +11,11 @@ on:
       - data/*.csv
       - .github/workflows/**
   workflow_dispatch:
+    inputs:
+      plne_nahrani:
+        description: 'Nahrát VŠECHNY soubory znovu (když na serveru něco chybí)'
+        type: boolean
+        default: false
 
 jobs:
   deploy:
@@ -30,6 +35,13 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           # FTP účet je u WEDOSu už nasměrovaný do _test adresáře, takže kořen účtu ("/") je _test
           server-dir: /
+          # Deploy nahrává jen soubory, které se liší od stavu zapsaného
+          # v .ftp-deploy-sync-state.json NA SERVERU. Když tedy soubor ze
+          # serveru zmizí jinak než deployem, stav o tom neví a nahrání ho
+          # napořád přeskakuje. Zaškrtnuté "plne_nahrani" použije jiný název
+          # stavového souboru, takže se server tváří jako prázdný a nahraje se
+          # všechno. Nic se přitom nemaže.
+          state-name: ${{ inputs.plne_nahrani && format('.ftp-deploy-state-{0}.json', github.run_number) || '.ftp-deploy-sync-state.json' }}
           exclude: |
             **/.git*
             **/.git*/**
