@@ -863,7 +863,8 @@ async function nactiPrisliby(map) {
 let _legendaFiltr = null;   // null | 'osidlena' | 'budka' | 'slib'
 
 window._filtrLegenda = function(druh) {
-  _legendaFiltr = (_legendaFiltr === druh) ? null : druh;
+  // 'vse' filtr vždycky zruší; klik na už zapnutou položku taky
+  _legendaFiltr = (druh === 'vse' || _legendaFiltr === druh) ? null : druh;
   const data = window._budkyDataMap || {};
   const cile = [];
 
@@ -883,10 +884,19 @@ window._filtrLegenda = function(druh) {
     if (vidi && _legendaFiltr === 'slib') cile.push(m.getLatLng());
   });
 
+  // bez filtru svítí „Vše"
   document.querySelectorAll('.legenda-polozka').forEach(el => {
-    el.classList.toggle('legenda-polozka--aktivni', el.dataset.filtr === _legendaFiltr);
+    el.classList.toggle('legenda-polozka--aktivni', el.dataset.filtr === (_legendaFiltr || 'vse'));
   });
 
+  if (!_legendaFiltr) {
+    // zpátky na výchozí pohled přes všechny budky
+    const vyrez = _vyrezVetsinyBudek(budkyData || []);
+    if (vyrez && vyrez.isValid() && mapInstance) {
+      mapInstance.fitBounds(vyrez, { padding: [24, 24] });
+    }
+    return;
+  }
   // Po zapnutí filtru najet na to, co zbylo – jinak by uživatel koukal na
   // prázdnou část mapy, když jsou vyfiltrované značky jinde.
   if (cile.length && mapInstance) {
@@ -900,6 +910,10 @@ function pridejLegend(map) {
     const div = L.DomUtil.create('div', 'mapa-legenda');
     div.innerHTML = `
       <div class="legenda-nadpis">Klikni a uvidíš jen:</div>
+      <button type="button" class="legenda-polozka legenda-polozka--aktivni" data-filtr="vse">
+        <span class="legenda-vse-ikona">✦</span>
+        <span>Všechny budky</span>
+      </button>
       <button type="button" class="legenda-polozka" data-filtr="osidlena">
         ${obydlenoSvg(28)}
         <span>Osídlená budka</span>

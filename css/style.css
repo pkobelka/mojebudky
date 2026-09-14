@@ -427,6 +427,7 @@ html, body {
 .legenda-polozka { display: flex; align-items: center; gap: 9px; width: 100%; background: none; border: 1px solid transparent; border-radius: 7px; padding: 3px 6px; margin: 0; font: inherit; font-size: 0.8rem; color: #3a2008; text-align: left; cursor: pointer; transition: background 0.15s, border-color 0.15s; }
 .legenda-polozka:hover { background: rgba(0,0,0,0.06); }
 .legenda-polozka--aktivni { background: rgba(224,104,32,0.16); border-color: var(--orange); font-weight: 600; }
+.legenda-vse-ikona { width: 18px; text-align: center; color: var(--orange); font-size: 1rem; flex-shrink: 0; margin: 0 7px; }
 .legenda-dot { width: 18px; height: 18px; border-radius: 50%; background: var(--dot-color, #e06820); border: 2.5px solid #fff; box-shadow: 0 0 0 2px #1a1a1a, 0 2px 5px rgba(0,0,0,0.45); display: inline-block; flex-shrink: 0; margin: 0 7px; }
 .budka-marker { display: flex; align-items: flex-end; justify-content: center; transition: transform 0.15s; cursor: pointer; transform: scale(var(--budka-scale, 1)); transform-origin: bottom center; }
 .budka-marker:hover { transform: scale(calc(var(--budka-scale, 1) * 1.25)); }
