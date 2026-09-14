@@ -765,7 +765,7 @@ function _prislibPopupHtml(cislo) {
   // podkladu, pod ní tělo) – bublina mapy je světlá, ne tmavá jako panely webu.
   return `<div class="prislib-popup">
     <div class="prislib-popup-hlavicka">
-      <div class="prislib-popup-nadpis">Tady má vyrůst budka</div>
+      <div class="prislib-popup-nadpis">Tady bude budka</div>
       <div class="prislib-popup-cislo">Žádost č. ${cislo}${kdy ? ' · slíbeno ' + kdy : ''}</div>
     </div>
     <div class="prislib-popup-telo">
