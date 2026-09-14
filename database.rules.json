@@ -149,12 +149,10 @@
       }
     },
     "prisliby": {
-      "_komentar": "Slíbené budky – neveřejná část. Jméno, telefon a poznámka jsou osobní údaje, čte a zapisuje je jen admin. Veřejná mapa bere data z prisliby_mapa.",
       ".read": "auth != null && auth.token.admin === true",
       ".write": "auth != null && auth.token.admin === true"
     },
     "prisliby_mapa": {
-      "_komentar": "Veřejná část slíbených budek pro mapu – jen pořadové číslo, souřadnice a měsíc. Žádné osobní údaje, proto ji smí číst kdokoli.",
       ".read": true,
       ".write": "auth != null && auth.token.admin === true"
     },
