@@ -676,24 +676,22 @@ function _prislibCas(p) {
   return p && p.mesic ? String(p.mesic) : '';
 }
 
+// Po najetí myší schválně jen číslo žádosti – jméno by při ukazování mapy
+// svítilo na obrazovce každému, kdo se dívá. Adminovi přibývá jen stav SMS
+// (nikoho nejmenuje a je vidět, co zbývá vyřídit); jméno a telefon se
+// ukážou až po kliknutí.
 function _prislibTooltipHtml(cislo) {
   const p = prislibyVerejne[cislo] || {};
   const kdy = _prislibCas(p);
-  if (!_jsemAdmin()) {
-    return `<div class="prislib-tip"><strong>📋 Žádost č. ${cislo}</strong>${kdy ? `<br><span class="prislib-tip-kdy">slíbeno ${kdy}</span>` : ''}</div>`;
+  let html = `<div class="prislib-tip"><strong>📋 Žádost č. ${cislo}</strong>`
+           + (kdy ? `<br><span class="prislib-tip-kdy">slíbeno ${kdy}</span>` : '');
+  if (_jsemAdmin()) {
+    const d = prislibyDetail[cislo] || {};
+    html += d.sms
+      ? `<br><span class="prislib-sms-ano">✉ SMS odeslána${typeof d.sms === 'number' ? ' ' + new Date(d.sms).toLocaleDateString('cs-CZ') : ''}</span>`
+      : `<br><span class="prislib-sms-ne">✉ SMS zatím neodeslána</span>`;
   }
-  // Admin vidí i to, co je potřeba k vyřízení – hlavně jestli už šla SMS.
-  const d = prislibyDetail[cislo] || {};
-  const radky = [];
-  if (d.misto)    radky.push(_esc(d.misto));
-  if (d.telefon)  radky.push(_esc(d.telefon));
-  if (d.poznamka) radky.push('„' + _esc(d.poznamka) + '"');
-  const sms = d.sms
-    ? `<span class="prislib-sms-ano">✉ SMS odeslána${typeof d.sms === 'number' ? ' ' + new Date(d.sms).toLocaleDateString('cs-CZ') : ''}</span>`
-    : `<span class="prislib-sms-ne">✉ SMS zatím neodeslána</span>`;
-  return `<div class="prislib-tip"><strong>📋 Žádost č. ${cislo}${d.jmeno ? ' — ' + _esc(d.jmeno) : ''}</strong>`
-       + (radky.length ? `<br><span class="prislib-tip-kdy">${radky.join(' · ')}</span>` : '')
-       + `<br>${sms}</div>`;
+  return html + '</div>';
 }
 
 function _esc(t) {
@@ -703,6 +701,15 @@ function _esc(t) {
 function _prislibPopupHtml(cislo) {
   const p = prislibyVerejne[cislo] || {};
   const kdy = _prislibCas(p);
+  const d = _jsemAdmin() ? (prislibyDetail[cislo] || {}) : null;
+  const detailRadky = d
+    ? `<div class="prislib-popup-detail">
+         ${d.jmeno ? `<strong>${_esc(d.jmeno)}</strong><br>` : ''}
+         ${d.misto ? _esc(d.misto) + '<br>' : ''}
+         ${d.telefon ? '☎ ' + _esc(d.telefon) + '<br>' : ''}
+         ${d.poznamka ? '„' + _esc(d.poznamka) + '"' : ''}
+       </div>`
+    : '';
   const adminCast = _jsemAdmin()
     ? `<div class="prislib-popup-admin">
          <button class="prislib-btn" data-prislib-akce="upravit" data-cislo="${cislo}">✏️ Upravit</button>
@@ -716,6 +723,7 @@ function _prislibPopupHtml(cislo) {
     <p class="prislib-popup-text">Někomu je na tomhle místě budka slíbená.<br>
       Jste to vy a už dlouho se nic neděje? Napište mi — žádostí je hodně a mohl jsem na vás zapomenout.</p>
     <button class="prislib-btn prislib-btn-napsat" data-prislib-akce="napsat">✉ Napsat Petrovi</button>
+    ${detailRadky}
     ${adminCast}
   </div>`;
 }

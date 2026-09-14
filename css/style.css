@@ -443,18 +443,18 @@ html, body {
 /* ── Slíbené budky (místa, kde budka teprve bude) ─────────────────────────
    Schválně nenápadné: šedý průsvitný obrys, aby mezi skutečnými budkami
    nekřičely, ale po najetí myší se zvýrazní. */
-.budka-prislib { filter: grayscale(1) contrast(0.8); opacity: 0.62; transition: opacity 0.15s, filter 0.15s; }
+.budka-prislib { filter: grayscale(1); opacity: 0.8; transition: opacity 0.15s, filter 0.15s; }
 .budka-prislib::after { content: ''; position: absolute; left: 50%; bottom: -4px; width: 26px; height: 9px; transform: translateX(-50%); border: 1.5px dashed #6b6b6b; border-radius: 50%; }
 .leaflet-marker-icon:hover .budka-prislib { opacity: 0.95; filter: grayscale(0.35); }
-.budka-dot-prislib { background: rgba(255,255,255,0.55) !important; border: 2.5px dashed #4a4a4a !important; box-shadow: 0 1px 4px rgba(0,0,0,0.35) !important; opacity: 0.9; }
-.legenda-dot-prislib { background: rgba(255,255,255,0.55); border: 2.5px dashed #4a4a4a; box-shadow: none; }
+.budka-dot-prislib { background: #8b9096 !important; opacity: 1; }
+.legenda-dot-prislib { background: #8b9096; }
 
 .prislib-tip { text-align: left; line-height: 1.45; }
 .prislib-tip-kdy { color: #e8e8e8; font-size: 0.88em; }
 .prislib-sms-ano { color: #7ed957; font-size: 0.88em; }
 .prislib-sms-ne { color: #ffb347; font-size: 0.88em; }
 
-.prislib-popup { text-align: left; }
+.prislib-popup { text-align: left; width: 260px; max-width: calc(100vw - 100px); }
 .prislib-popup-nadpis { font-size: 1.15rem; font-weight: 700; color: var(--accent-gold); margin-bottom: 2px; }
 .prislib-popup-cislo { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 10px; }
 .prislib-popup-text { color: var(--text-light); font-size: 0.95rem; line-height: 1.6; margin: 0 0 12px; }
@@ -462,6 +462,8 @@ html, body {
 .prislib-btn:hover { background: rgba(255,255,255,0.16); }
 .prislib-btn-napsat { background: var(--orange); border-color: var(--orange); color: #fff; font-weight: 600; }
 .prislib-btn-napsat:hover { background: var(--orange-light); }
+.prislib-popup-detail { margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--panel-border); color: var(--text-muted); font-size: 0.9rem; line-height: 1.55; }
+.prislib-popup-detail strong { color: var(--accent-gold); font-size: 1rem; }
 .prislib-popup-admin { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--panel-border); }
 .prislib-popup-admin .prislib-btn { font-size: 0.85rem; padding: 6px 10px; }
 .prislib-btn-smazat:hover { background: rgba(200,60,60,0.3); }
