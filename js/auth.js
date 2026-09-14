@@ -13,6 +13,32 @@ function _initEmailJS() {
   emailjs.init(_EJS_KEY);
   _ejsInit = true;
 }
+// Kopie žádosti o přístup správce na e-mail provozovatele. Push notifikace
+// chodí vždycky (Cloud Function budkyZpravaNotify) a žádost je i v administraci
+// pod „Žádosti" – tohle je jen třetí, nezávislá cesta, aby nezapadla.
+//
+// NEŽ TO ZAČNE FUNGOVAT, je potřeba v EmailJS (dashboard.emailjs.com) založit
+// druhou šablonu a její ID vepsat do _EJS_TEMPLATE_ZADOST níž. Dokud je prázdné,
+// e-mail se přeskočí a nic se nerozbije – žádost pořád dorazí push a do
+// administrace. Šablona má dostat proměnné: {{jmeno}}, {{email}}, {{budka}},
+// {{poznamka}}. Předmět si dej výrazný a hlavně STÁLE STEJNÝ, ať se na něj
+// v Gmailu dá udělat filtr (štítek + hvězdička + nikdy do spamu), např.:
+//   [MojeBudky] Zadost o pristup spravce – {{jmeno}}
+const _EJS_TEMPLATE_ZADOST = '';
+
+async function _poslatZadostMailem(udaje) {
+  if (!_EJS_TEMPLATE_ZADOST) return false;
+  _initEmailJS();
+  if (!window.emailjs) return false;
+  await emailjs.send(_EJS_SERVICE, _EJS_TEMPLATE_ZADOST, {
+    jmeno: udaje.jmeno,
+    email: udaje.email,
+    budka: udaje.budka || '(neuvedeno)',
+    poznamka: udaje.text || '(bez poznámky)'
+  });
+  return true;
+}
+
 async function _poslatVerifikacniKod(loginId, email, jmeno) {
   _initEmailJS();
   const kod = Math.floor(100000 + Math.random() * 900000).toString();
@@ -3508,8 +3534,13 @@ document.addEventListener('DOMContentLoaded', () => {
     try {
       await db.ref('admin_requests/zpravy').push({
         loginId: 'navstevnik', jmeno, email, text: popis,
+        // typ 'pristup' rozliší notifikaci od běžného dotazu návštěvníka
+        typ: 'pristup', budka: budka || '',
         ts: firebase.database.ServerValue.TIMESTAMP, vyrizeno: false
       });
+      // Kopie mailem je jen pojistka navíc – když selže, žádost už je uložená
+      // a push notifikace odešla, takže se to žadateli nehlásí jako chyba.
+      _poslatZadostMailem({ jmeno, email, budka, text }).catch(() => {});
       msg.style.color = '#4caf50';
       msg.textContent = '✓ Žádost odeslána. Ozvu se vám e-mailem a heslo vám pošlu.';
       msg.hidden = false;
