@@ -21,7 +21,7 @@ function _initEmailJS() {
 // druhou šablonu a její ID vepsat do _EJS_TEMPLATE_ZADOST níž. Dokud je prázdné,
 // e-mail se přeskočí a nic se nerozbije – žádost pořád dorazí push a do
 // administrace. Šablona má dostat proměnné: {{jmeno}}, {{email}}, {{budka}},
-// {{poznamka}}. Předmět si dej výrazný a hlavně STÁLE STEJNÝ, ať se na něj
+// {{telefon}}, {{poznamka}}. Předmět si dej výrazný a hlavně STÁLE STEJNÝ, ať se na něj
 // v Gmailu dá udělat filtr (štítek + hvězdička + nikdy do spamu), např.:
 //   [MojeBudky] Zadost o pristup spravce – {{jmeno}}
 const _EJS_TEMPLATE_ZADOST = '';
@@ -33,6 +33,7 @@ async function _poslatZadostMailem(udaje) {
   await emailjs.send(_EJS_SERVICE, _EJS_TEMPLATE_ZADOST, {
     jmeno: udaje.jmeno,
     email: udaje.email,
+    telefon: udaje.telefon || '(neuvedeno)',
     budka: udaje.budka || '(neuvedeno)',
     poznamka: udaje.text || '(bez poznámky)'
   });
@@ -3730,13 +3731,20 @@ document.addEventListener('DOMContentLoaded', () => {
   const pristupOdeslat = document.getElementById('pristupOdeslat');
   pristupOdeslat?.addEventListener('click', async () => {
     const jmeno = document.getElementById('pristupJmeno').value.trim();
+    const telefon = document.getElementById('pristupTelefon').value.trim();
     const email = document.getElementById('pristupEmail').value.trim();
     const budka = document.getElementById('pristupBudka').value.trim();
     const text  = document.getElementById('pristupText').value.trim();
     const msg   = document.getElementById('pristupMsg');
     msg.style.color = '';
-    if (!jmeno || !email) {
-      msg.textContent = '⚠ Vyplňte prosím jméno a e-mail, ať vám mám kam odpovědět.';
+    if (!jmeno || !email || !telefon) {
+      msg.textContent = '⚠ Vyplňte prosím jméno, telefon i e-mail, ať se vám mám jak ozvat.';
+      msg.hidden = false;
+      return;
+    }
+    // Volnější kontrola schválně – ať projde i zápis s předvolbou nebo mezerami.
+    if ((telefon.match(/\d/g) || []).length < 9) {
+      msg.textContent = '⚠ Telefon vypadá neúplně – zkontrolujte ho prosím.';
       msg.hidden = false;
       return;
     }
@@ -3749,23 +3757,26 @@ document.addEventListener('DOMContentLoaded', () => {
     pristupOdeslat.disabled = true;
     const popis = [
       '🔑 ŽÁDOST O PŘÍSTUP SPRÁVCE',
+      'Telefon: ' + telefon,
       budka ? 'Budka č.: ' + budka : 'Budka: neuvedena',
       text ? 'Poznámka: ' + text : ''
     ].filter(Boolean).join('\n');
     try {
       await db.ref('admin_requests/zpravy').push({
         loginId: 'navstevnik', jmeno, email, text: popis,
-        // typ 'pristup' rozliší notifikaci od běžného dotazu návštěvníka
-        typ: 'pristup', budka: budka || '',
+        // typ 'pristup' rozliší notifikaci od běžného dotazu návštěvníka;
+        // telefon je zvlášť, ať je vidět rovnou v push notifikaci
+        typ: 'pristup', telefon, budka: budka || '',
         ts: firebase.database.ServerValue.TIMESTAMP, vyrizeno: false
       });
       // Kopie mailem je jen pojistka navíc – když selže, žádost už je uložená
       // a push notifikace odešla, takže se to žadateli nehlásí jako chyba.
-      _poslatZadostMailem({ jmeno, email, budka, text }).catch(() => {});
+      _poslatZadostMailem({ jmeno, email, telefon, budka, text }).catch(() => {});
       msg.style.color = '#4caf50';
       msg.textContent = '✓ Žádost odeslána. Ozvu se vám e-mailem a heslo vám pošlu.';
       msg.hidden = false;
       document.getElementById('pristupJmeno').value = '';
+      document.getElementById('pristupTelefon').value = '';
       document.getElementById('pristupEmail').value = '';
       document.getElementById('pristupBudka').value = '';
       document.getElementById('pristupText').value = '';
