@@ -468,13 +468,21 @@ function _aktualizujZoomVzhled(force) {
   mapInstance.getContainer().style.setProperty('--budka-scale', _scaleProZoom(zoom).toFixed(3));
   const tier = zoom >= ZOOM_DETAIL ? 'full' : 'dot';
   if (tier === _zoomTier && !force) return;
-  // slíbené budky se přepínají mezi bodem a ikonou stejně jako ty postavené
-  if (typeof window._prekresliPrisliby === 'function') window._prekresliPrisliby();
   _zoomTier = tier;
+  // POŘADÍ JE DŮLEŽITÉ: skutečné budky se překreslí jako první. Když bylo
+  // překreslení slíbených budek první a cokoli v něm spadlo, přerušilo to
+  // celou funkci a budky se při přiblížení nikdy nepřepnuly z bodu na ikonu
+  // (zůstávaly malé). Sliby proto až nakonec a v try/catch – jsou doplněk
+  // a nesmí položit vykreslení mapy.
   Object.keys(markersByCislo).forEach(cislo => {
     const b = (window._budkyDataMap || {})[Number(cislo)];
     if (b) markersByCislo[cislo].setIcon(_ikonaProBudku(b));
   });
+  try {
+    if (typeof window._prekresliPrisliby === 'function') window._prekresliPrisliby();
+  } catch (e) {
+    console.warn('prisliby: překreslení selhalo, budky to neovlivní', e);
+  }
 }
 
 function _stavInfo(b) {
@@ -744,9 +752,14 @@ function _vytvorPrislibMarker(cislo) {
 // jména) a při změně zoomu.
 window._prekresliPrisliby = function() {
   Object.entries(prislibMarkery).forEach(([cislo, m]) => {
-    m.setIcon(_prislibIkona(prislibyVerejne[cislo]));
-    m.setTooltipContent(_prislibTooltipHtml(cislo));
-    m.setPopupContent(_prislibPopupHtml(cislo));
+    // jeden vadný záznam nesmí zastavit překreslení ostatních
+    try {
+      m.setIcon(_prislibIkona(prislibyVerejne[cislo]));
+      m.setTooltipContent(_prislibTooltipHtml(cislo));
+      m.setPopupContent(_prislibPopupHtml(cislo));
+    } catch (e) {
+      console.warn('prisliby: slib č. ' + cislo + ' se nepodařilo překreslit', e);
+    }
   });
 };
 
