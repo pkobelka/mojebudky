@@ -24,6 +24,16 @@ Stránka bez přihlášení, bez osobních údajů, bez editací.
 | Hosting | WEDOS FTP – produkce `mojebudky.cz` (workflow `ftp-deploy-prod.yml`, **ruční**), test `_test` (workflow `ftp-deploy.yml`, automaticky při pushi do `main`) |
 | Svátek | lokální CZ jmenný kalendář v JS |
 
+**Známá vada testu (9/2026):** na `_test` vrací `img/budky/*.jpg` chybu 403
+Zakázáno, takže tam v bublinách nejsou vidět fotky budek. Na ostrém webu je
+stejná složka v pořádku – ověřeno vedle sebe: `_test/img/179.jpg` se
+servíruje, `_test/img/budky/111.jpg` ne, `mojebudky.cz/img/budky/111.jpg` ano.
+Není to tedy příponou ani `.htaccess` (pravidla pro obrázky tam jsou, i přímo
+v té složce), ale právy adresáře na disku, která FTP deploy nenastavuje.
+Opravit jde jedině ručně u WEDOSu (FTP klient nebo souborový manažer, složce
+práva 755 a souborům 644). Vědomě neřešeno – je to vada jen testovací kopie
+a na ostrý web nemá vliv.
+
 > GitHub Pages už se pro tohle repo nebuildí – v historii běhů není jediný
 > „pages build and deployment". Ta adresa tedy servíruje starou verzi a nedá
 > se na ní nic testovat. Testuje se na `_test`.

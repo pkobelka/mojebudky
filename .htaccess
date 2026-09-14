@@ -25,6 +25,21 @@
   </IfModule>
 </FilesMatch>
 
+# Obrázky explicitně povolit.
+# (Hosting na .jpg v podadresáři _test vracel 403 Zakázáno – fotky budek se
+# pak v bublinách vůbec nenačetly, přestože soubory na serveru byly. Poznámka
+# níž tvrdila, že .jpg se servírují samy; to už neplatí, tak radši stejná
+# pojistka jako u videí a skriptů.)
+<FilesMatch "\.(jpg|jpeg|png|gif|svg|webp|ico|avif)$">
+  <IfModule mod_authz_core.c>
+    Require all granted
+  </IfModule>
+  <IfModule !mod_authz_core.c>
+    Order allow,deny
+    Allow from all
+  </IfModule>
+</FilesMatch>
+
 # Skripty, styly a datové soubory explicitně povolit.
 # (Tenhle hosting už u .mp4 vracel 403 Zakázáno — u .js/.json by se stránka
 # tvářila jen jako „nenačtená“, proto raději stejná pojistka.)

@@ -187,8 +187,14 @@ exports.budkyZpravaNotify = functions.database
       : `${jmeno} (návštěvník webu)`;
     let text = String(z.text || "").replace(/\s+/g, " ").trim();
     if (text.length > 140) text = text.slice(0, 138) + "…";
-    const title = "📨 Nová zpráva z webu";
-    const body = `${odKoho}: ${text}`;
+    // Žádost o přístup správce (z přihlašovacího okna) je jiný druh zprávy než
+    // dotaz návštěvníka – čeká se na ni odpověď a heslo, tak ať je v notifikaci
+    // na první pohled poznat a nezapadne mezi ostatní.
+    const jeZadostOPristup = z.typ === "pristup";
+    const title = jeZadostOPristup ? "🔑 Žádost o přístup správce" : "📨 Nová zpráva z webu";
+    const body = jeZadostOPristup
+      ? `${jmeno}${z.telefon ? " · ☎ " + z.telefon : ""}${z.email ? " · " + z.email : ""}${z.obec ? " · " + z.obec : ""}${z.budka ? " · č. " + z.budka : ""}`
+      : `${odKoho}: ${text}`;
 
     // tokeny admina – pošli na všechna jeho zařízení s povolenými notifikacemi
     const tokensSnap = await admin.database().ref("push_tokens").get();
@@ -212,7 +218,7 @@ exports.budkyZpravaNotify = functions.database
         notification: { title, body, icon: MB_ICON, badge: MB_ICON },
         fcmOptions: { link: MB_URL },
       },
-      data: { push_id: pushId, typ: "admin_zprava" },
+      data: { push_id: pushId, typ: jeZadostOPristup ? "admin_zadost_pristup" : "admin_zprava" },
     }));
     const resp = await admin.messaging().sendEach(messages);
 

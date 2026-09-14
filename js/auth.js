@@ -13,6 +13,34 @@ function _initEmailJS() {
   emailjs.init(_EJS_KEY);
   _ejsInit = true;
 }
+// Kopie žádosti o přístup správce na e-mail provozovatele. Push notifikace
+// chodí vždycky (Cloud Function budkyZpravaNotify) a žádost je i v administraci
+// pod „Žádosti" – tohle je jen třetí, nezávislá cesta, aby nezapadla.
+//
+// NEŽ TO ZAČNE FUNGOVAT, je potřeba v EmailJS (dashboard.emailjs.com) založit
+// druhou šablonu a její ID vepsat do _EJS_TEMPLATE_ZADOST níž. Dokud je prázdné,
+// e-mail se přeskočí a nic se nerozbije – žádost pořád dorazí push a do
+// administrace. Šablona má dostat proměnné: {{jmeno}}, {{email}}, {{budka}},
+// {{telefon}}, {{obec}}, {{poznamka}}. Předmět si dej výrazný a hlavně STÁLE STEJNÝ, ať se na něj
+// v Gmailu dá udělat filtr (štítek + hvězdička + nikdy do spamu), např.:
+//   [MojeBudky] Zadost o pristup spravce – {{jmeno}}
+const _EJS_TEMPLATE_ZADOST = '';
+
+async function _poslatZadostMailem(udaje) {
+  if (!_EJS_TEMPLATE_ZADOST) return false;
+  _initEmailJS();
+  if (!window.emailjs) return false;
+  await emailjs.send(_EJS_SERVICE, _EJS_TEMPLATE_ZADOST, {
+    jmeno: udaje.jmeno,
+    email: udaje.email,
+    telefon: udaje.telefon || '(neuvedeno)',
+    obec: udaje.obec || '(neuvedeno)',
+    budka: udaje.budka || '(neuvedeno)',
+    poznamka: udaje.text || '(bez poznámky)'
+  });
+  return true;
+}
+
 async function _poslatVerifikacniKod(loginId, email, jmeno) {
   _initEmailJS();
   const kod = Math.floor(100000 + Math.random() * 900000).toString();
@@ -531,6 +559,8 @@ async function _zobrazAdminPanel(loginId) {
   }
 
   window._aktualniSpravce = { loginId, spravceInfo, budkyList, jeAdmin };
+  // admin uvidí u slíbených budek i jména – mapa si dotáhne neveřejnou větev
+  if (typeof window._nactiPrislibyDetail === 'function') window._nactiPrislibyDetail();
   window._editBudku = _zobrazEditBudky;
   if (!jeAdmin) _sledujZpravySpravce(loginId);
 
@@ -562,7 +592,7 @@ async function _zobrazAdminPanel(loginId) {
     <button class="admin-dropdown-item" data-akce="zmenitHeslo">🔑 Změnit heslo</button>
     ${!jeAdmin ? `<button class="admin-dropdown-item" data-akce="napisAdminovi">✉️ Napsat adminovi</button>
     <button class="admin-dropdown-item" data-akce="zpravyOdAdmina">📨 Zprávy od admina <span class="admin-badge" id="zpravyOdAdminaBadge" hidden>0</span></button>` : ''}
-    ${jeAdmin ? `<div class="admin-dropdown-oddelovac"></div><button class="admin-dropdown-item admin-item-zadosti" data-akce="zadosti">📬 Žádosti správců <span class="admin-badge" id="adminBadge" hidden>0</span></button><button class="admin-dropdown-item" data-akce="prehledSpravcu">👥 Přehled správců</button><button class="admin-dropdown-item" data-akce="nastavitHeslo">🔑 Nastavit heslo správci</button><button class="admin-dropdown-item" data-akce="aktivitaSpravcu">🏆 Aktivita správců</button><button class="admin-dropdown-item" data-akce="pushHistorie">📩 Push notifikace</button><button class="admin-dropdown-item" data-akce="historieNavstev">📊 Online historie</button><button class="admin-dropdown-item" data-akce="navstevnostDenne">📅 Návštěvnost po dnech</button><button class="admin-dropdown-item" data-akce="resetBeta">🧹 Reset beta testu</button>` : ''}
+    ${jeAdmin ? `<div class="admin-dropdown-oddelovac"></div><button class="admin-dropdown-item admin-item-zadosti" data-akce="zadosti">📬 Žádosti správců <span class="admin-badge" id="adminBadge" hidden>0</span></button><button class="admin-dropdown-item" data-akce="prehledSpravcu">👥 Přehled správců</button><button class="admin-dropdown-item" data-akce="nastavitHeslo">🔑 Nastavit heslo správci</button><button class="admin-dropdown-item" data-akce="aktivitaSpravcu">🏆 Aktivita správců</button><button class="admin-dropdown-item" data-akce="prisliby">📋 Slíbené budky</button><button class="admin-dropdown-item" data-akce="pushHistorie">📩 Push notifikace</button><button class="admin-dropdown-item" data-akce="historieNavstev">📊 Online historie</button><button class="admin-dropdown-item" data-akce="navstevnostDenne">📅 Návštěvnost po dnech</button><button class="admin-dropdown-item" data-akce="resetBeta">🧹 Reset beta testu</button>` : ''}
     <div class="admin-dropdown-oddelovac"></div>
     <button class="admin-dropdown-item odhlasit" data-akce="odhlasit">🚪 Odhlásit se</button>
   `;
@@ -600,6 +630,8 @@ async function _zobrazAdminPanel(loginId) {
       _spravciInfoCache = null;
       if (typeof window._presenceSetAdmin === 'function') window._presenceSetAdmin(false);
       window._aktualniSpravce = null;
+      // s odhlášením musí z mapy zmizet i jména u slíbených budek
+      if (typeof window._nactiPrislibyDetail === 'function') window._nactiPrislibyDetail();
       if (_zpravySpravceRef) { _zpravySpravceRef.off(); _zpravySpravceRef = null; }
       if (_zadostiRef) { _zadostiRef.off(); _zadostiRef = null; }
       _navBadgePocty.zadosti = 0; _navBadgePocty.zpravy = 0;
@@ -615,6 +647,12 @@ async function _zobrazAdminPanel(loginId) {
     if (akce === 'karta' || akce === 'editSpravce') {
       _zobrazProfilSpravce(loginId, spravceInfo, budkaText);
       dropdown.classList.remove('open');
+      return;
+    }
+
+    if (akce === 'prisliby') {
+      dropdown.classList.remove('open');
+      _zobrazPrisliby();
       return;
     }
 
@@ -3261,6 +3299,313 @@ function _zobrazPrani(typ, osloveni) {
   });
 }
 
+// ═══ SLÍBENÉ BUDKY – ADMINISTRACE ════════════════════════════════════════
+// Evidence míst, kde je budka slíbená, ale ještě nestojí. Ukládá se do dvou
+// uzlů naráz: prisliby (jméno, telefon, poznámka – čte jen admin) a
+// prisliby_mapa (číslo, souřadnice, měsíc – veřejné pro mapu). Nikdy nezapisuj
+// jméno do prisliby_mapa, ten uzel je čitelný pro kohokoli bez přihlášení.
+let _prislibKlikRezim = false;
+
+function _prislibDalsiCislo(data) {
+  const cisla = Object.keys(data || {}).map(Number).filter(n => !isNaN(n));
+  return cisla.length ? Math.max(...cisla) + 1 : 1;
+}
+
+function _prislibMesicDnes() {
+  const d = new Date();
+  return (d.getMonth() + 1) + '/' + d.getFullYear();
+}
+
+async function _zobrazPrisliby() {
+  const db = _getFirebaseDB();
+  if (!db) return _zobrazToast('⚠ Databáze není dostupná');
+  document.getElementById('modalPrisliby')?.remove();
+  const snap = await db.ref('prisliby').once('value');
+  const data = snap.val() || {};
+  const polozky = Object.values(data).sort((a, b) => (a.cislo || 0) - (b.cislo || 0));
+
+  const radky = polozky.length ? polozky.map(p => {
+    const sms = p.sms
+      ? `<span style="color:#7ed957">✉ SMS ${typeof p.sms === 'number' ? new Date(p.sms).toLocaleDateString('cs-CZ') : 'odeslána'}</span>`
+      : `<span style="color:#ffb347">✉ SMS neodeslána</span>`;
+    return `<div class="zadost-item" data-cislo="${p.cislo}">
+      <strong>č. ${p.cislo} — ${_htmlEsc(p.jmeno || '(bez jména)')}</strong>
+      ${p.misto ? ` <span class="zadost-budka">📍 ${_htmlEsc(p.misto)}</span>` : ''}
+      ${p.telefon ? ` <span class="zadost-idlabel">${_htmlEsc(p.telefon)}</span>` : ''}
+      <span class="zadost-cas">${p.mesic || ''}</span><br>
+      ${p.poznamka ? `<span class="zadost-detail">„${_htmlEsc(p.poznamka)}"</span><br>` : ''}
+      ${sms}
+      <div class="zadost-btn-row">
+        <button class="zadost-btn-ok" data-pakce="ukaz" data-cislo="${p.cislo}">🗺 Ukázat v mapě</button>
+        <button class="zadost-btn-ok" data-pakce="upravit" data-cislo="${p.cislo}">✏️ Upravit</button>
+        ${!p.sms ? `<button class="zadost-btn-ok" data-pakce="sms" data-cislo="${p.cislo}">✉ SMS odeslána</button>` : ''}
+      </div>
+    </div>`;
+  }).join('') : '<div style="color:var(--text-muted);padding:16px">Zatím žádná slíbená budka. Přidej první tlačítkem nahoře.</div>';
+
+  const modal = document.createElement('div');
+  modal.id = 'modalPrisliby';
+  modal.className = 'modal-overlay';
+  modal.innerHTML = `<div class="modal-box profil-box">
+    <button class="modal-zavrit" id="prislibyZavrit" aria-label="Zavřít">×</button>
+    <div class="profil-header"><div class="profil-header-text">
+      <div class="profil-nadpis">📋 Slíbené budky (${polozky.length})</div>
+    </div></div>
+    <div class="profil-form">
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="zadost-btn-ok" id="prislibPridat">➕ Přidat slib — klikem do mapy</button>
+        <button class="zadost-btn-ok" id="prislibImport">⬆ Hromadný import</button>
+      </div>
+      ${radky}
+    </div>
+  </div>`;
+  document.body.appendChild(modal);
+
+  modal.querySelector('#prislibyZavrit').addEventListener('click', () => modal.remove());
+  modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
+  modal.querySelector('#prislibPridat').addEventListener('click', () => {
+    modal.remove();
+    _prislibZapniKlikRezim();
+  });
+  modal.querySelector('#prislibImport').addEventListener('click', () => {
+    modal.remove();
+    _prislibImport();
+  });
+  modal.querySelectorAll('[data-pakce]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const cislo = btn.dataset.cislo;
+      const akce = btn.dataset.pakce;
+      if (akce === 'ukaz') {
+        modal.remove();
+        const p = data[cislo];
+        if (p && window._mapInstance) window._mapInstance.setView([p.lat, p.lng], 15);
+        document.querySelector('.map-wrapper')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        return;
+      }
+      if (akce === 'sms') { _prislibOznacSms(cislo); modal.remove(); return; }
+      if (akce === 'upravit') { modal.remove(); _prislibFormular(data[cislo]); }
+    });
+  });
+}
+
+function _htmlEsc(t) {
+  return String(t == null ? '' : t).replace(/[<>&"]/g, z => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;' }[z]));
+}
+
+// Přidání slibu: admin klikne přímo do mapy na místo, kde budka bude.
+function _prislibZapniKlikRezim() {
+  const map = window._mapInstance;
+  if (!map) return _zobrazToast('⚠ Mapa ještě není načtená');
+  _prislibKlikRezim = true;
+  document.querySelector('.map-wrapper')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  _zobrazToast('🗺 Klikni do mapy na místo, kde bude budka (Esc zruší)', 6000);
+  map.getContainer().style.cursor = 'crosshair';
+
+  function konec() {
+    _prislibKlikRezim = false;
+    map.getContainer().style.cursor = '';
+    map.off('click', naKlik);
+    document.removeEventListener('keydown', naEsc);
+  }
+  function naKlik(e) {
+    konec();
+    _prislibFormular({ lat: +e.latlng.lat.toFixed(5), lng: +e.latlng.lng.toFixed(5) });
+  }
+  function naEsc(e) { if (e.key === 'Escape') { konec(); _zobrazToast('Přidávání zrušeno'); } }
+  map.on('click', naKlik);
+  document.addEventListener('keydown', naEsc);
+}
+
+async function _prislibFormular(p) {
+  const db = _getFirebaseDB();
+  if (!db) return _zobrazToast('⚠ Databáze není dostupná');
+  const jeNovy = p.cislo == null;
+  let cislo = p.cislo;
+  if (jeNovy) {
+    const snap = await db.ref('prisliby').once('value');
+    cislo = _prislibDalsiCislo(snap.val() || {});
+  }
+  document.getElementById('modalPrislibForm')?.remove();
+  const modal = document.createElement('div');
+  modal.id = 'modalPrislibForm';
+  modal.className = 'modal-overlay';
+  modal.innerHTML = `<div class="modal-box profil-box" style="max-width:520px">
+    <button class="modal-zavrit" id="pfZavrit" aria-label="Zavřít">×</button>
+    <div class="profil-header"><div class="profil-header-text">
+      <div class="profil-nadpis">${jeNovy ? '➕ Nový slib' : '✏️ Žádost č. ' + cislo}</div>
+    </div></div>
+    <div class="profil-form">
+      <div style="color:var(--text-muted);font-size:0.88rem">Žádost č. <strong>${cislo}</strong> · 📍 ${p.lat}, ${p.lng}<br>
+        Jméno, telefon a poznámka se ukazují <strong>jen tobě po přihlášení</strong>. Veřejně je vidět pouze číslo žádosti.</div>
+      <input class="profil-input" id="pfMisto" maxlength="80" placeholder="Místo (např. Vlašim)" value="${_htmlEsc(p.misto || '')}">
+      <input class="profil-input" id="pfJmeno" maxlength="60" placeholder="Jméno" value="${_htmlEsc(p.jmeno || '')}">
+      <input class="profil-input" id="pfTelefon" maxlength="30" placeholder="Telefon (nepovinné)" value="${_htmlEsc(p.telefon || '')}">
+      <input class="profil-input" id="pfMesic" maxlength="10" placeholder="Slíbeno (např. 5/2026)" value="${_htmlEsc(p.mesic || _prislibMesicDnes())}">
+      <textarea class="profil-input" id="pfPoznamka" rows="2" maxlength="300" placeholder="Poznámka (nepovinné)">${_htmlEsc(p.poznamka || '')}</textarea>
+      <label class="zobrazit-heslo-label"><input type="checkbox" id="pfSms" ${p.sms ? 'checked' : ''}> SMS už odeslána</label>
+      <button class="zadost-btn-ok" id="pfUlozit">💾 Uložit</button>
+      ${jeNovy ? '' : '<button class="zadost-btn-ok" id="pfSmazat" style="background:rgba(200,60,60,0.25)">🗑 Smazat slib</button>'}
+      <div id="pfMsg" class="login-error" hidden></div>
+    </div>
+  </div>`;
+  document.body.appendChild(modal);
+  modal.querySelector('#pfZavrit').addEventListener('click', () => modal.remove());
+  setTimeout(() => document.getElementById('pfJmeno')?.focus(), 60);
+
+  modal.querySelector('#pfUlozit').addEventListener('click', async () => {
+    const jmeno = document.getElementById('pfJmeno').value.trim();
+    const msg = document.getElementById('pfMsg');
+    if (!jmeno) { msg.textContent = '⚠ Vyplň aspoň jméno, ať víš, komu jsi slíbil.'; msg.hidden = false; return; }
+    const mesic = document.getElementById('pfMesic').value.trim();
+    const sms = document.getElementById('pfSms').checked;
+    const puvodniSms = p.sms;
+    const detail = {
+      cislo, lat: p.lat, lng: p.lng,
+      misto: document.getElementById('pfMisto').value.trim(),
+      jmeno,
+      telefon: document.getElementById('pfTelefon').value.trim(),
+      poznamka: document.getElementById('pfPoznamka').value.trim(),
+      mesic,
+      // u už odeslané SMS se datum nepřepisuje, ať zůstane to původní
+      sms: sms ? (typeof puvodniSms === 'number' ? puvodniSms : Date.now()) : false,
+      ts: p.ts || Date.now()
+    };
+    try {
+      await db.ref().update({
+        [`prisliby/${cislo}`]: detail,
+        [`prisliby_mapa/${cislo}`]: { cislo, lat: p.lat, lng: p.lng, mesic }
+      });
+      modal.remove();
+      _zobrazToast('✓ Slib uložen — je v mapě');
+      if (typeof window._nactiPrislibyDetail === 'function') window._nactiPrislibyDetail();
+    } catch (e) {
+      msg.textContent = '⚠ Uložení selhalo: ' + (e && e.message ? e.message : 'neznámá chyba');
+      msg.hidden = false;
+    }
+  });
+
+  modal.querySelector('#pfSmazat')?.addEventListener('click', async () => {
+    if (!confirm(`Opravdu smazat žádost č. ${cislo} (${p.jmeno || ''})?`)) return;
+    await db.ref().update({ [`prisliby/${cislo}`]: null, [`prisliby_mapa/${cislo}`]: null });
+    modal.remove();
+    _zobrazToast('🗑 Slib smazán');
+  });
+}
+
+// Hromadný import slibů – první dávka se přenáší z pracovní mapy v Google
+// My Maps, kde je bodů najednou hodně. Zapisuje prohlížeč přihlášeného admina,
+// takže jména nikam jinam nejdou: ani do repozitáře, ani do logů GitHub Actions.
+function _prislibImport() {
+  document.getElementById('modalPrislibImport')?.remove();
+  const modal = document.createElement('div');
+  modal.id = 'modalPrislibImport';
+  modal.className = 'modal-overlay';
+  modal.innerHTML = `<div class="modal-box profil-box" style="max-width:620px">
+    <button class="modal-zavrit" id="piZavrit" aria-label="Zavřít">×</button>
+    <div class="profil-header"><div class="profil-header-text">
+      <div class="profil-nadpis">⬆ Hromadný import slibů</div>
+    </div></div>
+    <div class="profil-form">
+      <div style="color:var(--text-muted);font-size:0.88rem;line-height:1.6">
+        Vlož seznam ve formátu JSON. Povinné je <strong>jmeno</strong>, <strong>lat</strong> a <strong>lng</strong>;
+        <em>cislo</em> se doplní samo, pokud chybí. Záznam s číslem, které už existuje, se přepíše.<br>
+        <code style="font-size:0.8rem">[{"misto":"Vlašim","jmeno":"Milan Tůma","lat":49.70632,"lng":14.89881}]</code>
+      </div>
+      <textarea class="profil-input" id="piText" rows="10" placeholder='[ ... ]' style="font-family:monospace;font-size:0.85rem"></textarea>
+      <button class="zadost-btn-ok" id="piNahrat">⬆ Nahrát do mapy</button>
+      <div id="piMsg" class="login-error" hidden></div>
+    </div>
+  </div>`;
+  document.body.appendChild(modal);
+  modal.querySelector('#piZavrit').addEventListener('click', () => modal.remove());
+
+  modal.querySelector('#piNahrat').addEventListener('click', async () => {
+    const msg = document.getElementById('piMsg');
+    const btn = document.getElementById('piNahrat');
+    msg.style.color = '';
+    let polozky;
+    try {
+      polozky = JSON.parse(document.getElementById('piText').value);
+    } catch (e) {
+      msg.textContent = '⚠ Tohle není platný JSON: ' + e.message;
+      msg.hidden = false;
+      return;
+    }
+    if (!Array.isArray(polozky) || !polozky.length) {
+      msg.textContent = '⚠ Čekám seznam v hranatých závorkách, a ne prázdný.';
+      msg.hidden = false;
+      return;
+    }
+    // vstup zkontrolovat dřív, než se sáhne na databázi – chyba v seznamu
+    // se tak ohlásí přesně, ne jako "databáze není dostupná"
+    const spatny = polozky.findIndex(p => !p || !p.jmeno || p.lat == null || p.lng == null);
+    if (spatny !== -1) {
+      msg.textContent = `⚠ ${spatny + 1}. záznam nemá jméno nebo souřadnice.`;
+      msg.hidden = false;
+      return;
+    }
+    const db = _getFirebaseDB();
+    if (!db) { msg.textContent = '⚠ Databáze není dostupná'; msg.hidden = false; return; }
+    btn.disabled = true;
+    try {
+      const snap = await db.ref('prisliby').once('value');
+      const stavajici = snap.val() || {};
+      let dalsi = _prislibDalsiCislo(stavajici);
+      const updates = {};
+      let novych = 0, prepsanych = 0;
+      for (const p of polozky) {
+        if (!p || !p.jmeno || p.lat == null || p.lng == null) {
+          throw new Error('záznam bez jména nebo souřadnic: ' + JSON.stringify(p));
+        }
+        const cislo = p.cislo != null ? Number(p.cislo) : dalsi++;
+        if (stavajici[cislo]) prepsanych++; else novych++;
+        const lat = Number(p.lat), lng = Number(p.lng);
+        const mesic = p.mesic || '';
+        updates[`prisliby/${cislo}`] = {
+          cislo, lat, lng, misto: p.misto || '', jmeno: p.jmeno,
+          telefon: p.telefon || '', poznamka: p.poznamka || '', mesic,
+          sms: p.sms || false, ts: p.ts || Date.now()
+        };
+        // veřejná větev schválně bez jména a telefonu
+        updates[`prisliby_mapa/${cislo}`] = { cislo, lat, lng, mesic };
+      }
+      await db.ref().update(updates);
+      modal.remove();
+      _zobrazToast(`✓ Nahráno: ${novych} nových, ${prepsanych} přepsaných`, 5000);
+      if (typeof window._nactiPrislibyDetail === 'function') window._nactiPrislibyDetail();
+    } catch (e) {
+      msg.textContent = '⚠ ' + (e && e.message ? e.message : 'nahrání selhalo');
+      msg.hidden = false;
+      btn.disabled = false;
+    }
+  });
+}
+
+async function _prislibOznacSms(cislo) {
+  const db = _getFirebaseDB();
+  if (!db) return;
+  await db.ref(`prisliby/${cislo}/sms`).set(Date.now());
+  _zobrazToast('✓ Označeno jako odeslané');
+  if (typeof window._nactiPrislibyDetail === 'function') window._nactiPrislibyDetail();
+}
+
+// Tlačítka v bublině slíbené budky na mapě (volá mapa.js)
+window._prislibAdminAkce = async function(akce, cislo) {
+  const db = _getFirebaseDB();
+  if (!db) return;
+  if (akce === 'sms') return _prislibOznacSms(cislo);
+  const snap = await db.ref(`prisliby/${cislo}`).once('value');
+  const p = snap.val();
+  if (!p) return _zobrazToast('⚠ Záznam se nenašel');
+  if (akce === 'upravit') { window._mapInstance?.closePopup(); return _prislibFormular(p); }
+  if (akce === 'smazat') {
+    if (!confirm(`Opravdu smazat žádost č. ${cislo} (${p.jmeno || ''})?`)) return;
+    await db.ref().update({ [`prisliby/${cislo}`]: null, [`prisliby_mapa/${cislo}`]: null });
+    window._mapInstance?.closePopup();
+    _zobrazToast('🗑 Slib smazán');
+  }
+};
+
 function _zobrazToast(text, ms, isHtml) {
   const existujici = document.getElementById('adminToast');
   if (existujici) existujici.remove();
@@ -3314,6 +3659,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (!btnPrihlasit || !modal) return;
 
+  // Modal má dva panely: vysvětlení + žádost o přístup (pristupInfo) a vlastní
+  // přihlášení (formWrap). Od hromadného zneplatnění hesel v 8/2026 se většině
+  // lidí staré heslo neověří, takže se jako první ukazuje vysvětlení – jinak by
+  // dokola zkoušeli heslo, které už nikdy nemůže projít. Kdo má zapamatované ID
+  // (tedy se už po zneplatnění úspěšně přihlásil), jde rovnou na formulář.
+  const pristupInfo = document.getElementById('loginPristupInfo');
+  const formWrap    = document.getElementById('loginFormWrap');
+
+  function ukazPanel(ktery) {
+    if (!pristupInfo || !formWrap) return;
+    pristupInfo.hidden = ktery !== 'pristup';
+    formWrap.hidden    = ktery !== 'formular';
+  }
+
   function otevritModal() {
     modal.hidden = false;
     const savedId = localStorage.getItem('mb_saved_loginId') || '';
@@ -3324,7 +3683,10 @@ document.addEventListener('DOMContentLoaded', () => {
     loginBtn.disabled = false;
     const cbZapamatovat = document.getElementById('cbZapamatovat');
     if (cbZapamatovat) cbZapamatovat.checked = !!savedId;
-    setTimeout(() => (savedId ? inputHeslo : inputId).focus(), 50);
+    const pristupMsg = document.getElementById('pristupMsg');
+    if (pristupMsg) pristupMsg.hidden = true;
+    ukazPanel(savedId ? 'formular' : 'pristup');
+    if (savedId) setTimeout(() => inputHeslo.focus(), 50);
   }
 
   function zavritModal() {
@@ -3386,6 +3748,18 @@ document.addEventListener('DOMContentLoaded', () => {
         if (vysledek.mustChange) {
           setTimeout(() => _zobrazZmenitHeslo(id, true), 600);
         }
+      } else if (vysledek.err === 'account-disabled') {
+        // Účet existuje, ale heslo mu bylo hromadně zneplatněno – zkoušet dál
+        // nemá smysl, tak rovnou ukážeme vysvětlení a žádost o přístup.
+        inputHeslo.value = '';
+        ukazPanel('pristup');
+        const pristupMsg = document.getElementById('pristupMsg');
+        if (pristupMsg) {
+          pristupMsg.style.color = '';
+          pristupMsg.textContent = 'ℹ Tenhle přístup je zneplatněný. Požádejte o nové heslo níže.';
+          pristupMsg.hidden = false;
+        }
+        document.getElementById('pristupJmeno')?.focus();
       } else {
         loginError.textContent = _mbChybaText(vysledek.err);
         loginError.hidden = false;
@@ -3436,6 +3810,84 @@ document.addEventListener('DOMContentLoaded', () => {
   if (btnOko) btnOko.addEventListener('click', () => toggleHeslo(inputHeslo.type === 'password'));
   if (cbZobrazit) cbZobrazit.addEventListener('change', () => toggleHeslo(cbZobrazit.checked));
 
+  // Přepínání mezi vysvětlením a přihlašovacím formulářem
+  document.getElementById('linkMamHeslo')?.addEventListener('click', e => {
+    e.preventDefault();
+    ukazPanel('formular');
+    setTimeout(() => (inputId.value ? inputHeslo : inputId).focus(), 50);
+  });
+  document.getElementById('linkChciPristup')?.addEventListener('click', e => {
+    e.preventDefault();
+    loginError.hidden = true;
+    ukazPanel('pristup');
+    setTimeout(() => document.getElementById('pristupJmeno')?.focus(), 50);
+  });
+
+  // Žádost o přístup správce – padá do stejné schránky jako zprávy návštěvníků
+  // (administrace → Žádosti → ✉️ Zprávy), takže se na ni nezapomene.
+  const pristupOdeslat = document.getElementById('pristupOdeslat');
+  pristupOdeslat?.addEventListener('click', async () => {
+    const jmeno = document.getElementById('pristupJmeno').value.trim();
+    const telefon = document.getElementById('pristupTelefon').value.trim();
+    const email = document.getElementById('pristupEmail').value.trim();
+    const obec  = document.getElementById('pristupObec').value.trim();
+    const budka = document.getElementById('pristupBudka').value.trim();
+    const text  = document.getElementById('pristupText').value.trim();
+    const msg   = document.getElementById('pristupMsg');
+    msg.style.color = '';
+    if (!jmeno || !email || !telefon || !obec) {
+      msg.textContent = '⚠ Vyplňte prosím jméno, telefon, e-mail a obec.';
+      msg.hidden = false;
+      return;
+    }
+    // Volnější kontrola schválně – ať projde i zápis s předvolbou nebo mezerami.
+    if ((telefon.match(/\d/g) || []).length < 9) {
+      msg.textContent = '⚠ Telefon vypadá neúplně – zkontrolujte ho prosím.';
+      msg.hidden = false;
+      return;
+    }
+    const db = _getFirebaseDB();
+    if (!db) {
+      msg.textContent = '⚠ Odeslání se nezdařilo — napište prosím na p.kobelka@gmail.com';
+      msg.hidden = false;
+      return;
+    }
+    pristupOdeslat.disabled = true;
+    const popis = [
+      '🔑 ŽÁDOST O PŘÍSTUP SPRÁVCE',
+      'Telefon: ' + telefon,
+      'Obec: ' + obec,
+      budka ? 'Budka/žádost č.: ' + budka : '',
+      text ? 'Poznámka: ' + text : ''
+    ].filter(Boolean).join('\n');
+    try {
+      await db.ref('admin_requests/zpravy').push({
+        loginId: 'navstevnik', jmeno, email, text: popis,
+        // typ 'pristup' rozliší notifikaci od běžného dotazu návštěvníka;
+        // telefon je zvlášť, ať je vidět rovnou v push notifikaci
+        typ: 'pristup', telefon, obec, budka: budka || '',
+        ts: firebase.database.ServerValue.TIMESTAMP, vyrizeno: false
+      });
+      // Kopie mailem je jen pojistka navíc – když selže, žádost už je uložená
+      // a push notifikace odešla, takže se to žadateli nehlásí jako chyba.
+      _poslatZadostMailem({ jmeno, email, telefon, obec, budka, text }).catch(() => {});
+      msg.style.color = '#4caf50';
+      msg.textContent = '✓ Žádost odeslána. Ozvu se vám e-mailem a heslo vám pošlu.';
+      msg.hidden = false;
+      document.getElementById('pristupJmeno').value = '';
+      document.getElementById('pristupTelefon').value = '';
+      document.getElementById('pristupEmail').value = '';
+      document.getElementById('pristupObec').value = '';
+      document.getElementById('pristupBudka').value = '';
+      document.getElementById('pristupText').value = '';
+      setTimeout(() => { zavritModal(); msg.hidden = true; pristupOdeslat.disabled = false; }, 3000);
+    } catch {
+      msg.textContent = '⚠ Odeslání se nezdařilo — napište prosím na p.kobelka@gmail.com';
+      msg.hidden = false;
+      pristupOdeslat.disabled = false;
+    }
+  });
+
   const linkZapomnel = document.getElementById('linkZapomnel');
   const zapomnelMsg  = document.getElementById('zapomnel-msg');
   if (linkZapomnel && zapomnelMsg) {
@@ -3466,6 +3918,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (btnNapsat && modalKontakt) {
     btnNapsat.addEventListener('click', () => { modalKontakt.hidden = false; setTimeout(() => document.getElementById('kontaktJmeno')?.focus(), 80); });
+    // tlačítko z bloku o slíbených budkách otevírá stejný formulář
+    document.getElementById('btnSlibeneNapsat')?.addEventListener('click', () => { modalKontakt.hidden = false; setTimeout(() => document.getElementById('kontaktJmeno')?.focus(), 80); });
     kontaktZavrit?.addEventListener('click', () => { modalKontakt.hidden = true; });
     modalKontakt.addEventListener('click', e => { if (e.target === modalKontakt) modalKontakt.hidden = true; });
 

@@ -148,6 +148,14 @@
         }
       }
     },
+    "prisliby": {
+      ".read": "auth != null && auth.token.admin === true",
+      ".write": "auth != null && auth.token.admin === true"
+    },
+    "prisliby_mapa": {
+      ".read": true,
+      ".write": "auth != null && auth.token.admin === true"
+    },
     "spravci": {
       "$loginId": {
         ".read": "auth != null && (auth.token.loginId === $loginId || auth.token.admin === true)",

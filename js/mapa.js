@@ -455,7 +455,10 @@ function _ikonaProBudku(b) {
 function _scaleProZoom(zoom) {
   if (zoom >= ZOOM_DETAIL) {
     const t = Math.max(0, Math.min(1, (zoom - ZOOM_DETAIL) / 2));
-    return 0.88 + t * 0.12;
+    // Ikony budek byly po přiblížení mapy malé, proto o pětinu větší
+    // než původních 0,88–1,0. Body na malém zoomu zůstávají beze změny,
+    // tam se o velikost nikdo nestěžoval.
+    return (0.88 + t * 0.12) * 1.2;
   }
   const t = Math.max(0, Math.min(1, (zoom - 6) / (ZOOM_DETAIL - 6)));
   return 0.9 + t * 0.35;
@@ -469,10 +472,20 @@ function _aktualizujZoomVzhled(force) {
   const tier = zoom >= ZOOM_DETAIL ? 'full' : 'dot';
   if (tier === _zoomTier && !force) return;
   _zoomTier = tier;
+  // POŘADÍ JE DŮLEŽITÉ: skutečné budky se překreslí jako první. Když bylo
+  // překreslení slíbených budek první a cokoli v něm spadlo, přerušilo to
+  // celou funkci a budky se při přiblížení nikdy nepřepnuly z bodu na ikonu
+  // (zůstávaly malé). Sliby proto až nakonec a v try/catch – jsou doplněk
+  // a nesmí položit vykreslení mapy.
   Object.keys(markersByCislo).forEach(cislo => {
     const b = (window._budkyDataMap || {})[Number(cislo)];
     if (b) markersByCislo[cislo].setIcon(_ikonaProBudku(b));
   });
+  try {
+    if (typeof window._prekresliPrisliby === 'function') window._prekresliPrisliby();
+  } catch (e) {
+    console.warn('prisliby: překreslení selhalo, budky to neovlivní', e);
+  }
 }
 
 function _stavInfo(b) {
@@ -639,6 +652,173 @@ function formatPopup(b) {
   </div>`;
 }
 
+// ═══ SLÍBENÉ BUDKY ════════════════════════════════════════════════════════
+// Místa, kde budka teprve bude. Veřejně se o nich ví jen pořadové číslo
+// žádosti, souřadnice a měsíc (uzel prisliby_mapa, čitelný pro kohokoli).
+// Jméno, telefon a poznámka jsou osobní údaje – leží v uzlu prisliby, který
+// podle pravidel databáze přečte jedině přihlášený admin, a ukazují se proto
+// jen jemu. Pozor na názvosloví: "slib" v tomhle projektu znamená slib správce
+// při prvním přihlášení (mb_slib_*), proto se tyhle body v kódu jmenují
+// prisliby.
+const prislibMarkery = {};
+let prislibyVerejne = {};
+let prislibyDetail  = {};
+let prislibyVrstva  = null;
+
+function _jsemAdmin() {
+  return !!(window._aktualniSpravce && window._aktualniSpravce.jeAdmin);
+}
+
+function _prislibIkona(p) {
+  const zoom = mapInstance ? mapInstance.getZoom() : 6;
+  if (zoom >= ZOOM_DETAIL) {
+    return L.divIcon({
+      html: `<div class="budka-marker budka-prislib"><img src="img/logo.svg" width="32" height="44" alt=""></div>`,
+      iconSize: [32, 44], iconAnchor: [16, 44], popupAnchor: [0, -46], className: ''
+    });
+  }
+  return L.divIcon({
+    html: `<div class="budka-dot budka-dot-prislib"></div>`,
+    iconSize: [18, 18], iconAnchor: [9, 9], popupAnchor: [0, -10], className: ''
+  });
+}
+
+function _prislibCas(p) {
+  return p && p.mesic ? String(p.mesic) : '';
+}
+
+// Po najetí myší schválně jen číslo žádosti – jméno by při ukazování mapy
+// svítilo na obrazovce každému, kdo se dívá. Adminovi přibývá jen stav SMS
+// (nikoho nejmenuje a je vidět, co zbývá vyřídit); jméno a telefon se
+// ukážou až po kliknutí.
+function _prislibTooltipHtml(cislo) {
+  const p = prislibyVerejne[cislo] || {};
+  const kdy = _prislibCas(p);
+  let html = `<div class="prislib-tip"><strong>📋 Žádost č. ${cislo}</strong>`
+           + (kdy ? `<br><span class="prislib-tip-kdy">slíbeno ${kdy}</span>` : '');
+  if (_jsemAdmin()) {
+    const d = prislibyDetail[cislo] || {};
+    html += d.sms
+      ? `<br><span class="prislib-sms-ano">✉ SMS odeslána${typeof d.sms === 'number' ? ' ' + new Date(d.sms).toLocaleDateString('cs-CZ') : ''}</span>`
+      : `<br><span class="prislib-sms-ne">✉ SMS zatím neodeslána</span>`;
+  }
+  return html + '</div>';
+}
+
+function _esc(t) {
+  return String(t == null ? '' : t).replace(/[<>&"]/g, z => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;' }[z]));
+}
+
+function _prislibPopupHtml(cislo) {
+  const p = prislibyVerejne[cislo] || {};
+  const kdy = _prislibCas(p);
+  const d = _jsemAdmin() ? (prislibyDetail[cislo] || {}) : null;
+  const detailRadky = d
+    ? `<div class="prislib-popup-detail">
+         ${d.jmeno ? `<strong>${_esc(d.jmeno)}</strong><br>` : ''}
+         ${d.misto ? _esc(d.misto) + '<br>' : ''}
+         ${d.telefon ? '☎ ' + _esc(d.telefon) + '<br>' : ''}
+         ${d.poznamka ? '„' + _esc(d.poznamka) + '"' : ''}
+       </div>`
+    : '';
+  const adminCast = _jsemAdmin()
+    ? `<div class="prislib-popup-admin">
+         <button class="prislib-btn" data-prislib-akce="upravit" data-cislo="${cislo}">✏️ Upravit</button>
+         <button class="prislib-btn" data-prislib-akce="sms" data-cislo="${cislo}">✉ SMS odeslána</button>
+         <button class="prislib-btn prislib-btn-smazat" data-prislib-akce="smazat" data-cislo="${cislo}">🗑 Smazat</button>
+       </div>`
+    : '';
+  return `<div class="prislib-popup">
+    <div class="prislib-popup-nadpis">📋 Tady má vyrůst budka</div>
+    <div class="prislib-popup-cislo">Žádost č. ${cislo}${kdy ? ' · slíbeno ' + kdy : ''}</div>
+    <p class="prislib-popup-text">Někomu je na tomhle místě budka slíbená.<br>
+      Jste to vy a už dlouho se nic neděje? Napište mi — žádostí je hodně a mohl jsem na vás zapomenout.</p>
+    <button class="prislib-btn prislib-btn-napsat" data-prislib-akce="napsat">✉ Napsat Petrovi</button>
+    ${detailRadky}
+    ${adminCast}
+  </div>`;
+}
+
+function _vytvorPrislibMarker(cislo) {
+  const p = prislibyVerejne[cislo];
+  if (!p || p.lat == null || p.lng == null) return;
+  const marker = L.marker([p.lat, p.lng], { icon: _prislibIkona(p), zIndexOffset: -500 });
+  marker.bindTooltip(_prislibTooltipHtml(cislo), {
+    direction: 'top', offset: [0, -46], className: 'budka-tooltip-wrap prislib-tooltip-wrap', sticky: false
+  });
+  marker.bindPopup(_prislibPopupHtml(cislo), { className: 'budka-popup-wrap prislib-popup-wrap', maxWidth: 320 });
+  prislibMarkery[cislo] = marker;
+  if (prislibyVrstva) prislibyVrstva.addLayer(marker);
+}
+
+// Překreslí texty i ikony – volá se po přihlášení admina (tehdy se doplní
+// jména) a při změně zoomu.
+window._prekresliPrisliby = function() {
+  Object.entries(prislibMarkery).forEach(([cislo, m]) => {
+    // jeden vadný záznam nesmí zastavit překreslení ostatních
+    try {
+      m.setIcon(_prislibIkona(prislibyVerejne[cislo]));
+      m.setTooltipContent(_prislibTooltipHtml(cislo));
+      m.setPopupContent(_prislibPopupHtml(cislo));
+    } catch (e) {
+      console.warn('prisliby: slib č. ' + cislo + ' se nepodařilo překreslit', e);
+    }
+  });
+};
+
+// Admin má po přihlášení vidět i jména – doplní se dočtením neveřejné větve.
+window._nactiPrislibyDetail = async function() {
+  if (!_jsemAdmin()) { prislibyDetail = {}; window._prekresliPrisliby(); return; }
+  try {
+    const snap = await firebase.database().ref('prisliby').once('value');
+    prislibyDetail = snap.val() || {};
+  } catch (e) {
+    console.warn('prisliby: detail se nepodařilo načíst', e);
+    prislibyDetail = {};
+  }
+  window._prekresliPrisliby();
+};
+
+async function nactiPrisliby(map) {
+  if (typeof firebase === 'undefined' || !firebase.database) return;
+  prislibyVrstva = L.layerGroup().addTo(map);
+  try {
+    // on('value') – po přidání slibu v administraci se mapa aktualizuje sama
+    firebase.database().ref('prisliby_mapa').on('value', snap => {
+      const data = snap.val() || {};
+      Object.values(prislibMarkery).forEach(m => prislibyVrstva.removeLayer(m));
+      Object.keys(prislibMarkery).forEach(k => delete prislibMarkery[k]);
+      prislibyVerejne = data;
+      Object.keys(data).forEach(cislo => _vytvorPrislibMarker(cislo));
+      const el = document.getElementById('stat-slibenych');
+      if (el) el.textContent = Object.keys(data).length;
+      const blok = document.getElementById('slibeneBudkyBlok');
+      if (blok) blok.hidden = Object.keys(data).length === 0;
+      if (_jsemAdmin()) window._nactiPrislibyDetail();
+    });
+  } catch (e) {
+    console.warn('prisliby: nepodařilo se načíst', e);
+  }
+
+  // Akce v bublině slíbené budky
+  map.on('popupopen', e => {
+    const el = e.popup.getElement();
+    if (!el) return;
+    el.querySelectorAll('[data-prislib-akce]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const akce = btn.dataset.prislibAkce;
+        const cislo = btn.dataset.cislo;
+        if (akce === 'napsat') {
+          map.closePopup();
+          document.getElementById('btnNapsat')?.click();
+          return;
+        }
+        if (typeof window._prislibAdminAkce === 'function') window._prislibAdminAkce(akce, cislo);
+      });
+    });
+  });
+}
+
 function pridejLegend(map) {
   const legend = L.control({ position: 'bottomright' });
   legend.onAdd = function() {
@@ -651,6 +831,10 @@ function pridejLegend(map) {
       <div class="legenda-polozka">
         <span class="legenda-dot" style="--dot-color:#e06820"></span>
         <span>Budka — přibliž pro detail</span>
+      </div>
+      <div class="legenda-polozka">
+        <span class="legenda-dot legenda-dot-prislib"></span>
+        <span>Slíbená budka — teprve bude</span>
       </div>`;
     return div;
   };
@@ -801,8 +985,10 @@ async function inicializujMapu() {
     className: 'mapa-dlazdice'
   }).addTo(mapInstance);
 
+  window._mapInstance = mapInstance;   // administrace do ní přidává slíbené budky
   pridejGpsOvladani(mapInstance);
   pridejLegend(mapInstance);
+  nactiPrisliby(mapInstance);
 
   try {
     const [resBudky, resSpravci] = await Promise.all([
