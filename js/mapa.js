@@ -455,7 +455,10 @@ function _ikonaProBudku(b) {
 function _scaleProZoom(zoom) {
   if (zoom >= ZOOM_DETAIL) {
     const t = Math.max(0, Math.min(1, (zoom - ZOOM_DETAIL) / 2));
-    return 0.88 + t * 0.12;
+    // Ikony budek byly po přiblížení mapy malé, proto o pětinu větší
+    // než původních 0,88–1,0. Body na malém zoomu zůstávají beze změny,
+    // tam se o velikost nikdo nestěžoval.
+    return (0.88 + t * 0.12) * 1.2;
   }
   const t = Math.max(0, Math.min(1, (zoom - 6) / (ZOOM_DETAIL - 6)));
   return 0.9 + t * 0.35;
