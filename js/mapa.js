@@ -5,6 +5,42 @@ let clusterGroup = null; // shlukování překrývajících se budek
 window._markersByCislo = markersByCislo;
 window._getMapInstance = () => mapInstance;
 
+// ── Sezóna osídlení ───────────────────────────────────────────────────────
+// Sýkory hnízdí od jara do konce léta; na podzim a v zimě jsou budky prázdné.
+// Mimo sezónu proto mapa osídlení neukazuje — ani zelenou ikonu, ani chip
+// v bublině, ani položku v legendě, ani filtr přes dlaždici statistiky.
+// Záznam „kdo hnízdí" ze správcovské aplikace platí jen pro svůj rok, takže
+// se loňské osídlení na jaře samo neobnoví; nová sezóna se rozsvítí sama,
+// jakmile ji správci začnou zapisovat.
+//
+// Statistiky (dlaždice „Osídlených budek" a panel druhů) se mimo sezónu
+// nepřepočítávají a zůstávají na číslech ze statistiky.json — jsou to
+// výsledky poslední sezóny, ne aktuální stav, a popisek to mimo sezónu říká.
+const SEZONA_OD_MESIC = 3;   // březen — začínají první snůšky
+const SEZONA_DO_MESIC = 8;   // srpen — konec hnízdění
+
+function _jeSezonaOsidleni(d = new Date()) {
+  const m = d.getMonth() + 1;
+  return m >= SEZONA_OD_MESIC && m <= SEZONA_DO_MESIC;
+}
+window._jeSezonaOsidleni = _jeSezonaOsidleni;   // panel druhů v main.js
+
+// Osídlení z Firebase platí, jen když je zapsané pro letošek a zrovna je sezóna.
+function _osidleniPlati(rok) {
+  return _jeSezonaOsidleni() && Number(rok) === new Date().getFullYear();
+}
+
+// Mimo sezónu dlaždice neukazuje aktuální stav, ale bilanci poslední sezóny —
+// popisek se tomu přizpůsobí, ať číslo nikoho nemate.
+function _sezonniPopisekStatistiky() {
+  const el = document.getElementById('stat-osidlenych-popisek');
+  if (!el || _jeSezonaOsidleni()) return;
+  const d = new Date();
+  const rok = (d.getMonth() + 1) < SEZONA_OD_MESIC ? d.getFullYear() - 1 : d.getFullYear();
+  el.textContent = `Osídleno v sezóně ${rok}`;
+}
+document.addEventListener('DOMContentLoaded', _sezonniPopisekStatistiky);
+
 // Ikona shluku: jedna neutrální bublina s počtem budek. Velikost roste s počtem.
 // Výchozí výřez mapy. Pevný střed a zoom musel pokrýt i tři budky
 // v Nizozemsku, takže se kvůli nim mačkalo zbylých 200 do rohu obrazovky
@@ -50,10 +86,12 @@ function _vytvorClusterIkonu(cluster) {
   });
 }
 
-// Vrátí { latestEdit, allEditsDict } z raw Firebase uzlu budky_edit/{cislo}.
-// Podporuje starý plochý formát i nový formát {rok: {...}}.
+// Vrátí { latestEdit, allEditsDict, latestRok } z raw Firebase uzlu
+// budky_edit/{cislo}. Podporuje starý plochý formát i nový formát {rok: {...}}.
+// latestRok je rok, ke kterému se latestEdit vztahuje — podle něj se pozná,
+// jestli je zapsané osídlení z letošní sezóny, nebo loňský zbytek.
 function _parseEditNode(raw) {
-  if (!raw) return { latestEdit: null, allEditsDict: {} };
+  if (!raw) return { latestEdit: null, allEditsDict: {}, latestRok: null };
   const keys = Object.keys(raw);
   const yearKeys = keys.filter(k => /^\d{4}$/.test(k));
   if (yearKeys.length > 0) {
@@ -61,28 +99,37 @@ function _parseEditNode(raw) {
     const allEditsDict = {};
     yearKeys.forEach(k => { allEditsDict[k] = raw[k]; });
     const latestRok = String(Math.max(...yearKeys.map(Number)));
-    return { latestEdit: allEditsDict[latestRok] || null, allEditsDict };
+    return { latestEdit: allEditsDict[latestRok] || null, allEditsDict, latestRok };
   }
   // Old flat format
   const rok = String(raw.rok || new Date().getFullYear());
-  return { latestEdit: raw, allEditsDict: { [rok]: raw } };
+  return { latestEdit: raw, allEditsDict: { [rok]: raw }, latestRok: rok };
 }
 
 let _aktivniDruhFilter = null;
 
+// Vrací true, když se na mapě opravdu má co zvýraznit. Mimo sezónu (a když
+// panel druhů ukazuje čísla poslední sezóny, ale na mapě už osídlené budky
+// nejsou) by filtr jinak zešedil celou mapu a nezbylo by na ní nic vidět.
 window._filtrovatMapuPoDruhu = function(nazev) {
-  _aktivniDruhFilter = nazev;
   const data = window._budkyDataMap || {};
-  const matching = [];
-  Object.entries(markersByCislo).forEach(([cislo, marker]) => {
+  const jeShoda = cislo => {
     const b = data[parseInt(cislo)];
-    const shoda = b && b.stav === 'osidlena' && b.ptak === nazev;
-    marker.setOpacity(shoda ? 1.0 : 0.15);
-    if (shoda) matching.push(marker.getLatLng());
-  });
-  if (matching.length > 0 && mapInstance) {
+    return !!(b && b.stav === 'osidlena' && b.ptak === nazev);
+  };
+  const matching = Object.entries(markersByCislo)
+    .filter(([cislo]) => jeShoda(cislo))
+    .map(([, marker]) => marker.getLatLng());
+  if (!matching.length) {
+    window._zrusitFilterMapy();
+    return false;
+  }
+  _aktivniDruhFilter = nazev;
+  Object.entries(markersByCislo).forEach(([cislo, marker]) => marker.setOpacity(jeShoda(cislo) ? 1.0 : 0.15));
+  if (mapInstance) {
     mapInstance.fitBounds(L.latLngBounds(matching), { padding: [50, 50], maxZoom: 15 });
   }
+  return true;
 };
 
 window._filtrovatMapuOsidlene = function() {
@@ -135,6 +182,9 @@ function _normDruh(ptak) {
 
 function _prepocitejDruhy() {
   if (!window._nactiDruhyPtaku || !window._druhy_ptaku_base) return;
+  // Mimo sezónu nechej počty ze statistiky.json — je to bilance poslední
+  // sezóny. Přepočet z prázdných budek by udělal ze všech druhů nuly.
+  if (!_jeSezonaOsidleni()) return;
   const pocty = {};
   Object.values(window._budkyDataMap || {}).forEach(b => {
     if (b.stav === 'osidlena' && b.ptak && b.ptak !== 'nezjisteno') {
@@ -862,6 +912,13 @@ async function nactiPrisliby(map) {
 // druh značky, klik na tu samou položku znovu filtr zruší.
 let _legendaFiltr = null;   // null | 'osidlena' | 'budka' | 'slib'
 
+// Popisek na sbaleném chipu legendy (mobil) podle zapnutého filtru
+const _LEGENDA_POPISKY = {
+  osidlena: 'Jen osídlené',
+  budka:    'Jen budky',
+  slib:     'Jen slíbené'
+};
+
 window._filtrLegenda = function(druh) {
   // 'vse' filtr vždycky zruší; klik na už zapnutou položku taky
   _legendaFiltr = (druh === 'vse' || _legendaFiltr === druh) ? null : druh;
@@ -888,6 +945,12 @@ window._filtrLegenda = function(druh) {
   document.querySelectorAll('.legenda-polozka').forEach(el => {
     el.classList.toggle('legenda-polozka--aktivni', el.dataset.filtr === (_legendaFiltr || 'vse'));
   });
+  // Sbalená legenda na mobilu neukazuje položky, takže zapnutý filtr musí být
+  // vidět na samotném chipu — jinak by uživatel nevěděl, proč budky zmizely.
+  const popis = document.querySelector('.legenda-prepinac-popis');
+  if (popis) popis.textContent = _LEGENDA_POPISKY[_legendaFiltr] || 'Filtr budek';
+  document.querySelector('.legenda-prepinac')
+    ?.classList.toggle('legenda-prepinac--aktivni', !!_legendaFiltr);
 
   if (!_legendaFiltr) {
     // zpátky na výchozí pohled přes všechny budky
@@ -908,28 +971,53 @@ function pridejLegend(map) {
   const legend = L.control({ position: 'bottomright' });
   legend.onAdd = function() {
     const div = L.DomUtil.create('div', 'mapa-legenda');
+    // Mimo sezónu žádná budka osídlená není, tak ať položka nezabírá řádek.
+    const osidlenaPolozka = _jeSezonaOsidleni()
+      ? `<button type="button" class="legenda-polozka" data-filtr="osidlena">
+           ${obydlenoSvg(28)}
+           <span>Osídlená budka</span>
+         </button>`
+      : '';
     div.innerHTML = `
-      <div class="legenda-nadpis">Klikni a uvidíš jen:</div>
-      <button type="button" class="legenda-polozka legenda-polozka--aktivni" data-filtr="vse">
-        <span class="legenda-vse-ikona">✦</span>
-        <span>Všechny budky</span>
+      <button type="button" class="legenda-prepinac" aria-expanded="false">
+        <span class="legenda-prepinac-ikona">☰</span>
+        <span class="legenda-prepinac-popis">Filtr budek</span>
       </button>
-      <button type="button" class="legenda-polozka" data-filtr="osidlena">
-        ${obydlenoSvg(28)}
-        <span>Osídlená budka</span>
-      </button>
-      <button type="button" class="legenda-polozka" data-filtr="budka">
-        <span class="legenda-dot" style="--dot-color:#e06820"></span>
-        <span>Budka — přibliž pro detail</span>
-      </button>
-      <button type="button" class="legenda-polozka" data-filtr="slib">
-        <span class="legenda-dot legenda-dot-prislib"></span>
-        <span>Slíbená budka — teprve bude</span>
-      </button>`;
+      <div class="legenda-telo">
+        <div class="legenda-nadpis">Klikni a uvidíš jen:</div>
+        <button type="button" class="legenda-polozka legenda-polozka--aktivni" data-filtr="vse">
+          <span class="legenda-vse-ikona">✦</span>
+          <span>Všechny budky</span>
+        </button>
+        ${osidlenaPolozka}
+        <button type="button" class="legenda-polozka" data-filtr="budka">
+          <span class="legenda-dot" style="--dot-color:#e06820"></span>
+          <span>Budka — přibliž pro detail</span>
+        </button>
+        <button type="button" class="legenda-polozka" data-filtr="slib">
+          <span class="legenda-dot legenda-dot-prislib"></span>
+          <span>Slíbená budka — teprve bude</span>
+        </button>
+      </div>`;
     // bez tohohle by klik na legendu probublal na mapu a přiblížil ji
     L.DomEvent.disableClickPropagation(div);
+
+    // Na telefonu je legenda sbalená do chipu (jinak zabírá třetinu mapy),
+    // na větších obrazovkách je přepínač schovaný přes CSS a legenda je vidět celá.
+    const prepinac = div.querySelector('.legenda-prepinac');
+    prepinac.addEventListener('click', () => {
+      const otevreno = div.classList.toggle('mapa-legenda--otevrena');
+      prepinac.setAttribute('aria-expanded', otevreno ? 'true' : 'false');
+    });
     div.querySelectorAll('.legenda-polozka').forEach(btn => {
-      btn.addEventListener('click', () => window._filtrLegenda(btn.dataset.filtr));
+      btn.addEventListener('click', () => {
+        window._filtrLegenda(btn.dataset.filtr);
+        // po výběru zase sbalit, ať je vidět, co filtr udělal
+        if (window.matchMedia('(max-width: 600px)').matches) {
+          div.classList.remove('mapa-legenda--otevrena');
+          prepinac.setAttribute('aria-expanded', 'false');
+        }
+      });
     });
     return div;
   };
@@ -1155,8 +1243,10 @@ async function inicializujMapu() {
 
     document.getElementById('stat-celkem').textContent = budky.length;
 
+    // Mimo sezónu není co filtrovat (žádná budka není osídlená), takže se
+    // dlaždice nechává jako obyčejné číslo — klik by jen zešedil celou mapu.
     const elStatOsidl = document.getElementById('stat-osidlenych');
-    if (elStatOsidl && !elStatOsidl.dataset.filterBound) {
+    if (elStatOsidl && _jeSezonaOsidleni() && !elStatOsidl.dataset.filterBound) {
       elStatOsidl.dataset.filterBound = '1';
       elStatOsidl.classList.add('stat-value--klikatelny');
       elStatOsidl.title = 'Zobrazit osídlené budky na mapě';
@@ -1184,14 +1274,14 @@ async function inicializujMapu() {
           const aktivita = window._spravceAktivita || {};
 
           Object.entries(edits).forEach(([cislo, editRaw]) => {
-            const { latestEdit, allEditsDict } = _parseEditNode(editRaw);
+            const { latestEdit, allEditsDict, latestRok } = _parseEditNode(editRaw);
             const cisloNum = Number(cislo);
             // Přejmenování budky správcem – nový název aplikuj VŠUDE (tooltip na mapě,
             // karta správce i popup), ať se mapa neliší od detailu.
             if (latestEdit && latestEdit.nazev && (window._budkyDataMap || {})[cisloNum]) {
               window._budkyDataMap[cisloNum].nazev = latestEdit.nazev;
             }
-            if (latestEdit && latestEdit.kdo_hnizdi) {
+            if (latestEdit && latestEdit.kdo_hnizdi && _osidleniPlati(latestRok)) {
               _aktualizujMarkerZFirebase(cisloNum, latestEdit.kdo_hnizdi, latestEdit.datum_osidleni || null, allEditsDict);
             } else if (Object.keys(allEditsDict).length || (latestEdit && latestEdit.nazev)) {
               // Edit history (čištění/kontrola) nebo přejmenování bez kdo_hnizdi — přerenderuj popup/tooltip
@@ -1233,17 +1323,22 @@ async function inicializujMapu() {
             }
           });
 
-          // Osídlených = z JSON NEBO má kdo_hnizdi ve Firebase
+          // Osídlených = z JSON NEBO má kdo_hnizdi ve Firebase (jen letošní sezóna)
           const osidleneCisla = new Set([
             ...Object.entries(window._budkyDataMap || {})
               .filter(([, b]) => b.stav === 'osidlena')
               .map(([c]) => String(c)),
             ...Object.entries(edits)
-              .filter(([, editRaw]) => { const { latestEdit } = _parseEditNode(editRaw); return latestEdit && latestEdit.kdo_hnizdi; })
+              .filter(([, editRaw]) => {
+                const { latestEdit, latestRok } = _parseEditNode(editRaw);
+                return latestEdit && latestEdit.kdo_hnizdi && _osidleniPlati(latestRok);
+              })
               .map(([c]) => String(c))
           ]);
+          // Mimo sezónu dlaždici nepřepisuj — zůstane na výsledku sezóny
+          // ze statistiky.json, jinak by na podzim ukazovala nulu.
           const elS = document.getElementById('stat-osidlenych');
-          if (elS) elS.textContent = osidleneCisla.size;
+          if (elS && _jeSezonaOsidleni()) elS.textContent = osidleneCisla.size;
           _prepocitejDruhy();
 
           const aktivnichCisla = new Set([

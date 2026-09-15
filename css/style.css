@@ -429,6 +429,25 @@ html, body {
 .legenda-polozka--aktivni { background: rgba(224,104,32,0.16); border-color: var(--orange); font-weight: 600; }
 .legenda-vse-ikona { width: 18px; text-align: center; color: var(--orange); font-size: 1rem; flex-shrink: 0; margin: 0 7px; }
 .legenda-dot { width: 18px; height: 18px; border-radius: 50%; background: var(--dot-color, #e06820); border: 2.5px solid #fff; box-shadow: 0 0 0 2px #1a1a1a, 0 2px 5px rgba(0,0,0,0.45); display: inline-block; flex-shrink: 0; margin: 0 7px; }
+.legenda-telo { display: flex; flex-direction: column; gap: 7px; }
+/* Přepínač sbalené legendy má smysl jen na telefonu, jinde je legenda celá vidět. */
+.legenda-prepinac { display: none; }
+/* Na telefonu zabírala rozbalená legenda skoro třetinu mapy, proto je sbalená
+   do chipu a rozbalí se až klepnutím; po výběru filtru se zase zavře.
+   Zapnutý filtr je vidět na chipu, ať se uživatel nediví, kam se budky poděly. */
+@media (max-width: 600px) {
+  .mapa-legenda { padding: 0; gap: 0; min-width: 0; font-size: 0.76rem; }
+  .mapa-legenda .legenda-telo { display: none; }
+  .mapa-legenda--otevrena .legenda-telo { display: flex; gap: 5px; padding: 2px 10px 9px; }
+  .legenda-prepinac { display: flex; align-items: center; gap: 7px; width: 100%; background: none; border: 0; border-radius: 8px; padding: 8px 11px; margin: 0; font: inherit; font-size: 0.78rem; font-weight: 600; color: #3a2008; text-align: left; cursor: pointer; }
+  .legenda-prepinac--aktivni { color: var(--orange); }
+  .legenda-prepinac-ikona { font-size: 0.95rem; line-height: 1; }
+  .mapa-legenda .legenda-nadpis { font-size: 0.64rem; }
+  .mapa-legenda .legenda-polozka { font-size: 0.76rem; padding: 2px 5px; gap: 6px; }
+  .mapa-legenda .legenda-polozka svg { width: 21px; height: 21px; }
+  .mapa-legenda .legenda-dot { width: 14px; height: 14px; border-width: 2px; margin: 0 4px; }
+  .mapa-legenda .legenda-vse-ikona { width: 14px; font-size: 0.85rem; margin: 0 4px; }
+}
 .budka-marker { display: flex; align-items: flex-end; justify-content: center; transition: transform 0.15s; cursor: pointer; transform: scale(var(--budka-scale, 1)); transform-origin: bottom center; }
 .budka-marker:hover { transform: scale(calc(var(--budka-scale, 1) * 1.25)); }
 /* Body na nízkém zoomu — plynule se zvětšují, u ZOOM_DETAIL se přepnou na plné ikony */

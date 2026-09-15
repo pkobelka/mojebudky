@@ -1,10 +1,10 @@
 {
-  "generovano": "2026-09-15T09:50:26Z",
+  "generovano": "2026-09-15T10:18:27Z",
   "umistene": [
     {
       "cislo": 2,
       "nazev": "Holda",
-      "stav": "osidlena",
+      "stav": "aktivni",
       "fotky": [
         "img/budky/2.jpg"
       ]
@@ -48,7 +48,7 @@
     {
       "cislo": 8,
       "nazev": "Karel",
-      "stav": "osidlena",
+      "stav": "aktivni",
       "fotky": [
         "img/budky/8.jpg"
       ]
@@ -72,7 +72,7 @@
     {
       "cislo": 11,
       "nazev": "Štěpánek",
-      "stav": "osidlena",
+      "stav": "aktivni",
       "fotky": [
         "img/budky/11.jpg"
       ]
@@ -121,7 +121,7 @@
     {
       "cislo": 17,
       "nazev": "Niki",
-      "stav": "osidlena",
+      "stav": "aktivni",
       "fotky": [
         "img/budky/17.jpg",
         "img/budky/17_1.jpg"
@@ -189,7 +189,7 @@
     {
       "cislo": 25,
       "nazev": "Vosí budka",
-      "stav": "osidlena",
+      "stav": "aktivni",
       "fotky": [
         "img/budky/25.jpg"
       ]
@@ -273,7 +273,7 @@
     {
       "cislo": 35,
       "nazev": "Miro",
-      "stav": "osidlena",
+      "stav": "aktivni",
       "fotky": [
         "img/budky/35.jpg"
       ]
@@ -281,7 +281,7 @@
     {
       "cislo": 37,
       "nazev": "",
-      "stav": "osidlena",
+      "stav": "aktivni",
       "fotky": [
         "img/budky/37.jpg"
       ]
@@ -297,7 +297,7 @@
     {
       "cislo": 39,
       "nazev": "Mateřská škola",
-      "stav": "osidlena",
+      "stav": "aktivni",
       "fotky": [
         "img/budky/39.jpg",
         "img/budky/39_1.jpg"
@@ -399,7 +399,7 @@
     {
       "cislo": 52,
       "nazev": "U Sojky",
-      "stav": "osidlena",
+      "stav": "aktivni",
       "fotky": [
         "img/budky/52.jpg"
       ]
@@ -484,7 +484,7 @@
     {
       "cislo": 63,
       "nazev": "Adla",
-      "stav": "osidlena",
+      "stav": "aktivni",
       "fotky": [
         "img/budky/63.jpg",
         "img/budky/63_1.jpg"
@@ -502,7 +502,7 @@
     {
       "cislo": 66,
       "nazev": "",
-      "stav": "osidlena",
+      "stav": "aktivni",
       "fotky": [
         "img/budky/66.jpg"
       ]
@@ -519,7 +519,7 @@
     {
       "cislo": 68,
       "nazev": "Hanička",
-      "stav": "osidlena",
+      "stav": "aktivni",
       "fotky": [
         "img/budky/68.jpg",
         "img/budky/68_1.jpg"
@@ -528,7 +528,7 @@
     {
       "cislo": 69,
       "nazev": "Srubec",
-      "stav": "osidlena",
+      "stav": "aktivni",
       "fotky": [
         "img/budky/69.jpg",
         "img/budky/69_1.jpg"
@@ -537,7 +537,7 @@
     {
       "cislo": 71,
       "nazev": "Martin",
-      "stav": "osidlena",
+      "stav": "aktivni",
       "fotky": [
         "img/budky/71.jpg",
         "img/budky/71_1.jpg"
@@ -554,7 +554,7 @@
     {
       "cislo": 73,
       "nazev": "",
-      "stav": "osidlena",
+      "stav": "aktivni",
       "fotky": [
         "img/budky/73.jpg",
         "img/budky/73_1.jpg"
@@ -622,7 +622,7 @@
     {
       "cislo": 82,
       "nazev": "Chille",
-      "stav": "osidlena",
+      "stav": "aktivni",
       "fotky": [
         "img/budky/82.jpg",
         "img/budky/82_1.jpg"
@@ -827,7 +827,7 @@
     {
       "cislo": 107,
       "nazev": "",
-      "stav": "osidlena",
+      "stav": "aktivni",
       "fotky": [
         "img/budky/107.jpg",
         "img/budky/107_1.jpg"
@@ -872,7 +872,7 @@
     {
       "cislo": 112,
       "nazev": "",
-      "stav": "osidlena",
+      "stav": "aktivni",
       "fotky": [
         "img/budky/112.jpg"
       ]
@@ -921,7 +921,7 @@
     {
       "cislo": 118,
       "nazev": "Tadeáš",
-      "stav": "osidlena",
+      "stav": "aktivni",
       "fotky": [
         "img/budky/118.jpg"
       ]
@@ -978,7 +978,7 @@
     {
       "cislo": 125,
       "nazev": "Daminán",
-      "stav": "osidlena",
+      "stav": "aktivni",
       "fotky": [
         "img/budky/125.jpg"
       ]
@@ -986,7 +986,7 @@
     {
       "cislo": 126,
       "nazev": "",
-      "stav": "osidlena",
+      "stav": "aktivni",
       "fotky": [
         "img/budky/126.jpg"
       ]
@@ -1029,7 +1029,7 @@
     {
       "cislo": 132,
       "nazev": "",
-      "stav": "osidlena",
+      "stav": "aktivni",
       "fotky": [
         "img/budky/132.jpg",
         "img/budky/132_1.jpg"
@@ -1038,7 +1038,7 @@
     {
       "cislo": 133,
       "nazev": "Oskar",
-      "stav": "osidlena",
+      "stav": "aktivni",
       "fotky": [
         "img/budky/133.jpg",
         "img/budky/133_1.jpg"
@@ -1072,7 +1072,7 @@
     {
       "cislo": 137,
       "nazev": "",
-      "stav": "osidlena",
+      "stav": "aktivni",
       "fotky": [
         "img/budky/137.jpg"
       ]
@@ -1080,7 +1080,7 @@
     {
       "cislo": 138,
       "nazev": "U starosty",
-      "stav": "osidlena",
+      "stav": "aktivni",
       "fotky": [
         "img/budky/138.jpg"
       ]
@@ -1088,7 +1088,7 @@
     {
       "cislo": 139,
       "nazev": "Honzík",
-      "stav": "osidlena",
+      "stav": "aktivni",
       "fotky": [
         "img/budky/139.jpg"
       ]
@@ -1120,7 +1120,7 @@
     {
       "cislo": 143,
       "nazev": "Adélka",
-      "stav": "osidlena",
+      "stav": "aktivni",
       "fotky": [
         "img/budky/143.jpg",
         "img/budky/143_1.jpg"
@@ -1153,7 +1153,7 @@
     {
       "cislo": 147,
       "nazev": "",
-      "stav": "osidlena",
+      "stav": "aktivni",
       "fotky": [
         "img/budky/147.jpg"
       ]
@@ -1169,7 +1169,7 @@
     {
       "cislo": 149,
       "nazev": "Markéta",
-      "stav": "osidlena",
+      "stav": "aktivni",
       "fotky": [
         "img/budky/149.jpg"
       ]
@@ -1177,7 +1177,7 @@
     {
       "cislo": 150,
       "nazev": "Jindřichovka",
-      "stav": "osidlena",
+      "stav": "aktivni",
       "fotky": [
         "img/budky/150.jpg",
         "img/budky/150_1.jpg"
@@ -1186,7 +1186,7 @@
     {
       "cislo": 151,
       "nazev": "Ivan",
-      "stav": "osidlena",
+      "stav": "aktivni",
       "fotky": [
         "img/budky/151.jpg"
       ]
@@ -1252,7 +1252,7 @@
     {
       "cislo": 159,
       "nazev": "Kubovka 63",
-      "stav": "osidlena",
+      "stav": "aktivni",
       "fotky": [
         "img/budky/159.jpg",
         "img/budky/159-2.jpg"
@@ -1319,7 +1319,7 @@
     {
       "cislo": 168,
       "nazev": "Tondova budka",
-      "stav": "osidlena",
+      "stav": "aktivni",
       "fotky": [
         "img/budky/168.jpg"
       ]
@@ -1431,7 +1431,7 @@
     {
       "cislo": 182,
       "nazev": "Libuška",
-      "stav": "osidlena",
+      "stav": "aktivni",
       "fotky": [
         "img/budky/182.jpg",
         "img/budky/182_1.jpg"
@@ -1506,7 +1506,7 @@
     {
       "cislo": 194,
       "nazev": "",
-      "stav": "osidlena",
+      "stav": "aktivni",
       "fotky": [
         "img/budky/194.jpg"
       ]
@@ -1533,7 +1533,7 @@
     {
       "cislo": 197,
       "nazev": "",
-      "stav": "osidlena",
+      "stav": "aktivni",
       "fotky": [
         "img/budky/197.jpg",
         "img/budky/197(1).jpg"
