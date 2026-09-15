@@ -191,10 +191,19 @@ exports.budkyZpravaNotify = functions.database
     // dotaz návštěvníka – čeká se na ni odpověď a heslo, tak ať je v notifikaci
     // na první pohled poznat a nezapadne mezi ostatní.
     const jeZadostOPristup = z.typ === "pristup";
-    const title = jeZadostOPristup ? "🔑 Žádost o přístup správce" : "📨 Nová zpráva z webu";
+    // Žádost o budku z veřejného formuláře – čeká se na ni SMS s potvrzením
+    // a číslem žádosti, tak ať je v notifikaci poznat stejně jako přístupy.
+    const jeZadostOBudku = z.typ === "budka";
+    const title = jeZadostOPristup ? "🔑 Žádost o přístup správce"
+      : jeZadostOBudku ? "🪺 Nová žádost o budku"
+        : "📨 Nová zpráva z webu";
+    const kontaktRadek = `${jmeno}${z.telefon ? " · ☎ " + z.telefon : ""}${z.email && z.email !== "(neuvedeno)" ? " · " + z.email : ""}`;
     const body = jeZadostOPristup
       ? `${jmeno}${z.telefon ? " · ☎ " + z.telefon : ""}${z.email ? " · " + z.email : ""}${z.obec ? " · " + z.obec : ""}${z.budka ? " · č. " + z.budka : ""}`
-      : `${odKoho}: ${text}`;
+      : jeZadostOBudku
+        ? `${kontaktRadek}${z.obec ? " · 📍 " + z.obec : ""}${z.adresa ? ", " + z.adresa : ""}`
+          + (z.otvor === "28mm" ? " · 🔵 28 mm" : z.otvor === "32mm" ? " · 🔵 32 mm" : z.otvor ? " · 🔵 poradit" : "")
+        : `${odKoho}: ${text}`;
 
     // tokeny admina – pošli na všechna jeho zařízení s povolenými notifikacemi
     const tokensSnap = await admin.database().ref("push_tokens").get();
@@ -218,7 +227,12 @@ exports.budkyZpravaNotify = functions.database
         notification: { title, body, icon: MB_ICON, badge: MB_ICON },
         fcmOptions: { link: MB_URL },
       },
-      data: { push_id: pushId, typ: jeZadostOPristup ? "admin_zadost_pristup" : "admin_zprava" },
+      data: {
+        push_id: pushId,
+        typ: jeZadostOPristup ? "admin_zadost_pristup"
+          : jeZadostOBudku ? "admin_zadost_budka"
+            : "admin_zprava",
+      },
     }));
     const resp = await admin.messaging().sendEach(messages);
 

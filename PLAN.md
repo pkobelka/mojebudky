@@ -76,6 +76,31 @@ změně v `js/` nebo `css/` ručně zvýšit, jinak lidem zůstane stará verze.
 
 ---
 
+## Žádost o budku z webu (od 9/2026)
+
+Kdo chce budku, vyplní na webu formulář **„🪺 Chci budku"** (tlačítko v bloku
+o slíbených budkách). Dřív na to sloužil obecný kontakt a jméno, telefon
+i adresu bylo potřeba vylovit z volného textu — odtud pocházejí díry
+v datech slibů (chybějící měsíce, místo „Tady bude").
+
+Telefon je povinný: bez něj není jak potvrdit založení žádosti, a formulář to
+tak i říká. Žádost padá do `admin_requests/zpravy` s příznakem `typ: "budka"`
+a s poli zvlášť (`telefon`, `obec`, `adresa`, `poznamka`), takže push
+notifikace přijde stejnou cestou jako dosud, jen s vlastním nadpisem.
+
+V administraci (📬 Žádosti → ✉️ Zprávy a žádosti) má taková žádost tlačítko
+**„➕ Založit slib"** — formulář slibu se otevře předvyplněný a po uložení se
+žádost sama označí jako vyřízená.
+
+**Souřadnice z adresy:** formulář slibu i hromadný import umí místo dohledat
+přes Nominatim (OpenStreetMap, zdarma a bez klíče). Volá to prohlížeč
+přihlášeného admina, ne server. Nominatim si účtuje zhruba dotaz za vteřinu,
+proto se v importu adresy hledají postupně s pauzou; co se nenajde, vypíše se
+a do mapy se to nenahraje. Klikání do mapy zůstává jako druhá cesta a rozepsané
+údaje se přitom neztrácejí.
+
+---
+
 ## Sezóna osídlení (od 9/2026)
 
 Osídlení je sezónní věc: hnízdí se od jara do konce léta, na podzim a v zimě

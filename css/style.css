@@ -1040,6 +1040,26 @@ body.mapa-cele .leaflet-left { left: calc(env(safe-area-inset-left, 0px) + 8px);
 .pristup-textarea::placeholder { color: var(--text-muted); }
 .pristup-mail { color: var(--text-muted); font-size: 0.95rem; margin: 1rem 0 0; }
 .pristup-mail a { color: var(--accent-gold); }
+
+/* Víceřádkové pole v modálních oknech — stejný vzhled jako .pristup-textarea,
+   jen pod obecnějším názvem, ať se nemusí psát styl přímo do HTML. */
+.modal-textarea { background: rgba(255,255,255,0.07); border: 1px solid var(--panel-border); border-radius: 8px; color: var(--text-light); font-family: inherit; font-size: 1rem; padding: 0.9rem 1.1rem; outline: none; width: 100%; box-sizing: border-box; resize: vertical; }
+.modal-textarea:focus { border-color: var(--accent-gold); }
+.modal-textarea::placeholder { color: var(--text-muted); }
+
+/* Výběr vletového otvoru — průměr rozhoduje, který pták se do budky vejde,
+   tak ať u voleb rovnou stojí, pro koho která je. */
+.chci-otvor { text-align: left; background: rgba(255,255,255,0.04); border: 1px solid var(--panel-border); border-radius: 8px; padding: 0.9rem 1.1rem; }
+.chci-otvor-nadpis { margin: 0 0 0.7rem; color: var(--text-light); font-size: 1.02rem; font-weight: 600; }
+.chci-otvor-volba { display: flex; align-items: flex-start; gap: 0.7rem; margin-bottom: 0.6rem; color: var(--text-muted); font-size: 0.98rem; line-height: 1.5; cursor: pointer; }
+.chci-otvor-volba:last-child { margin-bottom: 0; }
+.chci-otvor-volba input { width: 20px; height: 20px; min-width: 20px; margin: 2px 0 0; accent-color: var(--orange); cursor: pointer; }
+.chci-otvor-volba strong { color: var(--accent-gold); }
+
+/* Vysvětlení, proč po lidech chci telefon — bez něj jim nemám jak potvrdit,
+   že jsem žádost založil, a formulář by jinak vypadal jako zbytečné vyzvídání. */
+.chci-telefon-info { text-align: left; background: rgba(255,255,255,0.04); border-left: 3px solid var(--accent-gold); border-radius: 8px; padding: 0.9rem 1.1rem; margin: 0; color: var(--text-muted); font-size: 1rem; line-height: 1.6; }
+.chci-telefon-info strong { color: var(--accent-gold); }
 @media (max-width: 640px) {
   .pristup-box { font-size: 0.98rem; padding: 1rem 1.1rem; }
   .pristup-nadpis { font-size: 1.08rem; }
@@ -1300,6 +1320,15 @@ body.mapa-cele .leaflet-left { left: calc(env(safe-area-inset-left, 0px) + 8px);
 .zpravy-nova-bublina { display: inline-block; background: #e53935; color: #fff; border-radius: 8px; font-size: 0.72rem; font-weight: 700; padding: 1px 7px; margin-left: 6px; text-transform: uppercase; vertical-align: middle; }
 .zadost-btn-odpovedet { background: rgba(212,160,64,0.15); color: var(--accent-gold); border: 1px solid rgba(212,160,64,0.4); border-radius: 6px; padding: 5px 13px; font-size: 0.88rem; cursor: pointer; transition: background 0.15s; min-height: 44px; touch-action: manipulation; }
 .zadost-btn-odpovedet:hover { background: rgba(212,160,64,0.28); }
+/* Založení slibu ze žádosti o budku — hlavní akce u takové žádosti, proto
+   oranžová jako ostatní „udělej to“ tlačítka webu. */
+.zadost-btn-slib { background: var(--orange); color: #fff; border: none; border-radius: 6px; padding: 5px 15px; font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: background 0.15s; min-height: 44px; touch-action: manipulation; }
+.zadost-btn-slib:hover { background: var(--orange-light); }
+/* Dvojice tlačítek pro doplnění místa ve formuláři slibu */
+.prislib-gps-radek { display: flex; gap: 8px; flex-wrap: wrap; }
+.prislib-gps-radek .zadost-btn-ok { flex: 1 1 46%; margin-top: 0; background: rgba(255,255,255,0.09); border: 1px solid var(--panel-border); }
+.prislib-gps-radek .zadost-btn-ok:hover { background: rgba(255,255,255,0.16); }
+.prislib-gps-radek .zadost-btn-ok:disabled { opacity: 0.6; cursor: default; }
 .zadost-odpoved-wrap { margin-top: 10px; display: flex; flex-direction: column; gap: 8px; }
 .zadost-odpoved-ta { width: 100%; box-sizing: border-box; background: rgba(255,255,255,0.07); border: 1px solid var(--panel-border); border-radius: 8px; color: var(--text-light); font-size: 0.95rem; padding: 9px 12px; resize: vertical; font-family: inherit; line-height: 1.5; outline: none; }
 .zadost-odpoved-ta:focus { border-color: var(--accent-gold); }
