@@ -2003,7 +2003,11 @@ function _zobrazZadosti() {
 
     const renderZprava = (klic, z, vyrizena, typ = 'zpravy') => {
       const cas = z.ts ? new Date(z.ts).toLocaleString('cs-CZ') : '';
-      const emailInfo = z.email && z.email !== '(neuvedeno)' ? ` · ${z.email}` : '';
+      // Kontakt jako odkaz — u žádostí návštěvníků je to jediná cesta, jak jim
+      // odpovědět (do aplikace pro správce se nedostanou, účet nemají).
+      const emailInfo = z.email && z.email !== '(neuvedeno)'
+        ? ` · <a class="zadost-kontakt" href="mailto:${encodeURIComponent(z.email).replace(/%40/g, '@')}">${_htmlEsc(z.email)}</a>`
+        : '';
       const mozeOdpovedet = !vyrizena && z.loginId && z.loginId !== 'navstevnik';
       // Kdo a odkud píše – dohledání z dat správců podle loginId
       const si = z.loginId ? info[z.loginId] : null;
@@ -2017,7 +2021,9 @@ function _zobrazZadosti() {
       // Žádost o budku z veřejného formuláře má pole zvlášť, takže z ní jde
       // rovnou předvyplnit slib – nic se nemusí přepisovat z textu zprávy.
       const jeZadostOBudku = z.typ === 'budka';
-      const telefonInfo = jeZadostOBudku && z.telefon ? ` <span class="zadost-idlabel">☎ ${_htmlEsc(z.telefon)}</span>` : '';
+      const telefonInfo = jeZadostOBudku && z.telefon
+        ? ` <a class="zadost-kontakt zadost-idlabel" href="tel:${_htmlEsc(z.telefon.replace(/[^\d+]/g, ''))}">☎ ${_htmlEsc(z.telefon)}</a>`
+        : '';
       const otvorInfo = jeZadostOBudku && z.otvor ? ` <span class="zadost-budka">🔵 ${_htmlEsc(_popisOtvoru(z.otvor))}</span>` : '';
       const mistoZadosti = [z.obec, z.adresa].filter(Boolean).join(', ');
       const btnSlib = jeZadostOBudku
@@ -2034,10 +2040,10 @@ function _zobrazZadosti() {
           ${mozeOdpovedet ? `<button class="zadost-btn-odpovedet" data-loginid="${z.loginId}" data-jmeno="${z.jmeno || z.loginId}" data-klic="${klic}">💬 Odpovědět</button>` : ''}
           <button class="zadost-btn-ok" data-typ="${typ}" data-klic="${klic}">✓ Vyřízeno</button>
         </div>
-        <div class="zadost-odpoved-wrap" id="odpov-${klic}" hidden>
+        ${mozeOdpovedet ? `<div class="zadost-odpoved-wrap" id="odpov-${klic}" hidden>
           <textarea class="zadost-odpoved-ta" rows="3" placeholder="Tvoje odpověď…"></textarea>
           <button class="zadost-btn-odeslat-odpoved" data-loginid="${z.loginId}" data-jmeno="${z.jmeno || z.loginId}" data-klic="${klic}">📨 Odeslat</button>
-        </div>` : ''}
+        </div>` : ''}` : ''}
       </div>`;
     };
 
