@@ -1,5 +1,5 @@
 {
-  "generovano": "2026-08-24T20:45:43Z",
+  "generovano": "2026-09-15T09:50:26Z",
   "umistene": [
     {
       "cislo": 2,
@@ -373,7 +373,7 @@
     },
     {
       "cislo": 48,
-      "nazev": "U Kaplčky",
+      "nazev": "U Kapličky",
       "stav": "aktivni",
       "fotky": [
         "img/budky/48.jpg"
@@ -1562,6 +1562,14 @@
       "fotky": [
         "img/budky/201.jpeg",
         "img/budky/201_1.jpeg"
+      ]
+    },
+    {
+      "cislo": 202,
+      "nazev": "Lojza",
+      "stav": "aktivni",
+      "fotky": [
+        "img/budky/202.jpg"
       ]
     },
     {
