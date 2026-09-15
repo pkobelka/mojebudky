@@ -98,9 +98,8 @@ web měl na podzim ukazovat poctivé nuly, stačí ty dvě pojistky
 
 Stavy v `data/budky.json` se po sezóně 2026 přepnuly na `aktivni` ručně
 (37 budek) a `ptak` se u nich vyprázdnil — to pole patří aktuální sezóně,
-kdo kdy hnízdil, se drží v `historie`. Jediná výjimka je budka 11: měla
-zapsanou sýkoru koňadru, ale žádný záznam v `historie`, a rok se z čeho
-doplnit nedal. Až bude známý, patří tam řádek do `historie`.
+kdo kdy hnízdil, se drží v `historie`. Budce 11 se přitom do `historie`
+doplnila koňadra za rok 2025, jinak by ten záznam nikde nezůstal.
 
 ---
 

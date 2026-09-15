@@ -155,7 +155,12 @@
     "lng": 16.70605,
     "ptak": null,
     "stav": "aktivni",
-    "historie": null,
+    "historie": [
+      {
+        "rok": 2025,
+        "obsazeno": "Sýkora koňadra"
+      }
+    ],
     "foto_extra": 0
   },
   {
