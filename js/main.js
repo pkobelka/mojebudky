@@ -466,16 +466,21 @@ function nactiDruhyPtaku(druhy) {
   const aktivnich = obsazene.length;
   const druhSlovo = aktivnich === 1 ? 'druh' : aktivnich <= 4 ? 'druhy' : 'druhů';
 
+  // Mimo hnízdní sezónu jsou čísla bilancí poslední sezóny, ne aktuálním stavem —
+  // na mapě už osídlené budky nejsou, takže odkaz „ukaž na mapě" nemá co zobrazit.
+  const jeSezona = typeof window._jeSezonaOsidleni === 'function' ? window._jeSezonaOsidleni() : true;
+
   const renderItem = d => {
     const key = BIRD_KEY_MAP[d.nazev] || 'konadra';
     const icon = BIRD_ICONS[key].replace(/width="38" height="38"/, 'width="28" height="28"');
-    const mapBtn = d.pocet > 0
+    const naMapu = d.pocet > 0 && jeSezona;
+    const mapBtn = naMapu
       ? `<button class="druh-mapa-btn" data-nazev="${d.nazev.replace(/"/g,'&quot;')}" title="Zobrazit na mapě" tabindex="-1">🗺</button>`
       : '';
     return `<div class="druh-item${d.pocet === 0 ? ' druh-item--prazdny' : ''}" data-id="${d.id}" data-nazev="${d.nazev.replace(/"/g,'&quot;')}">
       <div class="druh-svg">${icon}</div>
       <span class="druh-nazev">${d.nazev}</span>
-      <span class="druh-pocet${d.pocet > 0 ? ' druh-pocet--klik' : ''}" data-nazev="${d.nazev.replace(/"/g,'&quot;')}" title="${d.pocet > 0 ? 'Zobrazit na mapě' : ''}">${d.pocet}</span><span class="druh-pocet-label">${d.pocet === 1 ? 'budka' : d.pocet <= 4 ? 'budky' : 'budek'}</span>${mapBtn}
+      <span class="druh-pocet${naMapu ? ' druh-pocet--klik' : ''}" data-nazev="${d.nazev.replace(/"/g,'&quot;')}" title="${naMapu ? 'Zobrazit na mapě' : ''}">${d.pocet}</span><span class="druh-pocet-label">${d.pocet === 1 ? 'budka' : d.pocet <= 4 ? 'budky' : 'budek'}</span>${mapBtn}
     </div>`;
   };
 
@@ -527,7 +532,8 @@ function nactiDruhyPtaku(druhy) {
       e.stopPropagation();
       const nazev = pocetBtn.dataset.nazev;
       if (typeof window._filtrovatMapuPoDruhu === 'function') {
-        window._filtrovatMapuPoDruhu(nazev);
+        // false = na mapě není co zvýraznit (mimo sezónu), filtr se nezapíná
+        if (window._filtrovatMapuPoDruhu(nazev) === false) return;
         window._aktualizujFilterBtn(nazev);
         document.querySelector('.map-wrapper')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }

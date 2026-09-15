@@ -76,6 +76,33 @@ změně v `js/` nebo `css/` ručně zvýšit, jinak lidem zůstane stará verze.
 
 ---
 
+## Sezóna osídlení (od 9/2026)
+
+Osídlení je sezónní věc: hnízdí se od jara do konce léta, na podzim a v zimě
+jsou budky prázdné. Mapa to od 9/2026 respektuje sama — `SEZONA_OD_MESIC`
+a `SEZONA_DO_MESIC` v `js/mapa.js` (březen–srpen).
+
+Mimo sezónu mapa osídlení vůbec neukazuje: žádná zelená ikona, žádný chip
+v bublině, v legendě není položka „Osídlená budka" a dlaždice „Osídlených
+budek" se nedá rozkliknout na filtr. Záznam „kdo hnízdí" ze správcovské
+aplikace (`budky_edit/{cislo}/{rok}/kdo_hnizdi`) platí jen pro svůj rok, takže
+se loňské osídlení na jaře samo neobnoví a nová sezóna se rozsvítí sama,
+jakmile ji správci začnou zapisovat. **Ručně se tedy na jaře nic přepínat
+nemusí.**
+
+Statistiky zůstávají mimo sezónu na číslech ze `statistiky.json` (dlaždice
+i panel druhů) — jsou to výsledky poslední sezóny, ne aktuální stav, a
+popisek dlaždice se mimo sezónu mění na „Osídleno v sezóně {rok}". Kdyby
+web měl na podzim ukazovat poctivé nuly, stačí ty dvě pojistky
+(`_prepocitejDruhy` a přepis dlaždice v `inicializujMapu`) zase pustit.
+
+Stavy v `data/budky.json` se po sezóně 2026 přepnuly na `aktivni` ručně
+(37 budek) a `ptak` se u nich vyprázdnil — to pole patří aktuální sezóně,
+kdo kdy hnízdil, se drží v `historie`. Budce 11 se přitom do `historie`
+doplnila koňadra za rok 2025, jinak by ten záznam nikde nezůstal.
+
+---
+
 ## Etapy
 
 ### Krok 1 – Kostra a design
