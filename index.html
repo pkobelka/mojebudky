@@ -9,7 +9,7 @@
   <link rel="stylesheet" href="css/vendor/MarkerCluster.css?v=mb20260914l">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=mb20260915a">
+  <link rel="stylesheet" href="css/style.css?v=mb20260915b">
   <link rel="icon" type="image/svg+xml" href="img/favicon.svg">
   <link rel="icon" type="image/png" sizes="512x512" href="img/icon-512.png">
   <link rel="icon" type="image/png" sizes="192x192" href="img/icon-192.png">
@@ -161,9 +161,10 @@
           žádostí je hodně a nerad bych na někoho zapomněl.
         </p>
         <p class="slibene-text">
-          <strong>Chcete budku taky?</strong> Napište mi, kde bydlíte, a domluvíme se.
+          <strong>Chcete budku taky?</strong> Vyplňte krátkou žádost — kam budka přijde a kam vám mám
+          poslat potvrzení. Ozvu se vám a domluvíme se.
         </p>
-        <button type="button" class="slibene-btn" id="btnSlibeneNapsat">✉ Napsat Petrovi</button>
+        <button type="button" class="slibene-btn" id="btnSlibeneNapsat">🪺 Chci budku</button>
       </div>
 
       <div class="sekce-dvojsloupec">
@@ -505,6 +506,33 @@
       <button type="button" id="kontaktOdeslat">📨 Odeslat zprávu</button>
     </div>
     <div id="kontaktMsg" class="login-error" hidden></div>
+  </div>
+</div>
+
+<!-- Žádost o budku — strukturovaný formulář místo volného textu v kontaktu.
+     Padá do stejné schránky jako ostatní zprávy (administrace → 📬 Žádosti),
+     jen s příznakem typ: "budka", takže z ní jde založit slib na jedno kliknutí. -->
+<div id="modalChciBudku" class="modal-overlay" role="dialog" aria-modal="true" aria-label="Chci budku" hidden>
+  <div class="modal-box" style="max-width:480px;width:94%">
+    <button class="modal-zavrit" id="chciZavrit" aria-label="Zavřít">×</button>
+    <div class="modal-logo-wrap"><img src="img/logo.svg" alt="" aria-hidden="true" width="48"></div>
+    <h2 class="modal-nadpis">🪺 Chci budku</h2>
+    <p class="modal-uvitani">Napište mi, kam by budka měla přijít, a já se vám ozvu. Budky dělám postupně, tak mi prosím nechte kontakt — ať na vás nezapomenu.</p>
+    <div class="modal-form">
+      <input type="text" id="chciJmeno" maxlength="60" placeholder="Jméno a příjmení" autocomplete="name" aria-label="Jméno a příjmení">
+      <input type="tel" id="chciTelefon" maxlength="20" inputmode="tel" placeholder="Telefon" autocomplete="tel" aria-label="Telefon">
+      <input type="email" id="chciEmail" maxlength="80" placeholder="E-mail (nepovinné)" autocomplete="email" aria-label="E-mail">
+      <input type="text" id="chciObec" maxlength="60" placeholder="Obec, kam budka přijde" aria-label="Obec">
+      <input type="text" id="chciAdresa" maxlength="80" placeholder="Ulice a číslo popisné (nepovinné)" autocomplete="street-address" aria-label="Ulice a číslo popisné">
+      <textarea id="chciPoznamka" class="modal-textarea" rows="3" maxlength="400" placeholder="Poznámka — třeba kam budku pověsíte (nepovinné)" aria-label="Poznámka"></textarea>
+      <p class="chci-telefon-info">
+        ☎ <strong>Telefon je povinný.</strong> Jakmile vaši žádost založím, pošlu vám SMS s potvrzením
+        a s číslem, pod kterým vaše budka na mapě čeká. Bez telefonu vám potvrzení nepošlu.
+      </p>
+      <button type="button" id="chciOdeslat">📨 Odeslat žádost o budku</button>
+    </div>
+    <div id="chciMsg" class="login-error" hidden></div>
+    <p class="pristup-mail">Kontakt použiju jen k domluvě o budce. Na mapě je z vaší žádosti vidět pouze její číslo a místo — jméno ani telefon se nikde nezveřejňují.</p>
   </div>
 </div>
 
@@ -937,7 +965,7 @@
     }
   }, 10000);
 </script>
-<script src="js/auth.js?v=mb20260914l"></script>
+<script src="js/auth.js?v=mb20260915b"></script>
 <script src="js/presence.js?v=mb20260914l"></script>
 <script>
   if ('serviceWorker' in navigator) {
