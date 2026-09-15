@@ -2018,14 +2018,16 @@ function _zobrazZadosti() {
       // rovnou předvyplnit slib – nic se nemusí přepisovat z textu zprávy.
       const jeZadostOBudku = z.typ === 'budka';
       const telefonInfo = jeZadostOBudku && z.telefon ? ` <span class="zadost-idlabel">☎ ${_htmlEsc(z.telefon)}</span>` : '';
+      const otvorInfo = jeZadostOBudku && z.otvor ? ` <span class="zadost-budka">🔵 ${_htmlEsc(_popisOtvoru(z.otvor))}</span>` : '';
       const mistoZadosti = [z.obec, z.adresa].filter(Boolean).join(', ');
       const btnSlib = jeZadostOBudku
         ? `<button class="zadost-btn-slib" data-klic="${klic}"
              data-jmeno="${_htmlEsc(z.jmeno || '')}" data-misto="${_htmlEsc(mistoZadosti)}"
-             data-telefon="${_htmlEsc(z.telefon || '')}" data-poznamka="${_htmlEsc(z.poznamka || '')}">➕ Založit slib</button>`
+             data-telefon="${_htmlEsc(z.telefon || '')}" data-poznamka="${_htmlEsc(z.poznamka || '')}"
+             data-otvor="${_htmlEsc(z.otvor || '')}">➕ Založit slib</button>`
         : '';
       return `<div class="zadost-item${vyrizena ? ' zadost-item--vyrizena' : ''}" data-typ="${typ}" data-klic="${klic}">
-        <strong>${celeJmeno}</strong>${budkaInfo}${idInfo}${telefonInfo}${emailInfo} <span class="zadost-cas">${cas}</span>${vyrizena ? ' <span style="color:#6dcc6d;font-size:0.82rem">✓ vyřízeno</span>' : ''}<br>
+        <strong>${celeJmeno}</strong>${budkaInfo}${idInfo}${telefonInfo}${otvorInfo}${emailInfo} <span class="zadost-cas">${cas}</span>${vyrizena ? ' <span style="color:#6dcc6d;font-size:0.82rem">✓ vyřízeno</span>' : ''}<br>
         <span class="zadost-detail zadost-zprava-text">${z.text ? z.text.replace(/</g,'&lt;') : ''}</span><br>
         ${!vyrizena ? `<div class="zadost-btn-row">
           ${btnSlib}
@@ -2101,6 +2103,7 @@ function _zobrazZadosti() {
         document.getElementById('modalZadosti')?.remove();
         _prislibFormular({
           jmeno: d.jmeno, misto: d.misto, telefon: d.telefon, poznamka: d.poznamka,
+          otvor: d.otvor,
           // po uložení slibu se žádost rovnou odškrtne jako vyřízená
           zadostKlic: d.klic
         });
@@ -3355,6 +3358,7 @@ async function _zobrazPrisliby() {
     return `<div class="zadost-item" data-cislo="${p.cislo}">
       <strong>č. ${p.cislo} — ${_htmlEsc(p.jmeno || '(bez jména)')}</strong>
       ${p.misto ? ` <span class="zadost-budka">📍 ${_htmlEsc(p.misto)}</span>` : ''}
+      ${p.otvor ? ` <span class="zadost-budka">🔵 ${_htmlEsc(_popisOtvoru(p.otvor))}</span>` : ''}
       ${p.telefon ? ` <span class="zadost-idlabel">${_htmlEsc(p.telefon)}</span>` : ''}
       <span class="zadost-cas">${p.mesic || ''}</span><br>
       ${p.poznamka ? `<span class="zadost-detail">„${_htmlEsc(p.poznamka)}"</span><br>` : ''}
@@ -3410,6 +3414,15 @@ async function _zobrazPrisliby() {
       if (akce === 'upravit') { modal.remove(); _prislibFormular(data[cislo]); }
     });
   });
+}
+
+// Průměr vletového otvoru rozhoduje, který pták se do sýkorníku vejde.
+// Hodnoty jsou stejné jako typ budky v data/budky.json ('28mm' / '32mm'),
+// navíc 'poradte' pro ty, kdo si při žádosti nebyli jistí.
+function _popisOtvoru(o) {
+  return o === '28mm' ? '28 mm (menší sýkory)'
+    : o === '32mm' ? '32 mm (i koňadra a spol.)'
+      : 'poradit — žadatel si nebyl jistý';
 }
 
 function _htmlEsc(t) {
@@ -3495,6 +3508,12 @@ async function _prislibFormular(p) {
       </div>
       <input class="profil-input" id="pfJmeno" maxlength="60" placeholder="Jméno" value="${_htmlEsc(p.jmeno || '')}">
       <input class="profil-input" id="pfTelefon" maxlength="30" placeholder="Telefon (nepovinné)" value="${_htmlEsc(p.telefon || '')}">
+      <select class="profil-input" id="pfOtvor" aria-label="Vletový otvor">
+        <option value="" ${!p.otvor ? 'selected' : ''}>Vletový otvor — zatím neurčen</option>
+        <option value="28mm" ${p.otvor === '28mm' ? 'selected' : ''}>🔵 28 mm — menší sýkory</option>
+        <option value="32mm" ${p.otvor === '32mm' ? 'selected' : ''}>🔵 32 mm — i koňadra a spol.</option>
+        <option value="poradte" ${p.otvor === 'poradte' ? 'selected' : ''}>❓ Poradit — žadatel si nebyl jistý</option>
+      </select>
       <input class="profil-input" id="pfMesic" maxlength="10" placeholder="Slíbeno (např. 5/2026)" value="${_htmlEsc(p.mesic || _prislibMesicDnes())}">
       <textarea class="profil-input" id="pfPoznamka" rows="2" maxlength="300" placeholder="Poznámka (nepovinné)">${_htmlEsc(p.poznamka || '')}</textarea>
       <label class="zobrazit-heslo-label"><input type="checkbox" id="pfSms" ${p.sms ? 'checked' : ''}> SMS už odeslána</label>
@@ -3553,6 +3572,7 @@ async function _prislibFormular(p) {
       misto: document.getElementById('pfMisto').value.trim(),
       jmeno: document.getElementById('pfJmeno').value.trim(),
       telefon: document.getElementById('pfTelefon').value.trim(),
+      otvor: document.getElementById('pfOtvor').value,
       mesic: document.getElementById('pfMesic').value.trim(),
       poznamka: document.getElementById('pfPoznamka').value.trim(),
       sms: document.getElementById('pfSms').checked
@@ -3580,6 +3600,7 @@ async function _prislibFormular(p) {
       jmeno,
       telefon: document.getElementById('pfTelefon').value.trim(),
       poznamka: document.getElementById('pfPoznamka').value.trim(),
+      otvor: document.getElementById('pfOtvor').value,
       mesic,
       // u už odeslané SMS se datum nepřepisuje, ať zůstane to původní
       sms: sms ? (typeof puvodniSms === 'number' ? puvodniSms : Date.now()) : false,
@@ -3716,7 +3737,7 @@ function _prislibImport() {
         const mesic = p.mesic || '';
         updates[`prisliby/${cislo}`] = {
           cislo, lat, lng, misto: p.misto || '', jmeno: p.jmeno,
-          telefon: p.telefon || '', poznamka: p.poznamka || '', mesic,
+          telefon: p.telefon || '', poznamka: p.poznamka || '', otvor: p.otvor || '', mesic,
           sms: p.sms || false, ts: p.ts || Date.now()
         };
         // veřejná větev schválně bez jména a telefonu
@@ -4103,6 +4124,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const obec     = document.getElementById('chciObec').value.trim();
       const adresa   = document.getElementById('chciAdresa').value.trim();
       const poznamka = document.getElementById('chciPoznamka').value.trim();
+      const otvor    = document.querySelector('input[name="chciOtvor"]:checked')?.value || 'poradte';
       const msg      = document.getElementById('chciMsg');
       msg.style.color = '';
       if (!jmeno || !telefon || !obec) {
@@ -4130,12 +4152,13 @@ document.addEventListener('DOMContentLoaded', () => {
         'Telefon: ' + telefon,
         'Obec: ' + obec,
         adresa ? 'Adresa: ' + adresa : '',
+        'Otvor: ' + _popisOtvoru(otvor),
         poznamka ? 'Poznámka: ' + poznamka : ''
       ].filter(Boolean).join('\n');
       try {
         await db.ref('admin_requests/zpravy').push({
           loginId: 'navstevnik', jmeno, email: email || '(neuvedeno)', text: popis,
-          typ: 'budka', telefon, obec, adresa, poznamka,
+          typ: 'budka', telefon, obec, adresa, poznamka, otvor,
           ts: firebase.database.ServerValue.TIMESTAMP, vyrizeno: false
         });
         msg.style.color = '#4caf50';

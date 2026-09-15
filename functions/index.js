@@ -202,6 +202,7 @@ exports.budkyZpravaNotify = functions.database
       ? `${jmeno}${z.telefon ? " · ☎ " + z.telefon : ""}${z.email ? " · " + z.email : ""}${z.obec ? " · " + z.obec : ""}${z.budka ? " · č. " + z.budka : ""}`
       : jeZadostOBudku
         ? `${kontaktRadek}${z.obec ? " · 📍 " + z.obec : ""}${z.adresa ? ", " + z.adresa : ""}`
+          + (z.otvor === "28mm" ? " · 🔵 28 mm" : z.otvor === "32mm" ? " · 🔵 32 mm" : z.otvor ? " · 🔵 poradit" : "")
         : `${odKoho}: ${text}`;
 
     // tokeny admina – pošli na všechna jeho zařízení s povolenými notifikacemi
