@@ -1330,6 +1330,12 @@ body.mapa-cele .leaflet-left { left: calc(env(safe-area-inset-left, 0px) + 8px);
 .prislib-gps-radek .zadost-btn-ok:hover { background: rgba(255,255,255,0.16); }
 .prislib-gps-radek .zadost-btn-ok:disabled { opacity: 0.6; cursor: default; }
 .zadost-odpoved-wrap { margin-top: 10px; display: flex; flex-direction: column; gap: 8px; }
+/* Bez tohohle přebíjelo `display: flex` atribut hidden a okénko na odpověď
+   bylo vidět pořád — i u zpráv, na které se odpovědět nedá. */
+.zadost-odpoved-wrap[hidden] { display: none; }
+/* Telefon a e-mail v hlavičce žádosti jsou odkazy (tel: / mailto:) */
+.zadost-kontakt { color: var(--accent-gold); text-decoration: none; border-bottom: 1px dotted rgba(212,160,64,0.5); }
+.zadost-kontakt:hover { border-bottom-style: solid; }
 .zadost-odpoved-ta { width: 100%; box-sizing: border-box; background: rgba(255,255,255,0.07); border: 1px solid var(--panel-border); border-radius: 8px; color: var(--text-light); font-size: 0.95rem; padding: 9px 12px; resize: vertical; font-family: inherit; line-height: 1.5; outline: none; }
 .zadost-odpoved-ta:focus { border-color: var(--accent-gold); }
 .zadost-btn-odeslat-odpoved { align-self: flex-end; background: var(--orange); color: #fff; border: none; border-radius: 6px; padding: 7px 18px; font-size: 0.92rem; font-weight: 600; cursor: pointer; transition: background 0.15s; }
