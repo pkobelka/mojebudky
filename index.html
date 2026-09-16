@@ -9,7 +9,7 @@
   <link rel="stylesheet" href="css/vendor/MarkerCluster.css?v=mb20260914l">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=mb20260916a">
+  <link rel="stylesheet" href="css/style.css?v=mb20260916b">
   <link rel="icon" type="image/svg+xml" href="img/favicon.svg">
   <link rel="icon" type="image/png" sizes="512x512" href="img/icon-512.png">
   <link rel="icon" type="image/png" sizes="192x192" href="img/icon-192.png">
@@ -53,7 +53,7 @@
         <li><a href="#mapa" id="nav-mapa">Mapa Budek</a></li>
         <li><a href="https://www.google.com/maps/d/viewer?hl=cs&amp;mid=11Yq1MfrrWfRHxefxtGCFA0TCKSnNToXu&amp;ll=46.96772040177989%2C12.94753644912273&amp;z=6" target="_blank" rel="noopener noreferrer" onclick="var w=window.open(this.href,'_blank','noopener');return w?false:true;">Stará mapa (Google)</a></li>
         <li><a href="#galerie">Fotogalerie</a></li>
-        <li id="navLiAktuality"><a href="#aktuality">Z deníku správců...</a></li>
+        <li id="navLiOsidleni"><a href="#osidleni">Kdo u nás hnízdí</a></li>
         <li><a href="#" id="navDesatero">Desatero správce</a></li>
         <li class="nav-navod-mobile"><a href="#" id="navNavodMobile">❓ Návod pro správce</a></li>
 
@@ -352,13 +352,14 @@
     </div>
   </section>
 
-  <!-- Sekce: Z deníku správců -->
-  <section class="sekce sekce-denik" id="aktuality" aria-label="Z deníku správců">
+  <!-- Sekce: Kdo hnízdil v budkách – skládá se sama z hlášení správců -->
+  <section class="sekce sekce-osidleni" id="osidleni" aria-label="Kdo hnízdil v našich budkách">
     <div class="sekce-inner">
-      <h2 class="sekce-nadpis">Z deníku správců</h2>
-      <p class="sekce-podnadpis">Co se právě děje v našich budkách po celé zemi.</p>
-      <div class="pribehy-list" id="aktualityList">
-        <div style="padding:20px; color:#6b7d5a; font-size:0.95rem;">Načítám aktuality…</div>
+      <h2 class="sekce-nadpis">Kdo u nás hnízdí</h2>
+      <p class="sekce-podnadpis">Jaké druhy evidujeme v budkách – podle toho, co nahlásili správci.</p>
+      <div class="osidleni-roky" id="osidleniRoky" role="group" aria-label="Výběr sezóny"></div>
+      <div class="osidleni-obsah" id="osidleniObsah">
+        <div class="osidleni-nacitam">Načítám hlášení správců…</div>
       </div>
     </div>
   </section>
@@ -739,8 +740,8 @@
   }
 </script>
 <script src="js/svatky.js?v=mb20260914l"></script>
-<script src="js/mapa.js?v=mb20260916a"></script>
-<script src="js/main.js?v=mb20260915a"></script>
+<script src="js/mapa.js?v=mb20260916b"></script>
+<script src="js/main.js?v=mb20260916b"></script>
 <!-- Fotogalerie: data i kód jsou schválně přímo tady, ne v samostatných
      souborech. Hosting opakovaně neservíroval nově nahrané soubory
      (js/galerie.js, data/galerie.js; dřív stejně dopadly obydleno.svg a .mp4),

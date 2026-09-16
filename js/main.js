@@ -16,8 +16,6 @@ for (const [k, arr] of Object.entries(PREZDIVKY)) arr.forEach(p => KANONICKY[p] 
 
 let spravciJmena = [];
 let _boxManagerKey = {};  // box_cislo → manažerský klíč (suffix), pro deduplikaci správců
-let _statickeAktuality = [];
-let _aktualityListenerSet = false;
 let _partneriData = [];
 let _podekovaniData = [];
 let _narozeniniceDnes = [];  // správci s narozeninami dnes
@@ -157,7 +155,6 @@ async function nactiStatistiky() {
       if (el) el.textContent = `${window.MB_CAS} (verze ${window.MB_VERZE})`;
     }
 
-    nactiAktuality(data.aktuality);
     nactiPartnery(data.partneri);
     nactiPodekovani(data.podekovani);
     nactiDruhyPtaku(data.druhy_ptaku);
@@ -262,101 +259,191 @@ const BIRD_KEY_MAP = {
   'Sojka obecná': 'sojka',
 };
 
-function _renderAktualityPanel(staticke, liveEntries) {
-  const el = document.getElementById('aktualityList');
-  if (!el) return;
+// ── Kdo u nás hnízdí ──────────────────────────────────────────────────────
+// Nahradilo sekci „Z deníku správců" (9/2026). Psané zápisy se neujaly:
+// nikdo do nich nepřispíval a prázdná sekce budila dojem, že se o projekt
+// nikdo nestará. Tady se psát nemusí nic — přehled se skládá sám z toho, co
+// správci u budek stejně evidují: `historie` v `budky.json` (uzavřené roky)
+// a zápisy `budky_edit/{cislo}/{rok}/kdo_hnizdi` z Firebase (běžící sezóna).
+//
+// Na rozdíl od panelu druhů v pravém sloupci tohle NENÍ aktuální stav mapy,
+// ale bilance zvolené sezóny — proto tu na roky nesahá `_jeSezonaOsidleni()`
+// a loňská čísla nezmizí ani v zimě.
 
-  const liveHTML = liveEntries.map(v => {
-    const datum = v.ts ? new Date(v.ts).toLocaleDateString('cs-CZ') : '—';
-    const cas = v.ts ? new Date(v.ts).toLocaleTimeString('cs-CZ', { hour: '2-digit', minute: '2-digit' }) : '';
-    const budkaNazevStr = (v.budka_nazev && v.budka_nazev !== String(v.budka_cislo)) ? ` – ${v.budka_nazev}` : '';
-    return `<div class="pribeh-item pribeh-item--live">
-      <div class="pribeh-ikona">🏠</div>
-      <div class="pribeh-text">
-        <div class="pribeh-druh">Správce ${v.jmeno}</div>
-        <div class="pribeh-popis">${v.zprava}</div>
-        <div class="pribeh-datum">${datum} · ${cas}</div>
-        ${v.budka_cislo ? `<a class="aktualita-link" data-budka="${v.budka_cislo}" href="#">→ Budka č. ${v.budka_cislo}${budkaNazevStr}</a>` : ''}
-      </div>
-    </div>`;
-  }).join('');
+// Druhy mimo BIRD_ICONS (savci, hmyz, nehlášený druh) dostanou aspoň emoji.
+const OSIDLENI_EMOJI = {
+  'Vosy': '🐝', 'Sršni': '🐝', 'Včely': '🐝',
+  'Plch lesní': '🐭', 'Plch velký': '🐭', 'Myš domácí': '🐭', 'Veverka': '🐿️',
+  'Osídlena – nevím kdo': '❓', 'Nezjištěno': '❓',
+};
 
-  const staticHTML = staticke.map(p => `
-    <div class="pribeh-item">
-      <div class="pribeh-ikona">${BIRD_ICONS[p.ikona] || BIRD_ICONS.konadra}</div>
-      <div class="pribeh-text">
-        <div class="pribeh-druh">${p.ptak}</div>
-        <div class="pribeh-popis">${p.text}</div>
-        <div class="pribeh-datum">${p.datum}${p.cas ? ` · ${p.cas}` : ''}</div>
-        ${p.budka_id ? `<a class="aktualita-link" data-budka="${p.budka_id}" href="#">→ Budka č. ${p.budka_id}</a>` : ''}
-      </div>
-    </div>`).join('');
+// Správce může v aplikaci zvolit „+ Jiný druh" a napsat cokoli, takže názvy
+// druhů jsou volný text — do HTML jdou vždy přes _esc().
+const _escOsidleni = t => (window._esc ? window._esc(t)
+  : String(t == null ? '' : t).replace(/[<>&"]/g, z => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;' }[z])));
 
-  const vsechny = (liveHTML + staticHTML);
-  const parser = new DOMParser();
-  const doc = parser.parseFromString(`<div>${vsechny}</div>`, 'text/html');
-  const polozky = Array.from(doc.body.firstChild.children);
-  const LIMIT = 5;
+const OSIDLENI_NEURCENO = 'Osídlena – nevím kdo';
+const OSIDLENI_POPIS_MAPA = '🗺 Ukázat na mapě';
+const OSIDLENI_POPIS_ZRUSIT = '✓ Na mapě · zrušit';
 
-  el.innerHTML = polozky.slice(0, LIMIT).map(n => n.outerHTML).join('');
-
-  const skryte = polozky.slice(LIMIT);
-  if (skryte.length > 0) {
-    const btnDalsi = document.createElement('button');
-    btnDalsi.type = 'button';
-    btnDalsi.className = 'aktuality-dalsi-btn';
-    btnDalsi.textContent = `▸ Další aktivity… (${skryte.length})`;
-    el.appendChild(btnDalsi);
-    btnDalsi.addEventListener('click', () => {
-      skryte.forEach(n => el.insertBefore(n, btnDalsi));
-      btnDalsi.remove();
-    });
-  }
+function _sklonuj(n, [jedna, dva, hodne]) {
+  return n === 1 ? jedna : (n >= 2 && n <= 4) ? dva : hodne;
 }
 
-function _poslechniAktualityFirebase() {
-  if (_aktualityListenerSet) return;
-  const db = typeof firebase !== 'undefined' ? firebase.database() : null;
-  if (!db) return;
-  _aktualityListenerSet = true;
+function _osidleniIkona(nazev) {
+  const key = BIRD_KEY_MAP[nazev];
+  if (key) return BIRD_ICONS[key].replace(/width="38" height="38"/, 'width="34" height="34"');
+  return `<span class="osidleni-karta-emoji">${OSIDLENI_EMOJI[nazev] || '🪶'}</span>`;
+}
 
-  let _liveEntries = [];
-  let _fbAktuality = [];
+let _osidleniVybranyRok = null;
 
-  function _rerender() {
-    _renderAktualityPanel([..._fbAktuality, ..._statickeAktuality], _liveEntries);
-  }
+// Vrátí { rok: { cislo_budky: druh } }. Klíčem je číslo budky, takže se jedna
+// budka nezapočítá dvakrát; Firebase se aplikuje po JSON a tedy vyhrává.
+function _osidleniPoRocich() {
+  const podleRoku = {};
+  const norm = window._normDruh || (x => x);
+  const pridej = (rok, cislo, druh) => {
+    const r = Number(rok), c = Number(cislo);
+    if (!r || !druh || Number.isNaN(c)) return;
+    (podleRoku[r] = podleRoku[r] || {})[c] = norm(druh);
+  };
 
-  db.ref('aktivita').orderByChild('ts').limitToLast(10).on('value', snap => {
-    _liveEntries = [];
-    snap.forEach(child => { _liveEntries.unshift(child.val()); });
-    _rerender();
+  (window._budkyData || []).forEach(b => {
+    (b.historie || []).forEach(h => pridej(h.rok, b.cislo, h.obsazeno));
   });
 
-  db.ref('aktuality').orderByChild('ts').limitToLast(20).on('value', snap => {
-    _fbAktuality = [];
-    snap.forEach(child => { _fbAktuality.unshift(child.val()); });
-    _rerender();
+  Object.entries(window._vsechnyEdity || {}).forEach(([cislo, raw]) => {
+    if (!raw) return;
+    const roky = Object.keys(raw).filter(k => /^\d{4}$/.test(k));
+    if (roky.length) {
+      roky.forEach(rok => { if (raw[rok] && raw[rok].kdo_hnizdi) pridej(rok, cislo, raw[rok].kdo_hnizdi); });
+    } else if (raw.kdo_hnizdi) {
+      pridej(raw.rok || new Date().getFullYear(), cislo, raw.kdo_hnizdi);   // starý plochý formát
+    }
   });
+
+  return podleRoku;
 }
 
-function nactiAktuality(aktuality) {
-  _statickeAktuality = aktuality || [];
-  const el = document.getElementById('aktualityList');
-  if (el && !el._clickSet) {
-    el._clickSet = true;
-    el.addEventListener('click', e => {
-      const link = e.target.closest('.aktualita-link');
-      if (!link) return;
-      e.preventDefault();
-      const cislo = parseInt(link.dataset.budka, 10);
-      focusBudka(cislo);
-      document.querySelector('.map-wrapper').scrollIntoView({ behavior: 'smooth' });
-    });
+function _renderOsidleni() {
+  const elObsah = document.getElementById('osidleniObsah');
+  const elRoky  = document.getElementById('osidleniRoky');
+  if (!elObsah || !elRoky) return;
+
+  const podleRoku = _osidleniPoRocich();
+  const roky = Object.keys(podleRoku).map(Number).sort((a, b) => b - a);
+
+  if (!roky.length) {
+    elRoky.innerHTML = '';
+    elObsah.innerHTML = `<p class="osidleni-prazdno">Zatím tu nemáme žádné hlášení o osídlení.
+      Jakmile správci začnou u budek zapisovat, kdo v nich hnízdí, objeví se přehled tady.</p>`;
+    return;
   }
-  _renderAktualityPanel(_statickeAktuality, []);
-  _poslechniAktualityFirebase();
+
+  if (!roky.includes(_osidleniVybranyRok)) _osidleniVybranyRok = roky[0];
+
+  elRoky.innerHTML = roky.map(r =>
+    `<button type="button" class="osidleni-rok${r === _osidleniVybranyRok ? ' is-active' : ''}" data-rok="${r}">
+      🪺 <span class="osidleni-rok-slovo">Sezóna </span>${r}
+    </button>`).join('');
+
+  const zaznamy = podleRoku[_osidleniVybranyRok];
+  const druhy = {};
+  Object.entries(zaznamy).forEach(([cislo, druh]) => {
+    (druhy[druh] = druhy[druh] || []).push(Number(cislo));
+  });
+  const serazene = Object.entries(druhy).sort((a, b) =>
+    (a[0] === OSIDLENI_NEURCENO) - (b[0] === OSIDLENI_NEURCENO)
+    || b[1].length - a[1].length
+    || a[0].localeCompare(b[0], 'cs'));
+
+  const budek = Object.keys(zaznamy).length;
+  const pocetDruhu = serazene.length;
+
+  const karty = serazene.map(([druh, cisla]) => `
+    <button type="button" class="osidleni-karta" data-druh="${_escOsidleni(druh)}"
+            title="Ukázat tyto budky na mapě">
+      <span class="osidleni-karta-ikona">${_osidleniIkona(druh)}</span>
+      <span class="osidleni-karta-nazev">${_escOsidleni(druh === OSIDLENI_NEURCENO ? 'Neurčený druh' : druh)}</span>
+      <span class="osidleni-karta-cislo">
+        <strong class="osidleni-karta-pocet">${cisla.length}</strong>
+        <span class="osidleni-karta-jednotka">${_sklonuj(cisla.length, ['budka', 'budky', 'budek'])}</span>
+      </span>
+      <span class="osidleni-karta-mapa">${OSIDLENI_POPIS_MAPA}</span>
+    </button>`).join('');
+
+  elObsah.innerHTML = `
+    <p class="osidleni-shrnuti">
+      V sezóně <strong>${_osidleniVybranyRok}</strong> nám správci nahlásili osídlení
+      u <strong>${budek} ${_sklonuj(budek, ['budky', 'budek', 'budek'])}</strong> –
+      dohromady <strong>${pocetDruhu} ${_sklonuj(pocetDruhu, ['druh', 'druhy', 'druhů'])}</strong>.
+    </p>
+    <div class="osidleni-karty">${karty}</div>
+    <p class="osidleni-pozn">Čísla vycházejí z hlášení správců, ne z odborného monitoringu –
+      u části budek zůstává hnízdění nenahlášené.</p>`;
 }
+
+// Obnovu si vyžádá mapa.js pokaždé, když dorazí budky.json nebo edity z Firebase.
+window._prepocitejOsidleni = _renderOsidleni;
+
+// Klik na kartu zvýrazní budky daného druhu na mapě, klik na tu samou kartu
+// znovu zvýraznění zruší (stejná logika jako u legendy mapy).
+let _osidleniAktivniDruh = null;
+
+window._osidleniZrusitZvyrazneni = function() {
+  _osidleniAktivniDruh = null;
+  document.querySelectorAll('.osidleni-karta--aktivni').forEach(el => {
+    el.classList.remove('osidleni-karta--aktivni');
+    const popis = el.querySelector('.osidleni-karta-mapa');
+    if (popis) popis.textContent = OSIDLENI_POPIS_MAPA;
+  });
+};
+
+// Data budek si sekce načítá sama, i když je fetchuje i mapa.js. Je to stejná
+// URL, takže druhé volání sedí v cache prohlížeče — a přehled se vykreslí i
+// tehdy, když se mapa nenačte (výpadek CDN s Leafletem, blokované skripty).
+async function _nactiBudkyProOsidleni() {
+  if (window._budkyData) return;
+  try {
+    const res = await fetch('data/budky.json?v=20260824a');
+    if (!window._budkyData) window._budkyData = await res.json();
+  } catch (e) {
+    console.error('Chyba načítání budek pro přehled osídlení:', e);
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const sekce = document.getElementById('osidleni');
+  if (!sekce) return;
+  _nactiBudkyProOsidleni().then(_renderOsidleni);
+
+  document.getElementById('osidleniRoky').addEventListener('click', e => {
+    const btn = e.target.closest('.osidleni-rok');
+    if (!btn) return;
+    _osidleniVybranyRok = Number(btn.dataset.rok);
+    if (typeof window._zrusitFilterMapy === 'function') window._zrusitFilterMapy();
+    _renderOsidleni();
+  });
+
+  document.getElementById('osidleniObsah').addEventListener('click', e => {
+    const karta = e.target.closest('.osidleni-karta');
+    if (!karta) return;
+    const druh = karta.dataset.druh;
+    if (_osidleniAktivniDruh === druh) {
+      if (typeof window._zrusitFilterMapy === 'function') window._zrusitFilterMapy();
+      return;
+    }
+    const cisla = Object.entries(_osidleniPoRocich()[_osidleniVybranyRok] || {})
+      .filter(([, d]) => d === druh).map(([c]) => Number(c));
+    if (typeof window._zvyraznitBudkyNaMape !== 'function') return;
+    if (!window._zvyraznitBudkyNaMape(cisla, `${druh} (${_osidleniVybranyRok})`)) return;
+    _osidleniAktivniDruh = druh;
+    karta.classList.add('osidleni-karta--aktivni');
+    karta.querySelector('.osidleni-karta-mapa').textContent = OSIDLENI_POPIS_ZRUSIT;
+    document.querySelector('.map-wrapper')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+});
 
 function nactiPartnery(partneri) {
   _partneriData = partneri || [];

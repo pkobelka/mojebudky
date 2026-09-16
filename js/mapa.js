@@ -146,8 +146,31 @@ window._filtrovatMapuOsidlene = function() {
     mapInstance.fitBounds(L.latLngBounds(matching), { padding: [50, 50], maxZoom: 15 });
 };
 
+// Zvýrazní na mapě jmenovitý seznam budek (sekce „Kdo u nás hnízdí"). Filtry
+// podle druhu vycházejí z aktuálního stavu budky, takže na loňské sezóny
+// nestačí — tady se posílají rovnou čísla budek z hlášení za daný rok.
+// Vrací počet budek, které se povedlo na mapě najít.
+window._zvyraznitBudkyNaMape = function(cisla, popis) {
+  const chtene = new Set((cisla || []).map(Number));
+  const cile = [];
+  Object.entries(markersByCislo).forEach(([cislo, marker]) => {
+    const shoda = chtene.has(Number(cislo));
+    marker.setOpacity(shoda ? 1.0 : 0.15);
+    if (shoda) cile.push(marker.getLatLng());
+  });
+  if (!cile.length) {
+    window._zrusitFilterMapy();
+    return 0;
+  }
+  _aktivniDruhFilter = popis || '__vyber__';
+  if (typeof window._aktualizujFilterBtn === 'function') window._aktualizujFilterBtn(popis || null);
+  if (mapInstance) mapInstance.fitBounds(L.latLngBounds(cile), { padding: [50, 50], maxZoom: 15 });
+  return cile.length;
+};
+
 window._zrusitFilterMapy = function() {
   _aktivniDruhFilter = null;
+  if (typeof window._osidleniZrusitZvyrazneni === 'function') window._osidleniZrusitZvyrazneni();
   Object.values(markersByCislo).forEach(m => m.setOpacity(1.0));
   if (typeof window._aktualizujFilterBtn === 'function') window._aktualizujFilterBtn(null);
   const el = document.getElementById('stat-osidlenych');
@@ -179,6 +202,7 @@ const _DRUH_NORMALIZE = {
 function _normDruh(ptak) {
   return _DRUH_NORMALIZE[ptak] || ptak;
 }
+window._normDruh = _normDruh;   // sekce „Kdo u nás hnízdí" v main.js
 
 function _prepocitejDruhy() {
   if (!window._nactiDruhyPtaku || !window._druhy_ptaku_base) return;
@@ -791,6 +815,7 @@ function _prislibTooltipHtml(cislo) {
 function _esc(t) {
   return String(t == null ? '' : t).replace(/[<>&"]/g, z => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;' }[z]));
 }
+window._esc = _esc;   // sekce „Kdo u nás hnízdí" v main.js
 
 function _prislibPopupHtml(cislo) {
   const p = prislibyVerejne[cislo] || {};
@@ -1181,6 +1206,7 @@ async function inicializujMapu() {
     const budky = await resBudky.json();
     budkyData = budky;
     window._budkyData = budky;
+    if (typeof window._prepocitejOsidleni === 'function') window._prepocitejOsidleni();
     const spravciList = await resSpravci.json();
     const spravci = Object.fromEntries(spravciList.map(s => [s.cislo, s.jmeno]));
 
@@ -1271,6 +1297,8 @@ async function inicializujMapu() {
 
         firebase.database().ref('budky_edit').on('value', editSnap => {
           const edits = editSnap.val() || {};
+          window._vsechnyEdity = edits;
+          if (typeof window._prepocitejOsidleni === 'function') window._prepocitejOsidleni();
           const aktivita = window._spravceAktivita || {};
 
           Object.entries(edits).forEach(([cislo, editRaw]) => {
