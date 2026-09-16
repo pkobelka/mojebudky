@@ -128,6 +128,41 @@ doplnila koňadra za rok 2025, jinak by ten záznam nikde nezůstal.
 
 ---
 
+## Kdo u nás hnízdí – místo deníku správců (od 9/2026)
+
+Sekce **„Z deníku správců"** na hlavní stránce skončila. Psané zápisy se
+neujaly: nikdo do nich nepřispíval a poloprázdná sekce budila dojem, že se
+o projekt nikdo nestará. Uzel `aktuality` ve Firebase ani pole `aktuality`
+ve `statistiky.json` se ale nemazaly – data zůstala, jen je web nečte.
+Uzel `aktivita` se dál plní i čte v administraci (📊 Online historie).
+
+Na jejím místě je sekce **„Kdo u nás hnízdí"** (`#osidleni`). Nic se do ní
+nepíše – skládá se sama z toho, co správci u budek stejně evidují:
+
+- `historie` v `data/budky.json` (uzavřené roky),
+- `budky_edit/{cislo}/{rok}/kdo_hnizdi` z Firebase (běžící sezóna).
+
+Přepínač sezón ukazuje bilanci zvoleného roku: kolik budek bylo nahlášeno
+jako osídlené a jaké druhy v nich hnízdily. Klik na kartu druhu zvýrazní
+právě ty budky na mapě (`window._zvyraznitBudkyNaMape` v `js/mapa.js`) –
+běžný filtr podle druhu na to nestačí, protože vychází z aktuálního stavu
+budky, ne z historie.
+
+Na rozdíl od panelu druhů v pravém sloupci tu **sezónní pojistka
+`_jeSezonaOsidleni()` úmyslně neplatí**: přehled není aktuální stav mapy,
+ale bilance sezóny, takže loňská čísla nemají v zimě mizet.
+
+Čísla se můžou lišit od dlaždice „Osídlených budek". Ta počítá aktuální
+stav (a mimo sezónu čísla ze `statistiky.json`), zatímco tady je součet
+hlášení za daný rok – u části budek osídlení nahlášené není. Sekce to pod
+kartami přiznává.
+
+Data si sekce načítá vlastním `fetch` `data/budky.json` (stejná URL jako
+v `mapa.js`, takže druhé volání sedí v cache). Je to schválně: přehled se
+vykreslí i tehdy, když se mapa nenačte.
+
+---
+
 ## Etapy
 
 ### Krok 1 – Kostra a design
