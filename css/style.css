@@ -1621,7 +1621,9 @@ a.uvod-cta-text:hover { background: rgba(255,255,255,0.22); transform: translate
 }
 
 /* ── STATISTIKY ── */
-.sekce-stats .stats-grid { grid-template-columns: repeat(4, 1fr); max-width: 980px; margin: 0 auto 22px; gap: 18px; padding: 0; }
+/* Tři dlaždice od zrušení „Aktivních budek“ (9/2026) — užší mřížka, ať nezbyde
+   prázdné místo po čtvrté. */
+.sekce-stats .stats-grid { grid-template-columns: repeat(3, 1fr); max-width: 780px; margin: 0 auto 22px; gap: 18px; padding: 0; }
 .sekce-stats .stat-item { background: #ffffff; border: 1px solid #e0ead4; border-top: 4px solid var(--orange); border-radius: 14px; box-shadow: 0 4px 16px rgba(60,90,40,0.07); padding: 20px 14px; }
 .sekce-stats .stat-value { color: #1c3d10; }
 .sekce-stats .stat-label { color: #6b7d5a; }
@@ -1697,6 +1699,9 @@ a.uvod-cta-text:hover { background: rgba(255,255,255,0.22); transform: translate
   .sekce { padding: 40px 16px; }
   .sekce-nadpis { font-size: 1.7rem; }
   .sekce-stats .stats-grid { grid-template-columns: 1fr 1fr; }
+  /* Tři dlaždice ve dvou sloupcích — třetí ať se roztáhne přes oba,
+     jinak zbyde na řádku okatá díra. */
+  .sekce-stats .stat-item:nth-child(3) { grid-column: 1 / -1; }
   .sekce-dvojsloupec { grid-template-columns: 1fr; }
   .map-wrapper { height: 60vh; min-height: 360px; }
 }

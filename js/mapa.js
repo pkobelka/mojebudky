@@ -1340,14 +1340,9 @@ async function inicializujMapu() {
           const elS = document.getElementById('stat-osidlenych');
           if (elS && _jeSezonaOsidleni()) elS.textContent = osidleneCisla.size;
           _prepocitejDruhy();
-
-          const aktivnichCisla = new Set([
-            ...Object.keys(edits),
-            ...Object.keys(aktivita),
-            ...osidleneCisla
-          ]);
-          const elA = document.getElementById('stat-aktivnich');
-          if (elA) elA.textContent = aktivnichCisla.size;
+          // Dlaždice „Aktivních budek“ se zrušila (9/2026) — počítala budky,
+          // u kterých někdo něco zapsal, takže měřila hlášení správců, ne stav
+          // budek. S osídlením navázaným na sezónu by navíc na podzim padala.
         });
       } catch(e) {}
     }
