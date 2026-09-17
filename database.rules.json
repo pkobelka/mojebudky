@@ -3,8 +3,9 @@
     ".read": false,
     ".write": false,
     "aquactrl_udalosti": {
-      ".read": "auth != null",
+      ".read": "auth != null && (auth.token.admin === true || auth.token.person == null || root.child('aquactrl_pristup_sekce').child(auth.token.person).child('udalosti').val() !== false)",
       "$id": {
+        ".read": "auth != null",
         ".write": "auth != null && ( auth.token.admin === true || (newData.exists() && (data.exists() || newData.child('zadal').val() === auth.token.person)) )"
       }
     },
@@ -47,6 +48,17 @@
     "aquactrl_qr_login": {
       ".read": "auth.token.admin === true",
       ".write": "auth.token.admin === true"
+    },
+    "aquactrl_karty_vrtu": {
+      ".read": "auth != null && (auth.token.admin === true || auth.token.person == null || root.child('aquactrl_pristup_sekce').child(auth.token.person).child('karty').val() !== false)",
+      ".write": "auth != null"
+    },
+    "aquactrl_pristup_sekce": {
+      ".read": "auth.token.admin === true",
+      ".write": "auth.token.admin === true",
+      "$kdo": {
+        ".read": "auth != null && (auth.token.admin === true || auth.token.person === $kdo)"
+      }
     },
     "florian_kandidati": {
       ".read": "auth != null",
