@@ -1825,8 +1825,13 @@ body.mapa-cele .map-wrapper {
 .gps-presnost { fill: #1a73e8; fill-opacity: 0.12; stroke: #1a73e8; stroke-opacity: 0.35; stroke-width: 1; }
 
 /* Proužek s přesností / rychlostí */
+.gps-info {
+  display: flex; flex-direction: column; align-items: flex-end; gap: 6px;
+  margin-bottom: 8px !important;
+}
+
 .gps-chip {
-  display: flex; margin-bottom: 8px !important; align-items: center; gap: 6px;
+  display: flex; align-items: center; gap: 6px;
   background: rgba(255,255,255,0.95); border-radius: 20px;
   box-shadow: 0 2px 10px rgba(0,0,0,0.25);
   padding: 6px 14px; font-family: 'Segoe UI', system-ui, sans-serif;
@@ -1834,8 +1839,34 @@ body.mapa-cele .map-wrapper {
 }
 .gps-chip-sep { color: #b09070; }
 
+/* Proužek „nejbližší budka". Sbalený je to malá pecka s šipkou a
+   vzdáleností, rozbalený doplní číslo, název a výzvu ke klepnutí. */
+.gps-blizko {
+  display: flex; align-items: center; gap: 6px; cursor: pointer;
+  background: rgba(58, 32, 8, 0.92); color: #fff8ee; border-radius: 20px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.25);
+  padding: 6px 13px; font-family: 'Segoe UI', system-ui, sans-serif;
+  font-size: 0.8rem; font-weight: 600; white-space: nowrap;
+  max-width: calc(100vw - 24px);
+  transition: background 0.2s ease;
+}
+.gps-blizko:hover, .gps-blizko:focus-visible { background: rgba(58, 32, 8, 1); outline: none; }
+.gps-blizko:focus-visible { box-shadow: 0 0 0 3px rgba(255,255,255,0.65); }
+.gps-blizko-ikona { font-size: 0.95em; }
+.gps-blizko-sipka {
+  display: inline-block; line-height: 1; color: #ffd79a; font-size: 1.05em;
+}
+.gps-blizko--otevrena { white-space: normal; text-align: right; }
+.gps-blizko-text { flex: 1 1 auto; }
+.gps-blizko-akce {
+  flex: 0 0 auto; padding-left: 8px; margin-left: 2px;
+  border-left: 1px solid rgba(255,248,238,0.35); color: #ffd79a;
+}
+
 @media (max-width: 600px) {
   .gps-chip { font-size: 0.75rem; padding: 5px 11px; max-width: calc(100vw - 24px); }
+  .gps-blizko { font-size: 0.75rem; padding: 5px 11px; }
+  .gps-blizko--otevrena { max-width: min(260px, calc(100vw - 24px)); }
 }
 
 /* Vynucená změna hesla po přechodu na serverové ověřování.

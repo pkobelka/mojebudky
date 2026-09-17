@@ -1522,6 +1522,15 @@ let _gpsWakeLock  = null;
 let _gpsSlabySignal   = false;  // poslední pokus o zaměření selhal
 let _gpsChybaOhlasena = false;  // hlásku o problému ukazujeme jen jednou
 
+// Proužek „nejbližší budka" — viz _gpsAktualizujBlizkou
+const _BLIZKO_MAX_M   = 150000;  // dál než 150 km je údaj k ničemu, radši nic
+const _BLIZKO_SVITI_MS = 7000;   // jak dlouho svítí rozbalený popis
+const _BLIZKO_U_BUDKY_M = 15;    // blíž už neříkáme metry, ale „jste u ní"
+let _gpsBlizko       = null;     // element proužku
+let _gpsBlizkoCislo  = null;     // číslo budky, kterou proužek zrovna ukazuje
+let _gpsBlizkoOtevr  = false;    // true = rozbalený popis, false = malá pecka
+let _gpsBlizkoTimer  = null;
+
 // Vzdálenost dvou bodů v metrech (haversine)
 function _gpsVzdalenost(a, b) {
   const R = 6371000, rad = Math.PI / 180;
@@ -1596,7 +1605,11 @@ function _gpsAktualizujChip(coords) {
   if (_gpsRezim === 'off') { _gpsChip.style.display = 'none'; _gpsChip.innerHTML = ''; return; }
   _gpsChip.style.display = '';
 
-  if (_gpsRezim === 'hledam') { _gpsChip.innerHTML = '<span>📡 Hledám vaši polohu…</span>'; return; }
+  if (_gpsRezim === 'hledam') {
+    _gpsChip.innerHTML = '<span>📡 Hledám vaši polohu…</span>';
+    _gpsSkryjBlizkou();
+    return;
+  }
   if (_gpsRezim === 'volne') {
     _gpsChip.innerHTML = '<span>⏸ Sledování pozastaveno — klepněte na tlačítko polohy</span>';
     return;
@@ -1616,6 +1629,108 @@ function _gpsAktualizujChip(coords) {
     `<span>📍 Sleduji vaši polohu</span>` +
     (presnost ? `<span class="gps-chip-sep">·</span><span>${presnost}</span>` : '') +
     (rychlost ? `<span class="gps-chip-sep">·</span><span>${rychlost}</span>` : '');
+}
+
+/* ── Nejbližší budka ────────────────────────────────────────────────
+   Na telefonu je každý pixel drahý, takže se informace drží co nejmenší:
+   normálně je to jen pecka „🏠 ↑ 320 m" u kraje mapy, která se s chůzí
+   sama přepočítává. Rozbalený popis (číslo, název, „Ukázat na mapě")
+   chvíli svítí po prvním zaměření a pokaždé, když se nejbližší budka
+   změní — pak se zase sbalí. Klepnutím ho jde vyvolat kdykoli a druhé
+   klepnutí mapu na tu budku posune a otevře její bublinu.
+   ─────────────────────────────────────────────────────────────────── */
+
+function _gpsFormatVzdalenost(m) {
+  if (m < 100)   return `${Math.round(m / 5) * 5} m`;
+  if (m < 1000)  return `${Math.round(m / 10) * 10} m`;
+  if (m < 10000) return `${(m / 1000).toFixed(1).replace('.', ',')} km`;
+  return `${Math.round(m / 1000)} km`;
+}
+
+function _gpsNejblizsiBudka(bod) {
+  let nej = null;
+  (budkyData || []).forEach(b => {
+    if (typeof b.lat !== 'number' || typeof b.lng !== 'number') return;
+    if (!markersByCislo[b.cislo]) return;   // co není na mapě, tam nemá smysl posílat
+    const m = _gpsVzdalenost(bod, { lat: b.lat, lng: b.lng });
+    if (!nej || m < nej.m) nej = { budka: b, m, azimut: _gpsAzimut(bod, { lat: b.lat, lng: b.lng }) };
+  });
+  return nej;
+}
+
+function _gpsBlizkoSbal(hned) {
+  clearTimeout(_gpsBlizkoTimer);
+  _gpsBlizkoTimer = null;
+  if (hned) { _gpsBlizkoOtevr = false; _gpsVykresliBlizkou(); return; }
+  _gpsBlizkoTimer = setTimeout(() => { _gpsBlizkoOtevr = false; _gpsVykresliBlizkou(); }, _BLIZKO_SVITI_MS);
+}
+
+function _gpsSkryjBlizkou() {
+  clearTimeout(_gpsBlizkoTimer);
+  _gpsBlizkoTimer = null;
+  _gpsBlizkoOtevr = false;
+  _gpsBlizkoCislo = null;
+  if (_gpsBlizko) { _gpsBlizko.style.display = 'none'; _gpsBlizko.innerHTML = ''; _gpsBlizko._nej = null; }
+}
+
+function _gpsAktualizujBlizkou(bod) {
+  if (!_gpsBlizko) return;
+  const nej = bod ? _gpsNejblizsiBudka(bod) : null;
+  if (!nej || nej.m > _BLIZKO_MAX_M) { _gpsSkryjBlizkou(); return; }
+
+  // Nová (nebo první) nejbližší budka → na chvíli rozsviť celý popis
+  if (nej.budka.cislo !== _gpsBlizkoCislo) {
+    _gpsBlizkoCislo = nej.budka.cislo;
+    _gpsBlizkoOtevr = true;
+    _gpsBlizkoSbal();
+  }
+  _gpsBlizko._nej = nej;
+  _gpsVykresliBlizkou();
+}
+
+function _gpsVykresliBlizkou() {
+  const nej = _gpsBlizko && _gpsBlizko._nej;
+  if (!nej) return;
+  // Přímo u budky nemá smysl hlásit „↑ 0 m" — šipka i číslo by jen mátly.
+  const uNi = nej.m < _BLIZKO_U_BUDKY_M;
+  const vzd = _gpsFormatVzdalenost(nej.m);
+  // Mapa je vždy „severem nahoru", takže šipka otočená o azimut ukazuje
+  // na obrazovce opravdu tím směrem, kde budka je.
+  const sipka = uNi ? ''
+    : `<span class="gps-blizko-sipka" style="transform:rotate(${Math.round(nej.azimut)}deg)" aria-hidden="true">↑</span>`;
+  const jmenoRaw = nej.budka.nazev ? ` ${nej.budka.nazev}` : '';   // aria-label se nevykresluje jako HTML
+  const jmeno = nej.budka.nazev ? ` ${_esc(nej.budka.nazev)}` : '';
+  const popis = uNi
+    ? `Jste u budky č.&nbsp;${nej.budka.cislo}${jmeno}`
+    : `Nejbližší budka č.&nbsp;${nej.budka.cislo}${jmeno} — ${sipka}&nbsp;${vzd}`;
+
+  _gpsBlizko.style.display = '';
+  _gpsBlizko.classList.toggle('gps-blizko--otevrena', _gpsBlizkoOtevr);
+  _gpsBlizko.innerHTML = _gpsBlizkoOtevr
+    ? `<span class="gps-blizko-ikona" aria-hidden="true">🏠</span>` +
+      `<span class="gps-blizko-text">${popis}</span>` +
+      `<span class="gps-blizko-akce">Ukázat&nbsp;›</span>`
+    : `<span class="gps-blizko-ikona" aria-hidden="true">🏠</span>${sipka}` +
+      `<span>${uNi ? 'jste u ní' : vzd}</span>`;
+  _gpsBlizko.setAttribute('aria-label', _gpsBlizkoOtevr
+    ? (uNi ? `Jste u budky číslo ${nej.budka.cislo}${jmenoRaw}. Klepnutím ji ukážete na mapě.`
+           : `Nejbližší budka číslo ${nej.budka.cislo}${jmenoRaw}, ${vzd} daleko. Klepnutím ji ukážete na mapě.`)
+    : (uNi ? 'Jste u nejbližší budky. Klepnutím zobrazíte podrobnosti.'
+           : `Nejbližší budka je ${vzd} daleko. Klepnutím zobrazíte podrobnosti.`));
+}
+
+// První klepnutí jen rozbalí popis (ať se mapa nehne omylem v kapse),
+// druhé už na budku skočí.
+function _gpsBlizkoKlik() {
+  if (!_gpsBlizko || !_gpsBlizko._nej) return;
+  if (!_gpsBlizkoOtevr) { _gpsBlizkoOtevr = true; _gpsVykresliBlizkou(); _gpsBlizkoSbal(); return; }
+  const cislo = _gpsBlizko._nej.budka.cislo;
+  _gpsBlizkoSbal(true);
+  // Sledování pozastav — jinak by další zaměření mapu hned odtáhlo zpátky
+  // k uživateli a budka by mu zmizela pod rukama. Tlačítko polohy se přepne
+  // na „Vycentrovat", takže návrat k sobě je na jedno klepnutí.
+  if (_gpsRezim === 'sleduji') _gpsNastavRezim('volne');
+  focusBudka(cislo);
 }
 
 // Udrž displej rozsvícený, dokud jedeme (jako v navigaci). Tiše ignoruj,
@@ -1683,6 +1798,7 @@ function _gpsZpracujPolohu(pos) {
   }
 
   _gpsAktualizujChip(c);
+  _gpsAktualizujBlizkou(bod);
 }
 
 function _gpsHlaska(text, ms) {
@@ -1752,6 +1868,7 @@ function _gpsStopSledovani() {
   _gpsSlabySignal = false;
   _gpsChybaOhlasena = false;
   if (_gpsChip) _gpsChip._posledni = null;
+  _gpsSkryjBlizkou();
   _gpsUvolniDisplej();
   _gpsNastavRezim('off');
 }
@@ -1795,10 +1912,22 @@ function pridejGpsOvladani(map) {
   // ani na úzkém telefonu nepřekrývají.
   const chipCtrl = L.control({ position: 'bottomright' });
   chipCtrl.onAdd = function() {
-    _gpsChip = L.DomUtil.create('div', 'gps-chip');
+    const box = L.DomUtil.create('div', 'gps-info');
+
+    _gpsChip = L.DomUtil.create('div', 'gps-chip', box);
     _gpsChip.style.display = 'none';
-    L.DomEvent.disableClickPropagation(_gpsChip);
-    return _gpsChip;
+
+    _gpsBlizko = L.DomUtil.create('div', 'gps-blizko', box);
+    _gpsBlizko.style.display = 'none';
+    _gpsBlizko.setAttribute('role', 'button');
+    _gpsBlizko.setAttribute('tabindex', '0');
+    L.DomEvent.on(_gpsBlizko, 'click', e => { L.DomEvent.preventDefault(e); _gpsBlizkoKlik(); });
+    L.DomEvent.on(_gpsBlizko, 'keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') { L.DomEvent.preventDefault(e); _gpsBlizkoKlik(); }
+    });
+
+    L.DomEvent.disableClickPropagation(box);
+    return box;
   };
   chipCtrl.addTo(map);
 
