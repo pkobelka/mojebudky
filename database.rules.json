@@ -44,6 +44,10 @@
       ".read": "auth != null",
       ".write": "auth.token.admin === true"
     },
+    "aquactrl_qr_login": {
+      ".read": "auth.token.admin === true",
+      ".write": "auth.token.admin === true"
+    },
     "florian_kandidati": {
       ".read": "auth != null",
       ".write": "auth != null"
