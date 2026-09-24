@@ -1028,6 +1028,34 @@ function _scrollNaMapu() {
   document.querySelector('.map-wrapper')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
+// Otevře bublinu, až když se mapa doopravdy zastaví. Shlukování markery při
+// každém dojezdu přeskládá (odebere a znovu přidá) a bublinu tím zavře —
+// když ji otevřeme moc brzy, zhasne dřív, než ji stihne někdo přečíst.
+// Čekáme proto na klid po posledním posunu, nejdéle ale _BUBLINA_STROP_MS,
+// ať bublina nakonec naskočí i na mapě, která se pořád hýbe.
+const _BUBLINA_KLID_MS  = 450;
+const _BUBLINA_STROP_MS = 2500;
+
+function _otevriBublinu(marker) {
+  if (!marker || !mapInstance) return;
+  let cekani = null;
+  const hotovo = () => {
+    clearTimeout(cekani);
+    clearTimeout(strop);
+    mapInstance.off('moveend', odloz);
+    mapInstance.off('zoomend', odloz);
+    marker.openPopup();
+  };
+  const odloz = () => {
+    clearTimeout(cekani);
+    cekani = setTimeout(hotovo, _BUBLINA_KLID_MS);
+  };
+  const strop = setTimeout(hotovo, _BUBLINA_STROP_MS);
+  mapInstance.on('moveend', odloz);
+  mapInstance.on('zoomend', odloz);
+  odloz();
+}
+
 function focusBudka(cislo) {
   const marker = markersByCislo[cislo];
   if (!marker || !mapInstance) return;
@@ -1035,12 +1063,12 @@ function focusBudka(cislo) {
   // Když je budka schovaná ve shluku, nejdřív ho rozbal (přiblíží / rozevře vějíř)
   if (clusterGroup && typeof clusterGroup.zoomToShowLayer === 'function') {
     clusterGroup.zoomToShowLayer(marker, () => {
-      setTimeout(() => marker.openPopup(), 200);
+      setTimeout(() => _otevriBublinu(marker), 200);
     });
     return;
   }
   mapInstance.setView(marker.getLatLng(), 16);
-  setTimeout(() => marker.openPopup(), 400);
+  setTimeout(() => _otevriBublinu(marker), 400);
 }
 
 async function hledejBudku(dotaz) {
@@ -1134,9 +1162,13 @@ async function inicializujMapu() {
     mapWrapper.appendChild(touchBadge);
 
     function aktivujMapu() {
+      touchBadge.style.display = 'none';
+      // Otočená mapa (režim „podle jízdy") má tažení i pinch schválně vypnuté —
+      // Leaflet počítá polohu prstu z neotočeného obdélníku, takže by mapa
+      // utíkala jinam, než uživatel táhne.
+      if (typeof window._mapaOtocena === 'function' && window._mapaOtocena()) return;
       mapInstance.dragging.enable();
       mapInstance.touchZoom.enable();
-      touchBadge.style.display = 'none';
     }
     function deaktivujMapu() {
       mapInstance.dragging.disable();
@@ -1598,6 +1630,9 @@ function _gpsNastavRezim(rezim) {
     _gpsBtn.setAttribute('aria-label', _gpsBtn.title);
   }
   _gpsAktualizujChip();
+  // Mimo sledování (vypnuto, hledá se, uživatel mapu posunul) se mapa vrací
+  // severem nahoru — jinak by zůstala natočená a nešlo by s ní pracovat.
+  if (typeof _jizdaAktualizuj === 'function') _jizdaAktualizuj();
 }
 
 function _gpsAktualizujChip(coords) {
@@ -1799,6 +1834,7 @@ function _gpsZpracujPolohu(pos) {
 
   _gpsAktualizujChip(c);
   _gpsAktualizujBlizkou(bod);
+  _jizdaAktualizuj(c);
 }
 
 function _gpsHlaska(text, ms) {
@@ -1886,6 +1922,171 @@ function _gpsKlik() {
   _gpsStopSledovani();   // 'sleduji' i 'hledam' → vypnout
 }
 
+/* ═══════════════════════════════════════════════════════════════
+   JÍZDA NAHORU — mapa otočená po směru jízdy (jako v navigaci)
+   ═══════════════════════════════════════════════════════════════
+   Leaflet umí mapu jen „severem nahoru". Otočení proto děláme přes CSS:
+   celý kontejner mapy se otočí o −azimut, takže směr jízdy míří vzhůru.
+
+   Dvě věci to musí ohlídat:
+   1) Otočený čtverec nepokryje viditelnou plochu — v rozích by byla díra
+      po dlaždicích. Kontejner proto v tomhle režimu zvětšíme na všechny
+      strany o _jizdaPrekryv() a přebytek se ořízne (.map-wrapper má
+      overflow: hidden). Leaflet si tak sám načte dlaždice i do rohů.
+   2) Ovládání a ikony budek musí zůstat „nohama dolů" — dostanou zpětné
+      otočení o stejný úhel (CSS proměnná --mb-zpet). Ovládací lišta se
+      navíc posadí přesně na viditelnou část, ne na zvětšený kontejner.
+
+   Otáčení zapíná uživatel tlačítkem a volba se pamatuje (localStorage),
+   takže v autě stačí zapnout jednou. Mapa se otáčí jen když ji poloha
+   opravdu sleduje a jede se aspoň krokem — při stání by GPS azimut
+   poskakoval a mapa by se třásla.
+
+   Dokud je mapa otočená, vypínáme tažení a gesta zoomu: Leaflet počítá
+   polohu prstu z neotočeného obdélníku, takže by mapa utíkala jinam, než
+   uživatel táhne. Tlačítka +/− fungují normálně a kliknutí na budku taky
+   (to řeší prohlížeč, ne Leaflet). Otevření bubliny mapu dočasně narovná,
+   ať se dá text přečíst.
+   ─────────────────────────────────────────────────────────────── */
+
+const _JIZDA_KLIC        = 'mb_mapa_jizda';
+const _JIZDA_MIN_RYCHLOST = 1.4;   // m/s (~5 km/h) — pomaleji se neotáčí
+const _JIZDA_MIN_ZMENA    = 2;     // stupně — menší změnu ignorujeme (klid)
+
+let _jizdaPref  = false;   // přání uživatele (drží se i mezi návštěvami)
+let _jizdaBtn   = null;
+let _jizdaUhel  = null;    // vykreslený azimut; roste/klesá plynule přes 0/360
+let _jizdaPauza = false;   // otevřená bublina → dočasně sever nahoru
+let _jizdaGesta = null;    // co jsme vypnuli, ať to umíme vrátit
+
+// Je mapa zrovna otočená? (ptá se na to odemykání mapy na mobilu)
+window._mapaOtocena = function() {
+  const w = _jizdaWrapper();
+  return !!(w && w.classList.contains('mb-jizda'));
+};
+
+function _jizdaWrapper() {
+  const el = mapInstance && mapInstance.getContainer();
+  return el ? el.parentElement : null;
+}
+
+// Otočený obdélník se vejde do většího; nejhorší případ je 45°, kdy má
+// opsaný obdélník rozměr (w+h)/√2. Počítáme jednou při zapnutí, ať se
+// kontejner při každé zatáčce nezvětšuje a nenačítaly se pořád dlaždice.
+function _jizdaPrekryv() {
+  const el = mapInstance && mapInstance.getContainer();
+  if (!el) return 0;
+  const w = el.clientWidth, h = el.clientHeight;
+  if (!w || !h) return 0;
+  return Math.ceil(((w + h) * Math.SQRT1_2 - Math.min(w, h)) / 2);
+}
+
+// Otáčí se jen při aktivním sledování a se známým směrem.
+function _jizdaMaOtacet() {
+  return _jizdaPref && !_jizdaPauza && _gpsRezim === 'sleduji' && _gpsSmer != null;
+}
+
+function _jizdaVypniGesta() {
+  if (_jizdaGesta || !mapInstance) return;
+  _jizdaGesta = [];
+  ['dragging', 'touchZoom', 'doubleClickZoom'].forEach(g => {
+    const h = mapInstance[g];
+    if (h && h.enabled()) { h.disable(); _jizdaGesta.push(g); }
+  });
+}
+
+function _jizdaZapniGesta() {
+  if (!_jizdaGesta || !mapInstance) { _jizdaGesta = null; return; }
+  _jizdaGesta.forEach(g => { try { mapInstance[g].enable(); } catch {} });
+  _jizdaGesta = null;
+}
+
+// Zvětší kontejner a zapne režim. Volá se, až když se opravdu má otáčet.
+function _jizdaZapniLayout() {
+  const wrap = _jizdaWrapper();
+  if (!wrap || wrap.classList.contains('mb-jizda')) return;
+  wrap.style.setProperty('--mb-prekryv', _jizdaPrekryv() + 'px');
+  wrap.classList.add('mb-jizda');
+  _jizdaVypniGesta();
+  // Kontejner je teď větší — Leaflet o tom musí vědět, jinak by dlaždice
+  // dorovnal až při dalším posunu mapy. Střed zůstává středem.
+  if (mapInstance) mapInstance.invalidateSize({ pan: false, animate: false });
+}
+
+function _jizdaVypniLayout() {
+  const wrap = _jizdaWrapper();
+  _jizdaZapniGesta();
+  if (!wrap || !wrap.classList.contains('mb-jizda')) return;
+  wrap.classList.remove('mb-jizda');
+  wrap.style.removeProperty('--mb-prekryv');
+  wrap.style.removeProperty('--mb-uhel');
+  wrap.style.removeProperty('--mb-zpet');
+  _jizdaUhel = null;
+  if (mapInstance) mapInstance.invalidateSize({ pan: false, animate: false });
+}
+
+// Nastaví úhel nejkratší cestou (aby se mapa z 350° na 10° nevracela
+// přes celý kruh) a zároveň dá ovládání a ikonám zpětné otočení.
+function _jizdaVykresli(azimut) {
+  const wrap = _jizdaWrapper();
+  if (!wrap) return;
+  if (_jizdaUhel == null) {
+    _jizdaUhel = azimut;
+  } else {
+    const rozdil = ((azimut - (_jizdaUhel % 360)) + 540) % 360 - 180;
+    if (Math.abs(rozdil) < _JIZDA_MIN_ZMENA) return;
+    _jizdaUhel += rozdil;
+  }
+  wrap.style.setProperty('--mb-uhel', (-_jizdaUhel).toFixed(1) + 'deg');
+  wrap.style.setProperty('--mb-zpet', _jizdaUhel.toFixed(1) + 'deg');
+}
+
+// Volá se při každém zaměření polohy i při změně režimu.
+function _jizdaAktualizuj(coords) {
+  if (!mapInstance) return;
+  if (!_jizdaMaOtacet()) { _jizdaVypniLayout(); _jizdaNastavTlacitko(); return; }
+
+  // Při stání (a v podstatě i při popojíždění krokem) je GPS azimut šum —
+  // necháme poslední úhel, ať se mapa sama netočí dokola.
+  const stoji = coords && coords.speed != null && coords.speed >= 0
+    && coords.speed < _JIZDA_MIN_RYCHLOST;
+  if (stoji && _jizdaUhel != null) return;
+
+  _jizdaZapniLayout();
+  _jizdaVykresli(_gpsSmer);
+  _jizdaNastavTlacitko();
+}
+
+function _jizdaNastavTlacitko() {
+  if (!_jizdaBtn) return;
+  // Skrýváme třídou, ne inline stylem: pilulka má display s !important,
+  // které by inline `display:none` přebilo a tlačítko by zůstalo viset.
+  _jizdaBtn.classList.toggle('jizda-btn--skryto', _gpsRezim === 'off');
+  _jizdaBtn.classList.toggle('jizda-btn--zap', _jizdaPref);
+  _jizdaBtn.title = _jizdaPref
+    ? 'Mapa se otáčí podle směru jízdy — klepnutím vrátíte sever nahoru'
+    : 'Otáčet mapu podle směru jízdy (jako v navigaci)';
+  _jizdaBtn.setAttribute('aria-pressed', _jizdaPref ? 'true' : 'false');
+  _jizdaBtn.setAttribute('aria-label', _jizdaBtn.title);
+  const popis = _jizdaBtn.querySelector('.jizda-btn-popis');
+  if (popis) popis.textContent = _jizdaPref ? 'Podle jízdy' : 'Sever nahoru';
+}
+
+function _jizdaKlik() {
+  _jizdaPref = !_jizdaPref;
+  try { localStorage.setItem(_JIZDA_KLIC, _jizdaPref ? '1' : '0'); } catch {}
+  if (_jizdaPref && _gpsRezim === 'volne') {
+    // „Podle jízdy" dává smysl jen když mapa jede s uživatelem — vrať sledování
+    _gpsNastavRezim('sleduji');
+    if (_gpsMarker && mapInstance) mapInstance.setView(_gpsMarker.getLatLng(), mapInstance.getZoom(), { animate: true });
+  }
+  _jizdaAktualizuj(_gpsChip && _gpsChip._posledni);
+  if (_jizdaPref && !_jizdaMaOtacet()) {
+    _gpsHlaska('🧭 Mapa se otočí podle jízdy, jakmile se rozjedete.', 4000);
+  }
+  _jizdaNastavTlacitko();
+}
+
 function pridejGpsOvladani(map) {
   const ovladani = L.control({ position: 'topleft' });
   ovladani.onAdd = function() {
@@ -1901,8 +2102,20 @@ function pridejGpsOvladani(map) {
           '<path d="M12 1.4v3.6M12 19v3.6M1.4 12h3.6M19 12h3.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>' +
         '</svg>' +
       '</span><span class="gps-btn-popis">Moje poloha</span>';
+    _jizdaBtn = L.DomUtil.create('a', 'jizda-btn', wrap);
+    _jizdaBtn.href = '#';
+    _jizdaBtn.setAttribute('role', 'button');
+    _jizdaBtn.classList.add('jizda-btn--skryto');
+    _jizdaBtn.innerHTML =
+      '<span class="jizda-btn-ikona" aria-hidden="true">🧭</span>' +
+      '<span class="jizda-btn-popis">Sever nahoru</span>';
+
     L.DomEvent.disableClickPropagation(wrap);
-    L.DomEvent.on(_gpsBtn, 'click', e => { L.DomEvent.preventDefault(e); _gpsKlik(); });
+    // L.DomEvent.stop, ne jen preventDefault: klepnutí na tlačítko se nesmí
+    // prohrnout až na mapu, kde ho čeká „odemčení" mapy (to by hned vrátilo
+    // gesta, která si otočená mapa vypíná).
+    L.DomEvent.on(_gpsBtn, 'click', e => { L.DomEvent.stop(e); _gpsKlik(); });
+    L.DomEvent.on(_jizdaBtn, 'click', e => { L.DomEvent.stop(e); _jizdaKlik(); });
     return wrap;
   };
   ovladani.addTo(map);
@@ -1936,6 +2149,24 @@ function pridejGpsOvladani(map) {
   map.on('dragstart', () => {
     if (_gpsRezim === 'sleduji') _gpsNastavRezim('volne');
   });
+
+  // Otevřená bublina se čte na stojato — mapu proto dočasně narovnáme.
+  map.on('popupopen', () => { _jizdaPauza = true; _jizdaAktualizuj(); });
+  map.on('popupclose', () => {
+    _jizdaPauza = false;
+    _jizdaAktualizuj(_gpsChip && _gpsChip._posledni);
+  });
+
+  // Po otočení displeje (nebo přepnutí na celou obrazovku) je potřeba
+  // spočítat překryv znovu — jinak by se v rozích objevily prázdné pruhy.
+  window.addEventListener('resize', () => {
+    if (!_jizdaWrapper()?.classList.contains('mb-jizda')) return;
+    _jizdaVypniLayout();
+    _jizdaAktualizuj(_gpsChip && _gpsChip._posledni);
+  });
+
+  try { _jizdaPref = localStorage.getItem(_JIZDA_KLIC) === '1'; } catch {}
+  _jizdaNastavTlacitko();
 
   _gpsNastavRezim('off');
 }
