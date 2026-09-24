@@ -1762,7 +1762,10 @@ body.mapa-cele .map-wrapper {
 
 /* Popsaná pilulka pod ovládáním zoomu (styl sjednocen s „Celá obrazovka") —
    samotná ikonka se v mapě ztrácela a nebylo poznat, k čemu je. */
-.gps-btn-wrap { border: none !important; box-shadow: none !important; margin-top: 10px !important; }
+.gps-btn-wrap {
+  border: none !important; box-shadow: none !important; margin-top: 10px !important;
+  display: flex; flex-direction: column; align-items: flex-start; gap: 8px;
+}
 .gps-btn-wrap a.gps-btn {
   display: inline-flex !important; align-items: center; gap: 7px;
   width: auto !important; height: auto !important; line-height: 1.1 !important;
@@ -1775,6 +1778,11 @@ body.mapa-cele .map-wrapper {
   transition: background 0.15s, color 0.15s;
 }
 .gps-btn-wrap a.gps-btn:hover { background: #1c5c10; color: #fff; }
+/* Leaflet zaobluje v liště první a poslední tlačítko po svém
+   (.leaflet-touch .leaflet-bar a:first-child) — pilulky by pak měly
+   nahoře uříznuté rohy. Vlastní zaoblení proto vynutíme. */
+.gps-btn-wrap a.gps-btn,
+.gps-btn-wrap a.jizda-btn { border-radius: 999px !important; }
 .gps-btn-ikona { display: block; flex: none; }
 .gps-btn-ikona svg { display: block; }
 .gps-btn-popis { display: block; }
@@ -1825,6 +1833,74 @@ body.mapa-cele .map-wrapper {
 .gps-presnost { fill: #1a73e8; fill-opacity: 0.12; stroke: #1a73e8; stroke-opacity: 0.35; stroke-width: 1; }
 
 /* Proužek s přesností / rychlostí */
+/* ── Jízda nahoru ──────────────────────────────────────────────
+   Kontejner mapy se otočí o −azimut (směr jízdy míří vzhůru) a je
+   o --mb-prekryv větší na všechny strany, aby po otočení nezůstaly
+   v rozích prázdné plochy; přesah ořízne .map-wrapper. Ovládání a
+   ikony budek dostanou zpětné otočení (--mb-zpet), takže zůstanou
+   nohama dolů. Podrobnosti viz blok „JÍZDA NAHORU" v js/mapa.js. */
+.map-wrapper.mb-jizda { overflow: hidden; }
+
+.map-wrapper.mb-jizda #map {
+  /* !important kvůli mobilním pravidlům `#map { height: 100% !important }` —
+     bez toho by mapa vyrostla jen do šířky a dole by v rozích chyběla. */
+  inset: calc(-1 * var(--mb-prekryv, 0px)) !important;
+  width: auto !important;
+  height: auto !important;
+  transform: rotate(var(--mb-uhel, 0deg));
+  transform-origin: 50% 50%;
+  transition: transform 0.45s ease-out;
+}
+
+/* Ovládání se posadí zpátky na viditelnou část mapy a narovná se. */
+.map-wrapper.mb-jizda .leaflet-control-container {
+  position: absolute;
+  inset: var(--mb-prekryv, 0px);
+  transform: rotate(var(--mb-zpet, 0deg));
+  transform-origin: 50% 50%;
+  transition: transform 0.45s ease-out;
+}
+
+.map-wrapper.mb-jizda .budka-marker,
+.map-wrapper.mb-jizda .budka-dot,
+.map-wrapper.mb-jizda .budka-cluster { transition: transform 0.45s ease-out; }
+.map-wrapper.mb-jizda .budka-marker { transform: rotate(var(--mb-zpet, 0deg)) scale(var(--budka-scale, 1)); }
+.map-wrapper.mb-jizda .budka-marker:hover { transform: rotate(var(--mb-zpet, 0deg)) scale(calc(var(--budka-scale, 1) * 1.25)); }
+.map-wrapper.mb-jizda .budka-dot { transform: rotate(var(--mb-zpet, 0deg)) scale(var(--budka-scale, 1)); }
+.map-wrapper.mb-jizda .budka-dot:hover { transform: rotate(var(--mb-zpet, 0deg)) scale(calc(var(--budka-scale, 1) * 1.35)); }
+.map-wrapper.mb-jizda .budka-cluster { transform: rotate(var(--mb-zpet, 0deg)); }
+.map-wrapper.mb-jizda .leaflet-marker-icon:hover > .budka-cluster { transform: rotate(var(--mb-zpet, 0deg)) scale(1.1); }
+
+/* Popisek u kurzoru by v otočené mapě ležel našikmo — za jízdy stejně
+   není k ničemu (je jen pro myš), tak ho schováme. */
+.map-wrapper.mb-jizda .leaflet-tooltip { display: none; }
+
+/* Tlačítko „podle jízdy" — menší sourozenec tlačítka polohy, hned pod ním. */
+.gps-btn-wrap a.jizda-btn {
+  display: inline-flex !important; align-items: center; gap: 6px;
+  width: auto !important; height: auto !important; line-height: 1.1 !important;
+  padding: 8px 13px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.4);
+  background: rgba(58,32,8,0.92); color: #fff8ee;
+  font-family: 'Segoe UI', system-ui, sans-serif; font-size: 0.82rem; font-weight: 700;
+  text-decoration: none; white-space: nowrap;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.4);
+  -webkit-tap-highlight-color: transparent;
+  transition: background 0.15s, color 0.15s;
+}
+.gps-btn-wrap a.jizda-btn:hover { background: #3a2008; color: #fff; }
+.gps-btn-wrap a.jizda-btn--zap,
+.gps-btn-wrap a.jizda-btn--zap:hover {
+  background: #fff6e6; color: #8a4b07; border-color: #8a4b07;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.35), inset 0 0 0 2px #8a4b07;
+}
+.gps-btn-wrap a.jizda-btn--skryto { display: none !important; }
+.jizda-btn-ikona { display: block; flex: none; font-size: 1rem; line-height: 1; }
+.jizda-btn-popis { display: block; }
+
+@media (max-width: 600px) {
+  .gps-btn-wrap a.jizda-btn { font-size: 0.76rem; padding: 7px 11px; }
+}
+
 .gps-info {
   display: flex; flex-direction: column; align-items: flex-end; gap: 6px;
   margin-bottom: 8px !important;
