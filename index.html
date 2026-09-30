@@ -9,7 +9,7 @@
   <link rel="stylesheet" href="css/vendor/MarkerCluster.css?v=mb20260914l">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=mb20260924a">
+  <link rel="stylesheet" href="css/style.css?v=mb20260930a">
   <link rel="icon" type="image/svg+xml" href="img/favicon.svg">
   <link rel="icon" type="image/png" sizes="512x512" href="img/icon-512.png">
   <link rel="icon" type="image/png" sizes="192x192" href="img/icon-192.png">
@@ -946,6 +946,17 @@
       ov.querySelector('.glb-prev').addEventListener('click', function () { dalsi(-1); });
       ov.querySelector('.glb-next').addEventListener('click', function () { dalsi(1); });
       ov.addEventListener('click', function (e) { if (e.target === ov || e.target.classList.contains('glb-stred')) zavri(); });
+      // na telefonu jde listovat i tažením prstem do strany
+      var tx = null, ty = null;
+      ov.addEventListener('touchstart', function (e) {
+        tx = e.touches[0].clientX; ty = e.touches[0].clientY;
+      }, { passive: true });
+      ov.addEventListener('touchend', function (e) {
+        if (tx == null) return;
+        var dx = e.changedTouches[0].clientX - tx, dy = e.changedTouches[0].clientY - ty;
+        tx = null;
+        if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.5) dalsi(dx < 0 ? 1 : -1);
+      }, { passive: true });
       document.addEventListener('keydown', onKey);
 
       zobraz();
