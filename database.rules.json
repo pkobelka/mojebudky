@@ -264,7 +264,19 @@
         ".write": "auth != null && (auth.token.loginId === $loginId || auth.token.admin === true)"
       }
     },
-    "volby_obce": {
+        "volby_obce": {
+      ".read": "auth != null",
+      ".write": "auth != null"
+    },
+    "volby_soubory": {
+      ".read": "auth != null",
+      ".write": "auth != null"
+    },
+    "volby_svazky": {
+      ".read": "auth != null",
+      ".write": "auth != null"
+    },
+    "volby_zamestnanci": {
       ".read": "auth != null",
       ".write": "auth != null"
     }
