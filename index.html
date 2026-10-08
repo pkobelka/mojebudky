@@ -736,7 +736,9 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging-compat.js"></script>
 <script>
-  window.MB_VERZE = "__MB_VERZE__"; window.MB_CAS = "__MB_CAS__";
+  window.MB_VERZE = "73"; window.MB_CAS = "__MB_CAS__";
+  // seznam fotek z img/info/ – doplní ho při nasazení tools/info_seznam.py
+  window.MB_INFO = {"planek-budky": ["img/info/planek-budky.jpg"], "moje-budka": ["img/info/moje-budka-1.jpg", "img/info/moje-budka-2.jpg", "img/info/moje-budka-3.jpg", "img/info/moje-budka-4.jpg", "img/info/moje-budka-5.jpg", "img/info/moje-budka-6.jpg", "img/info/moje-budka-7.jpg", "img/info/moje-budka-8.jpg", "img/info/moje-budka-9.jpg"]};
   // Záložní verze pro hosting, který při nasazení nenahrazuje placeholdery
   // (GitHub Pages / Firebase Hosting servírují soubory z gitu „tak jak jsou").
   // Toto ručně zvyš při každé změně, ať správci vždy poznají aktuální verzi.
@@ -837,6 +839,18 @@
           if (pdf) { window.open(fotky[0], '_blank', 'noopener'); return; }
           otevriLightbox([{ fotky: fotky, nadpis: nadpis, alt: nadpis, cislo: null }], 0);
         });
+      }
+      // Na webu je seznam fotek zapsaný při nasazení (MB_INFO). Dotazy HEAD
+      // jsou jen záloha pro lokální spuštění — WEDOS na ně neodpovídal tak,
+      // jak čekáme, a tlačítka zůstala skrytá.
+      var info = window.MB_INFO;
+      if (info && typeof info === 'object') {
+        var soubory = info[btn.getAttribute('data-soubor')];
+        if (soubory && soubory.length) {
+          var pdf = /\.pdf$/i.test(soubory[0]);
+          zapoj(soubory.map(function (f) { return f + verze; }), pdf);
+        }
+        return;
       }
       najdiAlbum(zaklad, 1, []).then(function (fotky) {
         if (fotky.length) return zapoj(fotky, false);
