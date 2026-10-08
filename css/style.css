@@ -301,6 +301,13 @@ html, body {
 .pod-bublina { display: none; position: absolute; bottom: calc(100% + 8px); left: 50%; transform: translateX(-50%); background: #ffe066; border: 1px solid #c8960a; border-radius: 10px; padding: 10px 14px; font-size: 1rem; font-weight: 400; color: #3a2000; white-space: normal; max-width: min(340px, calc(100vw - 32px)); width: max-content; box-shadow: 0 4px 16px rgba(0,0,0,0.35); z-index: 10; pointer-events: none; }
 .pod-bublina::after { content: ''; position: absolute; top: 100%; left: 50%; transform: translateX(-50%); border: 6px solid transparent; border-top-color: #c8960a; }
 .podekovani-item--ma-text.pod-open .pod-bublina { display: block; }
+@media (hover: hover) { .podekovani-item--ma-text:hover .pod-bublina { display: block; } }
+.podekovani-item--ma-text:focus-visible .pod-bublina { display: block; }
+.podekovani-item--ma-text { display: inline-flex; align-items: center; gap: 6px; transition: transform 0.15s, box-shadow 0.15s, background 0.15s; }
+.podekovani-item--ma-text:hover { transform: translateY(-2px); }
+.pod-jmeno { text-decoration: underline dotted; text-decoration-thickness: 2px; text-underline-offset: 4px; text-decoration-color: var(--accent-gold); }
+.pod-ikona { font-size: 0.8em; line-height: 1; }
+.podekovani-hint { text-align: center; color: var(--text-muted); font-size: 0.95rem; margin: -2px 0 12px; }
 
 /* ── PARTNEŘI MODAL ── */
 .pm-box { max-width: 1152px; width: 96%; padding: 0; overflow: hidden; text-align: center; max-height: 92vh; overflow-y: auto; }
@@ -380,7 +387,7 @@ html, body {
 .leaflet-popup-content { margin: 0; width: auto !important; }
 .leaflet-popup-close-button { width: 32px !important; height: 32px !important; font-size: 22px !important; line-height: 32px !important; top: 4px !important; right: 4px !important; color: #555 !important; }
 .popup-zavrit-btn { display: none; }
-.budka-popup { font-size: 1.15rem; font-family: 'Segoe UI', system-ui, sans-serif; min-width: 420px; }
+.budka-popup { font-size: 1.15rem; font-family: 'Segoe UI', system-ui, sans-serif; min-width: 420px; max-height: calc(var(--mapa-vyska, 2000px) - 120px); overflow-y: auto; }
 .popup-header { padding: 16px 22px 12px; background: #faf6ee; border-bottom: 1px solid #e8dcc8; }
 .popup-cislo { font-weight: 800; font-size: 1.6rem; color: #3a1a06; margin-bottom: 4px; }
 .popup-nazev-hlavni { font-weight: 800; font-size: 1.65rem; color: #3a1a06; }
@@ -521,8 +528,6 @@ html, body {
 /* Ve fullscreenu posuň ovládání pod stavovou lištu / výřez telefonu */
 body.mapa-cele .leaflet-top { top: calc(env(safe-area-inset-top, 0px) + 10px); }
 body.mapa-cele .leaflet-left { left: calc(env(safe-area-inset-left, 0px) + 8px); }
-.aktualita-link { display: inline-block; margin-top: 5px; color: var(--orange-light); font-size: 0.73rem; font-weight: 600; text-decoration: none; letter-spacing: 0.2px; transition: color 0.15s; }
-.aktualita-link:hover { color: var(--accent-gold); text-decoration: underline; }
 .main-content.mapa-fullscreen { min-height: 0; }
 .main-content.mapa-fullscreen .panel { display: none; }
 .main-content.mapa-fullscreen .map-wrapper { flex: 1; }
@@ -779,11 +784,10 @@ body.mapa-cele .leaflet-left { left: calc(env(safe-area-inset-left, 0px) + 8px);
   /* Pravý panel pod mapou — přirozená výška, stránka scrolluje */
   .panel { max-height: none; }
   .panel-scroll { overflow-y: visible; }
-  /* Aktuality panel a nav link skryté na mobilu */
+  /* Levý panel skrytý na mobilu */
   .panel-left { display: none; }
-  #navLiAktuality { display: none; }
   /* Popup na mobilu – užší (místo po stranách) + scrollovatelný na výšku */
-  .budka-popup { min-width: 0; width: calc(100vw - 80px); max-width: 300px; max-height: calc(100svh - 180px); overflow-y: auto; -webkit-overflow-scrolling: touch; font-size: 1rem; box-sizing: border-box; }
+  .budka-popup { min-width: 0; width: calc(100vw - 80px); max-width: 300px; max-height: min(calc(100svh - 180px), calc(var(--mapa-vyska, 2000px) - 120px)); overflow-y: auto; -webkit-overflow-scrolling: touch; font-size: 1rem; box-sizing: border-box; }
   .leaflet-popup-content-wrapper,
   .budka-popup-wrap .leaflet-popup-content-wrapper { width: auto !important; max-width: calc(100vw - 80px) !important; min-width: 0 !important; box-sizing: border-box; overflow: visible !important; }
   .leaflet-popup-content { width: auto !important; margin: 0 !important; padding: 0 !important; }
@@ -1058,6 +1062,26 @@ body.mapa-cele .leaflet-left { left: calc(env(safe-area-inset-left, 0px) + 8px);
 
 /* Vysvětlení, proč po lidech chci telefon — bez něj jim nemám jak potvrdit,
    že jsem žádost založil, a formulář by jinak vypadal jako zbytečné vyzvídání. */
+.chci-krok-nadpis { margin: 0 0 0.7rem; color: var(--text-light); font-size: 1.08rem; font-weight: 700; text-align: left; }
+.chci-krok-cislo { display: inline-block; background: var(--accent-gold); color: #fff; border-radius: 999px; padding: 1px 9px; font-size: 0.85rem; margin-right: 6px; vertical-align: 2px; }
+.chci-mapa-hledat { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 8px; }
+.chci-mapa-hledat input { flex: 1 1 180px; min-width: 0; background: rgba(255,255,255,0.07); border: 1px solid var(--panel-border); border-radius: 8px; color: var(--text-light); font-size: 1.05rem; padding: 0.6rem 0.9rem; outline: none; font-family: inherit; }
+.chci-mapa-hledat input:focus { border-color: var(--accent-gold); }
+.chci-mapa-hledat input::placeholder { color: var(--text-muted); }
+.chci-mapa-btn { flex: 0 0 auto; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--panel-border); background: rgba(255,255,255,0.08); color: var(--text-light); font-size: 0.95rem; font-weight: 600; cursor: pointer; font-family: inherit; }
+.chci-mapa-btn:hover { border-color: var(--accent-gold); }
+.chci-mapa-btn:disabled { opacity: 0.6; cursor: wait; }
+.chci-mapa { height: min(380px, 48vh); border-radius: 8px; border: 1px solid var(--panel-border); overflow: hidden; cursor: crosshair; background: #e8eee0; }
+.chci-mapa .leaflet-container, .chci-mapa.leaflet-container { cursor: crosshair; }
+.chci-mapa-stav { margin: 8px 0 0; color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; }
+.chci-mapa-stav--ok { color: #4caf50; font-weight: 600; }
+.chci-pokracovat { display: block; width: 100%; margin-top: 10px; padding: 13px 18px; border: none; border-radius: 10px; background: var(--orange); color: #fff; font-size: 1.08rem; font-weight: 700; cursor: pointer; font-family: inherit; }
+.chci-pokracovat:disabled { opacity: 0.45; cursor: not-allowed; }
+.chci-preskocit { display: block; text-align: center; margin-top: 10px; }
+.chci-misto-souhrn { text-align: left; background: rgba(76,175,80,0.1); border: 1px solid rgba(76,175,80,0.45); border-radius: 8px; padding: 0.6rem 0.9rem; color: var(--text-light); font-size: 0.98rem; }
+.chci-misto-souhrn:empty { display: none; }
+.chci-misto-souhrn button { background: none; border: none; color: var(--accent-gold); text-decoration: underline; cursor: pointer; font-size: 0.95rem; padding: 0 0 0 6px; font-family: inherit; }
+.chci-pin { font-size: 34px; line-height: 1; filter: drop-shadow(0 2px 3px rgba(0,0,0,0.4)); }
 .chci-telefon-info { text-align: left; background: rgba(255,255,255,0.04); border-left: 3px solid var(--accent-gold); border-radius: 8px; padding: 0.9rem 1.1rem; margin: 0; color: var(--text-muted); font-size: 1rem; line-height: 1.6; }
 .chci-telefon-info strong { color: var(--accent-gold); }
 @media (max-width: 640px) {
@@ -1187,9 +1211,6 @@ body.mapa-cele .leaflet-left { left: calc(env(safe-area-inset-left, 0px) + 8px);
 .admin-banner strong { color: var(--accent-gold); font-size: inherit; }
 .admin-banner button { background: none; border: 1px solid var(--panel-border); color: var(--text-muted); border-radius: 4px; padding: 0.3rem 0.8rem; cursor: pointer; font-size: 0.82rem; }
 .admin-banner button:hover { color: var(--text-light); border-color: var(--text-muted); }
-
-/* ── LIVE FIREBASE ACTIVITY ── */
-.pribeh-item--live { border-left: 3px solid var(--accent-gold); padding-left: 6px; }
 
 /* ── PROFIL FORM TEXTAREA ── */
 .profil-form textarea {
@@ -1535,7 +1556,6 @@ a.uvod-cta-text:hover { background: rgba(255,255,255,0.22); transform: translate
   padding: 56px 24px;
   color: #2b3a22;
 }
-.sekce-denik { background: #ffffff; }
 .sekce-inner { max-width: 1120px; margin: 0 auto; }
 .sekce-nadpis { text-align: center; color: #1c5c10; font-size: 2.1rem; font-weight: 800; margin-bottom: 8px; letter-spacing: 0.2px; }
 .sekce-podnadpis { text-align: center; color: #5a6e48; font-size: 1.12rem; margin-bottom: 34px; line-height: 1.5; }
@@ -1559,6 +1579,9 @@ a.uvod-cta-text:hover { background: rgba(255,255,255,0.22); transform: translate
   box-shadow: 0 3px 12px rgba(60,90,40,.10); transition: background .15s, border-color .15s;
 }
 .galerie-rozbalit:hover { background: #f2f8ec; border-color: #7fae5a; }
+.galerie-tlacitka { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin: 0 auto 22px; }
+.galerie-tlacitka .galerie-rozbalit { margin: 0; }
+.galerie-info-btn[hidden] { display: none; }
 .galerie-rozbalit-sipka { transition: transform .2s; font-size: 1.1rem; }
 .galerie-rozbalit.je-otevreno .galerie-rozbalit-sipka { transform: rotate(180deg); }
 
@@ -1616,6 +1639,7 @@ a.uvod-cta-text:hover { background: rgba(255,255,255,0.22); transform: translate
   .galerie-pocet { font-size: 0.8rem; }
   .galerie-pocet-ikona { display: none; }
   .galerie-rozbalit { width: 100%; font-size: 1rem; padding: 12px 16px; }
+  .galerie-tlacitka .galerie-info-btn { width: auto; flex: 1 1 40%; }
   /* Fotka má 92vw, takže šipky vedle ní by vypadly z obrazovky –
      na telefonu proto leží přes okraje fotky. */
   .galerie-lightbox .glb-nav {
@@ -1628,9 +1652,9 @@ a.uvod-cta-text:hover { background: rgba(255,255,255,0.22); transform: translate
 }
 
 /* ── STATISTIKY ── */
-/* Tři dlaždice od zrušení „Aktivních budek“ (9/2026) — užší mřížka, ať nezbyde
-   prázdné místo po čtvrté. */
-.sekce-stats .stats-grid { grid-template-columns: repeat(3, 1fr); max-width: 780px; margin: 0 auto 22px; gap: 18px; padding: 0; }
+/* Dvě dlaždice (Celkem budek, Správci) — „Aktivní budky“ zrušeny 9/2026,
+   „Osídlené budky“ skryty 10/2026. Užší mřížka, ať nezbyde prázdné místo. */
+.sekce-stats .stats-grid { grid-template-columns: repeat(2, 1fr); max-width: 540px; margin: 0 auto 22px; gap: 18px; padding: 0; }
 .sekce-stats .stat-item { background: #ffffff; border: 1px solid #e0ead4; border-top: 4px solid var(--orange); border-radius: 14px; box-shadow: 0 4px 16px rgba(60,90,40,0.07); padding: 20px 14px; }
 .sekce-stats .stat-value { color: #1c3d10; }
 .sekce-stats .stat-label { color: #6b7d5a; }
@@ -1648,15 +1672,6 @@ a.uvod-cta-text:hover { background: rgba(255,255,255,0.22); transform: translate
 .sekce-stats .stat-aktualizace { text-align: center; }
 .sekce-stats .pridat-na-plochu { display: block; background: #f1f7ea; border: 1px solid #e0ead4; border-radius: 12px; margin-top: 18px; }
 .sekce-stats .oblibene-pc { background: #f1f7ea; border-color: #e0ead4; }
-
-/* ── Z DENÍKU SPRÁVCŮ ── */
-.sekce-denik .pribehy-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 18px; overflow: visible; padding: 0; }
-.sekce-denik .pribeh-item { background: #ffffff; border: 1px solid #e0ead4; border-radius: 14px; box-shadow: 0 4px 16px rgba(60,90,40,0.07); padding: 16px 18px; }
-.sekce-denik .pribeh-item:hover { background: #fafdf6; box-shadow: 0 6px 22px rgba(60,90,40,0.12); }
-.aktuality-dalsi-btn { grid-column: 1 / -1; display: block; width: 100%; margin-top: 8px; padding: 14px 20px; background: #f4faf0; border: 1.5px dashed #b0d090; border-radius: 12px; color: #2e6b1a; font-size: 1.05rem; font-weight: 700; cursor: pointer; text-align: center; transition: background 0.15s, border-color 0.15s; font-family: inherit; }
-.aktuality-dalsi-btn:hover { background: #e6f4de; border-color: #7ab85a; }
-.sekce-denik .pribeh-druh { color: #1c5c10; }
-.sekce-denik .pribeh-popis { color: #3a4a30; opacity: 1; }
 
 /* ── Výzva: pomozte pokrýt budkami celou mapu ── */
 .sekce-vyzva-mapa { background: transparent; }
@@ -1682,9 +1697,6 @@ a.uvod-cta-text:hover { background: rgba(255,255,255,0.22); transform: translate
   .vyzva-mapa-text { font-size: 1rem; }
   .vyzva-mapa-btn { display: block; }
 }
-.sekce-denik .pribeh-datum { color: #7d8e6a; }
-.sekce-denik .aktualita-link { color: #2a8018; }
-.sekce-denik .aktualita-link:hover { color: #b07d10; }
 
 /* ── PODPOROVATELÉ (světlé) ── */
 .partners-section {
@@ -1700,15 +1712,15 @@ a.uvod-cta-text:hover { background: rgba(255,255,255,0.22); transform: translate
 .partners-section .partner-item:hover { background: #f6fbf0; box-shadow: 0 4px 16px rgba(60,90,40,0.12); }
 .partners-section .podekovani-wrap { border-top-color: #d6e6c8; }
 .partners-section .podekovani-item { background: #ffffff; color: #2e4a22; border: 1px solid #d6e6c8; box-shadow: 0 2px 8px rgba(60,90,40,0.06); }
+.partners-section .podekovani-item--ma-text { background: #fff9e8; border-color: #e3c574; }
+.partners-section .podekovani-item--ma-text:hover,
+.partners-section .podekovani-item--ma-text.pod-open { background: #fff3cc; border-color: #c8960a; box-shadow: 0 4px 12px rgba(176,125,16,0.18); }
 
 /* Responsivita redesignu */
 @media (max-width: 760px) {
   .sekce { padding: 40px 16px; }
   .sekce-nadpis { font-size: 1.7rem; }
   .sekce-stats .stats-grid { grid-template-columns: 1fr 1fr; }
-  /* Tři dlaždice ve dvou sloupcích — třetí ať se roztáhne přes oba,
-     jinak zbyde na řádku okatá díra. */
-  .sekce-stats .stat-item:nth-child(3) { grid-column: 1 / -1; }
   .sekce-dvojsloupec { grid-template-columns: 1fr; }
   .map-wrapper { height: 60vh; min-height: 360px; }
 }
@@ -1978,3 +1990,8 @@ body.mapa-cele .map-wrapper {
   cursor: pointer;
 }
 .profil-btn-zrusit:hover { background: rgba(127, 127, 127, 0.12); }
+
+/* Přepínač velikosti popisků mapy („Aa“) — pod tlačítky zoomu */
+.popisky-btn-wrap a.popisky-btn { width: 34px; height: 34px; line-height: 34px; font-size: 15px; font-weight: 800; color: #1c5c10; text-align: center; text-decoration: none; }
+.popisky-btn small { font-size: 11px; font-weight: 800; margin-left: 1px; }
+.leaflet-touch .popisky-btn-wrap a.popisky-btn { width: 44px; height: 44px; line-height: 44px; font-size: 17px; }

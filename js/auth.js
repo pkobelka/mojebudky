@@ -2026,14 +2026,19 @@ function _zobrazZadosti() {
         : '';
       const otvorInfo = jeZadostOBudku && z.otvor ? ` <span class="zadost-budka">🔵 ${_htmlEsc(_popisOtvoru(z.otvor))}</span>` : '';
       const mistoZadosti = [z.obec, z.adresa].filter(Boolean).join(', ');
+      const maMisto = jeZadostOBudku && z.lat != null && z.lng != null;
+      const mistoInfo = maMisto
+        ? ` <a class="zadost-budka" href="https://mapy.cz/zakladni?q=${z.lat},${z.lng}&source=coor&id=${z.lng},${z.lat}" target="_blank" rel="noopener">📍 místo v mapě</a>`
+        : '';
       const btnSlib = jeZadostOBudku
         ? `<button class="zadost-btn-slib" data-klic="${klic}"
              data-jmeno="${_htmlEsc(z.jmeno || '')}" data-misto="${_htmlEsc(mistoZadosti)}"
              data-telefon="${_htmlEsc(z.telefon || '')}" data-poznamka="${_htmlEsc(z.poznamka || '')}"
-             data-otvor="${_htmlEsc(z.otvor || '')}">➕ Založit slib</button>`
+             data-otvor="${_htmlEsc(z.otvor || '')}"
+             ${maMisto ? `data-lat="${Number(z.lat)}" data-lng="${Number(z.lng)}"` : ''}>➕ Založit slib</button>`
         : '';
       return `<div class="zadost-item${vyrizena ? ' zadost-item--vyrizena' : ''}" data-typ="${typ}" data-klic="${klic}">
-        <strong>${celeJmeno}</strong>${budkaInfo}${idInfo}${telefonInfo}${otvorInfo}${emailInfo} <span class="zadost-cas">${cas}</span>${vyrizena ? ' <span style="color:#6dcc6d;font-size:0.82rem">✓ vyřízeno</span>' : ''}<br>
+        <strong>${celeJmeno}</strong>${budkaInfo}${idInfo}${telefonInfo}${otvorInfo}${mistoInfo}${emailInfo} <span class="zadost-cas">${cas}</span>${vyrizena ? ' <span style="color:#6dcc6d;font-size:0.82rem">✓ vyřízeno</span>' : ''}<br>
         <span class="zadost-detail zadost-zprava-text">${z.text ? z.text.replace(/</g,'&lt;') : ''}</span><br>
         ${!vyrizena ? `<div class="zadost-btn-row">
           ${btnSlib}
@@ -2110,6 +2115,8 @@ function _zobrazZadosti() {
         _prislibFormular({
           jmeno: d.jmeno, misto: d.misto, telefon: d.telefon, poznamka: d.poznamka,
           otvor: d.otvor,
+          // místo, které žadatel vybral v mapě, se rovnou předvyplní
+          ...(d.lat && d.lng ? { lat: Number(d.lat), lng: Number(d.lng) } : {}),
           // po uložení slibu se žádost rovnou odškrtne jako vyřízená
           zadostKlic: d.klic
         });
@@ -4111,10 +4118,133 @@ document.addEventListener('DOMContentLoaded', () => {
   // z žádosti jde v administraci založit slib na jedno kliknutí.
   const modalChciBudku = document.getElementById('modalChciBudku');
 
+  // Žádost má dva kroky: nejdřív mapa, kam žadatel klikne, kde budka bude,
+  // pak formulář s kontaktem. Souřadnice se v administraci rovnou předvyplní
+  // do slibu a obec s ulicí se podle kliknutí předvyplní do formuláře.
+  let _chciMapa = null, _chciPin = null, _chciMisto = null;
+  const _chciStav = (text, ok) => {
+    const el = document.getElementById('chciMapaStav');
+    if (!el) return;
+    el.className = 'chci-mapa-stav' + (ok ? ' chci-mapa-stav--ok' : '');
+    el.textContent = text;
+  };
+  const _chciKrok = (n) => {
+    document.getElementById('chciKrok1').hidden = n !== 1;
+    document.getElementById('chciKrok2').hidden = n !== 2;
+    if (n === 1) setTimeout(_chciInitMapa, 50);   // Leaflet potřebuje viditelný kontejner
+    if (n === 2) {
+      const souhrn = document.getElementById('chciMistoSouhrn');
+      souhrn.innerHTML = _chciMisto
+        ? `📍 Místo vybráno v mapě <button type="button" id="chciZmenitMisto">změnit</button>`
+        : `📍 Místo v mapě nevybráno <button type="button" id="chciZmenitMisto">vybrat</button>`;
+      document.getElementById('chciZmenitMisto').addEventListener('click', () => _chciKrok(1));
+      const prazdne = ['chciJmeno','chciTelefon','chciObec'].find(id => !document.getElementById(id).value.trim());
+      setTimeout(() => document.getElementById(prazdne || 'chciJmeno')?.focus(), 80);
+    }
+    modalChciBudku.querySelector('.modal-box')?.scrollTo?.(0, 0);
+  };
+  // Obec a ulici z kliknutí dohledá Nominatim. Přepisuje jen prázdná pole
+  // nebo to, co sám dřív vyplnil — ručně napsané nechává být.
+  let _chciAutoObec = '', _chciAutoAdresa = '';
+  const _chciDoplnAdresu = async (lat, lng) => {
+    try {
+      const res = await fetch('https://nominatim.openstreetmap.org/reverse?format=jsonv2&zoom=18&accept-language=cs'
+        + `&lat=${lat}&lon=${lng}`, { headers: { 'Accept': 'application/json' } });
+      if (!res.ok) return;
+      const a = (await res.json()).address || {};
+      const obec = a.village || a.town || a.city || a.municipality || a.hamlet || '';
+      const ulice = [a.road || a.hamlet || '', a.house_number || ''].filter(Boolean).join(' ');
+      const elObec = document.getElementById('chciObec');
+      const elAdr = document.getElementById('chciAdresa');
+      if (obec && (!elObec.value.trim() || elObec.value === _chciAutoObec)) { elObec.value = obec; _chciAutoObec = obec; }
+      if (ulice && (!elAdr.value.trim() || elAdr.value === _chciAutoAdresa)) { elAdr.value = ulice; _chciAutoAdresa = ulice; }
+      if (obec && _chciMisto) _chciStav(`✓ Vybráno: ${[ulice, obec].filter(Boolean).join(', ')} – špendlík můžete ještě posunout.`, true);
+    } catch {}
+  };
+  const _chciNastavMisto = (latlng) => {
+    _chciMisto = { lat: +latlng.lat.toFixed(5), lng: +latlng.lng.toFixed(5) };
+    if (_chciPin) {
+      _chciPin.setLatLng(latlng);
+    } else {
+      _chciPin = L.marker(latlng, {
+        draggable: true,
+        icon: L.divIcon({ className: '', html: '<div class="chci-pin">📍</div>', iconSize: [34, 34], iconAnchor: [17, 32] })
+      }).addTo(_chciMapa);
+      _chciPin.on('dragend', () => _chciNastavMisto(_chciPin.getLatLng()));
+    }
+    _chciStav('✓ Místo vybráno – špendlík můžete ještě posunout.', true);
+    document.getElementById('chciPokracovat').disabled = false;
+    _chciDoplnAdresu(_chciMisto.lat, _chciMisto.lng);
+  };
+  const _chciZrusMisto = () => {
+    _chciMisto = null;
+    if (_chciPin) { _chciPin.remove(); _chciPin = null; }
+    _chciAutoObec = _chciAutoAdresa = '';
+    _chciStav('Najděte svou obec a klikněte na místo, kam budka přijde.');
+    document.getElementById('chciPokracovat').disabled = true;
+  };
+  const _chciInitMapa = () => {
+    if (typeof L === 'undefined') { _chciKrok(2); return; }   // mapa se nenačetla → rovnou formulář
+    if (_chciMapa) { _chciMapa.invalidateSize(); return; }
+    _chciMapa = L.map('chciMapa', { scrollWheelZoom: false }).setView([49.8, 15.5], 7);
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19, attribution: '© OpenStreetMap'
+    }).addTo(_chciMapa);
+    _chciMapa.on('click', e => {
+      // v přehledové mapě by klik trefil místo jen na kilometry — nejdřív přiblížit
+      if (_chciMapa.getZoom() < 13) {
+        _chciMapa.setView(e.latlng, Math.min(_chciMapa.getZoom() + 4, 16));
+        _chciStav('Přiblíženo – klikněte ještě jednou přesně na místo.');
+        return;
+      }
+      _chciNastavMisto(e.latlng);
+    });
+  };
+
+  const _chciHledej = async () => {
+    const btn = document.getElementById('chciNajitObec');
+    const dotaz = document.getElementById('chciHledat').value.trim();
+    if (!dotaz) { _chciStav('⚠ Napište obec nebo adresu, kterou mám v mapě najít.'); return; }
+    if (!_chciMapa) return;
+    btn.disabled = true;
+    try {
+      const misto = await _najdiSouradnice(dotaz);
+      if (misto) {
+        _chciMapa.setView([misto.lat, misto.lng], 16);
+        if (!_chciMisto) _chciStav('Teď klikněte do mapy přesně na místo, kam budka přijde.');
+      } else {
+        _chciStav('⚠ Tohle místo jsem nenašel – zkuste to jinak, nebo ho najděte v mapě ručně.');
+      }
+    } catch {
+      _chciStav('⚠ Hledání se nepovedlo – zkuste místo najít v mapě ručně.');
+    }
+    btn.disabled = false;
+  };
+  document.getElementById('chciNajitObec')?.addEventListener('click', _chciHledej);
+  document.getElementById('chciHledat')?.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); _chciHledej(); } });
+
+  document.getElementById('chciMojePoloha')?.addEventListener('click', () => {
+    const btn = document.getElementById('chciMojePoloha');
+    if (!navigator.geolocation || !_chciMapa) { _chciStav('⚠ Prohlížeč polohu nepodporuje – najděte místo v mapě.'); return; }
+    btn.disabled = true;
+    navigator.geolocation.getCurrentPosition(pos => {
+      const ll = L.latLng(pos.coords.latitude, pos.coords.longitude);
+      _chciMapa.setView(ll, 17);
+      _chciNastavMisto(ll);
+      btn.disabled = false;
+    }, () => {
+      _chciStav('⚠ Polohu se nepodařilo zjistit – najděte místo v mapě.');
+      btn.disabled = false;
+    }, { enableHighAccuracy: true, timeout: 10000 });
+  });
+
+  document.getElementById('chciPokracovat')?.addEventListener('click', () => _chciKrok(2));
+  document.getElementById('chciPreskocit')?.addEventListener('click', e => { e.preventDefault(); _chciKrok(2); });
+
   window._otevriChciBudku = function() {
     if (!modalChciBudku) { document.getElementById('btnNapsat')?.click(); return; }
     modalChciBudku.hidden = false;
-    setTimeout(() => document.getElementById('chciJmeno')?.focus(), 80);
+    _chciKrok(1);
   };
 
   if (modalChciBudku) {
@@ -4159,12 +4289,14 @@ document.addEventListener('DOMContentLoaded', () => {
         'Obec: ' + obec,
         adresa ? 'Adresa: ' + adresa : '',
         'Otvor: ' + _popisOtvoru(otvor),
+        _chciMisto ? `Místo v mapě: ${_chciMisto.lat}, ${_chciMisto.lng}` : '',
         poznamka ? 'Poznámka: ' + poznamka : ''
       ].filter(Boolean).join('\n');
       try {
         await db.ref('admin_requests/zpravy').push({
           loginId: 'navstevnik', jmeno, email: email || '(neuvedeno)', text: popis,
           typ: 'budka', telefon, obec, adresa, poznamka, otvor,
+          ...(_chciMisto ? { lat: _chciMisto.lat, lng: _chciMisto.lng } : {}),
           ts: firebase.database.ServerValue.TIMESTAMP, vyrizeno: false
         });
         msg.style.color = '#4caf50';
@@ -4172,6 +4304,8 @@ document.addEventListener('DOMContentLoaded', () => {
         msg.hidden = false;
         ['chciJmeno','chciTelefon','chciEmail','chciObec','chciAdresa','chciPoznamka']
           .forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+        _chciZrusMisto();
+        document.getElementById('chciHledat').value = '';
         setTimeout(() => {
           modalChciBudku.hidden = true;
           msg.hidden = true;

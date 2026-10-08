@@ -9,7 +9,7 @@
   <link rel="stylesheet" href="css/vendor/MarkerCluster.css?v=mb20260914l">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=mb20260930a">
+  <link rel="stylesheet" href="css/style.css?v=mb20261008g">
   <link rel="icon" type="image/svg+xml" href="img/favicon.svg">
   <link rel="icon" type="image/png" sizes="512x512" href="img/icon-512.png">
   <link rel="icon" type="image/png" sizes="192x192" href="img/icon-192.png">
@@ -53,7 +53,6 @@
         <li><a href="#mapa" id="nav-mapa">Mapa Budek</a></li>
         <li><a href="https://www.google.com/maps/d/viewer?hl=cs&amp;mid=11Yq1MfrrWfRHxefxtGCFA0TCKSnNToXu&amp;ll=46.96772040177989%2C12.94753644912273&amp;z=6" target="_blank" rel="noopener noreferrer" onclick="var w=window.open(this.href,'_blank','noopener');return w?false:true;">Stará mapa (Google)</a></li>
         <li><a href="#galerie">Fotogalerie</a></li>
-        <li id="navLiAktuality"><a href="#aktuality">Z deníku správců...</a></li>
         <li><a href="#" id="navDesatero">Desatero správce</a></li>
         <li class="nav-navod-mobile"><a href="#" id="navNavodMobile">❓ Návod pro správce</a></li>
 
@@ -115,23 +114,19 @@
       <h2 class="sekce-nadpis">Projekt v číslech</h2>
       <p class="sekce-podnadpis">Společně sledujeme ptačí budky po celé České republice.</p>
 
-      <!-- 3 statistiky. Dřív tu byla čtvrtá, „Aktivních budek“ — počítala budky,
+      <!-- 2 statistiky. Dřív tu byla čtvrtá, „Aktivních budek“ — počítala budky,
            u kterých někdo někdy něco zapsal, takže ve skutečnosti měřila píli
            správců v hlášení, ne stav budek. Návštěvník to ale četl jako „kolik
-           budek funguje“. Zrušeno 9/2026. -->
+           budek funguje“. Zrušeno 9/2026.
+           Dlaždice „Osídlených budek“ skryta 10/2026 — ukazovala jen nahlášená
+           hnízdění (38), což vypadalo málo. Na jaře se vrátí; JS v mapa.js
+           s chybějícím #stat-osidlenych počítá, stačí vrátit HTML. -->
       <div class="stats-grid" id="statsGrid">
         <div class="stat-item">
           <div class="stat-icon"><img src="img/logo.svg" alt="Budka" class="stat-svg-icon" loading="lazy"></div>
           <div>
             <div class="stat-value" id="stat-celkem">…</div>
             <div class="stat-label">Celkem budek</div>
-          </div>
-        </div>
-        <div class="stat-item">
-          <div class="stat-icon"><svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" class="stat-svg-icon" role="img" aria-label="Osídlená budka"><circle cx="100" cy="100" r="98" fill="#3a9a3a"/><rect x="93" y="152" width="14" height="36" rx="2" fill="#b5651d"/><rect x="96" y="152" width="4" height="36" rx="1" fill="#d4843a" opacity="0.4"/><rect x="38" y="143" width="124" height="11" rx="1" fill="#c96420"/><line x1="38" y1="148" x2="162" y2="148" stroke="#1a1a1a" stroke-width="2" opacity="0.2"/><path d="M32,48 L168,48 L156,143 L44,143 Z" fill="#7B3810"/><path d="M32,48 L168,48 L163,62 L37,62 Z" fill="#3d1505" opacity="0.3"/><rect x="22" y="33" width="156" height="18" rx="2" fill="#c96420"/><rect x="22" y="33" width="156" height="7" rx="2" fill="#e07830" opacity="0.4"/><rect x="32" y="48" width="136" height="3" fill="#1a1a1a" opacity="0.2"/><ellipse cx="86" cy="108" rx="20" ry="28" fill="#f5c800" transform="rotate(-8,86,108)"/><ellipse cx="114" cy="108" rx="20" ry="28" fill="#f5c800" transform="rotate(8,114,108)"/><rect x="92" y="88" width="16" height="42" rx="8" fill="#1a1f2e"/><ellipse cx="100" cy="80" rx="22" ry="20" fill="#1a1f2e"/><ellipse cx="83" cy="84" rx="9" ry="7" fill="#ffffff" opacity="0.9"/><ellipse cx="117" cy="84" rx="9" ry="7" fill="#ffffff" opacity="0.9"/><circle cx="91" cy="78" r="5" fill="#1a1f2e"/><circle cx="109" cy="78" r="5" fill="#1a1f2e"/><circle cx="92" cy="77" r="2" fill="#ffffff"/><circle cx="110" cy="77" r="2" fill="#ffffff"/><path d="M96,90 L104,90 L100,97 Z" fill="#ff9999"/><ellipse cx="86" cy="136" rx="10" ry="13" fill="#f8f4ee"/><ellipse cx="100" cy="138" rx="10" ry="13" fill="#f0ece5"/><ellipse cx="114" cy="136" rx="10" ry="13" fill="#f8f4ee"/><ellipse cx="86" cy="136" rx="10" ry="13" fill="#d4c8b8" opacity="0.2"/></svg></div>
-          <div>
-            <div class="stat-value" id="stat-osidlenych">…</div>
-            <div class="stat-label" id="stat-osidlenych-popisek">Osídlených budek</div>
           </div>
         </div>
         <div class="stat-item">
@@ -144,7 +139,7 @@
       </div>
 
       <p class="stats-poznamka">
-        ℹ️ Počítáme jen hnízdění, která nám správci nahlásili – <strong>skutečný počet osídlených budek je vyšší</strong>, ne každý svou budku hlásí. Pokud symbol vaší budky na mapě neodpovídá skutečnosti, můžete stav upravit sami po přihlášení, nebo nám ho nahlaste na <a href="mailto:p.kobelka@gmail.com">p.kobelka@gmail.com</a>. <a href="#" id="odkazNavodStats">Viz Návod pro správce →</a>
+        ℹ️ Osídlené budky na mapě ukazují jen hnízdění, která nám správci nahlásili – <strong>skutečně osídlených budek je víc</strong>, ne každý svou budku hlásí. Pokud symbol vaší budky na mapě neodpovídá skutečnosti, můžete stav upravit sami po přihlášení, nebo nám ho nahlaste na <a href="mailto:p.kobelka@gmail.com">p.kobelka@gmail.com</a>. <a href="#" id="odkazNavodStats">Viz Návod pro správce →</a>
       </p>
 
       <!-- Slíbené budky – text pro lidi, kterým je budka slíbená.
@@ -319,11 +314,17 @@
     <div class="sekce-inner">
       <h2 class="sekce-nadpis">Fotogalerie</h2>
       <p class="sekce-podnadpis">Umístěné budky a další fotky z projektu.</p>
-      <button class="galerie-rozbalit" id="galerieRozbalit" type="button"
-              aria-expanded="false" aria-controls="galerieObsah">
-        <span class="galerie-rozbalit-text">Zobrazit seznam budek s fotkami</span>
-        <span class="galerie-rozbalit-sipka" aria-hidden="true">▾</span>
-      </button>
+      <!-- Plánek a Moje budka se ukážou samy, jakmile je v img/info/ soubor
+           planek-budky.* / moje-budka.* (jpg, jpeg, png, webp nebo pdf). -->
+      <div class="galerie-tlacitka">
+        <button class="galerie-rozbalit" id="galerieRozbalit" type="button"
+                aria-expanded="false" aria-controls="galerieObsah">
+          <span class="galerie-rozbalit-text">Zobrazit seznam budek s fotkami</span>
+          <span class="galerie-rozbalit-sipka" aria-hidden="true">▾</span>
+        </button>
+        <button class="galerie-rozbalit galerie-info-btn" type="button" data-soubor="planek-budky" data-nadpis="Plánek budky" hidden>📐 Plánek budky</button>
+        <button class="galerie-rozbalit galerie-info-btn" type="button" data-soubor="moje-budka" data-nadpis="Moje budka" hidden>🏡 Moje budka</button>
+      </div>
       <div id="galerieObsah" hidden>
         <div class="galerie-taby" role="tablist" aria-label="Kategorie fotogalerie">
           <button class="galerie-tab is-active" data-tab="umistene" role="tab" aria-selected="true" type="button">🏡 Umístěné budky</button>
@@ -348,17 +349,6 @@
           spojíme se a přibude další ptačí domov.
         </p>
         <a class="vyzva-mapa-btn" href="#" role="button" onclick="document.getElementById('btnNapsat').click(); return false;">✉️ Napište mi</a>
-      </div>
-    </div>
-  </section>
-
-  <!-- Sekce: Z deníku správců -->
-  <section class="sekce sekce-denik" id="aktuality" aria-label="Z deníku správců">
-    <div class="sekce-inner">
-      <h2 class="sekce-nadpis">Z deníku správců</h2>
-      <p class="sekce-podnadpis">Co se právě děje v našich budkách po celé zemi.</p>
-      <div class="pribehy-list" id="aktualityList">
-        <div style="padding:20px; color:#6b7d5a; font-size:0.95rem;">Načítám aktuality…</div>
       </div>
     </div>
   </section>
@@ -509,12 +499,29 @@
      Padá do stejné schránky jako ostatní zprávy (administrace → 📬 Žádosti),
      jen s příznakem typ: "budka", takže z ní jde založit slib na jedno kliknutí. -->
 <div id="modalChciBudku" class="modal-overlay" role="dialog" aria-modal="true" aria-label="Chci budku" hidden>
-  <div class="modal-box" style="max-width:480px;width:94%">
+  <div class="modal-box" style="max-width:560px;width:94%">
     <button class="modal-zavrit" id="chciZavrit" aria-label="Zavřít">×</button>
     <div class="modal-logo-wrap"><img src="img/logo.svg" alt="" aria-hidden="true" width="48"></div>
     <h2 class="modal-nadpis">🪺 Chci budku</h2>
     <p class="modal-uvitani">Dělám <strong>sýkorníky</strong> — dřevěné budky pro sýkory a jejich příbuzné. Napište mi, kam by budka měla přijít, a já se vám ozvu. Budky dělám postupně, tak mi prosím nechte kontakt — ať na vás nezapomenu.</p>
-    <div class="modal-form">
+
+    <!-- Krok 1: místo klikem do mapy. Souřadnice se v administraci rovnou
+         předvyplní do slibu a obec/ulice se předvyplní do formuláře. -->
+    <div id="chciKrok1" class="chci-krok">
+      <p class="chci-krok-nadpis"><span class="chci-krok-cislo">1/2</span> Kam budku pověsíte? Klikněte do mapy.</p>
+      <div class="chci-mapa-hledat">
+        <input type="text" id="chciHledat" maxlength="80" placeholder="Obec nebo adresa…" aria-label="Najít obec nebo adresu v mapě">
+        <button type="button" class="chci-mapa-btn" id="chciNajitObec">🔎 Najít</button>
+        <button type="button" class="chci-mapa-btn" id="chciMojePoloha" title="Použít moji polohu">🎯 Jsem tady</button>
+      </div>
+      <div id="chciMapa" class="chci-mapa" aria-label="Mapa pro výběr místa budky"></div>
+      <p class="chci-mapa-stav" id="chciMapaStav">Najděte svou obec a klikněte na místo, kam budka přijde.</p>
+      <button type="button" id="chciPokracovat" class="chci-pokracovat" disabled>Pokračovat k formuláři →</button>
+      <a href="#" class="link-zapomnel chci-preskocit" id="chciPreskocit">Místo teď nevím – přeskočit mapu</a>
+    </div>
+
+    <div id="chciKrok2" class="modal-form" hidden>
+      <div class="chci-misto-souhrn" id="chciMistoSouhrn"></div>
       <input type="text" id="chciJmeno" maxlength="60" placeholder="Jméno a příjmení" autocomplete="name" aria-label="Jméno a příjmení">
       <input type="tel" id="chciTelefon" maxlength="20" inputmode="tel" placeholder="Telefon" autocomplete="tel" aria-label="Telefon">
       <input type="email" id="chciEmail" maxlength="80" placeholder="E-mail (nepovinné)" autocomplete="email" aria-label="E-mail">
@@ -739,8 +746,8 @@
   }
 </script>
 <script src="js/svatky.js?v=mb20260914l"></script>
-<script src="js/mapa.js?v=mb20260924a"></script>
-<script src="js/main.js?v=mb20260915a"></script>
+<script src="js/mapa.js?v=mb20261008g"></script>
+<script src="js/main.js?v=mb20261008c"></script>
 <!-- Fotogalerie: data i kód jsou schválně přímo tady, ne v samostatných
      souborech. Hosting opakovaně neservíroval nově nahrané soubory
      (js/galerie.js, data/galerie.js; dřív stejně dopadly obydleno.svg a .mp4),
@@ -791,6 +798,51 @@
     } else {
       zobrazSeznam();
     }
+
+    // ── Plánek budky / Moje budka ──────────────────────────────────
+    // Soubor stačí nahrát do img/info/ (třeba z mobilu přes GitHub) pod
+    // pevným názvem — tlačítko se ukáže samo, nic se negeneruje.
+    // Víc fotek = album: nazev-1.jpg, nazev-2.jpg, … (listuje se v nich).
+    var INFO_PRIPONY = ['jpg', 'jpeg', 'png', 'webp', 'JPG', 'JPEG', 'PNG', 'pdf'];
+    var verze = '?v=' + (window.MB_VERZE || '');
+    function existuje(url) {
+      return fetch(url, { method: 'HEAD', cache: 'no-cache' }).then(function (r) {
+        // některé hostingy vrací na neexistující soubor 200 s index.html
+        return r.ok && (r.headers.get('content-type') || '').indexOf('text/html') === -1;
+      }).catch(function () { return false; });
+    }
+    function najdiAlbum(zaklad, n, fotky) {
+      if (n > 40) return Promise.resolve(fotky);
+      var url = zaklad + '-' + n + '.jpg' + verze;
+      return existuje(url).then(function (ano) {
+        if (!ano) return fotky;
+        fotky.push(url);
+        return najdiAlbum(zaklad, n + 1, fotky);
+      });
+    }
+    function najdiSoubor(zaklad, i) {
+      if (i >= INFO_PRIPONY.length) return Promise.resolve(null);
+      var url = zaklad + '.' + INFO_PRIPONY[i] + verze;
+      return existuje(url).then(function (ano) {
+        return ano ? { url: url, pdf: INFO_PRIPONY[i] === 'pdf' } : najdiSoubor(zaklad, i + 1);
+      });
+    }
+    document.querySelectorAll('.galerie-info-btn').forEach(function (btn) {
+      var zaklad = 'img/info/' + btn.getAttribute('data-soubor');
+      var nadpis = btn.getAttribute('data-nadpis');
+      function zapoj(fotky, pdf) {
+        btn.hidden = false;
+        if (fotky.length > 1) btn.textContent += ' (' + fotky.length + ')';
+        btn.addEventListener('click', function () {
+          if (pdf) { window.open(fotky[0], '_blank', 'noopener'); return; }
+          otevriLightbox([{ fotky: fotky, nadpis: nadpis, alt: nadpis, cislo: null }], 0);
+        });
+      }
+      najdiAlbum(zaklad, 1, []).then(function (fotky) {
+        if (fotky.length) return zapoj(fotky, false);
+        return najdiSoubor(zaklad, 0).then(function (f) { if (f) zapoj([f.url], f.pdf); });
+      });
+    });
 
     // ── Přepínání záložek ──────────────────────────────────────────
     function wireTaby() {
@@ -894,6 +946,9 @@
         '<button class="glb-nav glb-next" aria-label="Další">&#8250;</button>';
       document.body.appendChild(ov);
       document.body.style.overflow = 'hidden';
+      // samostatný obrázek (třeba Plánek budky) — není kam listovat
+      if (items.length === 1 && item.fotky.length === 1)
+        ov.querySelectorAll('.glb-nav').forEach(function (b) { b.style.display = 'none'; });
 
       var img = ov.querySelector('.glb-img');
       var nadpisEl = ov.querySelector('.glb-nadpis');
@@ -981,7 +1036,7 @@
     }
   }, 10000);
 </script>
-<script src="js/auth.js?v=mb20260915c"></script>
+<script src="js/auth.js?v=mb20261008e"></script>
 <script src="js/presence.js?v=mb20260914l"></script>
 <script>
   if ('serviceWorker' in navigator) {

@@ -1115,6 +1115,17 @@ async function inicializujMapu() {
   // Zabrán zoom pod minZoom i kolečkem myši
   mapInstance.setMinZoom(5);
 
+  // Bublina budky nesmí být vyšší než mapa: autoPan by jinak posunul značku
+  // mimo výřez, markercluster ji odebral a bublina se hned zase zavřela
+  // (na mobilu u budek s fotkou). CSS si výšku bere z --mapa-vyska.
+  const _nastavVyskuMapy = () => {
+    const el = document.getElementById('map');
+    if (el) el.style.setProperty('--mapa-vyska', mapInstance.getSize().y + 'px');
+  };
+  _nastavVyskuMapy();
+  mapInstance.on('resize', _nastavVyskuMapy);
+  window.addEventListener('resize', _nastavVyskuMapy);
+
   // Scroll zoom jen po kliknutí na mapu; Ctrl+kolečko funguje vždy
   const mapEl = document.getElementById('map');
   const mapWrapper = mapEl.parentElement; // .map-wrapper má position:relative
@@ -1193,12 +1204,55 @@ async function inicializujMapu() {
   // ztlumí jejich sytost, ať budky v mapě nezanikají.
   // maxNativeZoom 19 = poslední zoom, který OSM dlaždice mají; nad ním se obrázky
   // jen zvětšují, aby mapa fungovala až do zoomu 20 jako dřív.
-  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  //
+  // Velké popisky: OSM má písmo „vypálené“ do dlaždic a na telefonu jsou názvy
+  // obcí skoro nečitelné. Dlaždice o zoom níž vykreslená na dvojnásobek
+  // (tileSize 512, zoomOffset -1) má písmo 2× větší — za cenu o stupeň
+  // menších podrobností. Tlačítko „Aa“ vrací původní jemný podklad.
+  const _podklad = (velke) => L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', velke ? {
+    attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+    tileSize: 512, zoomOffset: -1,
+    maxZoom: 20,
+    maxNativeZoom: 20,   // = dlaždice zoom 19, poslední, kterou OSM má
+    className: 'mapa-dlazdice'
+  } : {
     attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
     maxZoom: 20,
     maxNativeZoom: 19,
     className: 'mapa-dlazdice'
-  }).addTo(mapInstance);
+  });
+  let _velkePopisky = true;
+  try { _velkePopisky = localStorage.getItem('mb_mapa_popisky') !== 'male'; } catch {}
+  let _vrstvaPodkladu = _podklad(_velkePopisky).addTo(mapInstance);
+  const ovladacPopisku = L.control({ position: 'topleft' });
+  ovladacPopisku.onAdd = function() {
+    const wrap = L.DomUtil.create('div', 'leaflet-bar popisky-btn-wrap');
+    const btn = L.DomUtil.create('a', 'popisky-btn', wrap);
+    btn.href = '#';
+    btn.setAttribute('role', 'button');
+    const popis = () => {
+      btn.innerHTML = _velkePopisky ? 'Aa<small>−</small>' : 'Aa<small>+</small>';
+      btn.title = _velkePopisky ? 'Menší popisky mapy (víc podrobností)' : 'Větší popisky mapy (čitelnější názvy)';
+      btn.setAttribute('aria-label', btn.title);
+    };
+    popis();
+    L.DomEvent.disableClickPropagation(wrap);
+    L.DomEvent.on(btn, 'click', e => {
+      L.DomEvent.stop(e);
+      _velkePopisky = !_velkePopisky;
+      try { localStorage.setItem('mb_mapa_popisky', _velkePopisky ? 'velke' : 'male'); } catch {}
+      const nova = _podklad(_velkePopisky).addTo(mapInstance);
+      nova.bringToBack();
+      // starou vrstvu sundat až po načtení nové, ať mapa neblikne do šeda
+      const stara = _vrstvaPodkladu;
+      _vrstvaPodkladu = nova;
+      nova.once('load', () => mapInstance.removeLayer(stara));
+      setTimeout(() => { if (mapInstance.hasLayer(stara)) mapInstance.removeLayer(stara); }, 4000);
+      popis();
+    });
+    return wrap;
+  };
+  ovladacPopisku.addTo(mapInstance);
 
   window._mapInstance = mapInstance;   // administrace do ní přidává slíbené budky
   pridejGpsOvladani(mapInstance);
@@ -1225,6 +1279,9 @@ async function inicializujMapu() {
         showCoverageOnHover: false,    // bez oblasti při najetí (klidnější)
         spiderfyOnMaxZoom: true,       // budky na stejném místě se rozevřou do vějíře
         zoomToBoundsOnClick: true,     // klik na bublinu přiblíží a rozpadne shluk
+        // značky mimo výřez nechat na mapě — jinak se s nimi zavírala i
+        // otevřená bublina, když ji autoPan odsunul (budek je jen pár set)
+        removeOutsideVisibleBounds: false,
         iconCreateFunction: _vytvorClusterIkonu
       });
     } else {
