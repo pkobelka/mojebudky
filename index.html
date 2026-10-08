@@ -802,27 +802,46 @@
     // ── Plánek budky / Moje budka ──────────────────────────────────
     // Soubor stačí nahrát do img/info/ (třeba z mobilu přes GitHub) pod
     // pevným názvem — tlačítko se ukáže samo, nic se negeneruje.
+    // Víc fotek = album: nazev-1.jpg, nazev-2.jpg, … (listuje se v nich).
     var INFO_PRIPONY = ['jpg', 'jpeg', 'png', 'webp', 'JPG', 'JPEG', 'PNG', 'pdf'];
+    var verze = '?v=' + (window.MB_VERZE || '');
+    function existuje(url) {
+      return fetch(url, { method: 'HEAD', cache: 'no-cache' }).then(function (r) {
+        // některé hostingy vrací na neexistující soubor 200 s index.html
+        return r.ok && (r.headers.get('content-type') || '').indexOf('text/html') === -1;
+      }).catch(function () { return false; });
+    }
+    function najdiAlbum(zaklad, n, fotky) {
+      if (n > 40) return Promise.resolve(fotky);
+      var url = zaklad + '-' + n + '.jpg' + verze;
+      return existuje(url).then(function (ano) {
+        if (!ano) return fotky;
+        fotky.push(url);
+        return najdiAlbum(zaklad, n + 1, fotky);
+      });
+    }
+    function najdiSoubor(zaklad, i) {
+      if (i >= INFO_PRIPONY.length) return Promise.resolve(null);
+      var url = zaklad + '.' + INFO_PRIPONY[i] + verze;
+      return existuje(url).then(function (ano) {
+        return ano ? { url: url, pdf: INFO_PRIPONY[i] === 'pdf' } : najdiSoubor(zaklad, i + 1);
+      });
+    }
     document.querySelectorAll('.galerie-info-btn').forEach(function (btn) {
-      var zaklad = 'img/info/' + btn.getAttribute('data-soubor') + '.';
+      var zaklad = 'img/info/' + btn.getAttribute('data-soubor');
       var nadpis = btn.getAttribute('data-nadpis');
-      (function zkus(i) {
-        if (i >= INFO_PRIPONY.length) return;
-        var url = zaklad + INFO_PRIPONY[i] + '?v=' + (window.MB_VERZE || '');
-        fetch(url, { method: 'HEAD', cache: 'no-cache' }).then(function (r) {
-          var typ = r.headers.get('content-type') || '';
-          // některé hostingy vrací na neexistující soubor 200 s index.html
-          if (r.ok && typ.indexOf('text/html') === -1) {
-            btn.hidden = false;
-            btn.addEventListener('click', function () {
-              if (INFO_PRIPONY[i] === 'pdf') { window.open(url, '_blank', 'noopener'); return; }
-              otevriLightbox([{ fotky: [url], nadpis: nadpis, alt: nadpis, cislo: null }], 0);
-            });
-          } else {
-            zkus(i + 1);
-          }
-        }).catch(function () { zkus(i + 1); });
-      })(0);
+      function zapoj(fotky, pdf) {
+        btn.hidden = false;
+        if (fotky.length > 1) btn.textContent += ' (' + fotky.length + ')';
+        btn.addEventListener('click', function () {
+          if (pdf) { window.open(fotky[0], '_blank', 'noopener'); return; }
+          otevriLightbox([{ fotky: fotky, nadpis: nadpis, alt: nadpis, cislo: null }], 0);
+        });
+      }
+      najdiAlbum(zaklad, 1, []).then(function (fotky) {
+        if (fotky.length) return zapoj(fotky, false);
+        return najdiSoubor(zaklad, 0).then(function (f) { if (f) zapoj([f.url], f.pdf); });
+      });
     });
 
     // ── Přepínání záložek ──────────────────────────────────────────
