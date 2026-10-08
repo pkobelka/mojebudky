@@ -9,7 +9,7 @@
   <link rel="stylesheet" href="css/vendor/MarkerCluster.css?v=mb20260914l">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=mb20261008c">
+  <link rel="stylesheet" href="css/style.css?v=mb20261008e">
   <link rel="icon" type="image/svg+xml" href="img/favicon.svg">
   <link rel="icon" type="image/png" sizes="512x512" href="img/icon-512.png">
   <link rel="icon" type="image/png" sizes="192x192" href="img/icon-192.png">
@@ -493,12 +493,29 @@
      Padá do stejné schránky jako ostatní zprávy (administrace → 📬 Žádosti),
      jen s příznakem typ: "budka", takže z ní jde založit slib na jedno kliknutí. -->
 <div id="modalChciBudku" class="modal-overlay" role="dialog" aria-modal="true" aria-label="Chci budku" hidden>
-  <div class="modal-box" style="max-width:480px;width:94%">
+  <div class="modal-box" style="max-width:560px;width:94%">
     <button class="modal-zavrit" id="chciZavrit" aria-label="Zavřít">×</button>
     <div class="modal-logo-wrap"><img src="img/logo.svg" alt="" aria-hidden="true" width="48"></div>
     <h2 class="modal-nadpis">🪺 Chci budku</h2>
     <p class="modal-uvitani">Dělám <strong>sýkorníky</strong> — dřevěné budky pro sýkory a jejich příbuzné. Napište mi, kam by budka měla přijít, a já se vám ozvu. Budky dělám postupně, tak mi prosím nechte kontakt — ať na vás nezapomenu.</p>
-    <div class="modal-form">
+
+    <!-- Krok 1: místo klikem do mapy. Souřadnice se v administraci rovnou
+         předvyplní do slibu a obec/ulice se předvyplní do formuláře. -->
+    <div id="chciKrok1" class="chci-krok">
+      <p class="chci-krok-nadpis"><span class="chci-krok-cislo">1/2</span> Kam budku pověsíte? Klikněte do mapy.</p>
+      <div class="chci-mapa-hledat">
+        <input type="text" id="chciHledat" maxlength="80" placeholder="Obec nebo adresa…" aria-label="Najít obec nebo adresu v mapě">
+        <button type="button" class="chci-mapa-btn" id="chciNajitObec">🔎 Najít</button>
+        <button type="button" class="chci-mapa-btn" id="chciMojePoloha" title="Použít moji polohu">🎯 Jsem tady</button>
+      </div>
+      <div id="chciMapa" class="chci-mapa" aria-label="Mapa pro výběr místa budky"></div>
+      <p class="chci-mapa-stav" id="chciMapaStav">Najděte svou obec a klikněte na místo, kam budka přijde.</p>
+      <button type="button" id="chciPokracovat" class="chci-pokracovat" disabled>Pokračovat k formuláři →</button>
+      <a href="#" class="link-zapomnel chci-preskocit" id="chciPreskocit">Místo teď nevím – přeskočit mapu</a>
+    </div>
+
+    <div id="chciKrok2" class="modal-form" hidden>
+      <div class="chci-misto-souhrn" id="chciMistoSouhrn"></div>
       <input type="text" id="chciJmeno" maxlength="60" placeholder="Jméno a příjmení" autocomplete="name" aria-label="Jméno a příjmení">
       <input type="tel" id="chciTelefon" maxlength="20" inputmode="tel" placeholder="Telefon" autocomplete="tel" aria-label="Telefon">
       <input type="email" id="chciEmail" maxlength="80" placeholder="E-mail (nepovinné)" autocomplete="email" aria-label="E-mail">
@@ -965,7 +982,7 @@
     }
   }, 10000);
 </script>
-<script src="js/auth.js?v=mb20260915c"></script>
+<script src="js/auth.js?v=mb20261008e"></script>
 <script src="js/presence.js?v=mb20260914l"></script>
 <script>
   if ('serviceWorker' in navigator) {

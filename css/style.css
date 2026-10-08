@@ -1062,6 +1062,26 @@ body.mapa-cele .leaflet-left { left: calc(env(safe-area-inset-left, 0px) + 8px);
 
 /* Vysvětlení, proč po lidech chci telefon — bez něj jim nemám jak potvrdit,
    že jsem žádost založil, a formulář by jinak vypadal jako zbytečné vyzvídání. */
+.chci-krok-nadpis { margin: 0 0 0.7rem; color: var(--text-light); font-size: 1.08rem; font-weight: 700; text-align: left; }
+.chci-krok-cislo { display: inline-block; background: var(--accent-gold); color: #fff; border-radius: 999px; padding: 1px 9px; font-size: 0.85rem; margin-right: 6px; vertical-align: 2px; }
+.chci-mapa-hledat { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 8px; }
+.chci-mapa-hledat input { flex: 1 1 180px; min-width: 0; background: rgba(255,255,255,0.07); border: 1px solid var(--panel-border); border-radius: 8px; color: var(--text-light); font-size: 1.05rem; padding: 0.6rem 0.9rem; outline: none; font-family: inherit; }
+.chci-mapa-hledat input:focus { border-color: var(--accent-gold); }
+.chci-mapa-hledat input::placeholder { color: var(--text-muted); }
+.chci-mapa-btn { flex: 0 0 auto; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--panel-border); background: rgba(255,255,255,0.08); color: var(--text-light); font-size: 0.95rem; font-weight: 600; cursor: pointer; font-family: inherit; }
+.chci-mapa-btn:hover { border-color: var(--accent-gold); }
+.chci-mapa-btn:disabled { opacity: 0.6; cursor: wait; }
+.chci-mapa { height: min(380px, 48vh); border-radius: 8px; border: 1px solid var(--panel-border); overflow: hidden; cursor: crosshair; background: #e8eee0; }
+.chci-mapa .leaflet-container, .chci-mapa.leaflet-container { cursor: crosshair; }
+.chci-mapa-stav { margin: 8px 0 0; color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; }
+.chci-mapa-stav--ok { color: #4caf50; font-weight: 600; }
+.chci-pokracovat { display: block; width: 100%; margin-top: 10px; padding: 13px 18px; border: none; border-radius: 10px; background: var(--orange); color: #fff; font-size: 1.08rem; font-weight: 700; cursor: pointer; font-family: inherit; }
+.chci-pokracovat:disabled { opacity: 0.45; cursor: not-allowed; }
+.chci-preskocit { display: block; text-align: center; margin-top: 10px; }
+.chci-misto-souhrn { text-align: left; background: rgba(76,175,80,0.1); border: 1px solid rgba(76,175,80,0.45); border-radius: 8px; padding: 0.6rem 0.9rem; color: var(--text-light); font-size: 0.98rem; }
+.chci-misto-souhrn:empty { display: none; }
+.chci-misto-souhrn button { background: none; border: none; color: var(--accent-gold); text-decoration: underline; cursor: pointer; font-size: 0.95rem; padding: 0 0 0 6px; font-family: inherit; }
+.chci-pin { font-size: 34px; line-height: 1; filter: drop-shadow(0 2px 3px rgba(0,0,0,0.4)); }
 .chci-telefon-info { text-align: left; background: rgba(255,255,255,0.04); border-left: 3px solid var(--accent-gold); border-radius: 8px; padding: 0.9rem 1.1rem; margin: 0; color: var(--text-muted); font-size: 1rem; line-height: 1.6; }
 .chci-telefon-info strong { color: var(--accent-gold); }
 @media (max-width: 640px) {
