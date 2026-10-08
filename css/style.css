@@ -521,8 +521,6 @@ html, body {
 /* Ve fullscreenu posuň ovládání pod stavovou lištu / výřez telefonu */
 body.mapa-cele .leaflet-top { top: calc(env(safe-area-inset-top, 0px) + 10px); }
 body.mapa-cele .leaflet-left { left: calc(env(safe-area-inset-left, 0px) + 8px); }
-.aktualita-link { display: inline-block; margin-top: 5px; color: var(--orange-light); font-size: 0.73rem; font-weight: 600; text-decoration: none; letter-spacing: 0.2px; transition: color 0.15s; }
-.aktualita-link:hover { color: var(--accent-gold); text-decoration: underline; }
 .main-content.mapa-fullscreen { min-height: 0; }
 .main-content.mapa-fullscreen .panel { display: none; }
 .main-content.mapa-fullscreen .map-wrapper { flex: 1; }
@@ -779,9 +777,8 @@ body.mapa-cele .leaflet-left { left: calc(env(safe-area-inset-left, 0px) + 8px);
   /* Pravý panel pod mapou — přirozená výška, stránka scrolluje */
   .panel { max-height: none; }
   .panel-scroll { overflow-y: visible; }
-  /* Aktuality panel a nav link skryté na mobilu */
+  /* Levý panel skrytý na mobilu */
   .panel-left { display: none; }
-  #navLiAktuality { display: none; }
   /* Popup na mobilu – užší (místo po stranách) + scrollovatelný na výšku */
   .budka-popup { min-width: 0; width: calc(100vw - 80px); max-width: 300px; max-height: calc(100svh - 180px); overflow-y: auto; -webkit-overflow-scrolling: touch; font-size: 1rem; box-sizing: border-box; }
   .leaflet-popup-content-wrapper,
@@ -1188,9 +1185,6 @@ body.mapa-cele .leaflet-left { left: calc(env(safe-area-inset-left, 0px) + 8px);
 .admin-banner button { background: none; border: 1px solid var(--panel-border); color: var(--text-muted); border-radius: 4px; padding: 0.3rem 0.8rem; cursor: pointer; font-size: 0.82rem; }
 .admin-banner button:hover { color: var(--text-light); border-color: var(--text-muted); }
 
-/* ── LIVE FIREBASE ACTIVITY ── */
-.pribeh-item--live { border-left: 3px solid var(--accent-gold); padding-left: 6px; }
-
 /* ── PROFIL FORM TEXTAREA ── */
 .profil-form textarea {
   width: 100%;
@@ -1535,7 +1529,6 @@ a.uvod-cta-text:hover { background: rgba(255,255,255,0.22); transform: translate
   padding: 56px 24px;
   color: #2b3a22;
 }
-.sekce-denik { background: #ffffff; }
 .sekce-inner { max-width: 1120px; margin: 0 auto; }
 .sekce-nadpis { text-align: center; color: #1c5c10; font-size: 2.1rem; font-weight: 800; margin-bottom: 8px; letter-spacing: 0.2px; }
 .sekce-podnadpis { text-align: center; color: #5a6e48; font-size: 1.12rem; margin-bottom: 34px; line-height: 1.5; }
@@ -1649,15 +1642,6 @@ a.uvod-cta-text:hover { background: rgba(255,255,255,0.22); transform: translate
 .sekce-stats .pridat-na-plochu { display: block; background: #f1f7ea; border: 1px solid #e0ead4; border-radius: 12px; margin-top: 18px; }
 .sekce-stats .oblibene-pc { background: #f1f7ea; border-color: #e0ead4; }
 
-/* ── Z DENÍKU SPRÁVCŮ ── */
-.sekce-denik .pribehy-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 18px; overflow: visible; padding: 0; }
-.sekce-denik .pribeh-item { background: #ffffff; border: 1px solid #e0ead4; border-radius: 14px; box-shadow: 0 4px 16px rgba(60,90,40,0.07); padding: 16px 18px; }
-.sekce-denik .pribeh-item:hover { background: #fafdf6; box-shadow: 0 6px 22px rgba(60,90,40,0.12); }
-.aktuality-dalsi-btn { grid-column: 1 / -1; display: block; width: 100%; margin-top: 8px; padding: 14px 20px; background: #f4faf0; border: 1.5px dashed #b0d090; border-radius: 12px; color: #2e6b1a; font-size: 1.05rem; font-weight: 700; cursor: pointer; text-align: center; transition: background 0.15s, border-color 0.15s; font-family: inherit; }
-.aktuality-dalsi-btn:hover { background: #e6f4de; border-color: #7ab85a; }
-.sekce-denik .pribeh-druh { color: #1c5c10; }
-.sekce-denik .pribeh-popis { color: #3a4a30; opacity: 1; }
-
 /* ── Výzva: pomozte pokrýt budkami celou mapu ── */
 .sekce-vyzva-mapa { background: transparent; }
 .vyzva-mapa-box {
@@ -1682,9 +1666,6 @@ a.uvod-cta-text:hover { background: rgba(255,255,255,0.22); transform: translate
   .vyzva-mapa-text { font-size: 1rem; }
   .vyzva-mapa-btn { display: block; }
 }
-.sekce-denik .pribeh-datum { color: #7d8e6a; }
-.sekce-denik .aktualita-link { color: #2a8018; }
-.sekce-denik .aktualita-link:hover { color: #b07d10; }
 
 /* ── PODPOROVATELÉ (světlé) ── */
 .partners-section {

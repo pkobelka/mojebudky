@@ -16,8 +16,6 @@ for (const [k, arr] of Object.entries(PREZDIVKY)) arr.forEach(p => KANONICKY[p] 
 
 let spravciJmena = [];
 let _boxManagerKey = {};  // box_cislo → manažerský klíč (suffix), pro deduplikaci správců
-let _statickeAktuality = [];
-let _aktualityListenerSet = false;
 let _partneriData = [];
 let _podekovaniData = [];
 let _narozeniniceDnes = [];  // správci s narozeninami dnes
@@ -157,7 +155,6 @@ async function nactiStatistiky() {
       if (el) el.textContent = `${window.MB_CAS} (verze ${window.MB_VERZE})`;
     }
 
-    nactiAktuality(data.aktuality);
     nactiPartnery(data.partneri);
     nactiPodekovani(data.podekovani);
     nactiDruhyPtaku(data.druhy_ptaku);
@@ -261,102 +258,6 @@ const BIRD_KEY_MAP = {
   'Myš domácí': 'konadra',
   'Sojka obecná': 'sojka',
 };
-
-function _renderAktualityPanel(staticke, liveEntries) {
-  const el = document.getElementById('aktualityList');
-  if (!el) return;
-
-  const liveHTML = liveEntries.map(v => {
-    const datum = v.ts ? new Date(v.ts).toLocaleDateString('cs-CZ') : '—';
-    const cas = v.ts ? new Date(v.ts).toLocaleTimeString('cs-CZ', { hour: '2-digit', minute: '2-digit' }) : '';
-    const budkaNazevStr = (v.budka_nazev && v.budka_nazev !== String(v.budka_cislo)) ? ` – ${v.budka_nazev}` : '';
-    return `<div class="pribeh-item pribeh-item--live">
-      <div class="pribeh-ikona">🏠</div>
-      <div class="pribeh-text">
-        <div class="pribeh-druh">Správce ${v.jmeno}</div>
-        <div class="pribeh-popis">${v.zprava}</div>
-        <div class="pribeh-datum">${datum} · ${cas}</div>
-        ${v.budka_cislo ? `<a class="aktualita-link" data-budka="${v.budka_cislo}" href="#">→ Budka č. ${v.budka_cislo}${budkaNazevStr}</a>` : ''}
-      </div>
-    </div>`;
-  }).join('');
-
-  const staticHTML = staticke.map(p => `
-    <div class="pribeh-item">
-      <div class="pribeh-ikona">${BIRD_ICONS[p.ikona] || BIRD_ICONS.konadra}</div>
-      <div class="pribeh-text">
-        <div class="pribeh-druh">${p.ptak}</div>
-        <div class="pribeh-popis">${p.text}</div>
-        <div class="pribeh-datum">${p.datum}${p.cas ? ` · ${p.cas}` : ''}</div>
-        ${p.budka_id ? `<a class="aktualita-link" data-budka="${p.budka_id}" href="#">→ Budka č. ${p.budka_id}</a>` : ''}
-      </div>
-    </div>`).join('');
-
-  const vsechny = (liveHTML + staticHTML);
-  const parser = new DOMParser();
-  const doc = parser.parseFromString(`<div>${vsechny}</div>`, 'text/html');
-  const polozky = Array.from(doc.body.firstChild.children);
-  const LIMIT = 5;
-
-  el.innerHTML = polozky.slice(0, LIMIT).map(n => n.outerHTML).join('');
-
-  const skryte = polozky.slice(LIMIT);
-  if (skryte.length > 0) {
-    const btnDalsi = document.createElement('button');
-    btnDalsi.type = 'button';
-    btnDalsi.className = 'aktuality-dalsi-btn';
-    btnDalsi.textContent = `▸ Další aktivity… (${skryte.length})`;
-    el.appendChild(btnDalsi);
-    btnDalsi.addEventListener('click', () => {
-      skryte.forEach(n => el.insertBefore(n, btnDalsi));
-      btnDalsi.remove();
-    });
-  }
-}
-
-function _poslechniAktualityFirebase() {
-  if (_aktualityListenerSet) return;
-  const db = typeof firebase !== 'undefined' ? firebase.database() : null;
-  if (!db) return;
-  _aktualityListenerSet = true;
-
-  let _liveEntries = [];
-  let _fbAktuality = [];
-
-  function _rerender() {
-    _renderAktualityPanel([..._fbAktuality, ..._statickeAktuality], _liveEntries);
-  }
-
-  db.ref('aktivita').orderByChild('ts').limitToLast(10).on('value', snap => {
-    _liveEntries = [];
-    snap.forEach(child => { _liveEntries.unshift(child.val()); });
-    _rerender();
-  });
-
-  db.ref('aktuality').orderByChild('ts').limitToLast(20).on('value', snap => {
-    _fbAktuality = [];
-    snap.forEach(child => { _fbAktuality.unshift(child.val()); });
-    _rerender();
-  });
-}
-
-function nactiAktuality(aktuality) {
-  _statickeAktuality = aktuality || [];
-  const el = document.getElementById('aktualityList');
-  if (el && !el._clickSet) {
-    el._clickSet = true;
-    el.addEventListener('click', e => {
-      const link = e.target.closest('.aktualita-link');
-      if (!link) return;
-      e.preventDefault();
-      const cislo = parseInt(link.dataset.budka, 10);
-      focusBudka(cislo);
-      document.querySelector('.map-wrapper').scrollIntoView({ behavior: 'smooth' });
-    });
-  }
-  _renderAktualityPanel(_statickeAktuality, []);
-  _poslechniAktualityFirebase();
-}
 
 function nactiPartnery(partneri) {
   _partneriData = partneri || [];
