@@ -9,7 +9,7 @@
   <link rel="stylesheet" href="css/vendor/MarkerCluster.css?v=mb20260914l">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=mb20261008b">
+  <link rel="stylesheet" href="css/style.css?v=mb20261008c">
   <link rel="icon" type="image/svg+xml" href="img/favicon.svg">
   <link rel="icon" type="image/png" sizes="512x512" href="img/icon-512.png">
   <link rel="icon" type="image/png" sizes="192x192" href="img/icon-192.png">
@@ -114,23 +114,19 @@
       <h2 class="sekce-nadpis">Projekt v číslech</h2>
       <p class="sekce-podnadpis">Společně sledujeme ptačí budky po celé České republice.</p>
 
-      <!-- 3 statistiky. Dřív tu byla čtvrtá, „Aktivních budek“ — počítala budky,
+      <!-- 2 statistiky. Dřív tu byla čtvrtá, „Aktivních budek“ — počítala budky,
            u kterých někdo někdy něco zapsal, takže ve skutečnosti měřila píli
            správců v hlášení, ne stav budek. Návštěvník to ale četl jako „kolik
-           budek funguje“. Zrušeno 9/2026. -->
+           budek funguje“. Zrušeno 9/2026.
+           Dlaždice „Osídlených budek“ skryta 10/2026 — ukazovala jen nahlášená
+           hnízdění (38), což vypadalo málo. Na jaře se vrátí; JS v mapa.js
+           s chybějícím #stat-osidlenych počítá, stačí vrátit HTML. -->
       <div class="stats-grid" id="statsGrid">
         <div class="stat-item">
           <div class="stat-icon"><img src="img/logo.svg" alt="Budka" class="stat-svg-icon" loading="lazy"></div>
           <div>
             <div class="stat-value" id="stat-celkem">…</div>
             <div class="stat-label">Celkem budek</div>
-          </div>
-        </div>
-        <div class="stat-item">
-          <div class="stat-icon"><svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" class="stat-svg-icon" role="img" aria-label="Osídlená budka"><circle cx="100" cy="100" r="98" fill="#3a9a3a"/><rect x="93" y="152" width="14" height="36" rx="2" fill="#b5651d"/><rect x="96" y="152" width="4" height="36" rx="1" fill="#d4843a" opacity="0.4"/><rect x="38" y="143" width="124" height="11" rx="1" fill="#c96420"/><line x1="38" y1="148" x2="162" y2="148" stroke="#1a1a1a" stroke-width="2" opacity="0.2"/><path d="M32,48 L168,48 L156,143 L44,143 Z" fill="#7B3810"/><path d="M32,48 L168,48 L163,62 L37,62 Z" fill="#3d1505" opacity="0.3"/><rect x="22" y="33" width="156" height="18" rx="2" fill="#c96420"/><rect x="22" y="33" width="156" height="7" rx="2" fill="#e07830" opacity="0.4"/><rect x="32" y="48" width="136" height="3" fill="#1a1a1a" opacity="0.2"/><ellipse cx="86" cy="108" rx="20" ry="28" fill="#f5c800" transform="rotate(-8,86,108)"/><ellipse cx="114" cy="108" rx="20" ry="28" fill="#f5c800" transform="rotate(8,114,108)"/><rect x="92" y="88" width="16" height="42" rx="8" fill="#1a1f2e"/><ellipse cx="100" cy="80" rx="22" ry="20" fill="#1a1f2e"/><ellipse cx="83" cy="84" rx="9" ry="7" fill="#ffffff" opacity="0.9"/><ellipse cx="117" cy="84" rx="9" ry="7" fill="#ffffff" opacity="0.9"/><circle cx="91" cy="78" r="5" fill="#1a1f2e"/><circle cx="109" cy="78" r="5" fill="#1a1f2e"/><circle cx="92" cy="77" r="2" fill="#ffffff"/><circle cx="110" cy="77" r="2" fill="#ffffff"/><path d="M96,90 L104,90 L100,97 Z" fill="#ff9999"/><ellipse cx="86" cy="136" rx="10" ry="13" fill="#f8f4ee"/><ellipse cx="100" cy="138" rx="10" ry="13" fill="#f0ece5"/><ellipse cx="114" cy="136" rx="10" ry="13" fill="#f8f4ee"/><ellipse cx="86" cy="136" rx="10" ry="13" fill="#d4c8b8" opacity="0.2"/></svg></div>
-          <div>
-            <div class="stat-value" id="stat-osidlenych">…</div>
-            <div class="stat-label" id="stat-osidlenych-popisek">Osídlených budek</div>
           </div>
         </div>
         <div class="stat-item">
@@ -143,7 +139,7 @@
       </div>
 
       <p class="stats-poznamka">
-        ℹ️ Počítáme jen hnízdění, která nám správci nahlásili – <strong>skutečný počet osídlených budek je vyšší</strong>, ne každý svou budku hlásí. Pokud symbol vaší budky na mapě neodpovídá skutečnosti, můžete stav upravit sami po přihlášení, nebo nám ho nahlaste na <a href="mailto:p.kobelka@gmail.com">p.kobelka@gmail.com</a>. <a href="#" id="odkazNavodStats">Viz Návod pro správce →</a>
+        ℹ️ Osídlené budky na mapě ukazují jen hnízdění, která nám správci nahlásili – <strong>skutečně osídlených budek je víc</strong>, ne každý svou budku hlásí. Pokud symbol vaší budky na mapě neodpovídá skutečnosti, můžete stav upravit sami po přihlášení, nebo nám ho nahlaste na <a href="mailto:p.kobelka@gmail.com">p.kobelka@gmail.com</a>. <a href="#" id="odkazNavodStats">Viz Návod pro správce →</a>
       </p>
 
       <!-- Slíbené budky – text pro lidi, kterým je budka slíbená.
@@ -728,7 +724,7 @@
 </script>
 <script src="js/svatky.js?v=mb20260914l"></script>
 <script src="js/mapa.js?v=mb20260924a"></script>
-<script src="js/main.js?v=mb20261008b"></script>
+<script src="js/main.js?v=mb20261008c"></script>
 <!-- Fotogalerie: data i kód jsou schválně přímo tady, ne v samostatných
      souborech. Hosting opakovaně neservíroval nově nahrané soubory
      (js/galerie.js, data/galerie.js; dřív stejně dopadly obydleno.svg a .mp4),

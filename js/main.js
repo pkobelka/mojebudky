@@ -143,7 +143,8 @@ async function nactiStatistiky() {
     const res = await fetch('data/statistiky.json?v=' + (window.MB_VERZE || Date.now()));
     const data = await res.json();
 
-    document.getElementById('stat-osidlenych').textContent = data.osidlenych;
+    const elOsidl = document.getElementById('stat-osidlenych');  // dlaždice je mimo sezónu skrytá
+    if (elOsidl) elOsidl.textContent = data.osidlenych;
     document.getElementById('stat-spravcu').textContent = data.spravcuRegistrovano;
 
     const ted = new Date();
