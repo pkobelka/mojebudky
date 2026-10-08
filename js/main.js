@@ -282,10 +282,18 @@ function nactiPodekovani(podekovani) {
     const jmeno = typeof p === 'string' ? p : p.jmeno;
     const popis = typeof p === 'object' && p.popis ? p.popis : null;
     if (popis) {
-      return `<span class="podekovani-item podekovani-item--ma-text" tabindex="0" title="${popis}">${jmeno}<span class="pod-bublina">${popis}</span></span>`;
+      return `<span class="podekovani-item podekovani-item--ma-text" tabindex="0" role="button" aria-label="${jmeno} – zobrazit, za co děkujeme"><span class="pod-jmeno">${jmeno}</span><span class="pod-ikona" aria-hidden="true">💬</span><span class="pod-bublina">${popis}</span></span>`;
     }
     return `<span class="podekovani-item">${jmeno}</span>`;
   }).join('');
+  // Nápověda, že na jména jde najet / kliknout
+  if (podekovani.some(p => typeof p === 'object' && p.popis) && !document.getElementById('podekovaniHint')) {
+    const hint = document.createElement('p');
+    hint.id = 'podekovaniHint';
+    hint.className = 'podekovani-hint';
+    hint.textContent = '💬 Najeďte nebo klikněte na podtržené jméno – dozvíte se, za co děkujeme.';
+    el.before(hint);
+  }
   wrap.style.display = 'block';
 }
 

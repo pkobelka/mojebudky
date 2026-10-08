@@ -301,6 +301,13 @@ html, body {
 .pod-bublina { display: none; position: absolute; bottom: calc(100% + 8px); left: 50%; transform: translateX(-50%); background: #ffe066; border: 1px solid #c8960a; border-radius: 10px; padding: 10px 14px; font-size: 1rem; font-weight: 400; color: #3a2000; white-space: normal; max-width: min(340px, calc(100vw - 32px)); width: max-content; box-shadow: 0 4px 16px rgba(0,0,0,0.35); z-index: 10; pointer-events: none; }
 .pod-bublina::after { content: ''; position: absolute; top: 100%; left: 50%; transform: translateX(-50%); border: 6px solid transparent; border-top-color: #c8960a; }
 .podekovani-item--ma-text.pod-open .pod-bublina { display: block; }
+@media (hover: hover) { .podekovani-item--ma-text:hover .pod-bublina { display: block; } }
+.podekovani-item--ma-text:focus-visible .pod-bublina { display: block; }
+.podekovani-item--ma-text { display: inline-flex; align-items: center; gap: 6px; transition: transform 0.15s, box-shadow 0.15s, background 0.15s; }
+.podekovani-item--ma-text:hover { transform: translateY(-2px); }
+.pod-jmeno { text-decoration: underline dotted; text-decoration-thickness: 2px; text-underline-offset: 4px; text-decoration-color: var(--accent-gold); }
+.pod-ikona { font-size: 0.8em; line-height: 1; }
+.podekovani-hint { text-align: center; color: var(--text-muted); font-size: 0.95rem; margin: -2px 0 12px; }
 
 /* ── PARTNEŘI MODAL ── */
 .pm-box { max-width: 1152px; width: 96%; padding: 0; overflow: hidden; text-align: center; max-height: 92vh; overflow-y: auto; }
@@ -1681,6 +1688,9 @@ a.uvod-cta-text:hover { background: rgba(255,255,255,0.22); transform: translate
 .partners-section .partner-item:hover { background: #f6fbf0; box-shadow: 0 4px 16px rgba(60,90,40,0.12); }
 .partners-section .podekovani-wrap { border-top-color: #d6e6c8; }
 .partners-section .podekovani-item { background: #ffffff; color: #2e4a22; border: 1px solid #d6e6c8; box-shadow: 0 2px 8px rgba(60,90,40,0.06); }
+.partners-section .podekovani-item--ma-text { background: #fff9e8; border-color: #e3c574; }
+.partners-section .podekovani-item--ma-text:hover,
+.partners-section .podekovani-item--ma-text.pod-open { background: #fff3cc; border-color: #c8960a; box-shadow: 0 4px 12px rgba(176,125,16,0.18); }
 
 /* Responsivita redesignu */
 @media (max-width: 760px) {
