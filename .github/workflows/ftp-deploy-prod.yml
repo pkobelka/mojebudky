@@ -21,6 +21,7 @@ jobs:
       - name: Vygeneruj číslo verze a vynuť čerstvou cache
         run: |
           sed -i "s/__MB_VERZE__/${{ github.run_number }}/; s/__MB_CAS__/$(TZ='Europe/Prague' date '+%-d.%-m.%Y %H:%M')/" index.html
+          python3 tools/info_seznam.py
 
       - name: Nahraj na produkční FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
