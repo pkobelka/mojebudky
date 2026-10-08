@@ -314,7 +314,7 @@
     <div class="sekce-inner">
       <h2 class="sekce-nadpis">Fotogalerie</h2>
       <p class="sekce-podnadpis">Umístěné budky a další fotky z projektu.</p>
-      <!-- Plánek a Moje budka se ukážou samy, jakmile je v img/info/ soubor
+      <!-- Plánek a Moje budka se ukážou samy, jakmile je v img/ soubor
            planek-budky.* / moje-budka.* (jpg, jpeg, png, webp nebo pdf). -->
       <div class="galerie-tlacitka">
         <button class="galerie-rozbalit" id="galerieRozbalit" type="button"
@@ -737,7 +737,7 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging-compat.js"></script>
 <script>
   window.MB_VERZE = "__MB_VERZE__"; window.MB_CAS = "__MB_CAS__";
-  // seznam fotek z img/info/ – doplní ho při nasazení tools/info_seznam.py
+  // seznam fotek pro Plánek / Moje budka – doplní ho při nasazení tools/info_seznam.py
   window.MB_INFO = "__MB_INFO__";
   // Záložní verze pro hosting, který při nasazení nenahrazuje placeholdery
   // (GitHub Pages / Firebase Hosting servírují soubory z gitu „tak jak jsou").
@@ -802,7 +802,7 @@
     }
 
     // ── Plánek budky / Moje budka ──────────────────────────────────
-    // Soubor stačí nahrát do img/info/ (třeba z mobilu přes GitHub) pod
+    // Soubor stačí nahrát přímo do img/ (třeba z mobilu přes GitHub) pod
     // pevným názvem — tlačítko se ukáže samo, nic se negeneruje.
     // Víc fotek = album: nazev-1.jpg, nazev-2.jpg, … (listuje se v nich).
     var INFO_PRIPONY = ['jpg', 'jpeg', 'png', 'webp', 'JPG', 'JPEG', 'PNG', 'pdf'];
@@ -830,7 +830,7 @@
       });
     }
     document.querySelectorAll('.galerie-info-btn').forEach(function (btn) {
-      var zaklad = 'img/info/' + btn.getAttribute('data-soubor');
+      var zaklad = 'img/' + btn.getAttribute('data-soubor');
       var nadpis = btn.getAttribute('data-nadpis');
       function zapoj(fotky, pdf) {
         btn.hidden = false;

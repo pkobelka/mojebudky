@@ -34,6 +34,13 @@ Opravit jde jedině ručně u WEDOSu (FTP klient nebo souborový manažer, slož
 práva 755 a souborům 644). Vědomě neřešeno – je to vada jen testovací kopie
 a na ostrý web nemá vliv.
 
+**Pozor na nové podsložky (10/2026):** totéž platí pro každou složku, kterou
+FTP deploy na serveru nově **vytvoří** – a to i na ostrém webu. Složka
+`img/info/` (fotky „Plánek budky“ a „Moje budka“) po nasazení vracela 403,
+proto ty fotky leží přímo v `img/` (`img/planek-budky.jpg`,
+`img/moje-budka-1.jpg` …). Nové fotky proto dávej do existujících složek;
+když nová složka opravdu musí vzniknout, nastav jí u WEDOSu ručně práva 755.
+
 > GitHub Pages už se pro tohle repo nebuildí – v historii běhů není jediný
 > „pages build and deployment". Ta adresa tedy servíruje starou verzi a nedá
 > se na ní nic testovat. Testuje se na `_test`.
