@@ -41,6 +41,14 @@ proto ty fotky leží přímo v `img/` (`img/planek-budky.jpg`,
 `img/moje-budka-1.jpg` …). Nové fotky proto dávej do existujících složek;
 když nová složka opravdu musí vzniknout, nastav jí u WEDOSu ručně práva 755.
 
+**Ani soubory přímo v `img/` to nezachránilo (10/2026):** tlačítka „Plánek
+budky“ a „Moje budka“ se na ostrém webu ukázala, ale samotné fotky server
+nevydal („Fotku se nepodařilo načíst“), přestože je deploy podle logu nahrál.
+Lightbox ve Fotogalerii proto při chybě načtení zkusí tutéž fotku z veřejného
+repa (`raw.githubusercontent.com/pkobelka/mojebudky/main/…`). Platí to pro
+všechny fotky v lightboxu, takže to pokryje i `img/budky` na `_test`.
+Jakmile se u WEDOSu opraví práva, záloha se prostě přestane používat.
+
 > GitHub Pages už se pro tohle repo nebuildí – v historii běhů není jediný
 > „pages build and deployment". Ta adresa tedy servíruje starou verzi a nedá
 > se na ní nic testovat. Testuje se na `_test`.

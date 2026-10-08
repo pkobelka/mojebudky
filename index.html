@@ -940,6 +940,7 @@
     }
 
     // ── Lightbox ───────────────────────────────────────────────────
+    var ZALOHA_FOTEK = 'https://raw.githubusercontent.com/pkobelka/mojebudky/main/';
     function otevriLightbox(items, idx) {
       var item = items[idx];
       var fotoIdx = 0;
@@ -970,7 +971,14 @@
       var akceEl = ov.querySelector('.glb-akce');
 
       function zobraz() {
-        img.onerror = function () { img.alt = 'Fotku se nepodařilo načíst.'; };
+        // Když fotku nevydá náš hosting (WEDOS vrací 403 na nově nahrané
+        // soubory, viz PLAN.md), zkusíme tutéž fotku přímo z veřejného repa.
+        var zaloha = ZALOHA_FOTEK + item.fotky[fotoIdx].replace(/\?.*$/, '');
+        var zkusenaZaloha = false;
+        img.onerror = function () {
+          if (!zkusenaZaloha) { zkusenaZaloha = true; img.src = zaloha; return; }
+          img.alt = 'Fotku se nepodařilo načíst.';
+        };
         img.src = item.fotky[fotoIdx];
         img.alt = item.alt;
         nadpisEl.textContent = item.nadpis;
