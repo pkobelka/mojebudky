@@ -1579,6 +1579,9 @@ a.uvod-cta-text:hover { background: rgba(255,255,255,0.22); transform: translate
   box-shadow: 0 3px 12px rgba(60,90,40,.10); transition: background .15s, border-color .15s;
 }
 .galerie-rozbalit:hover { background: #f2f8ec; border-color: #7fae5a; }
+.galerie-tlacitka { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin: 0 auto 22px; }
+.galerie-tlacitka .galerie-rozbalit { margin: 0; }
+.galerie-info-btn[hidden] { display: none; }
 .galerie-rozbalit-sipka { transition: transform .2s; font-size: 1.1rem; }
 .galerie-rozbalit.je-otevreno .galerie-rozbalit-sipka { transform: rotate(180deg); }
 
@@ -1636,6 +1639,7 @@ a.uvod-cta-text:hover { background: rgba(255,255,255,0.22); transform: translate
   .galerie-pocet { font-size: 0.8rem; }
   .galerie-pocet-ikona { display: none; }
   .galerie-rozbalit { width: 100%; font-size: 1rem; padding: 12px 16px; }
+  .galerie-tlacitka .galerie-info-btn { width: auto; flex: 1 1 40%; }
   /* Fotka má 92vw, takže šipky vedle ní by vypadly z obrazovky –
      na telefonu proto leží přes okraje fotky. */
   .galerie-lightbox .glb-nav {

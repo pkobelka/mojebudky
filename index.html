@@ -9,7 +9,7 @@
   <link rel="stylesheet" href="css/vendor/MarkerCluster.css?v=mb20260914l">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=mb20261008e">
+  <link rel="stylesheet" href="css/style.css?v=mb20261008f">
   <link rel="icon" type="image/svg+xml" href="img/favicon.svg">
   <link rel="icon" type="image/png" sizes="512x512" href="img/icon-512.png">
   <link rel="icon" type="image/png" sizes="192x192" href="img/icon-192.png">
@@ -314,11 +314,17 @@
     <div class="sekce-inner">
       <h2 class="sekce-nadpis">Fotogalerie</h2>
       <p class="sekce-podnadpis">Umístěné budky a další fotky z projektu.</p>
-      <button class="galerie-rozbalit" id="galerieRozbalit" type="button"
-              aria-expanded="false" aria-controls="galerieObsah">
-        <span class="galerie-rozbalit-text">Zobrazit seznam budek s fotkami</span>
-        <span class="galerie-rozbalit-sipka" aria-hidden="true">▾</span>
-      </button>
+      <!-- Plánek a Moje budka se ukážou samy, jakmile je v img/info/ soubor
+           planek-budky.* / moje-budka.* (jpg, jpeg, png, webp nebo pdf). -->
+      <div class="galerie-tlacitka">
+        <button class="galerie-rozbalit" id="galerieRozbalit" type="button"
+                aria-expanded="false" aria-controls="galerieObsah">
+          <span class="galerie-rozbalit-text">Zobrazit seznam budek s fotkami</span>
+          <span class="galerie-rozbalit-sipka" aria-hidden="true">▾</span>
+        </button>
+        <button class="galerie-rozbalit galerie-info-btn" type="button" data-soubor="planek-budky" data-nadpis="Plánek budky" hidden>📐 Plánek budky</button>
+        <button class="galerie-rozbalit galerie-info-btn" type="button" data-soubor="moje-budka" data-nadpis="Moje budka" hidden>🏡 Moje budka</button>
+      </div>
       <div id="galerieObsah" hidden>
         <div class="galerie-taby" role="tablist" aria-label="Kategorie fotogalerie">
           <button class="galerie-tab is-active" data-tab="umistene" role="tab" aria-selected="true" type="button">🏡 Umístěné budky</button>
@@ -793,6 +799,32 @@
       zobrazSeznam();
     }
 
+    // ── Plánek budky / Moje budka ──────────────────────────────────
+    // Soubor stačí nahrát do img/info/ (třeba z mobilu přes GitHub) pod
+    // pevným názvem — tlačítko se ukáže samo, nic se negeneruje.
+    var INFO_PRIPONY = ['jpg', 'jpeg', 'png', 'webp', 'JPG', 'JPEG', 'PNG', 'pdf'];
+    document.querySelectorAll('.galerie-info-btn').forEach(function (btn) {
+      var zaklad = 'img/info/' + btn.getAttribute('data-soubor') + '.';
+      var nadpis = btn.getAttribute('data-nadpis');
+      (function zkus(i) {
+        if (i >= INFO_PRIPONY.length) return;
+        var url = zaklad + INFO_PRIPONY[i] + '?v=' + (window.MB_VERZE || '');
+        fetch(url, { method: 'HEAD', cache: 'no-cache' }).then(function (r) {
+          var typ = r.headers.get('content-type') || '';
+          // některé hostingy vrací na neexistující soubor 200 s index.html
+          if (r.ok && typ.indexOf('text/html') === -1) {
+            btn.hidden = false;
+            btn.addEventListener('click', function () {
+              if (INFO_PRIPONY[i] === 'pdf') { window.open(url, '_blank', 'noopener'); return; }
+              otevriLightbox([{ fotky: [url], nadpis: nadpis, alt: nadpis, cislo: null }], 0);
+            });
+          } else {
+            zkus(i + 1);
+          }
+        }).catch(function () { zkus(i + 1); });
+      })(0);
+    });
+
     // ── Přepínání záložek ──────────────────────────────────────────
     function wireTaby() {
       document.querySelectorAll('.galerie-tab').forEach(function (btn) {
@@ -895,6 +927,9 @@
         '<button class="glb-nav glb-next" aria-label="Další">&#8250;</button>';
       document.body.appendChild(ov);
       document.body.style.overflow = 'hidden';
+      // samostatný obrázek (třeba Plánek budky) — není kam listovat
+      if (items.length === 1 && item.fotky.length === 1)
+        ov.querySelectorAll('.glb-nav').forEach(function (b) { b.style.display = 'none'; });
 
       var img = ov.querySelector('.glb-img');
       var nadpisEl = ov.querySelector('.glb-nadpis');
