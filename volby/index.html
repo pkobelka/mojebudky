@@ -71,6 +71,19 @@ header p{color:#666;margin-top:4px;font-size:.92rem;}
 .hidden{display:none!important;}
 footer{text-align:center;margin-top:30px;font-size:.78rem;color:#aaa;}
 .hint{font-size:.74rem;color:#b3ab99;margin-top:8px;}
+/* záznamy z návštěv */
+.b.zazn{background:#efe8f7;color:#5d3f86;}
+.zform{margin-top:8px;}
+.zform textarea{width:100%;min-height:110px;padding:10px 12px;border:1px solid var(--sedaramecek);border-radius:10px;font:inherit;font-size:1rem;resize:vertical;}
+.zrow{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:8px;}
+.zrow input[type=datetime-local]{padding:7px 8px;border:1px solid var(--sedaramecek);border-radius:8px;font-size:.9rem;}
+.btn.mic{background:#fff;color:var(--zelena);font-size:1rem;}
+.btn.mic.rec{background:#c0392b;border-color:#c0392b;color:#fff;}
+.zlist{margin-top:10px;}
+.zitem{background:#faf8f3;border:1px solid #eee7d8;border-radius:10px;padding:9px 12px;margin-top:8px;}
+.zitem .zkdy{font-size:.78rem;color:#7a8a72;font-weight:600;display:flex;justify-content:space-between;gap:8px;}
+.zitem .ztxt{margin-top:4px;white-space:pre-wrap;word-break:break-word;font-size:.95rem;}
+.zdel{border:none;background:none;color:#b55;cursor:pointer;font-size:.78rem;}
 </style></head><body>
 
 <div class="login" id="login">
@@ -115,7 +128,7 @@ var LOGIN_URL=location.origin+location.pathname;
 function leKey(email){return String(email||'').trim().toLowerCase().replace(/\./g,',');}
 function esc(s){return (s||"").replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];});}
 
-var OBCE=[], _USER=null, _CUR=null, _EDIT=false;
+var OBCE=[], _USER=null, _CUR=null, _EDIT=false, ZAZN={}, _DRAFT={};
 var PRAC=["Moravská Třebová","Svitavy","Polička","Litomyšl","Jevíčko"];
 var fProv="Vše", fPrac="Vše";
 
@@ -172,6 +185,12 @@ function loadData(){
     initProv();initPrac();render();
     updateStav();
   });
+  // Záznamy z návštěv – soukromé, každý přihlášený vidí jen své (pravidla: volby_zaznamy/$uid)
+  FDB.ref("volby_zaznamy/"+_USER.uid).on("value",function(snap){
+    ZAZN=snap.val()||{};
+    if(OBCE.length)render();
+    if(_CUR&&!_EDIT)renderZaznamy();
+  });
 }
 function updateStav(){
   if(!OBCE.length)return;
@@ -204,7 +223,9 @@ function initPrac(){
 function badgesHTML(o){var mimo=o.okres!=="Svitavy";
   return (o.provozovano?"<span class='b prac'>"+esc(o.pracoviste)+"</span>":"<span class='b np'>neprovozováno</span>")+
     (mimo?"<span class='b mimo'>okres "+esc(o.okres)+"</span>":"")+
-    (o.overeno?"<span class='b ok'>✔ ověřeno</span>":(o.jistota==="nízká"?"<span class='b over'>starosta ověřit</span>":""));}
+    (o.overeno?"<span class='b ok'>✔ ověřeno</span>":(o.jistota==="nízká"?"<span class='b over'>starosta ověřit</span>":""))+
+    (pocetZazn(o)?"<span class='b zazn'>📝 "+pocetZazn(o)+"</span>":"");}
+function pocetZazn(o){return ZAZN[o.kod]?Object.keys(ZAZN[o.kod]).length:0;}
 function groupHdr(g,provoz){var h=document.createElement("div");h.className="grouphdr"+(provoz?"":" npg");
   var n=OBCE.filter(function(o){return o.provozovano===provoz;}).length;
   h.innerHTML=(provoz?"🔧 Provozované VHOS":"Neprovozované")+" <span class='cnt'>("+n+" obcí)</span>";g.appendChild(h);}
@@ -250,7 +271,16 @@ function renderModal(){
   }else{
     contact=viewRow("Starosta",o.starosta)+viewRow("Místostarosta",o.mistostarosta);
   }
-  var body=head+
+  var body=head;
+  if(!_EDIT){
+    body+="<div class='sekce'>📝 Záznamy z návštěv</div>"+
+      "<div class='zform'><textarea id='ztext' placeholder='Co jste projednali… (na klávesnici klepni na 🎤 a nadiktuj)'></textarea>"+
+      "<div class='zrow'><input type='datetime-local' id='zkdy' value='"+dtLocal(new Date())+"' />"+
+      (SR?"<button class='btn mic' id='zmic' title='Diktovat'>🎤 Diktovat</button>":"")+
+      "<button class='btn' id='zsave'>💾 Uložit záznam</button></div>"+
+      "<div class='msg' id='zmsg'></div></div><div class='zlist' id='zlist'></div>";
+  }
+  body+=
     "<div class='sekce'>Současnost <span class='obd'>· období 2022–2026</span></div>"+
     contact+
     "<div class='r'><b>Zastupitelstvo"+(z22.length?" ("+z22.length+")":"")+"</b><span>"+zastList(z22,"— k doplnění —")+"</span></div>";
@@ -276,7 +306,60 @@ function renderModal(){
   }else{
     document.getElementById("editBtn").addEventListener("click",function(){_EDIT=true;renderModal();});
     document.getElementById("overBtn").addEventListener("click",toggleOvereno);
+    var ta=document.getElementById("ztext");
+    ta.value=_DRAFT[o.kod]||"";
+    ta.addEventListener("input",function(){_DRAFT[o.kod]=ta.value;});
+    document.getElementById("zsave").addEventListener("click",ulozZaznam);
+    if(SR)document.getElementById("zmic").addEventListener("click",diktuj);
+    renderZaznamy();
   }
+}
+
+/* ---------- ZÁZNAMY Z NÁVŠTĚV ---------- */
+function pad2(n){return (n<10?"0":"")+n;}
+function dtLocal(d){return d.getFullYear()+"-"+pad2(d.getMonth()+1)+"-"+pad2(d.getDate())+"T"+pad2(d.getHours())+":"+pad2(d.getMinutes());}
+function fmtKdy(ts){var d=new Date(ts);
+  return d.toLocaleDateString("cs-CZ",{weekday:"short",day:"numeric",month:"numeric",year:"numeric"})+" "+pad2(d.getHours())+":"+pad2(d.getMinutes());}
+function renderZaznamy(){
+  var box=document.getElementById("zlist");if(!box||!_CUR)return;
+  var z=ZAZN[_CUR.kod]||{};
+  var ids=Object.keys(z).sort(function(a,b){return (z[b].kdy||0)-(z[a].kdy||0);});
+  box.innerHTML=ids.length?ids.map(function(id){var r=z[id];
+    return "<div class='zitem'><div class='zkdy'><span>"+fmtKdy(r.kdy)+"</span><button class='zdel' data-id='"+esc(id)+"'>smazat</button></div>"+
+      "<div class='ztxt'>"+esc(r.text)+"</div></div>";}).join(""):"<div class='prazdne'>Zatím žádný záznam.</div>";
+  box.querySelectorAll(".zdel").forEach(function(b){b.addEventListener("click",function(){
+    if(!confirm("Smazat tento záznam?"))return;
+    FDB.ref("volby_zaznamy/"+_USER.uid+"/"+_CUR.kod+"/"+b.getAttribute("data-id")).remove();
+  });});
+}
+function ulozZaznam(){
+  var o=_CUR, ta=document.getElementById("ztext"), out=document.getElementById("zmsg");
+  var text=(ta.value||"").trim();
+  if(!text){out.textContent="Napiš nebo nadiktuj, co jste projednali.";return;}
+  var kdy=new Date(document.getElementById("zkdy").value).getTime();
+  if(!kdy)kdy=Date.now();
+  out.textContent="Ukládám…";
+  FDB.ref("volby_zaznamy/"+_USER.uid+"/"+o.kod).push({text:text,kdy:kdy,ts:Date.now(),obec:o.nazev||""}).then(function(){
+    ta.value="";delete _DRAFT[o.kod];out.textContent="✅ Uloženo.";
+    document.getElementById("zkdy").value=dtLocal(new Date());
+  }).catch(function(e){out.textContent="⚠️ "+(e&&e.message?e.message:e);});
+}
+// Diktování přímo v prohlížeči (Chrome na Androidu, Safari); jinak zbývá mikrofon na klávesnici.
+var SR=window.SpeechRecognition||window.webkitSpeechRecognition, _REC=null;
+function diktuj(){
+  var btn=document.getElementById("zmic"), ta=document.getElementById("ztext");
+  if(_REC){_REC.stop();return;}
+  var r=new SR();r.lang="cs-CZ";r.continuous=true;r.interimResults=false;
+  r.onresult=function(e){
+    for(var i=e.resultIndex;i<e.results.length;i++){
+      if(e.results[i].isFinal){var t=e.results[i][0].transcript.trim();
+        ta.value=(ta.value&&!/\s$/.test(ta.value)?ta.value+" ":ta.value)+t;_DRAFT[_CUR.kod]=ta.value;}
+    }
+  };
+  r.onerror=function(e){document.getElementById("zmsg").textContent="⚠️ Diktování: "+(e.error||"chyba")+" – zkus mikrofon na klávesnici.";};
+  r.onend=function(){_REC=null;var b=document.getElementById("zmic");if(b){b.classList.remove("rec");b.textContent="🎤 Diktovat";}};
+  try{r.start();}catch(err){return;}
+  _REC=r;btn.classList.add("rec");btn.textContent="⏹ Zastavit";
 }
 function saveEdit(){
   var o=_CUR;var g=function(id){return (document.getElementById(id).value||"").trim();};
@@ -293,9 +376,10 @@ function toggleOvereno(){
   document.getElementById("mmsg").textContent="Ukládám…";
   FDB.ref("volby_obce/"+o.kod).update(upd).then(function(){Object.assign(o,upd);renderModal();}).catch(function(e){document.getElementById("mmsg").textContent="⚠️ "+(e&&e.message?e.message:e);});
 }
-document.getElementById("mclose").addEventListener("click",function(){document.getElementById("modal").classList.remove("show");});
-document.getElementById("modal").addEventListener("click",function(e){if(e.target.id==="modal")e.currentTarget.classList.remove("show");});
-document.addEventListener("keydown",function(e){if(e.key==="Escape")document.getElementById("modal").classList.remove("show");});
+function zavriModal(){if(_REC)_REC.stop();document.getElementById("modal").classList.remove("show");}
+document.getElementById("mclose").addEventListener("click",zavriModal);
+document.getElementById("modal").addEventListener("click",function(e){if(e.target.id==="modal")zavriModal();});
+document.addEventListener("keydown",function(e){if(e.key==="Escape")zavriModal();});
 document.getElementById("q").addEventListener("input",render);
 </script>
 </body></html>
