@@ -49,6 +49,14 @@ repa (`raw.githubusercontent.com/pkobelka/mojebudky/main/…`). Platí to pro
 všechny fotky v lightboxu, takže to pokryje i `img/budky` na `_test`.
 Jakmile se u WEDOSu opraví práva, záloha se prostě přestane používat.
 
+**Oprava práv při nasazení (10/2026):** oba FTP workflowy teď po nahrání
+spustí krok „Nastav práva souborů na serveru“ – `tools/ftp_prava.py` vypíše
+pro lftp `chmod 755` všem složkám a `chmod 644` všem souborům z repa (stejné
+vynechávky jako deploy, na `_test` na produkčním účtu nesahá). Spustilo to
+složka `volby/`, která po nasazení vracela 403 („Server unable to read
+htaccess file“). Krok má `continue-on-error`, takže když server chmod
+odmítne, deploy zůstane zelený – v logu kroku je pak vidět chyba.
+
 > GitHub Pages už se pro tohle repo nebuildí – v historii běhů není jediný
 > „pages build and deployment". Ta adresa tedy servíruje starou verzi a nedá
 > se na ní nic testovat. Testuje se na `_test`.
