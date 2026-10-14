@@ -268,7 +268,7 @@
         ".write": "auth != null && (auth.token.loginId === $loginId || auth.token.admin === true)"
       }
     },
-        "volby_obce": {
+    "volby_obce": {
       ".read": "auth != null",
       ".write": "auth != null"
     },
@@ -338,6 +338,16 @@
     "konference2027_aktuality": {
       ".read": true,
       ".write": "auth != null && root.child('florian_login_email').child(auth.token.email.toLowerCase().replace('.', ',')).exists()"
+    },
+    "konference2027_doprava": {
+      ".read": "auth != null && root.child('florian_login_email').child(auth.token.email.toLowerCase().replace('.', ',')).exists()",
+      ".write": "auth != null && root.child('florian_login_email').child(auth.token.email.toLowerCase().replace('.', ',')).exists()",
+      "z": {
+        "$id": {
+          ".write": "!data.exists() || (auth != null && root.child('florian_login_email').child(auth.token.email.toLowerCase().replace('.', ',')).exists())",
+          ".validate": "newData.hasChildren(['jm','nast','smer','n','ts']) && newData.child('jm').isString() && newData.child('jm').val().length >= 1 && newData.child('jm').val().length <= 80 && (newData.child('nast').val() === 'kraskov' || newData.child('nast').val() === 'sec') && (newData.child('smer').val() === 'oba' || newData.child('smer').val() === 'tam' || newData.child('smer').val() === 'zpet') && newData.child('n').isNumber() && newData.child('n').val() >= 1 && newData.child('n').val() <= 5 && newData.child('ts').isNumber() && newData.child('ts').val() <= now + 60000 && (!newData.child('firma').exists() || (newData.child('firma').isString() && newData.child('firma').val().length <= 120)) && (!newData.child('pozn').exists() || (newData.child('pozn').isString() && newData.child('pozn').val().length <= 300))"
+        }
+      }
     }
   }
 }
