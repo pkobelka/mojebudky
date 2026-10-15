@@ -910,7 +910,7 @@ body.mapa-cele .leaflet-left { left: calc(env(safe-area-inset-left, 0px) + 8px);
   .admin-toast { font-size: 1.1rem; padding: 22px 18px; border-radius: 16px; width: 88vw; max-width: 88vw; box-sizing: border-box; max-height: 80vh; line-height: 1.5; }
 }
 .toast-posledni { display: block; font-size: 0.48em; font-weight: 500; opacity: 0.72; margin-top: 6px; }
-.uvod-toast-slovo { opacity: 0; transition: opacity 0.35s ease; }
+.uvod-toast-slovo { opacity: 0; transition: opacity 0.2s ease; }
 .uvod-toast-slovo--viditelne { opacity: 1; }
 
 /* ── PUSH FOREGROUND BANNER ── */
