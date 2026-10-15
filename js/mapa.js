@@ -295,9 +295,11 @@ document.addEventListener('click', function(e) {
   document.addEventListener('touchstart', function(e) {
     if (!e.target.closest('.leaflet-popup')) { ps = null; return; }
     const t = e.touches[0];
-    ps = { sx: t.clientX, sy: t.clientY, lx: t.clientX, ly: t.clientY, dir: null };
-    // Vypnout Leaflet drag aby nebojoval s naším panBy
     const m = window._getMapInstance && window._getMapInstance();
+    // Zapamatovat, jestli tažení bylo zapnuté – po puštění vrátit totéž, ne
+    // natvrdo zapnout (zamčená mapa na mobilu by pak brala posun stránky)
+    ps = { sx: t.clientX, sy: t.clientY, lx: t.clientX, ly: t.clientY, dir: null, drag: !!(m && m.dragging.enabled()) };
+    // Vypnout Leaflet drag aby nebojoval s naším panBy
     if (m) m.dragging.disable();
   }, { passive: true });
   document.addEventListener('touchmove', function(e) {
@@ -313,20 +315,15 @@ document.addEventListener('click', function(e) {
     if (m) m.panBy([-(cx - ps.lx), -(cy - ps.ly)], { animate: false });
     ps.lx = cx; ps.ly = cy;
   }, { passive: true });
-  document.addEventListener('touchend', function() {
-    if (ps) {
+  function konecTazeni() {
+    if (ps && ps.drag) {
       const m = window._getMapInstance && window._getMapInstance();
       if (m) m.dragging.enable();
     }
     ps = null;
-  }, { passive: true });
-  document.addEventListener('touchcancel', function() {
-    if (ps) {
-      const m = window._getMapInstance && window._getMapInstance();
-      if (m) m.dragging.enable();
-    }
-    ps = null;
-  }, { passive: true });
+  }
+  document.addEventListener('touchend', konecTazeni, { passive: true });
+  document.addEventListener('touchcancel', konecTazeni, { passive: true });
 })();
 
 window._fotoNav = function(btn, dir) {
@@ -1172,7 +1169,9 @@ async function inicializujMapu() {
     ].join(';');
     mapWrapper.appendChild(touchBadge);
 
+    let mapaAktivni = false;
     function aktivujMapu() {
+      mapaAktivni = true;
       touchBadge.style.display = 'none';
       // Otočená mapa (režim „podle jízdy") má tažení i pinch schválně vypnuté —
       // Leaflet počítá polohu prstu z neotočeného obdélníku, takže by mapa
@@ -1182,6 +1181,8 @@ async function inicializujMapu() {
       mapInstance.touchZoom.enable();
     }
     function deaktivujMapu() {
+      if (!mapaAktivni) return;   // už zamčená – jinak by se kupil posluchač klepnutí
+      mapaAktivni = false;
       mapInstance.dragging.disable();
       mapInstance.touchZoom.disable();
       touchBadge.style.display = '';
@@ -1192,8 +1193,15 @@ async function inicializujMapu() {
 
     // Umožni aktivovat mapu zvenčí (fullscreen) – aby pinch zoomoval mapu, ne stránku
     window._mapaAktivovat = aktivujMapu;
+    // Po návratu z celé obrazovky zase zamknout – jinak tažení přes mapu
+    // posouvá mapu místo stránky a stránka „nejde posunout"
+    window._mapaDeaktivovat = deaktivujMapu;
+    window._mapaJeAktivni = () => mapaAktivni;
 
     document.addEventListener('touchstart', e => {
+      // Na celé obrazovce mapu nezamykat (např. po zavření fotky přes celý
+      // displej) – tam není žádná stránka, kterou by šlo posouvat.
+      if (document.body.classList.contains('mapa-cele')) return;
       if (!mapWrapper.contains(e.target)) deaktivujMapu();
     }, { passive: true });
   }

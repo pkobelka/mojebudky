@@ -806,8 +806,6 @@ body.mapa-cele .leaflet-left { left: calc(env(safe-area-inset-left, 0px) + 8px);
   /* Splash – plná šířka na mobilu */
   .splash-box { padding: 40px 28px 36px; }
   .splash-nadpis { font-size: 2rem; }
-  /* Přihlašovací toast */
-  .admin-toast { font-size: 1.1rem; padding: 22px 18px; border-radius: 16px; max-width: 88vw; max-height: 80vh; overflow-y: auto; pointer-events: auto; }
   .panel-title { font-size: 1rem; padding: 10px 14px; }
   .pribeh-druh { font-size: 1rem; }
   .pribeh-popis { font-size: 0.95rem; }
@@ -905,6 +903,12 @@ body.mapa-cele .leaflet-left { left: calc(env(safe-area-inset-left, 0px) + 8px);
 /* ── PŘIHLAŠOVACÍ TOAST ── */
 .admin-toast { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -40%); background: linear-gradient(135deg, #d4f5d4 0%, #a8e6a8 60%, #7dd67d 100%); border: 3px solid #3aaa3a; border-radius: 28px; color: #1a4a1a; font-size: 2.1rem; font-weight: 700; padding: 48px 80px; box-shadow: 0 16px 60px rgba(0,0,0,0.55); z-index: 2000; text-align: center; opacity: 0; transition: opacity 0.5s, transform 0.5s; pointer-events: none; max-width: 90vw; max-height: 85vh; overflow-y: auto; line-height: 1.6; }
 .admin-toast--show { opacity: 1; transform: translate(-50%, -50%); }
+/* Mobil: menší toast. Musí být AŽ ZA základním pravidlem – dřív stál v bloku
+   výš a základní 2.1rem + 80px odsazení ho přebilo, takže uvítání zakrylo celý
+   displej. Bez pointer-events, ať jde stránka pod ním dál posouvat. */
+@media (max-width: 600px) {
+  .admin-toast { font-size: 1.1rem; padding: 22px 18px; border-radius: 16px; width: 88vw; max-width: 88vw; box-sizing: border-box; max-height: 80vh; line-height: 1.5; }
+}
 .toast-posledni { display: block; font-size: 0.48em; font-weight: 500; opacity: 0.72; margin-top: 6px; }
 .uvod-toast-slovo { opacity: 0; transition: opacity 0.35s ease; }
 .uvod-toast-slovo--viditelne { opacity: 1; }

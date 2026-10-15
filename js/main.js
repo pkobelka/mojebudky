@@ -643,6 +643,8 @@ function inicializujFullscreenMapu() {
     mainContent.style.height = '';
     btnZpet.style.display = 'none';
     if (btnZpetTR) btnZpetTR.style.display = 'none';
+    // Mapu zase zamknout, ať prst na mapě posouvá stránku (klepnutím se odemkne)
+    if (typeof window._mapaDeaktivovat === 'function') window._mapaDeaktivovat();
     if (typeof mapInstance !== 'undefined' && mapInstance) {
       setTimeout(() => mapInstance.invalidateSize(), 100);
     }
