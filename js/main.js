@@ -643,6 +643,8 @@ function inicializujFullscreenMapu() {
     mainContent.style.height = '';
     btnZpet.style.display = 'none';
     if (btnZpetTR) btnZpetTR.style.display = 'none';
+    // Mapu zase zamknout, ať prst na mapě posouvá stránku (klepnutím se odemkne)
+    if (typeof window._mapaDeaktivovat === 'function') window._mapaDeaktivovat();
     if (typeof mapInstance !== 'undefined' && mapInstance) {
       setTimeout(() => mapInstance.invalidateSize(), 100);
     }
@@ -855,8 +857,8 @@ function ukazUvitaciToast() {
     '<a href="#" onclick="document.getElementById(\'btnNapsat\').click();return false;" style="color:inherit;text-decoration:underline;pointer-events:auto">napište mi</a>.',
     '💌'
   ];
-  const DOBA_SLOVO = 340;
-  const DOBA_DRZENI = 9000;
+  const DOBA_SLOVO = 140;
+  const DOBA_DRZENI = 3000;
 
   const existujici = document.getElementById('adminToast');
   if (existujici) existujici.remove();
