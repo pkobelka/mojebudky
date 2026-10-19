@@ -348,6 +348,46 @@
           ".validate": "newData.hasChildren(['jm','nast','smer','n','ts']) && newData.child('jm').isString() && newData.child('jm').val().length >= 1 && newData.child('jm').val().length <= 80 && (newData.child('nast').val() === 'kraskov' || newData.child('nast').val() === 'sec') && (newData.child('smer').val() === 'oba' || newData.child('smer').val() === 'tam' || newData.child('smer').val() === 'zpet') && newData.child('n').isNumber() && newData.child('n').val() >= 1 && newData.child('n').val() <= 5 && newData.child('ts').isNumber() && newData.child('ts').val() <= now + 60000 && (!newData.child('firma').exists() || (newData.child('firma').isString() && newData.child('firma').val().length <= 120)) && (!newData.child('pozn').exists() || (newData.child('pozn').isString() && newData.child('pozn').val().length <= 300))"
         }
       }
+    },
+    "konference2027_ohlasy": {
+      ".read": "auth != null && root.child('florian_login_email').child(auth.token.email.toLowerCase().replace('.', ',')).exists()",
+      ".write": "auth != null && root.child('florian_login_email').child(auth.token.email.toLowerCase().replace('.', ',')).exists()",
+      "o": {
+        "$id": {
+          ".write": "!data.exists() || (auth != null && root.child('florian_login_email').child(auth.token.email.toLowerCase().replace('.', ',')).exists())",
+          ".validate": "newData.hasChildren(['ts','dev']) && (newData.child('k').exists() || newData.child('p').exists()) && (!newData.child('k').exists() || (newData.child('k').isNumber() && newData.child('k').val() >= 1 && newData.child('k').val() <= 4)) && (!newData.child('p').exists() || (newData.child('p').isNumber() && newData.child('p').val() >= 1 && newData.child('p').val() <= 4)) && (!newData.child('lib').exists() || (newData.child('lib').isString() && newData.child('lib').val().length <= 1000)) && (!newData.child('chybi').exists() || (newData.child('chybi').isString() && newData.child('chybi').val().length <= 1000)) && (!newData.child('a').exists() || (newData.child('a').isString() && newData.child('a').val().length <= 120)) && (!newData.child('zv').exists() || newData.child('zv').isBoolean()) && newData.child('ts').isNumber() && newData.child('ts').val() <= now + 60000 && newData.child('dev').isString() && newData.child('dev').val().length <= 40 && $id.matches(/^[a-z0-9]{6,40}$/)",
+          "k": {
+            ".validate": true
+          },
+          "p": {
+            ".validate": true
+          },
+          "lib": {
+            ".validate": true
+          },
+          "chybi": {
+            ".validate": true
+          },
+          "a": {
+            ".validate": true
+          },
+          "zv": {
+            ".validate": true
+          },
+          "ts": {
+            ".validate": true
+          },
+          "dev": {
+            ".validate": true
+          },
+          "$jine": {
+            ".validate": false
+          }
+        }
+      },
+      "zv": {
+        ".read": true
+      }
     }
   }
 }
