@@ -1687,9 +1687,11 @@ function _gpsNastavRezim(rezim) {
     :                       'Zobrazit moji polohu na mapě';
     const popis = _gpsBtn.querySelector('.gps-btn-popis');
     if (popis) popis.textContent =
-      rezim === 'sleduji' ? 'Sleduji vás'
-    : rezim === 'volne'   ? 'Vycentrovat'
-    : rezim === 'hledam'  ? 'Hledám…'
+      // Popis drží „Moje poloha" i při sledování – dřív se přepsal na
+      // „Sleduji vás" a lidé měli dojem, že tlačítko zmizelo.
+      rezim === 'sleduji' ? 'Moje poloha ✓'
+    : rezim === 'volne'   ? 'Zpět na mě'
+    : rezim === 'hledam'  ? 'Moje poloha…'
     :                       'Moje poloha';
     _gpsBtn.setAttribute('aria-pressed', rezim === 'sleduji' ? 'true' : 'false');
     _gpsBtn.setAttribute('aria-label', _gpsBtn.title);
@@ -1810,8 +1812,9 @@ function _gpsVykresliBlizkou() {
     ? `<span class="gps-blizko-ikona" aria-hidden="true">🏠</span>` +
       `<span class="gps-blizko-text">${popis}</span>` +
       `<span class="gps-blizko-akce">Ukázat&nbsp;›</span>`
-    : `<span class="gps-blizko-ikona" aria-hidden="true">🏠</span>${sipka}` +
-      `<span>${uNi ? 'jste u ní' : vzd}</span>`;
+    : `<span class="gps-blizko-ikona" aria-hidden="true">🏠</span>` +
+      `<span>${uNi ? 'Jste u nejbližší budky' : 'Nejbližší budka'}</span>${sipka}` +
+      `<span>${uNi ? '' : vzd}</span>`;
   _gpsBlizko.setAttribute('aria-label', _gpsBlizkoOtevr
     ? (uNi ? `Jste u budky číslo ${nej.budka.cislo}${jmenoRaw}. Klepnutím ji ukážete na mapě.`
            : `Nejbližší budka číslo ${nej.budka.cislo}${jmenoRaw}, ${vzd} daleko. Klepnutím ji ukážete na mapě.`)
