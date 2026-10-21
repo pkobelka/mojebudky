@@ -337,7 +337,19 @@
     },
     "konference2027_aktuality": {
       ".read": true,
-      ".write": "auth != null && root.child('florian_login_email').child(auth.token.email.toLowerCase().replace('.', ',')).exists()"
+      ".write": "auth != null && root.child('florian_login_email').child(auth.token.email.toLowerCase().replace('.', ',')).exists()",
+      "$k": {
+        ".write": "auth != null && auth.token.email_verified === true && root.child('konference2027_tym').child(auth.token.email.toLowerCase().replace('.', ',')).val() === true && ((!data.exists() && newData.child('uid').val() === auth.uid) || (data.exists() && data.child('uid').val() === auth.uid && !newData.exists()))",
+        ".validate": "newData.child('h').isString() && newData.child('h').val().length > 0 && newData.child('h').val().length <= 120 && newData.child('ts').isNumber() && newData.child('ts').val() <= now + 60000 && (!newData.child('p').exists() || (newData.child('p').isString() && newData.child('p').val().length <= 1000)) && (!newData.child('autor').exists() || (newData.child('autor').isString() && newData.child('autor').val().length <= 120)) && (!newData.child('uid').exists() || (newData.child('uid').isString() && newData.child('uid').val().length <= 128))"
+      }
+    },
+    "konference2027_tym": {
+      ".read": "auth != null && root.child('florian_login_email').child(auth.token.email.toLowerCase().replace('.', ',')).exists()",
+      ".write": "auth != null && root.child('florian_login_email').child(auth.token.email.toLowerCase().replace('.', ',')).exists()",
+      "$e": {
+        ".read": "auth != null && auth.token.email.toLowerCase().replace('.', ',') === $e",
+        ".validate": "newData.val() === true"
+      }
     },
     "konference2027_doprava": {
       ".read": "auth != null && root.child('florian_login_email').child(auth.token.email.toLowerCase().replace('.', ',')).exists()",
@@ -353,6 +365,7 @@
       ".read": "auth != null && root.child('florian_login_email').child(auth.token.email.toLowerCase().replace('.', ',')).exists()",
       ".write": "auth != null && root.child('florian_login_email').child(auth.token.email.toLowerCase().replace('.', ',')).exists()",
       "o": {
+        ".read": "auth != null && root.child('florian_login_email').child(auth.token.email.toLowerCase().replace('.', ',')).exists() || (auth != null && auth.token.email_verified === true && root.child('konference2027_tym').child(auth.token.email.toLowerCase().replace('.', ',')).val() === true)",
         "$id": {
           ".write": "!data.exists() || (auth != null && root.child('florian_login_email').child(auth.token.email.toLowerCase().replace('.', ',')).exists())",
           ".validate": "newData.hasChildren(['ts','dev']) && (newData.child('k').exists() || newData.child('p').exists()) && (!newData.child('k').exists() || (newData.child('k').isNumber() && newData.child('k').val() >= 1 && newData.child('k').val() <= 4)) && (!newData.child('p').exists() || (newData.child('p').isNumber() && newData.child('p').val() >= 1 && newData.child('p').val() <= 4)) && (!newData.child('lib').exists() || (newData.child('lib').isString() && newData.child('lib').val().length <= 1000)) && (!newData.child('chybi').exists() || (newData.child('chybi').isString() && newData.child('chybi').val().length <= 1000)) && (!newData.child('a').exists() || (newData.child('a').isString() && newData.child('a').val().length <= 120)) && (!newData.child('zv').exists() || newData.child('zv').isBoolean()) && newData.child('ts').isNumber() && newData.child('ts').val() <= now + 60000 && newData.child('dev').isString() && newData.child('dev').val().length <= 40 && $id.matches(/^[a-z0-9]{6,40}$/)",
