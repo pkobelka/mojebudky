@@ -343,6 +343,18 @@
         ".validate": "newData.child('h').isString() && newData.child('h').val().length > 0 && newData.child('h').val().length <= 120 && newData.child('ts').isNumber() && newData.child('ts').val() <= now + 60000 && (!newData.child('p').exists() || (newData.child('p').isString() && newData.child('p').val().length <= 1000)) && (!newData.child('autor').exists() || (newData.child('autor').isString() && newData.child('autor').val().length <= 120)) && (!newData.child('uid').exists() || (newData.child('uid').isString() && newData.child('uid').val().length <= 128))"
       }
     },
+    "konference2027_online": {
+      "d": {
+        ".read": "auth != null && root.child('florian_login_email').child(auth.token.email.toLowerCase().replace('.', ',')).exists()",
+        "$dev": {
+          ".write": "newData.exists() && $dev.matches(/^[a-z0-9]{6,40}$/)",
+          ".validate": "newData.isNumber() && newData.val() <= now + 60000 && newData.val() >= now - 60000"
+        }
+      },
+      "n": {
+        ".read": true
+      }
+    },
     "konference2027_tym": {
       ".read": "auth != null && root.child('florian_login_email').child(auth.token.email.toLowerCase().replace('.', ',')).exists()",
       ".write": "auth != null && root.child('florian_login_email').child(auth.token.email.toLowerCase().replace('.', ',')).exists()",
