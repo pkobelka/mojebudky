@@ -791,3 +791,36 @@ exports.budkyKontaktyReq = functions.database
       return smazReq();
     }
   });
+
+// ===== 10) Konference – kolik lidí má teď otevřeného průvodce =====
+// Průvodce (pkobelka.github.io/konference/pruvodce/) při otevřené obrazovce každou minutu zapíše
+// /konference2027_online/d/{zařízení} = čas serveru (anonymní kód, žádné jméno). Tady se jednou za minutu
+// spočítají zařízení aktivní za poslední 2,5 min a všem se pošle jen výsledek:
+//   /konference2027_online/n = { n, ts, max, maxTs, den }   (max = nejvíc za den, Europe/Prague)
+// Staré záznamy (> 10 min) se mažou, takže uzel d drží jen právě aktivní zařízení.
+const ONLINE_AKTIVNI = 150 * 1000;
+const ONLINE_SMAZAT = 10 * 60 * 1000;
+exports.konferenceOnline = functions.pubsub
+  .schedule("every 1 minutes")
+  .timeZone("Europe/Prague")
+  .onRun(async () => {
+    const root = admin.database().ref("konference2027_online");
+    const snap = await root.child("d").get();
+    const now = Date.now();
+    const smazat = {};
+    let n = 0;
+    snap.forEach((c) => {
+      const ts = +c.val() || 0;
+      if (ts > now - ONLINE_AKTIVNI) n++;
+      else if (ts < now - ONLINE_SMAZAT) smazat[c.key] = null;
+    });
+    if (Object.keys(smazat).length) await root.child("d").update(smazat);
+    const den = new Intl.DateTimeFormat("sv-SE", { timeZone: "Europe/Prague" }).format(new Date(now));
+    const stare = (await root.child("n").get()).val() || {};
+    if (!n && !stare.n && stare.den === den) return null; // nikdo online a nic se nemění – nic nepsat
+    const novyDen = stare.den !== den, stMax = +stare.max || 0;
+    const max = novyDen ? n : Math.max(stMax, n);
+    const maxTs = novyDen || n > stMax ? now : stare.maxTs || now;
+    await root.child("n").set({ n, ts: now, max, maxTs, den });
+    return null;
+  });
