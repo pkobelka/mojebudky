@@ -532,10 +532,10 @@ async function _zobrazAdminPanel(loginId) {
     const posledniText = posledniLoginTs
       ? `<small class="toast-posledni">Poslední přihlášení: ${new Date(posledniLoginTs).toLocaleString('cs-CZ', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</small>`
       : '';
-    _zobrazToast(`Ahoj ${osloveni}! 🌿${posledniText}`, 6000, true);
+    _zobrazToast(`Ahoj ${osloveni}! 🌿${posledniText}`, 3000, true);
     if (jePoprve) {
       localStorage.setItem('mb_firstlogin_' + loginId, '1');
-      setTimeout(() => _zobrazProfilSpravce(loginId, spravceInfo, budkaText), 7000);
+      setTimeout(() => _zobrazProfilSpravce(loginId, spravceInfo, budkaText), 4000);
     }
   }
 
