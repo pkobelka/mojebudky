@@ -535,7 +535,7 @@ async function _zobrazAdminPanel(loginId) {
     _zobrazToast(`Ahoj ${osloveni}! 🌿${posledniText}`, 3000, true);
     if (jePoprve) {
       localStorage.setItem('mb_firstlogin_' + loginId, '1');
-      setTimeout(() => _zobrazProfilSpravce(loginId, spravceInfo, budkaText), 7000);
+      setTimeout(() => _zobrazProfilSpravce(loginId, spravceInfo, budkaText), 4000);
     }
   }
 
