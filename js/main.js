@@ -858,7 +858,7 @@ function ukazUvitaciToast() {
     '💌'
   ];
   const DOBA_SLOVO = 140;
-  const DOBA_DRZENI = 3000;
+  const DOBA_DRZENI = 2000;
 
   const existujici = document.getElementById('adminToast');
   if (existujici) existujici.remove();
