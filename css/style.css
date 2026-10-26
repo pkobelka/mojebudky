@@ -1884,6 +1884,10 @@ body.mapa-cele .map-wrapper {
   transform: rotate(var(--mb-zpet, 0deg));
   transform-origin: 50% 50%;
   transition: transform 0.45s ease-out;
+  /* Vrstva teď leží přes celou mapu – sama nesmí brát dotyky, jinak
+     prsty nedosáhly na mapu (nešlo posouvat ani klepnout na budku).
+     Samotná tlačítka (.leaflet-control) dotyky berou dál. */
+  pointer-events: none;
 }
 
 .map-wrapper.mb-jizda .budka-marker,
@@ -1957,12 +1961,37 @@ body.mapa-cele .map-wrapper {
 .gps-blizko-sipka {
   display: inline-block; line-height: 1; color: #ffd79a; font-size: 1.05em;
 }
-.gps-blizko--otevrena { white-space: normal; text-align: right; }
+.gps-blizko--otevrena { white-space: normal; }
 .gps-blizko-text { flex: 1 1 auto; }
 .gps-blizko-akce {
   flex: 0 0 auto; padding-left: 8px; margin-left: 2px;
   border-left: 1px solid rgba(255,248,238,0.35); color: #ffd79a;
 }
+/* Rozbalený proužek: nahoře co a kam, pod tím tlačítka (dřív vše v jednom
+   řádku a text se na telefonu lámal po slovech) */
+.gps-blizko--otevrena { flex-direction: column; align-items: stretch; gap: 7px; padding: 9px 12px; text-align: left; }
+.gps-blizko-hlava { display: flex; align-items: center; gap: 6px; }
+.gps-blizko-vzd { margin-left: auto; padding-left: 8px; white-space: nowrap; font-weight: 800; color: #ffd79a; }
+.gps-blizko-tlacitka { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 6px; }
+.gps-blizko--otevrena .gps-blizko-akce {
+  border: 1px solid rgba(255,248,238,0.45); border-left: 1px solid rgba(255,248,238,0.45);
+  border-radius: 999px; padding: 6px 12px; margin: 0; min-height: 32px;
+  display: inline-flex; align-items: center; white-space: nowrap;
+}
+.gps-blizko--otevrena .gps-blizko-akce--hl { background: #ffd79a; color: #3a2008; border-color: #ffd79a; }
+.leaflet-container a.gps-blizko-akce { color: #ffd79a; text-decoration: none; }
+/* Navigace k vybrané budce – zelený proužek, ať se nesplete s „nejbližší" */
+.gps-blizko--cil { background: rgba(28, 92, 16, 0.95); }
+.gps-blizko--cil:hover, .gps-blizko--cil:focus-visible { background: rgba(28, 92, 16, 1); }
+/* Čára od polohy k budce, ke které se naviguje */
+.gps-cara { filter: drop-shadow(0 0 2px rgba(255,255,255,0.9)); }
+
+/* Bublina budky: navigace k ní */
+.popup-navigace { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; padding: 10px 22px 12px; border-top: 1px solid #e8dcc8; }
+.popup-nav-btn { background: #1c5c10; color: #fff; border: none; border-radius: 999px; padding: 9px 16px; font-size: 0.95rem; font-weight: 700; cursor: pointer; min-height: 44px; touch-action: manipulation; }
+.popup-nav-btn:hover { background: #164a0c; }
+.leaflet-container a.popup-nav-google, .popup-nav-google { color: #1c5c10; font-weight: 600; font-size: 0.92rem; }
+@media (max-width: 600px) { .popup-navigace { padding: 8px 12px 10px; } .popup-nav-btn { font-size: 0.9rem; padding: 8px 14px; } }
 
 @media (max-width: 600px) {
   .gps-chip { font-size: 0.75rem; padding: 5px 11px; max-width: calc(100vw - 24px); }
