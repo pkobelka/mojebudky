@@ -639,28 +639,26 @@ function formatHistorie(b) {
     const fbRok = parseInt(rokStr);
     const fbRadek = {
       rok: fbRok,
-      cisteno: !!edit.cisteni,
-      kontrolovano: !!edit.kontrola,
       obsazeno: edit.kdo_hnizdi || null,
       poznamka: edit.poznamka || null,
     };
     const idx = base.findIndex(r => r.rok === fbRok);
     if (idx >= 0) { base[idx] = { ...base[idx], ...fbRadek }; }
-    else { base.push(fbRadek); }
+    // Edit jen s čištěním/kontrolou do historie nepatří – řádek „—" by tvrdil,
+    // že budka v tom roce zůstala prázdná
+    else if (fbRadek.obsazeno || fbRadek.poznamka) { base.push(fbRadek); }
   });
   if (allEditsDict && Object.keys(allEditsDict).length) base.sort((a, bx) => bx.rok - a.rok);
   if (!base.length) return '';
   const radky = base.map(r => {
-    const cisteno = r.cisteno ? '✅' : '—';
-    const kontrola = r.kontrolovano ? '✅' : '—';
     const obsazeno = r.obsazeno || '—';
     const poznamkaRow = r.poznamka
-      ? `<tr><td colspan="4" class="popup-poznamka">📝 ${r.poznamka}</td></tr>` : '';
-    return `<tr><td>${r.rok}</td><td>${cisteno}</td><td>${kontrola}</td><td>${obsazeno}</td></tr>${poznamkaRow}`;
+      ? `<tr><td colspan="2" class="popup-poznamka">📝 ${r.poznamka}</td></tr>` : '';
+    return `<tr><td>${r.rok}</td><td>${obsazeno}</td></tr>${poznamkaRow}`;
   }).join('');
   return `<div class="popup-sekce-title">📋 Historie</div>
     <table class="popup-historie">
-      <thead><tr><th>Rok</th><th>Čistění</th><th>Kontrola</th><th>Obsadil</th></tr></thead>
+      <thead><tr><th>Rok</th><th>Obsadil</th></tr></thead>
       <tbody>${radky}</tbody>
     </table>`;
 }
