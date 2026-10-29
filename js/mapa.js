@@ -224,7 +224,10 @@ function _aktualizujMarkerZFirebase(cisloNum, kdoHnizdi, datumOsidleni, edit) {
 }
 window._aktualizujMarkerZFirebase = _aktualizujMarkerZFirebase;
 
-const FOTO_ROKY = ['2026', '2025', '2024'];
+// 'github' = poslední pokus: tatáž fotka z veřejného repa, když ji náš hosting
+// nevydá (WEDOS vrací 403 na nově nahrané soubory, viz PLAN.md)
+const FOTO_ROKY = ['2026', '2025', '2024', 'github'];
+const ZALOHA_FOTEK_BUDEK = 'https://raw.githubusercontent.com/pkobelka/mojebudky/main/';
 
 // Zoom fotky v popupu — delegovaný listener, funguje i pod adminskou session
 document.addEventListener('click', function(e) {
@@ -391,8 +394,9 @@ window._tryBudkaFoto = function(img, cislo, roky) {
   const next = roky[0];
   img.onerror = function() { window._tryBudkaFoto(this, cislo, roky.slice(1)); };
   // 'flat' = bez roku, přímo img/budky/{cislo}.jpg
-  img.src = next === 'flat' ? 'img/budky/' + cislo + '.jpg'
-                            : 'img/budky/' + next + '/' + cislo + '.jpg';
+  img.src = next === 'flat'   ? 'img/budky/' + cislo + '.jpg'
+          : next === 'github' ? ZALOHA_FOTEK_BUDEK + 'img/budky/' + cislo + '.jpg'
+                              : 'img/budky/' + next + '/' + cislo + '.jpg';
 };
 
 function _formatDatum(ts) {
