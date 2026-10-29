@@ -644,17 +644,20 @@ function formatHistorie(b) {
     };
     const idx = base.findIndex(r => r.rok === fbRok);
     if (idx >= 0) { base[idx] = { ...base[idx], ...fbRadek }; }
-    // Edit jen s čištěním/kontrolou do historie nepatří – řádek „—" by tvrdil,
-    // že budka v tom roce zůstala prázdná
-    else if (fbRadek.obsazeno || fbRadek.poznamka) { base.push(fbRadek); }
+    else { base.push(fbRadek); }
   });
-  if (allEditsDict && Object.keys(allEditsDict).length) base.sort((a, bx) => bx.rok - a.rok);
-  if (!base.length) return '';
-  const radky = base.map(r => {
-    const obsazeno = r.obsazeno || '—';
-    const poznamkaRow = r.poznamka
-      ? `<tr><td colspan="2" class="popup-poznamka">📝 ${r.poznamka}</td></tr>` : '';
-    return `<tr><td>${r.rok}</td><td>${obsazeno}</td></tr>${poznamkaRow}`;
+  // Ukazujeme jen roky, kdy někdo nahlásil, kdo v budce byl (nebo poznámku) –
+  // rok bez hlášení do historie nepatří
+  const radkyData = base.filter(r => r.obsazeno || r.poznamka);
+  if (!radkyData.length) return '';
+  radkyData.sort((a, bx) => bx.rok - a.rok);
+  const radky = radkyData.map(r => {
+    const poznamka = r.poznamka ? `📝 ${r.poznamka}` : '';
+    if (!r.obsazeno)
+      return `<tr><td>${r.rok}</td><td class="popup-poznamka">${poznamka}</td></tr>`;
+    const poznamkaRow = poznamka
+      ? `<tr><td colspan="2" class="popup-poznamka">${poznamka}</td></tr>` : '';
+    return `<tr><td>${r.rok}</td><td>${r.obsazeno}</td></tr>${poznamkaRow}`;
   }).join('');
   return `<div class="popup-sekce-title">📋 Historie</div>
     <table class="popup-historie">
