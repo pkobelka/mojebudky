@@ -2720,21 +2720,13 @@ async function _zobrazEditBudky(loginId, spravceInfo, budkaText, budkaCislo, bud
         </div>
         <div class="profil-row">
           <div class="profil-field" style="flex:0 0 auto">
-            <label>Rok kontroly</label>
+            <label>Rok</label>
             <div class="eb-rok-ctrl">
               <button type="button" class="eb-rok-btn" id="ebRokMinus">◀</button>
               <span class="eb-rok-val" id="ebRokVal">${ulozeno.rok || new Date().getFullYear()}</span>
               <button type="button" class="eb-rok-btn" id="ebRokPlus">▶</button>
             </div>
             <input type="hidden" id="ebRok" value="${ulozeno.rok || new Date().getFullYear()}">
-          </div>
-          <div class="profil-field">
-            <label>Datum kontroly</label>
-            <input type="date" id="ebKontrola" value="${_czToIso(ulozeno.kontrola) || new Date().toISOString().slice(0,10)}">
-          </div>
-          <div class="profil-field">
-            <label>Datum čištění</label>
-            <input type="date" id="ebCisteni" value="${_czToIso(ulozeno.cisteni) || ''}">
           </div>
         </div>
         <div class="profil-field profil-field--wide">
@@ -2893,8 +2885,6 @@ async function _zobrazEditBudky(loginId, spravceInfo, budkaText, budkaCislo, bud
     const nazev     = document.getElementById('ebNazev').value.trim();
     const instalace = document.getElementById('ebInstalace').value.trim();
     const rok       = document.getElementById('ebRok').value.trim();
-    const kontrola        = _isoToCz(document.getElementById('ebKontrola').value.trim());
-    const cisteni         = _isoToCz(document.getElementById('ebCisteni').value.trim());
     const datumOsidleni   = _isoToCz(document.getElementById('ebDatumOsidleni').value.trim());
     const poznamka  = document.getElementById('ebPoznamka').value.trim();
     let kdoHnizdi   = aktualniDruh === '__jiny'
@@ -2911,7 +2901,7 @@ async function _zobrazEditBudky(loginId, spravceInfo, budkaText, budkaCislo, bud
     if (db) {
       try {
         const data = {
-          nazev, instalace, rok, kontrola, cisteni,
+          nazev, instalace, rok,
           kdo_hnizdi: kdoHnizdi, datum_osidleni: datumOsidleni, poznamka,
           ts: firebase.database.ServerValue.TIMESTAMP,
           spravce_id: loginId, jmeno
@@ -2925,13 +2915,10 @@ async function _zobrazEditBudky(loginId, spravceInfo, budkaText, budkaCislo, bud
       } catch {}
     }
 
-    if (ok) {
-      const casti = [];
-      if (kdoHnizdi) casti.push(`sídlí ${kdoHnizdi}`);
-      if (kontrola) casti.push(`kontrola ${kontrola}`);
-      if (cisteni) casti.push(`čištění ${cisteni}`);
-      if (casti.length) await _logAktivita(loginId, jmeno, budkaCislo, nazev || budkaNazev, casti.join(' · '));
-    }
+    // Každé uložení se počítá do Aktivity správců (dřív to zajišťovalo
+    // předvyplněné datum kontroly)
+    if (ok) await _logAktivita(loginId, jmeno, budkaCislo, nazev || budkaNazev,
+                               kdoHnizdi ? `sídlí ${kdoHnizdi}` : 'úprava budky');
     return ok;
   }
 
